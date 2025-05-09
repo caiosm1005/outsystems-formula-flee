@@ -2,7 +2,6 @@
 using System.Reflection.Emit;
 using System.Globalization;
 using Flee.ExpressionElements.Base.Literals;
-
 using Flee.InternalTypes;
 using Flee.PublicTypes;
 using Flee.Resources;
@@ -16,9 +15,9 @@ namespace Flee.ExpressionElements.Literals
         {
             ExpressionParserOptions options = context.ParserOptions;
 
-            if (DateTime.TryParseExact(image, options.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out _myValue) == false)
+            if (DateTime.TryParseExact(image, options.DateTimeFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out _myValue) == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(DateTime).Name);
+                ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(DateTime).Name);
             }
         }
 
@@ -28,7 +27,7 @@ namespace Flee.ExpressionElements.Literals
 
             Utility.EmitLoadLocalAddress(ilg, index);
 
-            LiteralElement.EmitLoad(_myValue.Ticks, ilg);
+            EmitLoad(_myValue.Ticks, ilg);
 
             ConstructorInfo ci = typeof(DateTime).GetConstructor(new Type[] { typeof(long) });
 
@@ -37,6 +36,6 @@ namespace Flee.ExpressionElements.Literals
             Utility.EmitLoadLocal(ilg, index);
         }
 
-        public override System.Type ResultType => typeof(DateTime);
+        public override Type ResultType => typeof(DateTime);
     }
 }

@@ -8,14 +8,14 @@ namespace Flee.PublicTypes
         private PropertyDictionary _myProperties;
         private readonly ExpressionContext _myOwner;
         private readonly CultureInfo _myParseCulture;
-
         private NumberStyles NumberStyles = NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent | NumberStyles.None;
+        
         internal ExpressionParserOptions(ExpressionContext owner)
         {
             _myOwner = owner;
             _myProperties = new PropertyDictionary();
             _myParseCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
-            this.InitializeProperties();
+            InitializeProperties();
         }
 
         #region "Methods - Public"
@@ -31,7 +31,7 @@ namespace Flee.PublicTypes
 
         internal ExpressionParserOptions Clone()
         {
-            ExpressionParserOptions copy = (ExpressionParserOptions)this.MemberwiseClone();
+            ExpressionParserOptions copy = (ExpressionParserOptions)MemberwiseClone();
             copy._myProperties = _myProperties.Clone();
             return copy;
         }
@@ -50,16 +50,17 @@ namespace Flee.PublicTypes
         {
             return decimal.Parse(image, NumberStyles, _myParseCulture);
         }
+
         #endregion
 
         #region "Methods - Private"
 
         private void InitializeProperties()
         {
-            this.DateTimeFormat = "dd/MM/yyyy";
-            this.RequireDigitsBeforeDecimalPoint = false;
-            this.DecimalSeparator = '.';
-            this.FunctionArgumentSeparator = ',';
+            DateTimeFormat = "dd/MM/yyyy";
+            RequireDigitsBeforeDecimalPoint = false;
+            DecimalSeparator = '.';
+            FunctionArgumentSeparator = ',';
         }
 
         #endregion
@@ -68,8 +69,14 @@ namespace Flee.PublicTypes
 
         public string DateTimeFormat
         {
-            get { return _myProperties.GetValue<string>("DateTimeFormat"); }
-            set { _myProperties.SetValue("DateTimeFormat", value); }
+            get { return DateTimeFormats.FirstOrDefault(); }
+            set { DateTimeFormats = new string[] { value }; }
+        }
+
+        public string[] DateTimeFormats
+        {
+            get { return _myProperties.GetValue<string[]>("DateTimeFormats"); }
+            set { _myProperties.SetValue("DateTimeFormats", value); }
         }
 
         public bool RequireDigitsBeforeDecimalPoint
