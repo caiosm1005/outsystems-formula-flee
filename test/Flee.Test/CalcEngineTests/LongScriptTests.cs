@@ -36,6 +36,9 @@ namespace Flee.Test.CalcEngineTests
 			context.Imports.AddType(typeof(Convert));
 			context.Imports.AddType(typeof(string));
 
+			// Set default culture
+			context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
+
 			engine.Context = context;
             _myEngine = engine;
         }
