@@ -67,7 +67,7 @@
         private Type _myType;
         internal ResolveVariableTypeEventArgs(string name)
         {
-            this._myName = name;
+            _myName = name;
         }
 
         public string VariableName => _myName;

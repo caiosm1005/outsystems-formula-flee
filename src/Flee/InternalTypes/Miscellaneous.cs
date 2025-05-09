@@ -66,7 +66,7 @@ namespace Flee.InternalTypes
         {
         }
 
-        public override PropertyInfo SelectProperty(BindingFlags bindingAttr, PropertyInfo[] match, System.Type returnType, System.Type[] indexes, ParameterModifier[] modifiers)
+        public override PropertyInfo SelectProperty(BindingFlags bindingAttr, PropertyInfo[] match, Type returnType, Type[] indexes, ParameterModifier[] modifiers)
         {
             return null;
         }
@@ -136,7 +136,7 @@ namespace Flee.InternalTypes
     {
 
 
-        private static readonly DefaultExpressionOwner OurInstance = new DefaultExpressionOwner();
+        private static readonly DefaultExpressionOwner OurInstance = new();
 
         private DefaultExpressionOwner()
         {
@@ -182,15 +182,15 @@ namespace Flee.InternalTypes
             }
             else if (IsParamArray == true)
             {
-                _myScore = this.ComputeScoreForParamArray(@params, argTypes);
+                _myScore = ComputeScoreForParamArray(@params, argTypes);
             }
             else if (IsExtensionMethod == true)
             {
-                _myScore = this.ComputeScoreExtensionMethodInternal(@params, argTypes);
+                _myScore = ComputeScoreExtensionMethodInternal(@params, argTypes);
             }
             else
             {
-                _myScore = this.ComputeScoreInternal(@params, argTypes);
+                _myScore = ComputeScoreInternal(@params, argTypes);
             }
         }
 
@@ -200,7 +200,7 @@ namespace Flee.InternalTypes
         /// <param name="parameters"></param>
         /// <param name="argTypes"></param>
         /// <returns></returns>
-        private float ComputeScoreExtensionMethodInternal(ParameterInfo[] parameters, Type[] argTypes)
+        private static float ComputeScoreExtensionMethodInternal(ParameterInfo[] parameters, Type[] argTypes)
         {
             Debug.Assert(parameters.Length == argTypes.Length + 1);
             int sum = 0;
@@ -219,7 +219,7 @@ namespace Flee.InternalTypes
         /// <param name="parameters"></param>
         /// <param name="argTypes"></param>
         /// <returns></returns>
-        private float ComputeScoreInternal(ParameterInfo[] parameters, Type[] argTypes)
+        private static float ComputeScoreInternal(ParameterInfo[] parameters, Type[] argTypes)
         {
             // Our score is the average of the scores of each parameter.  The lower the score, the better the match.
             int sum = ComputeSum(parameters, argTypes);
@@ -312,7 +312,7 @@ namespace Flee.InternalTypes
                     IsExtensionMethod = true;
                     return AreValidExtensionMethodArgumentsForParameters(argTypes, parameters, previous, context);
                 }
-                if ((parameters.Length != argTypes.Length))
+                if (parameters.Length != argTypes.Length)
                 {
                     // Not a paramArray and parameter and argument counts don't match
                     return false;
@@ -331,7 +331,7 @@ namespace Flee.InternalTypes
             {
                 return true;
             }
-            else if (this.IsParamArrayMatch(argTypes, parameters, lastParam) == true)
+            else if (IsParamArrayMatch(argTypes, parameters, lastParam) == true)
             {
                 IsParamArray = true;
                 return true;
@@ -436,7 +436,7 @@ namespace Flee.InternalTypes
         {
             return _myScore == other._myScore;
         }
-        bool System.IEquatable<CustomMethodInfo>.Equals(CustomMethodInfo other)
+        bool IEquatable<CustomMethodInfo>.Equals(CustomMethodInfo other)
         {
             return Equals1(other);
         }
@@ -500,7 +500,7 @@ namespace Flee.InternalTypes
             Utility.EmitLoadLocal(ilg, _myIndex);
         }
 
-        public override System.Type ResultType => _myTarget.ResultType;
+        public override Type ResultType => _myTarget.ResultType;
     }
 
     /// <summary>
@@ -516,7 +516,7 @@ namespace Flee.InternalTypes
 
         public PropertyDictionary Clone()
         {
-            PropertyDictionary copy = new PropertyDictionary();
+            PropertyDictionary copy = new();
 
             foreach (KeyValuePair<string, object> pair in _myProperties)
             {
@@ -528,7 +528,7 @@ namespace Flee.InternalTypes
 
         public T GetValue<T>(string name)
         {
-            object value = default(T);
+            object value;
             if (_myProperties.TryGetValue(name, out value) == false)
             {
                 Debug.Fail($"Unknown property '{name}'");
@@ -539,7 +539,7 @@ namespace Flee.InternalTypes
         public void SetToDefault<T>(string name)
         {
             T value = default(T);
-            this.SetValue(name, value);
+            SetValue(name, value);
         }
 
         public void SetValue(string name, object value)

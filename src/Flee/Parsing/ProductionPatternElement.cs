@@ -23,23 +23,23 @@ namespace Flee.Parsing
                                         int max)
         {
 
-            this._token = isToken;
-            this._id = id;
+            _token = isToken;
+            _id = id;
             if (min < 0)
             {
                 min = 0;
             }
-            this._min = min;
+            _min = min;
             if (max <= 0)
             {
-                max = Int32.MaxValue;
+                max = int.MaxValue;
             }
             else if (max < min)
             {
                 max = min;
             }
-            this._max = max;
-            this._lookAhead = null;
+            _max = max;
+            _lookAhead = null;
         }
 
         public int Id => _id;
@@ -95,10 +95,10 @@ namespace Flee.Parsing
             if (obj is ProductionPatternElement)
             {
                 var elem = (ProductionPatternElement)obj;
-                return this._token == elem._token
-                    && this._id == elem._id
-                    && this._min == elem._min
-                    && this._max == elem._max;
+                return _token == elem._token
+                    && _id == elem._id
+                    && _min == elem._min
+                    && _max == elem._max;
             }
             else
             {
@@ -108,12 +108,12 @@ namespace Flee.Parsing
 
         public override int GetHashCode()
         {
-            return this._id * 37;
+            return _id * 37;
         }
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             buffer.Append(_id);
             if (_token)
@@ -126,11 +126,11 @@ namespace Flee.Parsing
             }
             if (_min != 1 || _max != 1)
             {
-                buffer.Append("{");
+                buffer.Append('{');
                 buffer.Append(_min);
-                buffer.Append(",");
+                buffer.Append(',');
                 buffer.Append(_max);
-                buffer.Append("}");
+                buffer.Append('}');
             }
             return buffer.ToString();
         }

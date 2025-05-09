@@ -18,9 +18,9 @@ namespace Flee.ExpressionElements
             _myWhenTrue = whenTrue;
             _myWhenFalse = whenFalse;
 
-            if ((!object.ReferenceEquals(_myCondition.ResultType, typeof(bool))))
+            if (!ReferenceEquals(_myCondition.ResultType, typeof(bool)))
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.FirstArgNotBoolean, CompileExceptionReason.TypeMismatch);
+                ThrowCompileException(CompileErrorResourceKeys.FirstArgNotBoolean, CompileExceptionReason.TypeMismatch);
             }
 
             // The result type is the type that is common to the true/false operands
@@ -34,13 +34,13 @@ namespace Flee.ExpressionElements
             }
             else
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther, CompileExceptionReason.TypeMismatch, _myWhenTrue.ResultType.Name, _myWhenFalse.ResultType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther, CompileExceptionReason.TypeMismatch, _myWhenTrue.ResultType.Name, _myWhenFalse.ResultType.Name);
             }
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            this.EmitConditional(ilg, services);
+            EmitConditional(ilg, services);
         }
 
         private void EmitConditional(FleeILGenerator ilg, IServiceProvider services)
@@ -70,6 +70,6 @@ namespace Flee.ExpressionElements
             ilg.MarkLabel(endLabel);
         }
 
-        public override System.Type ResultType => _myResultType;
+        public override Type ResultType => _myResultType;
     }
 }

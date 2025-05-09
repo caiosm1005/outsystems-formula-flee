@@ -20,10 +20,10 @@ namespace Flee.CalcEngine.InternalTypes
             switch (node.Id)
             {
                 case (int)ExpressionConstants.IDENTIFIER:
-                    this.ExitIdentifier((Token)node);
+                    ExitIdentifier((Token)node);
                     break;
                 case (int)ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
-                    this.ExitFieldPropertyExpression();
+                    ExitFieldPropertyExpression();
                     break;
             }
 
@@ -35,10 +35,10 @@ namespace Flee.CalcEngine.InternalTypes
             switch (node.Id)
             {
                 case (int)ExpressionConstants.MEMBER_EXPRESSION:
-                    this.EnterMemberExpression();
+                    EnterMemberExpression();
                     break;
                 case (int)ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
-                    this.EnterFieldPropertyExpression();
+                    EnterFieldPropertyExpression();
                     break;
             }
         }
@@ -79,7 +79,7 @@ namespace Flee.CalcEngine.InternalTypes
 
         public ICollection<string> GetIdentifiers(ExpressionContext context)
         {
-            Dictionary<string, object> dict = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, object> dict = new(StringComparer.OrdinalIgnoreCase);
             ExpressionImports ei = context.Imports;
 
             foreach (string identifier in _myIdentifiers.Values)

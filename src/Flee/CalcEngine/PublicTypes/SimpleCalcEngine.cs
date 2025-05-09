@@ -42,7 +42,7 @@ namespace Flee.CalcEngine.PublicTypes
             IdentifierAnalyzer analyzer = Context.ParseIdentifiers(expression);
 
             ExpressionContext context2 = _myContext.CloneInternal(true);
-            this.LinkExpression(expressionName, context2, analyzer);
+            LinkExpression(expressionName, context2, analyzer);
 
             // Tell the expression not to clone the context since it's already been cloned
             context2.NoClone = true;
@@ -57,14 +57,13 @@ namespace Flee.CalcEngine.PublicTypes
         {
             foreach (string identifier in analyzer.GetIdentifiers(context))
             {
-                this.LinkIdentifier(identifier, expressionName, context);
+                LinkIdentifier(identifier, expressionName, context);
             }
         }
 
         private void LinkIdentifier(string identifier, string expressionName, ExpressionContext context)
         {
-            IExpression child = null;
-
+            IExpression child;
             if (_myExpressions.TryGetValue(identifier, out child) == false)
             {
                 string msg = $"Expression '{expressionName}' references unknown name '{identifier}'";
@@ -80,16 +79,16 @@ namespace Flee.CalcEngine.PublicTypes
 
         public void AddDynamic(string expressionName, string expression)
         {
-            ExpressionContext linkedContext = this.ParseAndLink(expressionName, expression);
+            ExpressionContext linkedContext = ParseAndLink(expressionName, expression);
             IExpression e = linkedContext.CompileDynamic(expression);
-            this.AddCompiledExpression(expressionName, e);
+            AddCompiledExpression(expressionName, e);
         }
 
         public void AddGeneric<T>(string expressionName, string expression)
         {
-            ExpressionContext linkedContext = this.ParseAndLink(expressionName, expression);
+            ExpressionContext linkedContext = ParseAndLink(expressionName, expression);
             IExpression e = linkedContext.CompileGeneric<T>(expression);
-            this.AddCompiledExpression(expressionName, e);
+            AddCompiledExpression(expressionName, e);
         }
 
         public void Clear()
@@ -104,7 +103,7 @@ namespace Flee.CalcEngine.PublicTypes
         {
             get
             {
-                IExpression e = null;
+                IExpression e;
                 _myExpressions.TryGetValue(name, out e);
                 return e;
             }

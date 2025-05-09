@@ -26,10 +26,10 @@ namespace Flee.Parsing
 
         public RegExp(string pattern, bool ignoreCase)
         {
-            this._pattern = pattern;
-            this._ignoreCase = ignoreCase;
-            this._pos = 0;
-            this._element = ParseExpr();
+            _pattern = pattern;
+            _ignoreCase = ignoreCase;
+            _pos = 0;
+            _element = ParseExpr();
             if (_pos < pattern.Length)
             {
                 throw new RegExpException(
@@ -82,7 +82,7 @@ namespace Flee.Parsing
 
         private Element ParseTerm()
         {
-            ArrayList list = new ArrayList();
+            ArrayList list = new();
 
             list.Add(ParseFact());
             while (true)
@@ -159,13 +159,13 @@ namespace Flee.Parsing
 
         private Element ParseAtomModifier(Element elem)
         {
-            int min = 0;
-            int max = -1;
             RepeatElement.RepeatType type;
             int firstPos;
 
             // Read min and max
             type = RepeatElement.RepeatType.GREEDY;
+            int min;
+            int max;
             switch (ReadChar())
             {
                 case '?':
@@ -335,7 +335,7 @@ namespace Flee.Parsing
                           ReadChar().ToString();
                     try
                     {
-                        value = Int32.Parse(str,
+                        value = int.Parse(str,
                                             NumberStyles.AllowHexSpecifier);
                         return new StringElement(FixChar((char)value));
                     }
@@ -353,7 +353,7 @@ namespace Flee.Parsing
                           ReadChar().ToString();
                     try
                     {
-                        value = Int32.Parse(str,
+                        value = int.Parse(str,
                                             NumberStyles.AllowHexSpecifier);
                         return new StringElement(FixChar((char)value));
                     }
@@ -402,12 +402,12 @@ namespace Flee.Parsing
 
         private char FixChar(char c)
         {
-            return _ignoreCase ? Char.ToLower(c) : c;
+            return _ignoreCase ? char.ToLower(c) : c;
         }
 
         private int ReadNumber()
         {
-            StringBuilder buf = new StringBuilder();
+            StringBuilder buf = new();
             int c;
 
             c = PeekChar(0);
@@ -423,7 +423,7 @@ namespace Flee.Parsing
                     _pos,
                     _pattern);
             }
-            return Int32.Parse(buf.ToString());
+            return int.Parse(buf.ToString());
         }
 
         private char ReadChar()
@@ -468,7 +468,7 @@ namespace Flee.Parsing
             }
         }
 
-        private Element CombineElements(ArrayList list)
+        private static Element CombineElements(ArrayList list)
         {
             Element elem;
             int i;

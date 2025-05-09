@@ -12,8 +12,8 @@
     internal class TokenNFA
     {
         private readonly NFAState[] _initialChar = new NFAState[128];
-        private readonly NFAState _initial = new NFAState();
-        private readonly NFAStateQueue _queue = new NFAStateQueue();
+        private readonly NFAState _initial = new();
+        private readonly NFAStateQueue _queue = new();
 
         public void AddTextMatch(string str, bool ignoreCase, TokenPattern value)
         {
@@ -43,7 +43,7 @@
                                    bool ignoreCase,
                                    TokenPattern value)
         {
-            TokenRegExpParser parser = new TokenRegExpParser(pattern, ignoreCase);
+            TokenRegExpParser parser = new(pattern, ignoreCase);
             string debug = "DFA regexp; " + parser.GetDebugInfo();
 
             var isAscii = parser.Start.IsAsciiOutgoing();
@@ -103,40 +103,40 @@
 
             // The first step of the match loop has been unrolled and
             // optimized for performance below.
-            this._queue.Clear();
+            _queue.Clear();
             var peekChar = buffer.Peek(0);
             if (0 <= peekChar && peekChar < 128)
             {
-                state = this._initialChar[peekChar];
+                state = _initialChar[peekChar];
                 if (state != null)
                 {
-                    this._queue.AddLast(state);
+                    _queue.AddLast(state);
                 }
             }
             if (peekChar >= 0)
             {
-                this._initial.MatchTransitions((char)peekChar, this._queue, true);
+                _initial.MatchTransitions((char)peekChar, _queue, true);
             }
-            this._queue.MarkEnd();
+            _queue.MarkEnd();
             peekChar = buffer.Peek(1);
 
             // The remaining match loop processes all subsequent states
-            while (!this._queue.Empty)
+            while (!_queue.Empty)
             {
-                if (this._queue.Marked)
+                if (_queue.Marked)
                 {
                     pos++;
                     peekChar = buffer.Peek(pos);
-                    this._queue.MarkEnd();
+                    _queue.MarkEnd();
                 }
-                state = this._queue.RemoveFirst();
+                state = _queue.RemoveFirst();
                 if (state.Value != null)
                 {
                     match.Update(pos, state.Value);
                 }
                 if (peekChar >= 0)
                 {
-                    state.MatchTransitions((char)peekChar, this._queue, false);
+                    state.MatchTransitions((char)peekChar, _queue, false);
                 }
             }
             return length;
@@ -185,8 +185,8 @@
                 {
                     state = new NFAState();
                 }
-                AddOut(new NFACharTransition(Char.ToLower(ch), state));
-                AddOut(new NFACharTransition(Char.ToUpper(ch), state));
+                AddOut(new NFACharTransition(char.ToLower(ch), state));
+                AddOut(new NFACharTransition(char.ToUpper(ch), state));
                 return state;
             }
             else
@@ -311,8 +311,8 @@
 
         protected NFATransition(NFAState state)
         {
-            this.State = state;
-            this.State.AddIn(this);
+            State = state;
+            State.AddIn(this);
         }
 
         public abstract bool IsAscii();
@@ -371,7 +371,7 @@
 
         public override bool Match(char ch)
         {
-            return this._match == ch;
+            return _match == ch;
         }
 
         public override NFATransition Copy(NFAState state)
@@ -397,8 +397,8 @@
                                       bool ignoreCase,
                                       NFAState state) : base(state)
         {
-            this.Inverse = inverse;
-            this.IgnoreCase = ignoreCase;
+            Inverse = inverse;
+            IgnoreCase = ignoreCase;
         }
 
         public override bool IsAscii()
@@ -433,7 +433,7 @@
         {
             if (IgnoreCase)
             {
-                c = Char.ToLower(c);
+                c = char.ToLower(c);
             }
             AddContent(c);
         }
@@ -442,13 +442,13 @@
         {
             if (IgnoreCase)
             {
-                min = Char.ToLower(min);
-                max = Char.ToLower(max);
+                min = char.ToLower(min);
+                max = char.ToLower(max);
             }
             AddContent(new Range(min, max));
         }
 
-        private void AddContent(Object obj)
+        private void AddContent(object obj)
         {
             Array.Resize(ref _contents, _contents.Length + 1);
             _contents[_contents.Length - 1] = obj;
@@ -462,7 +462,7 @@
 
             if (IgnoreCase)
             {
-                ch = Char.ToLower(ch);
+                ch = char.ToLower(ch);
             }
             for (int i = 0; i < _contents.Length; i++)
             {
@@ -500,8 +500,8 @@
 
             public Range(char min, char max)
             {
-                this._min = min;
-                this._max = max;
+                _min = min;
+                _max = max;
             }
 
             public bool IsAscii()
@@ -774,7 +774,7 @@
 
         private int _mark = 0;
 
-        public bool Empty => (_last <= _first);
+        public bool Empty => _last <= _first;
 
         public bool Marked => _first == _mark;
 

@@ -71,28 +71,28 @@ namespace Flee.Parsing
         private readonly ArrayList _details;
 
         public ParserCreationException(ErrorType type,
-                                       String info)
+                                       string info)
             : this(type, null, info)
         {
         }
 
         public ParserCreationException(ErrorType type,
-                                       String name,
-                                       String info)
+                                       string name,
+                                       string info)
             : this(type, name, info, null)
         {
         }
 
         public ParserCreationException(ErrorType type,
-                                       String name,
-                                       String info,
+                                       string name,
+                                       string info,
                                        ArrayList details)
         {
 
-            this._type = type;
-            this._name = name;
-            this._info = info;
-            this._details = details;
+            _type = type;
+            _name = name;
+            _info = info;
+            _details = details;
         }
 
         public ErrorType Type => _type;
@@ -120,7 +120,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 if (_details == null)
                 {
@@ -152,7 +152,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 switch (_type)
                 {
@@ -175,15 +175,15 @@ namespace Flee.Parsing
                     case ErrorType.INFINITE_LOOP:
                         buffer.Append("infinite loop found in production pattern '");
                         buffer.Append(_name);
-                        buffer.Append("'");
+                        buffer.Append('\'');
                         break;
                     case ErrorType.INHERENT_AMBIGUITY:
                         buffer.Append("inherent ambiguity in production '");
                         buffer.Append(_name);
-                        buffer.Append("'");
+                        buffer.Append('\'');
                         if (_info != null)
                         {
-                            buffer.Append(" ");
+                            buffer.Append(' ');
                             buffer.Append(_info);
                         }
                         if (_details != null)

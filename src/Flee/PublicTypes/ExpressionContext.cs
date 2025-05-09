@@ -14,7 +14,7 @@ namespace Flee.PublicTypes
 
         private PropertyDictionary _myProperties;
 
-        private readonly object _mySyncRoot = new object();
+        private readonly object _mySyncRoot = new();
 
         private VariableCollection _myVariables;
         #endregion
@@ -27,7 +27,7 @@ namespace Flee.PublicTypes
 
         public ExpressionContext(object expressionOwner)
         {
-            Utility.AssertNotNull(expressionOwner, "expressionOwner");
+            Utility.AssertNotNull(expressionOwner, nameof(expressionOwner));
             _myProperties = new PropertyDictionary();
 
             _myProperties.SetValue("CalculationEngine", null);
@@ -40,12 +40,12 @@ namespace Flee.PublicTypes
 
             _myProperties.SetValue("Options", new ExpressionOptions(this));
             _myProperties.SetValue("Imports", new ExpressionImports());
-            this.Imports.SetContext(this);
+            Imports.SetContext(this);
             _myVariables = new VariableCollection(this);
 
             _myProperties.SetToDefault<bool>("NoClone");
 
-            this.RecreateParser();
+            RecreateParser();
         }
 
         #endregion
@@ -61,7 +61,7 @@ namespace Flee.PublicTypes
                 isPublic = t.IsNestedPublic;
             }
 
-            bool isSameModuleAsOwner = object.ReferenceEquals(t.Module, this.ExpressionOwner.GetType().Module);
+            bool isSameModuleAsOwner = ReferenceEquals(t.Module, ExpressionOwner.GetType().Module);
 
             // Public types are always accessible.  Otherwise they have to be in the same module as the owner
             bool isAccessible = isPublic | isSameModuleAsOwner;
@@ -75,7 +75,7 @@ namespace Flee.PublicTypes
 
         private void AssertNestedTypeIsAccessible(Type t)
         {
-            while ((t != null))
+            while (t != null)
             {
                 AssertTypeIsAccessibleInternal(t);
                 t = t.DeclaringType;
@@ -86,7 +86,7 @@ namespace Flee.PublicTypes
         #region "Methods - Internal"
         internal ExpressionContext CloneInternal(bool cloneVariables)
         {
-            ExpressionContext context = (ExpressionContext)this.MemberwiseClone();
+            ExpressionContext context = (ExpressionContext)MemberwiseClone();
             context._myProperties = _myProperties.Clone();
             context._myProperties.SetValue("Options", context.Options.Clone());
             context._myProperties.SetValue("ParserOptions", context.ParserOptions.Clone());
@@ -96,7 +96,7 @@ namespace Flee.PublicTypes
             if (cloneVariables == true)
             {
                 context._myVariables = new VariableCollection(context);
-                this.Variables.Copy(context._myVariables);
+                Variables.Copy(context._myVariables);
             }
 
             return context;
@@ -118,8 +118,8 @@ namespace Flee.PublicTypes
         {
             lock (_mySyncRoot)
             {
-                System.IO.StringReader sr = new System.IO.StringReader(expression);
-                ExpressionParser parser = this.Parser;
+                StringReader sr = new(expression);
+                ExpressionParser parser = Parser;
                 parser.Reset(sr);
                 parser.Tokenizer.Reset(sr);
                 FleeExpressionAnalyzer analyzer = (FleeExpressionAnalyzer)parser.Analyzer;
@@ -137,8 +137,8 @@ namespace Flee.PublicTypes
         {
             lock (_mySyncRoot)
             {
-                FleeExpressionAnalyzer analyzer = new FleeExpressionAnalyzer();
-                ExpressionParser parser = new ExpressionParser(TextReader.Null, analyzer, this);
+                FleeExpressionAnalyzer analyzer = new();
+                ExpressionParser parser = new(TextReader.Null, analyzer, this);
                 _myProperties.SetValue("ExpressionParser", parser);
             }
         }
@@ -147,7 +147,7 @@ namespace Flee.PublicTypes
         {
             try
             {
-                return this.Parser.Parse();
+                return Parser.Parse();
             }
             catch (ParserLogException ex)
             {
@@ -164,8 +164,8 @@ namespace Flee.PublicTypes
 
         internal IdentifierAnalyzer ParseIdentifiers(string expression)
         {
-            ExpressionParser parser = this.IdentifierParser;
-            StringReader sr = new StringReader(expression);
+            ExpressionParser parser = IdentifierParser;
+            StringReader sr = new(expression);
             parser.Reset(sr);
             parser.Tokenizer.Reset(sr);
 
@@ -182,17 +182,17 @@ namespace Flee.PublicTypes
 
         public ExpressionContext Clone()
         {
-            return this.CloneInternal(true);
+            return CloneInternal(true);
         }
 
         public IDynamicExpression CompileDynamic(string expression)
         {
-            return new Flee.InternalTypes.Expression<object>(expression, this, false);
+            return new Expression<object>(expression, this, false);
         }
 
         public IGenericExpression<TResultType> CompileGeneric<TResultType>(string expression)
         {
-            return new Flee.InternalTypes.Expression<TResultType>(expression, this, true);
+            return new Expression<TResultType>(expression, this, true);
         }
 
         #endregion
@@ -207,8 +207,8 @@ namespace Flee.PublicTypes
 
                 if (parser == null)
                 {
-                    IdentifierAnalyzer analyzer = new IdentifierAnalyzer();
-                    parser = new ExpressionParser(System.IO.TextReader.Null, analyzer, this);
+                    IdentifierAnalyzer analyzer = new();
+                    parser = new ExpressionParser(TextReader.Null, analyzer, this);
                     //parser = new ExpressionParser(System.IO.StringReader.Null, analyzer, this);
                     _myProperties.SetValue("IdentifierParser", parser);
                 }

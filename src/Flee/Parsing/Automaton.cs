@@ -3,7 +3,7 @@
     internal class Automaton
     {
         private object _value;
-        private readonly AutomatonTree _tree = new AutomatonTree();
+        private readonly AutomatonTree _tree = new();
 
         public Automaton()
         {
@@ -13,7 +13,7 @@
         {
             if (str.Length == 0)
             {
-                this._value = value;
+                _value = value;
             }
             else
             {
@@ -35,13 +35,10 @@
         {
 
             object result = null;
-            Automaton state = null;
-            int c = 0;
-
-            c = input.Peek(pos);
+            int c = input.Peek(pos);
             if (_tree != null && c >= 0)
             {
-                state = _tree.Find(Convert.ToChar(c), caseInsensitive);
+                Automaton state = _tree.Find(Convert.ToChar(c), caseInsensitive);
                 if (state != null)
                 {
                     result = state.MatchFrom(input, pos + 1, caseInsensitive);
@@ -69,7 +66,7 @@
         {
             if (lowerCase)
             {
-                c = Char.ToLower(c);
+                c = char.ToLower(c);
             }
             if (_value == (char)0 || _value == c)
             {
@@ -89,14 +86,14 @@
         {
             if (lowerCase)
             {
-                c = Char.ToLower(c);
+                c = char.ToLower(c);
             }
             if (_value == (char)0)
             {
-                this._value = c;
-                this._state = state;
-                this._left = new AutomatonTree();
-                this._right = new AutomatonTree();
+                _value = c;
+                _state = state;
+                _left = new AutomatonTree();
+                _right = new AutomatonTree();
             }
             else if (_value > c)
             {

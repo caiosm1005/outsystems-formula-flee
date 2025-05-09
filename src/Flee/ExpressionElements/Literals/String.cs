@@ -18,6 +18,6 @@ namespace Flee.ExpressionElements.Literals
             ilg.Emit(OpCodes.Ldstr, _myValue);
         }
 
-        public override System.Type ResultType => typeof(string);
+        public override Type ResultType => typeof(string);
     }
 }

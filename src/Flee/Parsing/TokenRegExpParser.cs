@@ -13,7 +13,7 @@ namespace Flee.Parsing
         private readonly string _pattern;
         private readonly bool _ignoreCase;
         private int _pos;
-        internal NFAState Start = new NFAState();
+        internal NFAState Start = new();
         internal NFAState End;
         private int _stateCount;
         private int _transitionCount;
@@ -25,10 +25,10 @@ namespace Flee.Parsing
 
         public TokenRegExpParser(string pattern, bool ignoreCase)
         {
-            this._pattern = pattern;
-            this._ignoreCase = ignoreCase;
-            this._pos = 0;
-            this.End = ParseExpr(Start);
+            _pattern = pattern;
+            _ignoreCase = ignoreCase;
+            _pos = 0;
+            End = ParseExpr(Start);
             if (_pos < pattern.Length)
             {
                 throw new RegExpException(
@@ -69,7 +69,7 @@ namespace Flee.Parsing
 
         private NFAState ParseExpr(NFAState start)
         {
-            NFAState end = new NFAState();
+            NFAState end = new();
             do
             {
                 if (PeekChar(0) == '|')
@@ -124,7 +124,7 @@ namespace Flee.Parsing
 
         private NFAState ParseFact(NFAState start)
         {
-            NFAState placeholder = new NFAState();
+            NFAState placeholder = new();
 
             var end = ParseAtom(placeholder);
             switch (PeekChar(0))
@@ -187,10 +187,10 @@ namespace Flee.Parsing
 
         private NFAState ParseAtomModifier(NFAState start, NFAState end)
         {
-            int min = 0;
-            int max = -1;
             int firstPos = _pos;
 
+            int min;
+            int max;
             // Read min and max
             switch (ReadChar())
             {
@@ -294,7 +294,7 @@ namespace Flee.Parsing
 
         private NFAState ParseCharSet(NFAState start)
         {
-            NFAState end = new NFAState();
+            NFAState end = new();
             NFACharRangeTransition range;
 
             if (PeekChar(0) == '^')
@@ -357,7 +357,7 @@ namespace Flee.Parsing
 
         private NFAState ParseEscapeChar(NFAState start)
         {
-            NFAState end = new NFAState();
+            NFAState end = new();
 
             if (PeekChar(0) == '\\' && PeekChar(1) > 0)
             {
@@ -428,7 +428,7 @@ namespace Flee.Parsing
                     str = ReadChar().ToString() + ReadChar().ToString();
                     try
                     {
-                        value = Int32.Parse(str, NumberStyles.AllowHexSpecifier);
+                        value = int.Parse(str, NumberStyles.AllowHexSpecifier);
                         return (char)value;
                     }
                     catch (FormatException)
@@ -445,7 +445,7 @@ namespace Flee.Parsing
                           ReadChar().ToString();
                     try
                     {
-                        value = Int32.Parse(str, NumberStyles.AllowHexSpecifier);
+                        value = int.Parse(str, NumberStyles.AllowHexSpecifier);
                         return (char)value;
                     }
                     catch (FormatException)
@@ -481,7 +481,7 @@ namespace Flee.Parsing
 
         private int ReadNumber()
         {
-            StringBuilder buf = new StringBuilder();
+            StringBuilder buf = new();
             int c;
 
             c = PeekChar(0);
@@ -497,7 +497,7 @@ namespace Flee.Parsing
                     _pos,
                     _pattern);
             }
-            return Int32.Parse(buf.ToString());
+            return int.Parse(buf.ToString());
         }
 
         private char ReadChar()

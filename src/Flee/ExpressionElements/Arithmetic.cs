@@ -28,30 +28,30 @@ namespace Flee.ExpressionElements
             _myOperation = (BinaryArithmeticOperation)operation;
         }
 
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override Type GetResultType(Type leftType, Type rightType)
         {
             Type binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
-            MethodInfo overloadedMethod = this.GetOverloadedArithmeticOperator();
+            MethodInfo overloadedMethod = GetOverloadedArithmeticOperator();
 
             // Is an overloaded operator defined for our left and right children?
-            if ((overloadedMethod != null))
+            if (overloadedMethod != null)
             {
                 // Yes, so use its return type
                 return overloadedMethod.ReturnType;
             }
-            else if ((binaryResultType != null))
+            else if (binaryResultType != null)
             {
                 // Operands are primitive types.  Return computed result type unless we are doing a power operation
                 if (_myOperation == BinaryArithmeticOperation.Power)
                 {
-                    return this.GetPowerResultType(leftType, rightType, binaryResultType);
+                    return GetPowerResultType(leftType, rightType, binaryResultType);
                 }
                 else
                 {
                     return binaryResultType;
                 }
             }
-            else if (this.IsEitherChildOfType(typeof(string)) == true & (_myOperation == BinaryArithmeticOperation.Add))
+            else if (IsEitherChildOfType(typeof(string)) == true & (_myOperation == BinaryArithmeticOperation.Add))
             {
                 // String concatenation
                 return typeof(string);
@@ -65,7 +65,7 @@ namespace Flee.ExpressionElements
 
         private Type GetPowerResultType(Type leftType, Type rightType, Type binaryResultType)
         {
-            if (this.IsOptimizablePower == true)
+            if (IsOptimizablePower == true)
             {
                 return leftType;
             }
@@ -79,7 +79,7 @@ namespace Flee.ExpressionElements
         {
             // Get the name of the operator
             string name = GetOverloadedOperatorFunctionName(_myOperation);
-            return base.GetOverloadedBinaryOperator(name, _myOperation);
+            return GetOverloadedBinaryOperator(name, _myOperation);
         }
 
         private static string GetOverloadedOperatorFunctionName(BinaryArithmeticOperation op)
@@ -106,17 +106,17 @@ namespace Flee.ExpressionElements
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            MethodInfo overloadedMethod = this.GetOverloadedArithmeticOperator();
+            MethodInfo overloadedMethod = GetOverloadedArithmeticOperator();
 
-            if ((overloadedMethod != null))
+            if (overloadedMethod != null)
             {
                 // Emit a call to an overloaded operator
-                this.EmitOverloadedOperatorCall(overloadedMethod, ilg, services);
+                EmitOverloadedOperatorCall(overloadedMethod, ilg, services);
             }
-            else if (this.IsEitherChildOfType(typeof(string)) == true)
+            else if (IsEitherChildOfType(typeof(string)) == true)
             {
                 // One of our operands is a string so emit a concatenation
-                this.EmitStringConcat(ilg, services);
+                EmitStringConcat(ilg, services);
             }
             else
             {
@@ -127,7 +127,7 @@ namespace Flee.ExpressionElements
 
         private static bool IsUnsignedForArithmetic(Type t)
         {
-            return object.ReferenceEquals(t, typeof(UInt32)) | object.ReferenceEquals(t, typeof(UInt64));
+            return ReferenceEquals(t, typeof(uint)) | ReferenceEquals(t, typeof(ulong));
         }
 
         /// <summary>
@@ -143,11 +143,11 @@ namespace Flee.ExpressionElements
             bool integral = Utility.IsIntegralType(MyLeftChild.ResultType) & Utility.IsIntegralType(MyRightChild.ResultType);
             bool emitOverflow = integral & options.Checked;
 
-            EmitChildWithConvert(MyLeftChild, this.ResultType, ilg, services);
+            EmitChildWithConvert(MyLeftChild, ResultType, ilg, services);
 
-            if (this.IsOptimizablePower == false)
+            if (IsOptimizablePower == false)
             {
-                EmitChildWithConvert(MyRightChild, this.ResultType, ilg, services);
+                EmitChildWithConvert(MyRightChild, ResultType, ilg, services);
             }
 
             switch (op)
@@ -187,7 +187,7 @@ namespace Flee.ExpressionElements
                     }
                     break;
                 case BinaryArithmeticOperation.Multiply:
-                    this.EmitMultiply(ilg, emitOverflow, unsigned);
+                    EmitMultiply(ilg, emitOverflow, unsigned);
                     break;
                 case BinaryArithmeticOperation.Divide:
                     if (unsigned == true)
@@ -210,7 +210,7 @@ namespace Flee.ExpressionElements
                     }
                     break;
                 case BinaryArithmeticOperation.Power:
-                    this.EmitPower(ilg, emitOverflow, unsigned);
+                    EmitPower(ilg, emitOverflow, unsigned);
                     break;
                 default:
                     Debug.Fail("Unknown op type");
@@ -220,9 +220,9 @@ namespace Flee.ExpressionElements
 
         private void EmitPower(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
         {
-            if (this.IsOptimizablePower == true)
+            if (IsOptimizablePower == true)
             {
-                this.EmitOptimizedPower(ilg, emitOverflow, unsigned);
+                EmitOptimizedPower(ilg, emitOverflow, unsigned);
             }
             else
             {
@@ -237,8 +237,8 @@ namespace Flee.ExpressionElements
             if (right.Value == 0)
             {
                 ilg.Emit(OpCodes.Pop);
-                IntegralLiteralElement.EmitLoad(1, ilg);
-                ImplicitConverter.EmitImplicitNumericConvert(typeof(Int32), MyLeftChild.ResultType, ilg);
+                LiteralElement.EmitLoad(1, ilg);
+                ImplicitConverter.EmitImplicitNumericConvert(typeof(int), MyLeftChild.ResultType, ilg);
                 return;
             }
 
@@ -255,11 +255,11 @@ namespace Flee.ExpressionElements
 
             for (int i = 1; i <= right.Value - 1; i++)
             {
-                this.EmitMultiply(ilg, emitOverflow, unsigned);
+                EmitMultiply(ilg, emitOverflow, unsigned);
             }
         }
 
-        private void EmitMultiply(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
+        private static void EmitMultiply(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
         {
             if (emitOverflow == true)
             {
@@ -285,18 +285,17 @@ namespace Flee.ExpressionElements
         /// <param name="services"></param>
         private void EmitStringConcat(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type argType = default(Type);
-            System.Reflection.MethodInfo concatMethodInfo = default(System.Reflection.MethodInfo);
-
+            Type argType;
+            MethodInfo concatMethodInfo;
             // Pick the most specific concat method
-            if (this.AreBothChildrenOfType(typeof(string)) == true)
+            if (AreBothChildrenOfType(typeof(string)) == true)
             {
                 concatMethodInfo = _ourStringConcatMethodInfo;
                 argType = typeof(string);
             }
             else
             {
-                Debug.Assert(this.IsEitherChildOfType(typeof(string)), "one child must be a string");
+                Debug.Assert(IsEitherChildOfType(typeof(string)), "one child must be a string");
                 concatMethodInfo = _ourObjectConcatMethodInfo;
                 argType = typeof(object);
             }

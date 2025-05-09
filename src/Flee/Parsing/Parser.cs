@@ -11,10 +11,10 @@ namespace Flee.Parsing
         private bool _initialized;
         private readonly Tokenizer _tokenizer;
         private Analyzer _analyzer;
-        private readonly ArrayList _patterns = new ArrayList();
-        private readonly Hashtable _patternIds = new Hashtable();
-        private readonly ArrayList _tokens = new ArrayList();
-        private ParserLogException _errorLog = new ParserLogException();
+        private readonly ArrayList _patterns = new();
+        private readonly Hashtable _patternIds = new();
+        private readonly ArrayList _tokens = new();
+        private ParserLogException _errorLog = new();
         private int _errorRecovery = -1;
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Flee.Parsing
         internal Parser(TextReader input, Analyzer analyzer)
         {
             _tokenizer = NewTokenizer(input);
-            this._analyzer = analyzer ?? NewAnalyzer();
+            _analyzer = analyzer ?? NewAnalyzer();
         }
 
         /**
@@ -47,8 +47,8 @@ namespace Flee.Parsing
 
         internal Parser(Tokenizer tokenizer, Analyzer analyzer)
         {
-            this._tokenizer = tokenizer;
-            this._analyzer = analyzer ?? NewAnalyzer();
+            _tokenizer = tokenizer;
+            _analyzer = analyzer ?? NewAnalyzer();
         }
 
         protected virtual Tokenizer NewTokenizer(TextReader input)
@@ -157,14 +157,14 @@ namespace Flee.Parsing
 
         public void Reset(TextReader input)
         {
-            this._tokenizer.Reset(input);
-            this._analyzer.Reset();
+            _tokenizer.Reset(input);
+            _analyzer.Reset();
         }
 
         public void Reset(TextReader input, Analyzer analyzer)
         {
-            this._tokenizer.Reset(input);
-            this._analyzer = analyzer;
+            _tokenizer.Reset(input);
+            _analyzer = analyzer;
         }
 
         public Node Parse()
@@ -176,9 +176,9 @@ namespace Flee.Parsing
             {
                 Prepare();
             }
-            this._tokens.Clear();
-            this._errorLog = new ParserLogException();
-            this._errorRecovery = -1;
+            _tokens.Clear();
+            _errorLog = new ParserLogException();
+            _errorRecovery = -1;
 
             // Parse input
             try
@@ -370,20 +370,20 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _patterns.Count; i++)
             {
                 buffer.Append(ToString((ProductionPattern)_patterns[i]));
-                buffer.Append("\n");
+                buffer.Append('\n');
             }
             return buffer.ToString();
         }
 
         private string ToString(ProductionPattern prod)
         {
-            StringBuilder buffer = new StringBuilder();
-            StringBuilder indent = new StringBuilder();
+            StringBuilder buffer = new();
+            StringBuilder indent = new();
             int i;
 
             buffer.Append(prod.Name);
@@ -392,7 +392,7 @@ namespace Flee.Parsing
             buffer.Append(") ");
             for (i = 0; i < buffer.Length; i++)
             {
-                indent.Append(" ");
+                indent.Append(' ');
             }
             buffer.Append("= ");
             indent.Append("| ");
@@ -403,7 +403,7 @@ namespace Flee.Parsing
                     buffer.Append(indent);
                 }
                 buffer.Append(ToString(prod[i]));
-                buffer.Append("\n");
+                buffer.Append('\n');
             }
             for (i = 0; i < prod.Count; i++)
             {
@@ -416,7 +416,7 @@ namespace Flee.Parsing
                     buffer.Append(i + 1);
                     buffer.Append(": ");
                     buffer.Append(set.ToString(_tokenizer));
-                    buffer.Append("\n");
+                    buffer.Append('\n');
                 }
             }
             return buffer.ToString();
@@ -424,13 +424,13 @@ namespace Flee.Parsing
 
         private string ToString(ProductionPatternAlternative alt)
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < alt.Count; i++)
             {
                 if (i > 0)
                 {
-                    buffer.Append(" ");
+                    buffer.Append(' ');
                 }
                 buffer.Append(ToString(alt[i]));
             }
@@ -439,13 +439,13 @@ namespace Flee.Parsing
 
         private string ToString(ProductionPatternElement elem)
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
             int min = elem.MinCount;
             int max = elem.MaxCount;
 
             if (min == 0 && max == 1)
             {
-                buffer.Append("[");
+                buffer.Append('[');
             }
             if (elem.IsToken())
             {
@@ -457,23 +457,23 @@ namespace Flee.Parsing
             }
             if (min == 0 && max == 1)
             {
-                buffer.Append("]");
+                buffer.Append(']');
             }
-            else if (min == 0 && max == Int32.MaxValue)
+            else if (min == 0 && max == int.MaxValue)
             {
-                buffer.Append("*");
+                buffer.Append('*');
             }
-            else if (min == 1 && max == Int32.MaxValue)
+            else if (min == 1 && max == int.MaxValue)
             {
-                buffer.Append("+");
+                buffer.Append('+');
             }
             else if (min != 1 || max != 1)
             {
-                buffer.Append("{");
+                buffer.Append('{');
                 buffer.Append(min);
-                buffer.Append(",");
+                buffer.Append(',');
                 buffer.Append(max);
-                buffer.Append("}");
+                buffer.Append('}');
             }
             return buffer.ToString();
         }

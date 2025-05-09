@@ -16,8 +16,8 @@ namespace Flee.Parsing
 
         public Production(ProductionPattern pattern)
         {
-            this._pattern = pattern;
-            this._children = new ArrayList();
+            _pattern = pattern;
+            _children = new ArrayList();
         }
 
         public override int Id => _pattern.Id;

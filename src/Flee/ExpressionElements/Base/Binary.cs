@@ -49,11 +49,11 @@ namespace Flee.ExpressionElements.Base
 
         protected void ValidateInternal(object op)
         {
-            _myResultType = this.GetResultType(MyLeftChild.ResultType, MyRightChild.ResultType);
+            _myResultType = GetResultType(MyLeftChild.ResultType, MyRightChild.ResultType);
 
             if (_myResultType == null)
             {
-                this.ThrowOperandTypeMismatch(op, MyLeftChild.ResultType, MyRightChild.ResultType);
+                ThrowOperandTypeMismatch(op, MyLeftChild.ResultType, MyRightChild.ResultType);
             }
         }
 
@@ -61,19 +61,16 @@ namespace Flee.ExpressionElements.Base
         {
             Type leftType = MyLeftChild.ResultType;
             Type rightType = MyRightChild.ResultType;
-            BinaryOperatorBinder binder = new BinaryOperatorBinder(leftType, rightType);
+            BinaryOperatorBinder binder = new(leftType, rightType);
 
             // If both arguments are of the same type, pick either as the owner type
-            if (object.ReferenceEquals(leftType, rightType))
+            if (ReferenceEquals(leftType, rightType))
             {
                 return Utility.GetOverloadedOperator(name, leftType, binder, leftType, rightType);
             }
-
             // Get the operator for both types
-            MethodInfo leftMethod = default(MethodInfo);
-            MethodInfo rightMethod = default(MethodInfo);
-            leftMethod = Utility.GetOverloadedOperator(name, leftType, binder, leftType, rightType);
-            rightMethod = Utility.GetOverloadedOperator(name, rightType, binder, leftType, rightType);
+            MethodInfo leftMethod = Utility.GetOverloadedOperator(name, leftType, binder, leftType, rightType);
+            MethodInfo rightMethod = Utility.GetOverloadedOperator(name, rightType, binder, leftType, rightType);
 
             // Pick the right one
             if (leftMethod == null & rightMethod == null)
@@ -89,7 +86,7 @@ namespace Flee.ExpressionElements.Base
             {
                 return leftMethod;
             }
-            else if (object.ReferenceEquals(leftMethod, rightMethod))
+            else if (ReferenceEquals(leftMethod, rightMethod))
             {
                 // same operator for both (most likely defined in a common base class)
                 return leftMethod;
@@ -97,7 +94,7 @@ namespace Flee.ExpressionElements.Base
             else
             {
                 // Ambiguous call
-                base.ThrowAmbiguousCallException(leftType, rightType, operation);
+                ThrowAmbiguousCallException(leftType, rightType, operation);
                 return null;
             }
         }
@@ -115,7 +112,7 @@ namespace Flee.ExpressionElements.Base
 
         protected void ThrowOperandTypeMismatch(object operation, Type leftType, Type rightType)
         {
-            base.ThrowCompileException(CompileErrorResourceKeys.OperationNotDefinedForTypes, CompileExceptionReason.TypeMismatch, operation, leftType.Name, rightType.Name);
+            ThrowCompileException(CompileErrorResourceKeys.OperationNotDefinedForTypes, CompileExceptionReason.TypeMismatch, operation, leftType.Name, rightType.Name);
         }
 
         protected abstract Type GetResultType(Type leftType, Type rightType);
@@ -139,7 +136,7 @@ namespace Flee.ExpressionElements.Base
 
         protected static bool IsChildOfType(ExpressionElement child, Type t)
         {
-            return object.ReferenceEquals(child.ResultType, t);
+            return ReferenceEquals(child.ResultType, t);
         }
 
         /// <summary>
@@ -152,11 +149,11 @@ namespace Flee.ExpressionElements.Base
         {
             MyLeftChild = leftChild;
             MyRightChild = rightChild;
-            this.GetOperation(op);
+            GetOperation(op);
 
-            this.ValidateInternal(op);
+            ValidateInternal(op);
         }
 
-        public sealed override System.Type ResultType => _myResultType;
+        public sealed override Type ResultType => _myResultType;
     }
 }

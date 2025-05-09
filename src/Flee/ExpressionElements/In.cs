@@ -30,7 +30,7 @@ namespace Flee.ExpressionElements
             listElements.CopyTo(arr, 0);
 
             MyArguments = new List<ExpressionElement>(arr);
-            this.ResolveForListSearch();
+            ResolveForListSearch();
         }
 
         // Initialize for searching a collection
@@ -38,12 +38,12 @@ namespace Flee.ExpressionElements
         {
             MyOperand = operand;
             MyTargetCollectionElement = targetCollection;
-            this.ResolveForCollectionSearch();
+            ResolveForCollectionSearch();
         }
 
         private void ResolveForListSearch()
         {
-            CompareElement ce = new CompareElement();
+            CompareElement ce = new();
 
             // Validate that our operand is comparable to all elements in the list
             foreach (ExpressionElement argumentElement in MyArguments)
@@ -56,20 +56,20 @@ namespace Flee.ExpressionElements
         private void ResolveForCollectionSearch()
         {
             // Try to find a collection type
-            MyTargetCollectionType = this.GetTargetCollectionType();
+            MyTargetCollectionType = GetTargetCollectionType();
 
             if (MyTargetCollectionType == null)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType, CompileExceptionReason.TypeMismatch, MyTargetCollectionElement.ResultType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType, CompileExceptionReason.TypeMismatch, MyTargetCollectionElement.ResultType.Name);
             }
 
             // Validate that the operand type is compatible with the collection
-            MethodInfo mi = this.GetCollectionContainsMethod();
+            MethodInfo mi = GetCollectionContainsMethod();
             ParameterInfo p1 = mi.GetParameters()[0];
 
             if (ImplicitConverter.EmitImplicitConvert(MyOperand.ResultType, p1.ParameterType, null) == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.OperandNotConvertibleToCollectionType, CompileExceptionReason.TypeMismatch, MyOperand.ResultType.Name, p1.ParameterType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.OperandNotConvertibleToCollectionType, CompileExceptionReason.TypeMismatch, MyOperand.ResultType.Name, p1.ParameterType.Name);
             }
         }
 
@@ -89,7 +89,7 @@ namespace Flee.ExpressionElements
 
                 Type genericTypeDef = interfaceType.GetGenericTypeDefinition();
 
-                if (object.ReferenceEquals(genericTypeDef, typeof(ICollection<>)) | object.ReferenceEquals(genericTypeDef, typeof(IDictionary<,>)))
+                if (ReferenceEquals(genericTypeDef, typeof(ICollection<>)) | ReferenceEquals(genericTypeDef, typeof(IDictionary<,>)))
                 {
                     return interfaceType;
                 }
@@ -111,21 +111,21 @@ namespace Flee.ExpressionElements
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            if ((MyTargetCollectionType != null))
+            if (MyTargetCollectionType != null)
             {
-                this.EmitCollectionIn(ilg, services);
+                EmitCollectionIn(ilg, services);
             }
             else
             {
                 // Do the real emit
-                this.EmitListIn(ilg, services);
+                EmitListIn(ilg, services);
             }
         }
 
         private void EmitCollectionIn(FleeILGenerator ilg, IServiceProvider services)
         {
             // Get the contains method
-            MethodInfo mi = this.GetCollectionContainsMethod();
+            MethodInfo mi = GetCollectionContainsMethod();
             ParameterInfo p1 = mi.GetParameters()[0];
 
             // Load the collection
@@ -142,7 +142,7 @@ namespace Flee.ExpressionElements
         {
             string methodName = "Contains";
 
-            if (MyTargetCollectionType.IsGenericType == true && object.ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
+            if (MyTargetCollectionType.IsGenericType == true && ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
             {
                 methodName = "ContainsKey";
             }
@@ -152,7 +152,7 @@ namespace Flee.ExpressionElements
 
         private void EmitListIn(FleeILGenerator ilg, IServiceProvider services)
         {
-            CompareElement ce = new CompareElement();
+            CompareElement ce = new();
             Label endLabel = ilg.DefineLabel();
             Label trueTerminal = ilg.DefineLabel();
 
@@ -164,7 +164,7 @@ namespace Flee.ExpressionElements
             Utility.EmitStoreLocal(ilg, targetIndex);
 
             // Wrap our operand in a local shim
-            LocalBasedElement targetShim = new LocalBasedElement(MyOperand, targetIndex);
+            LocalBasedElement targetShim = new(MyOperand, targetIndex);
 
             // Emit the compares
             foreach (ExpressionElement argumentElement in MyArguments)
@@ -190,6 +190,6 @@ namespace Flee.ExpressionElements
             ilg.EmitBranchTrue(trueTerminal);
         }
 
-        public override System.Type ResultType => typeof(bool);
+        public override Type ResultType => typeof(bool);
     }
 }

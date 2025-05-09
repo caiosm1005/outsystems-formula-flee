@@ -133,7 +133,7 @@ namespace Flee.Parsing
 
         internal void SetParent(Node parent)
         {
-            this._parent = parent;
+            _parent = parent;
         }
 
         public virtual int Count => 0;
@@ -173,7 +173,7 @@ namespace Flee.Parsing
             }
             set
             {
-                this._values = value;
+                _values = value;
             }
         }
 
@@ -230,7 +230,7 @@ namespace Flee.Parsing
         private void PrintTo(TextWriter output, string indent)
         {
             output.WriteLine(indent + ToString());
-            indent = indent + "  ";
+            indent += "  ";
             for (int i = 0; i < Count; i++)
             {
                 this[i].PrintTo(output, indent);

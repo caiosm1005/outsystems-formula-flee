@@ -56,16 +56,16 @@ namespace Flee.Parsing
 
         public RegExpException(ErrorType type, int pos, string pattern)
         {
-            this._type = type;
-            this._position = pos;
-            this._pattern = pattern;
+            _type = type;
+            _position = pos;
+            _pattern = pattern;
         }
 
         public override string Message => GetMessage();
 
         public string GetMessage()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             // Append error type name
             switch (_type)

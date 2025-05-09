@@ -44,7 +44,7 @@ namespace Flee.Test.CalcEngineTests
             ce.Add("b", "a + a + a", context);
             ce.Recalculate("a");
             var result = ce.GetResult<int>("b");
-            Assert.AreEqual((100 * 2) * 3, result);
+            Assert.AreEqual(100 * 2 * 3, result);
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Flee.Test.CalcEngineTests
             ce.Recalculate("a", "b");
 
             var result = ce.GetResult<int>("e");
-            Assert.AreEqual((100 * 2) + (24 * 2) + ((100 * 2) + (24 * 2)) + 80, result);
+            Assert.AreEqual((100 * 2) + (24 * 2) + (100 * 2) + (24 * 2) + 80, result);
         }
 
         [Test]
@@ -144,7 +144,7 @@ namespace Flee.Test.CalcEngineTests
             ce.Add("c", "b * 2", context);
             ce.Recalculate("a", "b");
             var result = ce.GetResult<int>("c");
-            Assert.AreEqual(((100) * 2 + 1) * 2, result);
+            Assert.AreEqual((100 * 2 + 1) * 2, result);
         }
 
         [Test]
@@ -184,7 +184,7 @@ namespace Flee.Test.CalcEngineTests
         public void Test_Boolean_Expression()
         {
             string expression = "a AND NOT b AND NOT c AND d";
-            Dictionary<string, object> expressionVariables = new Dictionary<string, object>();
+            Dictionary<string, object> expressionVariables = new();
             expressionVariables.Add("a", 1);
             expressionVariables.Add("b", 0);
             expressionVariables.Add("c", 0);

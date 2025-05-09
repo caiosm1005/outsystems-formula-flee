@@ -12,18 +12,15 @@ namespace Flee.ExpressionElements.Base.Literals
 
         public static LiteralElement CreateFromInteger(string image, IServiceProvider services)
         {
-            LiteralElement element = default(LiteralElement);
-
-            element = CreateSingle(image, services);
-
-            if ((element != null))
+            LiteralElement element = CreateSingle(image, services);
+            if (element != null)
             {
                 return element;
             }
 
             element = CreateDecimal(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
@@ -41,25 +38,22 @@ namespace Flee.ExpressionElements.Base.Literals
 
         public static LiteralElement Create(string image, IServiceProvider services)
         {
-            LiteralElement element = default(LiteralElement);
-
-            element = CreateSingle(image, services);
-
-            if ((element != null))
+            LiteralElement element = CreateSingle(image, services);
+            if (element != null)
             {
                 return element;
             }
 
             element = CreateDecimal(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
 
             element = CreateDouble(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }

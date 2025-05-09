@@ -8,11 +8,11 @@ namespace Flee.ExpressionElements.Literals.Integral
     internal class Int64LiteralElement : IntegralLiteralElement
     {
 
-        private Int64 _myValue;
+        private long _myValue;
         private const string MinValue = "9223372036854775808";
 
         private readonly bool _myIsMinValue;
-        public Int64LiteralElement(Int64 value)
+        public Int64LiteralElement(long value)
         {
             _myValue = value;
         }
@@ -30,13 +30,11 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             else if (isHex == true)
             {
-                Int64 value = default(Int64);
-
-                if (Int64.TryParse(image, NumberStyles.AllowHexSpecifier, null, out value) == false)
+                if (long.TryParse(image, NumberStyles.AllowHexSpecifier, null, out long value) == false)
                 {
                     return null;
                 }
-                else if (value >= 0 & value <= Int64.MaxValue)
+                else if (value >= 0 & value <= long.MaxValue)
                 {
                     return new Int64LiteralElement(value);
                 }
@@ -47,9 +45,8 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             else
             {
-                Int64 value = default(Int64);
-
-                if (Int64.TryParse(image, out value) == true)
+                long value;
+                if (long.TryParse(image, out value) == true)
                 {
                     return new Int64LiteralElement(value);
                 }
@@ -69,7 +66,7 @@ namespace Flee.ExpressionElements.Literals.Integral
         {
             if (_myIsMinValue == true)
             {
-                _myValue = Int64.MinValue;
+                _myValue = long.MinValue;
             }
             else
             {
@@ -77,6 +74,6 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
         }
 
-        public override System.Type ResultType => typeof(Int64);
+        public override Type ResultType => typeof(long);
     }
 }

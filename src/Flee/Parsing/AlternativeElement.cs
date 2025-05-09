@@ -26,15 +26,13 @@
                                   int skip)
         {
             int length = 0;
-            int length1 = -1;
-            int length2 = -1;
             int skip1 = 0;
             int skip2 = 0;
 
             while (length >= 0 && skip1 + skip2 <= skip)
             {
-                length1 = _elem1.Match(m, buffer, start, skip1);
-                length2 = _elem2.Match(m, buffer, start, skip2);
+                int length1 = _elem1.Match(m, buffer, start, skip1);
+                int length2 = _elem2.Match(m, buffer, start, skip2);
                 if (length1 >= length2)
                 {
                     length = length1;

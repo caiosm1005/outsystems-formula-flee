@@ -22,12 +22,12 @@ namespace Flee.InternalTypes
             typeof(char),
             typeof(byte),
             typeof(sbyte),
-            typeof(Int16),
-            typeof(UInt16),
-            typeof(Int32),
-            typeof(UInt32),
-            typeof(Int64),
-            typeof(UInt64),
+            typeof(short),
+            typeof(ushort),
+            typeof(int),
+            typeof(uint),
+            typeof(long),
+            typeof(ulong),
             typeof(float),
             typeof(double)
         };
@@ -37,70 +37,70 @@ namespace Flee.InternalTypes
             FillIdentities(types, table);
 
             // Fill the table
-            AddEntry(typeof(UInt32), typeof(UInt64), typeof(UInt64));
-            AddEntry(typeof(Int32), typeof(Int64), typeof(Int64));
-            AddEntry(typeof(UInt32), typeof(Int64), typeof(Int64));
-            AddEntry(typeof(Int32), typeof(UInt32), typeof(Int64));
-            AddEntry(typeof(UInt32), typeof(float), typeof(float));
-            AddEntry(typeof(UInt32), typeof(double), typeof(double));
-            AddEntry(typeof(Int32), typeof(float), typeof(float));
-            AddEntry(typeof(Int32), typeof(double), typeof(double));
-            AddEntry(typeof(Int64), typeof(float), typeof(float));
-            AddEntry(typeof(Int64), typeof(double), typeof(double));
-            AddEntry(typeof(UInt64), typeof(float), typeof(float));
-            AddEntry(typeof(UInt64), typeof(double), typeof(double));
+            AddEntry(typeof(uint), typeof(ulong), typeof(ulong));
+            AddEntry(typeof(int), typeof(long), typeof(long));
+            AddEntry(typeof(uint), typeof(long), typeof(long));
+            AddEntry(typeof(int), typeof(uint), typeof(long));
+            AddEntry(typeof(uint), typeof(float), typeof(float));
+            AddEntry(typeof(uint), typeof(double), typeof(double));
+            AddEntry(typeof(int), typeof(float), typeof(float));
+            AddEntry(typeof(int), typeof(double), typeof(double));
+            AddEntry(typeof(long), typeof(float), typeof(float));
+            AddEntry(typeof(long), typeof(double), typeof(double));
+            AddEntry(typeof(ulong), typeof(float), typeof(float));
+            AddEntry(typeof(ulong), typeof(double), typeof(double));
             AddEntry(typeof(float), typeof(double), typeof(double));
 
             // Byte
-            AddEntry(typeof(byte), typeof(byte), typeof(Int32));
-            AddEntry(typeof(byte), typeof(sbyte), typeof(Int32));
-            AddEntry(typeof(byte), typeof(Int16), typeof(Int32));
-            AddEntry(typeof(byte), typeof(UInt16), typeof(Int32));
-            AddEntry(typeof(byte), typeof(Int32), typeof(Int32));
-            AddEntry(typeof(byte), typeof(UInt32), typeof(UInt32));
-            AddEntry(typeof(byte), typeof(Int64), typeof(Int64));
-            AddEntry(typeof(byte), typeof(UInt64), typeof(UInt64));
+            AddEntry(typeof(byte), typeof(byte), typeof(int));
+            AddEntry(typeof(byte), typeof(sbyte), typeof(int));
+            AddEntry(typeof(byte), typeof(short), typeof(int));
+            AddEntry(typeof(byte), typeof(ushort), typeof(int));
+            AddEntry(typeof(byte), typeof(int), typeof(int));
+            AddEntry(typeof(byte), typeof(uint), typeof(uint));
+            AddEntry(typeof(byte), typeof(long), typeof(long));
+            AddEntry(typeof(byte), typeof(ulong), typeof(ulong));
             AddEntry(typeof(byte), typeof(float), typeof(float));
             AddEntry(typeof(byte), typeof(double), typeof(double));
 
             // SByte
-            AddEntry(typeof(sbyte), typeof(sbyte), typeof(Int32));
-            AddEntry(typeof(sbyte), typeof(Int16), typeof(Int32));
-            AddEntry(typeof(sbyte), typeof(UInt16), typeof(Int32));
-            AddEntry(typeof(sbyte), typeof(Int32), typeof(Int32));
-            AddEntry(typeof(sbyte), typeof(UInt32), typeof(long));
-            AddEntry(typeof(sbyte), typeof(Int64), typeof(Int64));
+            AddEntry(typeof(sbyte), typeof(sbyte), typeof(int));
+            AddEntry(typeof(sbyte), typeof(short), typeof(int));
+            AddEntry(typeof(sbyte), typeof(ushort), typeof(int));
+            AddEntry(typeof(sbyte), typeof(int), typeof(int));
+            AddEntry(typeof(sbyte), typeof(uint), typeof(long));
+            AddEntry(typeof(sbyte), typeof(long), typeof(long));
             //invalid -- AddEntry(GetType(SByte), GetType(UInt64), GetType(UInt64))
             AddEntry(typeof(sbyte), typeof(float), typeof(float));
             AddEntry(typeof(sbyte), typeof(double), typeof(double));
 
             // int16
-            AddEntry(typeof(Int16), typeof(Int16), typeof(Int32));
-            AddEntry(typeof(Int16), typeof(UInt16), typeof(Int32));
-            AddEntry(typeof(Int16), typeof(Int32), typeof(Int32));
-            AddEntry(typeof(Int16), typeof(UInt32), typeof(long));
-            AddEntry(typeof(Int16), typeof(Int64), typeof(Int64));
+            AddEntry(typeof(short), typeof(short), typeof(int));
+            AddEntry(typeof(short), typeof(ushort), typeof(int));
+            AddEntry(typeof(short), typeof(int), typeof(int));
+            AddEntry(typeof(short), typeof(uint), typeof(long));
+            AddEntry(typeof(short), typeof(long), typeof(long));
             //invalid -- AddEntry(GetType(Int16), GetType(UInt64), GetType(UInt64))
-            AddEntry(typeof(Int16), typeof(float), typeof(float));
-            AddEntry(typeof(Int16), typeof(double), typeof(double));
+            AddEntry(typeof(short), typeof(float), typeof(float));
+            AddEntry(typeof(short), typeof(double), typeof(double));
 
             // Uint16
-            AddEntry(typeof(UInt16), typeof(UInt16), typeof(Int32));
-            AddEntry(typeof(UInt16), typeof(Int16), typeof(Int32));
-            AddEntry(typeof(UInt16), typeof(Int32), typeof(Int32));
-            AddEntry(typeof(UInt16), typeof(UInt32), typeof(UInt32));
-            AddEntry(typeof(UInt16), typeof(Int64), typeof(Int64));
-            AddEntry(typeof(UInt16), typeof(UInt64), typeof(UInt64));
-            AddEntry(typeof(UInt16), typeof(float), typeof(float));
-            AddEntry(typeof(UInt16), typeof(double), typeof(double));
+            AddEntry(typeof(ushort), typeof(ushort), typeof(int));
+            AddEntry(typeof(ushort), typeof(short), typeof(int));
+            AddEntry(typeof(ushort), typeof(int), typeof(int));
+            AddEntry(typeof(ushort), typeof(uint), typeof(uint));
+            AddEntry(typeof(ushort), typeof(long), typeof(long));
+            AddEntry(typeof(ushort), typeof(ulong), typeof(ulong));
+            AddEntry(typeof(ushort), typeof(float), typeof(float));
+            AddEntry(typeof(ushort), typeof(double), typeof(double));
 
             // Char
-            AddEntry(typeof(char), typeof(char), typeof(Int32));
-            AddEntry(typeof(char), typeof(UInt16), typeof(UInt16));
-            AddEntry(typeof(char), typeof(Int32), typeof(Int32));
-            AddEntry(typeof(char), typeof(UInt32), typeof(UInt32));
-            AddEntry(typeof(char), typeof(Int64), typeof(Int64));
-            AddEntry(typeof(char), typeof(UInt64), typeof(UInt64));
+            AddEntry(typeof(char), typeof(char), typeof(int));
+            AddEntry(typeof(char), typeof(ushort), typeof(ushort));
+            AddEntry(typeof(char), typeof(int), typeof(int));
+            AddEntry(typeof(char), typeof(uint), typeof(uint));
+            AddEntry(typeof(char), typeof(long), typeof(long));
+            AddEntry(typeof(char), typeof(ulong), typeof(ulong));
             AddEntry(typeof(char), typeof(float), typeof(float));
             AddEntry(typeof(char), typeof(double), typeof(double));
         }
@@ -128,12 +128,12 @@ namespace Flee.InternalTypes
 
         private static int GetTypeIndex(Type t)
         {
-            return System.Array.IndexOf(OurBinaryTypes, t);
+            return Array.IndexOf(OurBinaryTypes, t);
         }
 
         public static bool EmitImplicitConvert(Type sourceType, Type destType, FleeILGenerator ilg)
         {
-            if (object.ReferenceEquals(sourceType, destType))
+            if (ReferenceEquals(sourceType, destType))
             {
                 return true;
             }
@@ -162,7 +162,7 @@ namespace Flee.InternalTypes
                 return false;
             }
 
-            if ((ilg != null))
+            if (ilg != null)
             {
                 ilg.Emit(OpCodes.Call, mi);
             }
@@ -177,7 +177,7 @@ namespace Flee.InternalTypes
                 return false;
             }
 
-            if (object.ReferenceEquals(sourceType, typeof(Null)))
+            if (ReferenceEquals(sourceType, typeof(Null)))
             {
                 // Null is always convertible to a reference type
                 return true;
@@ -190,7 +190,7 @@ namespace Flee.InternalTypes
 
             if (sourceType.IsValueType == true)
             {
-                if ((ilg != null))
+                if (ilg != null)
                 {
                     ilg.Emit(OpCodes.Box, sourceType);
                 }
@@ -412,7 +412,7 @@ namespace Flee.InternalTypes
 
         private static void EmitConvert(FleeILGenerator ilg, OpCode convertOpcode)
         {
-            if ((ilg != null))
+            if (ilg != null)
             {
                 ilg.Emit(convertOpcode);
             }
@@ -441,12 +441,12 @@ namespace Flee.InternalTypes
 
         public static int GetImplicitConvertScore(Type sourceType, Type destType)
         {
-            if (object.ReferenceEquals(sourceType, destType))
+            if (ReferenceEquals(sourceType, destType))
             {
                 return 0;
             }
 
-            if (object.ReferenceEquals(sourceType, typeof(Null)))
+            if (ReferenceEquals(sourceType, typeof(Null)))
             {
                 return GetInverseDistanceToObject(destType);
             }

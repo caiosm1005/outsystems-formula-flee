@@ -19,15 +19,15 @@ namespace Flee.PublicTypes
 
         private static Dictionary<string, Type> CreateBuiltinTypeMap()
         {
-            Dictionary<string, Type> map = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, Type> map = new(StringComparer.OrdinalIgnoreCase);
 
             map.Add("boolean", typeof(bool));
             map.Add("byte", typeof(byte));
             map.Add("sbyte", typeof(sbyte));
             map.Add("short", typeof(short));
-            map.Add("ushort", typeof(UInt16));
-            map.Add("int", typeof(Int32));
-            map.Add("uint", typeof(UInt32));
+            map.Add("ushort", typeof(ushort));
+            map.Add("int", typeof(int));
+            map.Add("uint", typeof(uint));
             map.Add("long", typeof(long));
             map.Add("ulong", typeof(ulong));
             map.Add("single", typeof(float));
@@ -49,7 +49,7 @@ namespace Flee.PublicTypes
 
         internal ExpressionImports Clone()
         {
-            ExpressionImports copy = new ExpressionImports();
+            ExpressionImports copy = new();
 
             copy.MyRootImport = (NamespaceImport)MyRootImport.Clone();
             copy.MyOwnerImport = MyOwnerImport;
@@ -66,7 +66,7 @@ namespace Flee.PublicTypes
         internal bool HasNamespace(string ns)
         {
             NamespaceImport import = MyRootImport.FindImport(ns) as NamespaceImport;
-            return (import != null);
+            return import != null;
         }
 
         internal NamespaceImport GetImport(string ns)
@@ -87,7 +87,7 @@ namespace Flee.PublicTypes
             return import;
         }
 
-        internal MemberInfo[] FindOwnerMembers(string memberName, System.Reflection.MemberTypes memberType)
+        internal MemberInfo[] FindOwnerMembers(string memberName, MemberTypes memberType)
         {
             return MyOwnerImport.FindMembers(memberName, memberType);
         }
@@ -97,7 +97,7 @@ namespace Flee.PublicTypes
             string[] namespaces = new string[typeNameParts.Length - 1];
             string typeName = typeNameParts[typeNameParts.Length - 1];
 
-            System.Array.Copy(typeNameParts, namespaces, namespaces.Length);
+            Array.Copy(typeNameParts, namespaces, namespaces.Length);
             ImportBase currentImport = MyRootImport;
 
             foreach (string ns in namespaces)
@@ -114,8 +114,7 @@ namespace Flee.PublicTypes
 
         static internal Type GetBuiltinType(string name)
         {
-            Type t = null;
-
+            Type t;
             if (OurBuiltinTypeMap.TryGetValue(name, out t) == true)
             {
                 return t;
@@ -130,24 +129,24 @@ namespace Flee.PublicTypes
         #region "Methods - Public"
         public void AddType(Type t, string ns)
         {
-            Utility.AssertNotNull(t, "t");
+            Utility.AssertNotNull(t, nameof(t));
             Utility.AssertNotNull(ns, "namespace");
 
             MyContext.AssertTypeIsAccessible(t);
 
-            NamespaceImport import = this.GetImport(ns);
+            NamespaceImport import = GetImport(ns);
             import.Add(new TypeImport(t, BindingFlags.Public | BindingFlags.Static, false));
         }
 
         public void AddType(Type t)
         {
-            this.AddType(t, string.Empty);
+            AddType(t, string.Empty);
         }
 
         public void AddMethod(string methodName, Type t, string ns)
         {
-            Utility.AssertNotNull(methodName, "methodName");
-            Utility.AssertNotNull(t, "t");
+            Utility.AssertNotNull(methodName, nameof(methodName));
+            Utility.AssertNotNull(t, nameof(t));
             Utility.AssertNotNull(ns, "namespace");
 
             MethodInfo mi = t.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
@@ -158,12 +157,12 @@ namespace Flee.PublicTypes
                 throw new ArgumentException(msg);
             }
 
-            this.AddMethod(mi, ns);
+            AddMethod(mi, ns);
         }
 
         public void AddMethod(MethodInfo mi, string ns)
         {
-            Utility.AssertNotNull(mi, "mi");
+            Utility.AssertNotNull(mi, nameof(mi));
             Utility.AssertNotNull(ns, "namespace");
 
             MyContext.AssertTypeIsAccessible(mi.ReflectedType);
@@ -174,7 +173,7 @@ namespace Flee.PublicTypes
                 throw new ArgumentException(msg);
             }
 
-            NamespaceImport import = this.GetImport(ns);
+            NamespaceImport import = GetImport(ns);
             import.Add(new MethodImport(mi));
         }
 
@@ -182,7 +181,7 @@ namespace Flee.PublicTypes
         {
             foreach (KeyValuePair<string, Type> pair in OurBuiltinTypeMap)
             {
-                this.AddType(pair.Value, pair.Key);
+                AddType(pair.Value, pair.Key);
             }
         }
         #endregion

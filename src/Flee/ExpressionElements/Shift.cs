@@ -14,10 +14,10 @@ namespace Flee.ExpressionElements
         {
         }
 
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override Type GetResultType(Type leftType, Type rightType)
         {
             // Right argument (shift count) must be convertible to int32
-            if (ImplicitConverter.EmitImplicitNumericConvert(rightType, typeof(Int32), null) == false)
+            if (ImplicitConverter.EmitImplicitNumericConvert(rightType, typeof(int), null) == false)
             {
                 return null;
             }
@@ -37,13 +37,13 @@ namespace Flee.ExpressionElements
                 case TypeCode.Int16:
                 case TypeCode.UInt16:
                 case TypeCode.Int32:
-                    return typeof(Int32);
+                    return typeof(int);
                 case TypeCode.UInt32:
-                    return typeof(UInt32);
+                    return typeof(uint);
                 case TypeCode.Int64:
-                    return typeof(Int64);
+                    return typeof(long);
                 case TypeCode.UInt64:
-                    return typeof(UInt64);
+                    return typeof(ulong);
                 default:
                     Debug.Assert(false, "unknown left shift operand");
                     return null;
@@ -58,8 +58,8 @@ namespace Flee.ExpressionElements
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             MyLeftChild.Emit(ilg, services);
-            this.EmitShiftCount(ilg, services);
-            this.EmitShift(ilg);
+            EmitShiftCount(ilg, services);
+            EmitShift(ilg);
         }
 
         // If the shift count is greater than the number of bits in the number, the result is undefined.

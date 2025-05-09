@@ -17,7 +17,7 @@ namespace Flee.Parsing
         private readonly NFAMatcher _nfaMatcher;
         private readonly RegExpMatcher _regExpMatcher;
         private ReaderBuffer _buffer = null;
-        private readonly TokenMatch _lastMatch = new TokenMatch();
+        private readonly TokenMatch _lastMatch = new();
         private Token _previousToken = null;
 
         public Tokenizer(TextReader input)
@@ -27,10 +27,10 @@ namespace Flee.Parsing
 
         public Tokenizer(TextReader input, bool ignoreCase)
         {
-            this._stringDfaMatcher = new StringDFAMatcher(ignoreCase);
-            this._nfaMatcher = new NFAMatcher(ignoreCase);
-            this._regExpMatcher = new RegExpMatcher(ignoreCase);
-            this._buffer = new ReaderBuffer(input);
+            _stringDfaMatcher = new StringDFAMatcher(ignoreCase);
+            _nfaMatcher = new NFAMatcher(ignoreCase);
+            _regExpMatcher = new RegExpMatcher(ignoreCase);
+            _buffer = new ReaderBuffer(input);
         }
 
         public bool UseTokenList
@@ -52,7 +52,7 @@ namespace Flee.Parsing
 
         public void SetUseTokenList(bool useTokenList)
         {
-            this._useTokenList = useTokenList;
+            _useTokenList = useTokenList;
         }
 
         public string GetPatternDescription(int id)
@@ -141,15 +141,14 @@ namespace Flee.Parsing
         public void Reset(TextReader input)
         {
             //this.buffer.Dispose();
-            this._buffer = new ReaderBuffer(input);
-            this._previousToken = null;
-            this._lastMatch.Clear();
+            _buffer = new ReaderBuffer(input);
+            _previousToken = null;
+            _lastMatch.Clear();
         }
 
         public Token Next()
         {
-            Token token = null;
-
+            Token token;
             do
             {
                 token = NextToken();
@@ -231,7 +230,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
             buffer.Append(_stringDfaMatcher);
             buffer.Append(_nfaMatcher);
             buffer.Append(_regExpMatcher);
@@ -271,7 +270,7 @@ namespace Flee.Parsing
         }
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < Patterns.Length; i++)
             {
@@ -285,7 +284,7 @@ namespace Flee.Parsing
     internal class StringDFAMatcher : TokenMatcher
     {
 
-        private readonly TokenStringDFA _automaton = new TokenStringDFA();
+        private readonly TokenStringDFA _automaton = new();
 
         public StringDFAMatcher(bool ignoreCase) : base(ignoreCase)
         {
@@ -311,7 +310,7 @@ namespace Flee.Parsing
     internal class NFAMatcher : TokenMatcher
     {
 
-        private readonly TokenNFA _automaton = new TokenNFA();
+        private readonly TokenNFA _automaton = new();
 
         public NFAMatcher(bool ignoreCase) : base(ignoreCase)
         {

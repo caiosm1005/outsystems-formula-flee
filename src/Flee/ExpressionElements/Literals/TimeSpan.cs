@@ -14,17 +14,17 @@ namespace Flee.ExpressionElements.Literals
         {
             if (TimeSpan.TryParse(image, out _myValue) == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(TimeSpan).Name);
+                ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(TimeSpan).Name);
             }
         }
 
-        public override void Emit(FleeILGenerator ilg, System.IServiceProvider services)
+        public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             int index = ilg.GetTempLocalIndex(typeof(TimeSpan));
 
             Utility.EmitLoadLocalAddress(ilg, index);
 
-            LiteralElement.EmitLoad(_myValue.Ticks, ilg);
+            EmitLoad(_myValue.Ticks, ilg);
 
             ConstructorInfo ci = typeof(TimeSpan).GetConstructor(new Type[] { typeof(long) });
 
@@ -33,6 +33,6 @@ namespace Flee.ExpressionElements.Literals
             Utility.EmitLoadLocal(ilg, index);
         }
 
-        public override System.Type ResultType => typeof(TimeSpan);
+        public override Type ResultType => typeof(TimeSpan);
     }
 }

@@ -24,8 +24,7 @@ namespace Flee.InternalTypes
 
         public int GetTempLocalIndex(Type localType)
         {
-            LocalBuilder local = null;
-
+            LocalBuilder local;
             if (_localBuilderTemp.TryGetValue(localType, out local) == false)
             {
                 local = _myIlGenerator.DeclareLocal(localType);
@@ -61,85 +60,85 @@ namespace Flee.InternalTypes
 
         public void Emit(OpCode op)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op);
         }
 
         public void Emit(OpCode op, Type arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, ConstructorInfo arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, MethodInfo arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, FieldInfo arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, byte arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, sbyte arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, short arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, int arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, long arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, float arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, double arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, string arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, Label arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
@@ -256,7 +255,7 @@ namespace Flee.InternalTypes
         [Conditional("DEBUG")]
         public void ValidateLength()
         {
-            Debug.Assert(this.Length == this.ILGeneratorLength, "ILGenerator length mismatch");
+            Debug.Assert(Length == ILGeneratorLength, "ILGenerator length mismatch");
         }
 
         public int Length => _myLength;

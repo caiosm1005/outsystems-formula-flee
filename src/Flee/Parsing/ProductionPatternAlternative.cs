@@ -15,7 +15,7 @@ namespace Flee.Parsing
     internal class ProductionPatternAlternative
     {
         private ProductionPattern _pattern;
-        private readonly ArrayList _elements = new ArrayList();
+        private readonly ArrayList _elements = new();
         private LookAheadSet _lookAhead = null;
 
         public ProductionPatternAlternative()
@@ -96,7 +96,7 @@ namespace Flee.Parsing
 
         internal void SetPattern(ProductionPattern pattern)
         {
-            this._pattern = pattern;
+            _pattern = pattern;
         }
 
         public int GetMinElementCount()
@@ -118,9 +118,9 @@ namespace Flee.Parsing
             for (int i = 0; i < _elements.Count; i++)
             {
                 var elem = (ProductionPatternElement)_elements[i];
-                if (elem.MaxCount >= Int32.MaxValue)
+                if (elem.MaxCount >= int.MaxValue)
                 {
-                    return Int32.MaxValue;
+                    return int.MaxValue;
                 }
                 else
                 {
@@ -195,13 +195,13 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _elements.Count; i++)
             {
                 if (i > 0)
                 {
-                    buffer.Append(" ");
+                    buffer.Append(' ');
                 }
                 buffer.Append(_elements[i]);
             }

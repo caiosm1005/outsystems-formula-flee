@@ -23,7 +23,7 @@
 
         public ReaderBuffer(TextReader input)
         {
-            this._input = input;
+            _input = input;
         }
         public void Dispose()
         {
@@ -126,7 +126,7 @@
             // Remove (almost all) old characters from buffer
             if (_pos > BlockSize)
             {
-                _length -= (_pos - 16);
+                _length -= _pos - 16;
                 Array.Copy(_buffer, _pos - 16, _buffer, 0, _length);
                 _pos = 16;
             }

@@ -24,20 +24,20 @@ namespace Flee.ExpressionElements.Base
 
         public override string ToString()
         {
-            return this.Name;
+            return Name;
         }
 
         protected void ThrowCompileException(string messageKey, CompileExceptionReason reason, params object[] arguments)
         {
             string messageTemplate = FleeResourceManager.Instance.GetCompileErrorString(messageKey);
             string message = string.Format(messageTemplate, arguments);
-            message = string.Concat(this.Name, ": ", message);
+            message = string.Concat(Name, ": ", message);
             throw new ExpressionCompileException(message, reason);
         }
 
         protected void ThrowAmbiguousCallException(Type leftType, Type rightType, object operation)
         {
-            this.ThrowCompileException(CompileErrorResourceKeys.AmbiguousOverloadedOperator, CompileExceptionReason.AmbiguousMatch, leftType.Name, rightType.Name, operation);
+            ThrowCompileException(CompileErrorResourceKeys.AmbiguousOverloadedOperator, CompileExceptionReason.AmbiguousMatch, leftType.Name, rightType.Name, operation);
         }
 
 
@@ -45,7 +45,7 @@ namespace Flee.ExpressionElements.Base
         {
             get
             {
-                string key = this.GetType().Name;
+                string key = GetType().Name;
                 string value = FleeResourceManager.Instance.GetElementNameString(key);
                 Debug.Assert(value != null, $"Element name for '{key}' not in resource file");
                 return value;

@@ -28,7 +28,7 @@ namespace Flee.ExpressionElements.Base.Literals
                 // Create a real element if required
                 LiteralElement realElement = RealLiteralElement.CreateFromInteger(image, services);
 
-                if ((realElement != null))
+                if (realElement != null)
                 {
                     return realElement;
                 }
@@ -38,9 +38,7 @@ namespace Flee.ExpressionElements.Base.Literals
             bool hasLSuffix = image.EndsWith("l", comparison) & !image.EndsWith("ul", comparison);
             bool hasUlSuffix = image.EndsWith("ul", comparison) | image.EndsWith("lu", comparison);
             bool hasSuffix = hasUSuffix | hasLSuffix | hasUlSuffix;
-
-            LiteralElement constant = default(LiteralElement);
-            System.Globalization.NumberStyles numStyles = NumberStyles.Integer;
+            NumberStyles numStyles = NumberStyles.Integer;
 
             if (isHex == true)
             {
@@ -48,26 +46,28 @@ namespace Flee.ExpressionElements.Base.Literals
                 image = image.Remove(0, 2);
             }
 
+
+            LiteralElement constant;
             if (hasSuffix == false)
             {
                 // If the literal has no suffix, it has the first of these types in which its value can be represented: int, uint, long, ulong.
                 constant = Int32LiteralElement.TryCreate(image, isHex, negated);
 
-                if ((constant != null))
+                if (constant != null)
                 {
                     return constant;
                 }
 
                 constant = UInt32LiteralElement.TryCreate(image, numStyles);
 
-                if ((constant != null))
+                if (constant != null)
                 {
                     return constant;
                 }
 
                 constant = Int64LiteralElement.TryCreate(image, isHex, negated);
 
-                if ((constant != null))
+                if (constant != null)
                 {
                     return constant;
                 }
@@ -81,7 +81,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
                 constant = UInt32LiteralElement.TryCreate(image, numStyles);
 
-                if ((constant != null))
+                if (constant != null)
                 {
                     return constant;
                 }
@@ -97,7 +97,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
                 constant = Int64LiteralElement.TryCreate(image, isHex, negated);
 
-                if ((constant != null))
+                if (constant != null)
                 {
                     return constant;
                 }

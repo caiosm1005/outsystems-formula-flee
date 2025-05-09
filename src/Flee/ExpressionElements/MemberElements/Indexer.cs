@@ -29,14 +29,14 @@ namespace Flee.ExpressionElements.MemberElements
             // Yes, so setup for an array index
             if (target.IsArray == true)
             {
-                this.SetupArrayIndexer();
+                SetupArrayIndexer();
                 return;
             }
 
             // Not an array, so try to find an indexer on the type
-            if (this.FindIndexer(target) == false)
+            if (FindIndexer(target) == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.TypeNotArrayAndHasNoIndexerOfType, CompileExceptionReason.TypeMismatch, target.Name, _myIndexerElements);
+                ThrowCompileException(CompileErrorResourceKeys.TypeNotArrayAndHasNoIndexerOfType, CompileExceptionReason.TypeMismatch, target.Name, _myIndexerElements);
             }
         }
 
@@ -46,11 +46,11 @@ namespace Flee.ExpressionElements.MemberElements
 
             if (_myIndexerElements.Count > 1)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.MultiArrayIndexNotSupported, CompileExceptionReason.TypeMismatch);
+                ThrowCompileException(CompileErrorResourceKeys.MultiArrayIndexNotSupported, CompileExceptionReason.TypeMismatch);
             }
-            else if (ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(Int32), null) == false)
+            else if (ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(int), null) == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.ArrayIndexersMustBeOfType, CompileExceptionReason.TypeMismatch, typeof(Int32).Name);
+                ThrowCompileException(CompileErrorResourceKeys.ArrayIndexersMustBeOfType, CompileExceptionReason.TypeMismatch, typeof(int).Name);
             }
         }
 
@@ -59,19 +59,19 @@ namespace Flee.ExpressionElements.MemberElements
             // Get the default members
             MemberInfo[] members = targetType.GetDefaultMembers();
 
-            List<MethodInfo> methods = new List<MethodInfo>();
+            List<MethodInfo> methods = new();
 
             // Use the first one that's valid for our indexer type
             foreach (MemberInfo mi in members)
             {
                 PropertyInfo pi = mi as PropertyInfo;
-                if ((pi != null))
+                if (pi != null)
                 {
                     methods.Add(pi.GetGetMethod(true));
                 }
             }
 
-            FunctionCallElement func = new FunctionCallElement("Indexer", methods.ToArray(), _myIndexerElements);
+            FunctionCallElement func = new("Indexer", methods.ToArray(), _myIndexerElements);
             func.Resolve(MyServices);
             _myIndexerElement = func;
 
@@ -82,22 +82,22 @@ namespace Flee.ExpressionElements.MemberElements
         {
             base.Emit(ilg, services);
 
-            if (this.IsArray == true)
+            if (IsArray == true)
             {
-                this.EmitArrayLoad(ilg, services);
+                EmitArrayLoad(ilg, services);
             }
             else
             {
-                this.EmitIndexer(ilg, services);
+                EmitIndexer(ilg, services);
             }
         }
 
         private void EmitArrayLoad(FleeILGenerator ilg, IServiceProvider services)
         {
             _myIndexerElement.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(Int32), ilg);
+            ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(int), ilg);
 
-            Type elementType = this.ResultType;
+            Type elementType = ResultType;
 
             if (elementType.IsValueType == false)
             {
@@ -106,13 +106,13 @@ namespace Flee.ExpressionElements.MemberElements
             }
             else
             {
-                this.EmitValueTypeArrayLoad(ilg, elementType);
+                EmitValueTypeArrayLoad(ilg, elementType);
             }
         }
 
         private void EmitValueTypeArrayLoad(FleeILGenerator ilg, Type elementType)
         {
-            if (this.NextRequiresAddress == true)
+            if (NextRequiresAddress == true)
             {
                 ilg.Emit(OpCodes.Ldelema, elementType);
             }
@@ -125,14 +125,14 @@ namespace Flee.ExpressionElements.MemberElements
         private void EmitIndexer(FleeILGenerator ilg, IServiceProvider services)
         {
             FunctionCallElement func = (FunctionCallElement)_myIndexerElement;
-            func.EmitFunctionCall(this.NextRequiresAddress, ilg, services);
+            func.EmitFunctionCall(NextRequiresAddress, ilg, services);
         }
 
         private Type ArrayType
         {
             get
             {
-                if (this.IsArray == true)
+                if (IsArray == true)
                 {
                     return MyPrevious.TargetType;
                 }
@@ -145,15 +145,15 @@ namespace Flee.ExpressionElements.MemberElements
 
         private bool IsArray => MyPrevious.TargetType.IsArray;
 
-        protected override bool RequiresAddress => this.IsArray == false;
+        protected override bool RequiresAddress => IsArray == false;
 
-        public override System.Type ResultType
+        public override Type ResultType
         {
             get
             {
-                if (this.IsArray == true)
+                if (IsArray == true)
                 {
-                    return this.ArrayType.GetElementType();
+                    return ArrayType.GetElementType();
                 }
                 else
                 {
@@ -166,7 +166,7 @@ namespace Flee.ExpressionElements.MemberElements
         {
             get
             {
-                if (this.IsArray == true)
+                if (IsArray == true)
                 {
                     return true;
                 }

@@ -4,7 +4,6 @@ using Flee.ExpressionElements.Base.Literals;
 using Flee.InternalTypes;
 using Flee.PublicTypes;
 
-
 namespace Flee.ExpressionElements.Literals.Real
 {
     internal class DecimalLiteralElement : RealLiteralElement
@@ -24,9 +23,9 @@ namespace Flee.ExpressionElements.Literals.Real
         private static ConstructorInfo GetConstructor()
         {
             Type[] types = {
-            typeof(Int32),
-            typeof(Int32),
-            typeof(Int32),
+            typeof(int),
+            typeof(int),
+            typeof(int),
             typeof(bool),
             typeof(byte)
         };
@@ -36,7 +35,7 @@ namespace Flee.ExpressionElements.Literals.Real
         public static DecimalLiteralElement Parse(string image, IServiceProvider services)
         {
             ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
-            DecimalLiteralElement element = new DecimalLiteralElement();
+            DecimalLiteralElement element = new();
 
             try
             {
@@ -71,6 +70,6 @@ namespace Flee.ExpressionElements.Literals.Real
             Utility.EmitLoadLocal(ilg, index);
         }
 
-        public override System.Type ResultType => typeof(decimal);
+        public override Type ResultType => typeof(decimal);
     }
 }

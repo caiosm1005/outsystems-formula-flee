@@ -98,11 +98,11 @@ namespace Flee.Parsing
                               int column)
         {
 
-            this._type = type;
-            this._info = info;
-            this._details = details;
-            this._line = line;
-            this._column = column;
+            _type = type;
+            _info = info;
+            _details = details;
+            _line = line;
+            _column = column;
         }
 
         
@@ -120,7 +120,7 @@ namespace Flee.Parsing
             return Info;
         }
 
-        public ArrayList Details => new ArrayList(_details);
+        public ArrayList Details => new(_details);
 
         public ArrayList GetDetails()
         {
@@ -145,7 +145,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 // Add error description
                 buffer.Append(ErrorMessage);
@@ -172,7 +172,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 // Add type and info
                 switch (_type)
@@ -187,7 +187,7 @@ namespace Flee.Parsing
                     case ErrorType.UNEXPECTED_CHAR:
                         buffer.Append("unexpected character '");
                         buffer.Append(_info);
-                        buffer.Append("'");
+                        buffer.Append('\'');
                         break;
                     case ErrorType.UNEXPECTED_TOKEN:
                         buffer.Append("unexpected token ");
@@ -229,7 +229,7 @@ namespace Flee.Parsing
 
         private string GetMessageDetails()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _details.Count; i++)
             {

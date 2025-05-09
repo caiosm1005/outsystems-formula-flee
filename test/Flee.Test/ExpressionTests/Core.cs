@@ -5,14 +5,14 @@ namespace Flee.Test.ExpressionTests
 {
     public class Core
     {
-        protected IDynamicExpression CreateDynamicExpression(string expression, ExpressionContext context)
+        protected static IDynamicExpression CreateDynamicExpression(string expression, ExpressionContext context)
         {
             return context.CompileDynamic(expression);
         }
 
-        protected void WriteMessage(string msg, params object[] args)
+        protected static void WriteMessage(string msg, params object[] args)
         {
-            msg = String.Format(msg, args);
+            msg = string.Format(msg, args);
             Console.WriteLine(msg);
         }
     }

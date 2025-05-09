@@ -11,10 +11,10 @@ namespace Flee.ExpressionElements.Base.Literals
     {
         protected void OnParseOverflow(string image)
         {
-            base.ThrowCompileException(CompileErrorResourceKeys.ValueNotRepresentableInType, CompileExceptionReason.ConstantOverflow, image, this.ResultType.Name);
+            ThrowCompileException(CompileErrorResourceKeys.ValueNotRepresentableInType, CompileExceptionReason.ConstantOverflow, image, ResultType.Name);
         }
 
-        public static void EmitLoad(Int32 value, FleeILGenerator ilg)
+        public static void EmitLoad(int value, FleeILGenerator ilg)
         {
             if (value >= -1 & value <= 8)
             {
@@ -30,14 +30,14 @@ namespace Flee.ExpressionElements.Base.Literals
             }
         }
 
-        protected static void EmitLoad(Int64 value, FleeILGenerator ilg)
+        protected static void EmitLoad(long value, FleeILGenerator ilg)
         {
-            if (value >= Int32.MinValue & value <= Int32.MaxValue)
+            if (value >= int.MinValue & value <= int.MaxValue)
             {
                 EmitLoad(Convert.ToInt32(value), ilg);
                 ilg.Emit(OpCodes.Conv_I8);
             }
-            else if (value >= 0 & value <= UInt32.MaxValue)
+            else if (value >= 0 & value <= uint.MaxValue)
             {
                 ilg.Emit(OpCodes.Ldc_I4, unchecked((int)Convert.ToUInt32(value)));
                 ilg.Emit(OpCodes.Conv_U8);
@@ -60,7 +60,7 @@ namespace Flee.ExpressionElements.Base.Literals
             }
         }
 
-        private static void EmitSuperShort(Int32 value, FleeILGenerator ilg)
+        private static void EmitSuperShort(int value, FleeILGenerator ilg)
         {
             OpCode ldcOpcode = default(OpCode);
 

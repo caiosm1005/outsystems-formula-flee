@@ -25,12 +25,12 @@ namespace Flee.Parsing
 
         public ProductionPattern(int id, string name)
         {
-            this._id = id;
-            this._name = name;
-            this._synthetic = false;
-            this._alternatives = new ArrayList();
-            this._defaultAlt = -1;
-            this._lookAhead = null;
+            _id = id;
+            _name = name;
+            _synthetic = false;
+            _alternatives = new ArrayList();
+            _defaultAlt = -1;
+            _lookAhead = null;
         }
         public int Id => _id;
 
@@ -181,17 +181,17 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
-            StringBuilder indent = new StringBuilder();
+            StringBuilder buffer = new();
+            StringBuilder indent = new();
             int i;
 
             buffer.Append(_name);
-            buffer.Append("(");
+            buffer.Append('(');
             buffer.Append(_id);
             buffer.Append(") ");
             for (i = 0; i < buffer.Length; i++)
             {
-                indent.Append(" ");
+                indent.Append(' ');
             }
             for (i = 0; i < _alternatives.Count; i++)
             {
@@ -201,7 +201,7 @@ namespace Flee.Parsing
                 }
                 else
                 {
-                    buffer.Append("\n");
+                    buffer.Append('\n');
                     buffer.Append(indent);
                     buffer.Append("| ");
                 }

@@ -10,7 +10,7 @@ namespace Flee.Test.ExpressionTests
         [Test]
         public void DateTimeFormat()
         {
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
 
             context.ParserOptions.DateTimeFormats = new string[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" };
 

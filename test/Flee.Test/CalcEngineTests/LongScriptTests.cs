@@ -13,14 +13,14 @@ namespace Flee.Test.CalcEngineTests
 
 		public class TestFunction
         {
-			static public Decimal Price(String s)
+			static public decimal Price(string s)
             {
 				return 1.0m;
             }
 
-			static public Decimal First(params object[] args)
+			static public decimal First(params object[] args)
             {
-				return (Decimal)args[0];
+				return (decimal)args[0];
             }
         }
 

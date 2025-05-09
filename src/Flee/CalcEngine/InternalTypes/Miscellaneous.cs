@@ -65,7 +65,7 @@ namespace Flee.CalcEngine.InternalTypes
 
         public T Result => MyResult;
 
-        public override System.Type ResultType => typeof(T);
+        public override Type ResultType => typeof(T);
 
         public override object ResultAsObject
         {
@@ -82,9 +82,9 @@ namespace Flee.CalcEngine.InternalTypes
         public ExpressionContext Context;
         public BatchLoadInfo(string name, string text, ExpressionContext context)
         {
-            this.Name = name;
-            this.ExpressionText = text;
-            this.Context = context;
+            Name = name;
+            ExpressionText = text;
+            Context = context;
         }
     }
 

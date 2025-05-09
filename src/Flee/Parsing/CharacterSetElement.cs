@@ -12,19 +12,19 @@ namespace Flee.Parsing
      */
     internal class CharacterSetElement : Element
     {
-        public static CharacterSetElement Dot = new CharacterSetElement(false);
-        public static CharacterSetElement Digit = new CharacterSetElement(false);
-        public static CharacterSetElement NonDigit = new CharacterSetElement(true);
-        public static CharacterSetElement Whitespace = new CharacterSetElement(false);
-        public static CharacterSetElement NonWhitespace = new CharacterSetElement(true);
-        public static CharacterSetElement Word = new CharacterSetElement(false);
-        public static CharacterSetElement NonWord = new CharacterSetElement(true);
+        public static CharacterSetElement Dot = new(false);
+        public static CharacterSetElement Digit = new(false);
+        public static CharacterSetElement NonDigit = new(true);
+        public static CharacterSetElement Whitespace = new(false);
+        public static CharacterSetElement NonWhitespace = new(true);
+        public static CharacterSetElement Word = new(false);
+        public static CharacterSetElement NonWord = new(true);
         private readonly bool _inverted;
-        private readonly ArrayList _contents = new ArrayList();
+        private readonly ArrayList _contents = new();
 
         public CharacterSetElement(bool inverted)
         {
-            this._inverted = inverted;
+            _inverted = inverted;
         }
 
         public void AddCharacter(char c)
@@ -80,7 +80,7 @@ namespace Flee.Parsing
             }
             if (m.IsCaseInsensitive())
             {
-                c = (int)Char.ToLower((char)c);
+                c = (int)char.ToLower((char)c);
             }
             return InSet((char)c) ? 1 : -1;
         }
@@ -109,7 +109,7 @@ namespace Flee.Parsing
             }
         }
 
-        private bool InDotSet(char c)
+        private static bool InDotSet(char c)
         {
             switch (c)
             {
@@ -124,12 +124,12 @@ namespace Flee.Parsing
             }
         }
 
-        private bool InDigitSet(char c)
+        private static bool InDigitSet(char c)
         {
             return '0' <= c && c <= '9';
         }
 
-        private bool InWhitespaceSet(char c)
+        private static bool InWhitespaceSet(char c)
         {
             switch (c)
             {
@@ -145,7 +145,7 @@ namespace Flee.Parsing
             }
         }
 
-        private bool InWordSet(char c)
+        private static bool InWordSet(char c)
         {
             return ('a' <= c && c <= 'z')
                 || ('A' <= c && c <= 'Z')
@@ -231,13 +231,13 @@ namespace Flee.Parsing
             }
             else
             {
-                buffer.Append("[");
+                buffer.Append('[');
             }
             for (int i = 0; i < _contents.Count; i++)
             {
                 buffer.Append(_contents[i]);
             }
-            buffer.Append("]");
+            buffer.Append(']');
 
             return buffer.ToString();
         }
@@ -249,8 +249,8 @@ namespace Flee.Parsing
 
             public Range(char min, char max)
             {
-                this._min = min;
-                this._max = max;
+                _min = min;
+                _max = max;
             }
 
             public bool Inside(char c)

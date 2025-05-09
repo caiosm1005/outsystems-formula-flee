@@ -18,15 +18,15 @@ namespace Flee.CalcEngine.PublicTypes
 
         public void Add(string atomName, string expression, ExpressionContext context)
         {
-            Utility.AssertNotNull(atomName, "atomName");
-            Utility.AssertNotNull(expression, "expression");
-            Utility.AssertNotNull(context, "context");
+            Utility.AssertNotNull(atomName, nameof(atomName));
+            Utility.AssertNotNull(expression, nameof(expression));
+            Utility.AssertNotNull(context, nameof(context));
 
-            BatchLoadInfo info = new BatchLoadInfo(atomName, expression, context);
+            BatchLoadInfo info = new(atomName, expression, context);
             _myNameInfoMap.Add(atomName, info);
             _myDependencies.AddTail(atomName);
 
-            ICollection<string> references = this.GetReferences(expression, context);
+            ICollection<string> references = GetReferences(expression, context);
 
             foreach (string reference in references)
             {
@@ -57,7 +57,7 @@ namespace Flee.CalcEngine.PublicTypes
             return infos;
         }
 
-        private ICollection<string> GetReferences(string expression, ExpressionContext context)
+        private static ICollection<string> GetReferences(string expression, ExpressionContext context)
         {
             IdentifierAnalyzer analyzer = context.ParseIdentifiers(expression);
 

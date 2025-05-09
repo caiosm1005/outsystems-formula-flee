@@ -3,8 +3,8 @@
 namespace Flee.ExtensionMethodTests
 {
     using Flee.ExtensionMethodTests.ExtensionMethodTestData;
-    using global::Flee.PublicTypes;
-    using global::Flee.Test.Infrastructure;
+    using Flee.PublicTypes;
+    using Flee.Test.Infrastructure;
 
     /// <summary>The extension method test.</summary>
     [TestFixture]

@@ -230,7 +230,7 @@ namespace Flee.InternalTypes
         /// <returns>The operator's method or null of no match is found</returns>
         public static MethodInfo GetSimpleOverloadedOperator(string name, Type sourceType, Type destType)
         {
-            Hashtable data = new Hashtable();
+            Hashtable data = new();
             data.Add("Name", string.Concat("op_", name));
             data.Add("sourceType", sourceType);
             data.Add("destType", destType);
@@ -290,7 +290,7 @@ namespace Flee.InternalTypes
 
             if (destType != null)
             {
-                bool returnTypeMatch = object.ReferenceEquals(destType, method.ReturnType);
+                bool returnTypeMatch = ReferenceEquals(destType, method.ReturnType);
 
                 if (returnTypeMatch == false)
                 {
@@ -307,10 +307,9 @@ namespace Flee.InternalTypes
         public static MethodInfo GetOverloadedOperator(string name, Type sourceType, Binder binder, params Type[] argumentTypes)
         {
             name = string.Concat("op_", name);
-            MethodInfo mi = null;
             do
             {
-                mi = sourceType.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
+                MethodInfo mi = sourceType.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
                 if (mi != null && mi.IsSpecialName == true)
                 {
                     return mi;

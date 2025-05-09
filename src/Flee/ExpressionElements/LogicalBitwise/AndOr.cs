@@ -9,11 +9,11 @@ namespace Flee.ExpressionElements.LogicalBitwise
     internal class AndOrElement : BinaryExpressionElement
     {
         private AndOrOperation _myOperation;
-        private static readonly object OurTrueTerminalKey = new object();
-        private static readonly object OurFalseTerminalKey = new object();
-        private static readonly object OurEndLabelKey = new object();
+        private static readonly object OurTrueTerminalKey = new();
+        private static readonly object OurFalseTerminalKey = new();
+        private static readonly object OurEndLabelKey = new();
 
-        public void New()
+        public static void New()
         {
         }
 
@@ -22,14 +22,14 @@ namespace Flee.ExpressionElements.LogicalBitwise
             _myOperation = (AndOrOperation)operation;
         }
 
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override Type GetResultType(Type leftType, Type rightType)
         {
             Type bitwiseOpType = Utility.GetBitwiseOpType(leftType, rightType);
-            if ((bitwiseOpType != null))
+            if (bitwiseOpType != null)
             {
                 return bitwiseOpType;
             }
-            else if (this.AreBothChildrenOfType(typeof(bool)))
+            else if (AreBothChildrenOfType(typeof(bool)))
             {
                 return typeof(bool);
             }
@@ -41,11 +41,11 @@ namespace Flee.ExpressionElements.LogicalBitwise
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type resultType = this.ResultType;
+            Type resultType = ResultType;
 
-            if (object.ReferenceEquals(resultType, typeof(bool)))
+            if (ReferenceEquals(resultType, typeof(bool)))
             {
-                this.DoEmitLogical(ilg, services);
+                DoEmitLogical(ilg, services);
             }
             else
             {
@@ -76,10 +76,10 @@ namespace Flee.ExpressionElements.LogicalBitwise
         private void DoEmitLogical(FleeILGenerator ilg, IServiceProvider services)
         {
             // We have to do a 'fake' emit so we can get the positions of the labels
-            ShortCircuitInfo info = new ShortCircuitInfo();
+            ShortCircuitInfo info = new();
 
             // Do the real emit
-            this.EmitLogical(ilg, info, services);
+            EmitLogical(ilg, info, services);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             Label endLabel = ilg.DefineLabel();
 
             // Populate our data structures
-            this.PopulateData(info);
+            PopulateData(info);
 
             // Emit the sequence
             EmitLogicalShortCircuit(ilg, info, services);
@@ -207,7 +207,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             AndOrElement andOrChild = MyRightChild as AndOrElement;
 
             // What kind of child do we have?
-            if ((andOrChild != null))
+            if (andOrChild != null)
             {
                 // Another and/or expression so recurse
                 andOrChild.Pop(operands, operators);

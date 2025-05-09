@@ -17,12 +17,12 @@ namespace Flee.Parsing
       */
     internal class LookAheadSet
     {
-        private readonly ArrayList _elements = new ArrayList();
+        private readonly ArrayList _elements = new();
         private readonly int _maxLength;
 
         public LookAheadSet(int maxLength)
         {
-            this._maxLength = maxLength;
+            _maxLength = maxLength;
         }
 
         public LookAheadSet(int maxLength, LookAheadSet set)
@@ -68,7 +68,7 @@ namespace Flee.Parsing
 
         public int[] GetInitialTokens()
         {
-            ArrayList list = new ArrayList();
+            ArrayList list = new();
             int i;
             for (i = 0; i < _elements.Count; i++)
             {
@@ -224,7 +224,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateNextSet(int token)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength - 1);
+            LookAheadSet result = new(_maxLength - 1);
             for (int i = 0; i < _elements.Count; i++)
             {
                 var seq = (Sequence)_elements[i];
@@ -239,7 +239,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateIntersection(LookAheadSet set)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
             for (int i = 0; i < _elements.Count; i++)
             {
                 var seq1 = (Sequence)_elements[i];
@@ -258,10 +258,10 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateCombination(LookAheadSet set)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
 
             // Handle special cases
-            if (this.Size() <= 0)
+            if (Size() <= 0)
             {
                 return set;
             }
@@ -296,7 +296,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateOverlaps(LookAheadSet set)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
 
             for (int i = 0; i < _elements.Count; i++)
             {
@@ -311,10 +311,10 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateFilter(LookAheadSet set)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
 
             // Handle special cases
-            if (this.Size() <= 0 || set.Size() <= 0)
+            if (Size() <= 0 || set.Size() <= 0)
             {
                 return this;
             }
@@ -337,7 +337,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateRepetitive()
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
 
             for (int i = 0; i < _elements.Count; i++)
             {
@@ -361,9 +361,9 @@ namespace Flee.Parsing
 
         public string ToString(Tokenizer tokenizer)
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
-            buffer.Append("{");
+            buffer.Append('{');
             for (int i = 0; i < _elements.Count; i++)
             {
                 var seq = (Sequence)_elements[i];
@@ -381,8 +381,8 @@ namespace Flee.Parsing
 
             public Sequence()
             {
-                this._repeat = false;
-                this._tokens = new ArrayList(0);
+                _repeat = false;
+                _tokens = new ArrayList(0);
             }
 
             public Sequence(bool repeat, int token)
@@ -394,8 +394,8 @@ namespace Flee.Parsing
 
             public Sequence(int length, Sequence seq)
             {
-                this._repeat = seq._repeat;
-                this._tokens = new ArrayList(length);
+                _repeat = seq._repeat;
+                _tokens = new ArrayList(length);
                 if (seq.Length() < length)
                 {
                     length = seq.Length();
@@ -408,8 +408,8 @@ namespace Flee.Parsing
 
             public Sequence(bool repeat, Sequence seq)
             {
-                this._repeat = repeat;
-                this._tokens = seq._tokens;
+                _repeat = repeat;
+                _tokens = seq._tokens;
             }
 
             public int Length()
@@ -522,7 +522,7 @@ namespace Flee.Parsing
 
             public string ToString(Tokenizer tokenizer)
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 if (tokenizer == null)
                 {
@@ -530,18 +530,18 @@ namespace Flee.Parsing
                 }
                 else
                 {
-                    buffer.Append("[");
+                    buffer.Append('[');
                     for (int i = 0; i < _tokens.Count; i++)
                     {
                         var id = (int)_tokens[i];
                         var str = tokenizer.GetPatternDescription(id);
                         if (i > 0)
                         {
-                            buffer.Append(" ");
+                            buffer.Append(' ');
                         }
                         buffer.Append(str);
                     }
-                    buffer.Append("]");
+                    buffer.Append(']');
                 }
                 if (_repeat)
                 {
@@ -552,13 +552,13 @@ namespace Flee.Parsing
 
             public Sequence Concat(int length, Sequence seq)
             {
-                Sequence res = new Sequence(length, this);
+                Sequence res = new(length, this);
 
                 if (seq._repeat)
                 {
                     res._repeat = true;
                 }
-                length -= this.Length();
+                length -= Length();
                 if (length > seq.Length())
                 {
                     res._tokens.AddRange(seq._tokens);
@@ -575,7 +575,7 @@ namespace Flee.Parsing
 
             public Sequence Subsequence(int start)
             {
-                Sequence res = new Sequence(Length(), this);
+                Sequence res = new(Length(), this);
 
                 while (start > 0 && res._tokens.Count > 0)
                 {

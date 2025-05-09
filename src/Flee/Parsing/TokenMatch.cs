@@ -21,10 +21,10 @@
 
         public void Update(int length, TokenPattern pattern)
         {
-            if (this._length < length)
+            if (_length < length)
             {
-                this._length = length;
-                this._pattern = pattern;
+                _length = length;
+                _pattern = pattern;
             }
         }
     }

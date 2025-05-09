@@ -12,17 +12,17 @@ namespace Flee.ExpressionElements.Base
         public void SetChild(ExpressionElement child)
         {
             MyChild = child;
-            _myResultType = this.GetResultType(child.ResultType);
+            _myResultType = GetResultType(child.ResultType);
 
             if (_myResultType == null)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.OperationNotDefinedForType, CompileExceptionReason.TypeMismatch, MyChild.ResultType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.OperationNotDefinedForType, CompileExceptionReason.TypeMismatch, MyChild.ResultType.Name);
             }
         }
 
         protected abstract Type GetResultType(Type childType);
 
-        public override System.Type ResultType => _myResultType;
+        public override Type ResultType => _myResultType;
     }
 
 }

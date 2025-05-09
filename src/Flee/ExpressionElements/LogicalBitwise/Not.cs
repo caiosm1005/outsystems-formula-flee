@@ -9,9 +9,9 @@ namespace Flee.ExpressionElements.LogicalBitwise
     {
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            if (object.ReferenceEquals(MyChild.ResultType, typeof(bool)))
+            if (ReferenceEquals(MyChild.ResultType, typeof(bool)))
             {
-                this.EmitLogical(ilg, services);
+                EmitLogical(ilg, services);
             }
             else
             {
@@ -27,9 +27,9 @@ namespace Flee.ExpressionElements.LogicalBitwise
             ilg.Emit(OpCodes.Ceq);
         }
 
-        protected override System.Type GetResultType(System.Type childType)
+        protected override Type GetResultType(Type childType)
         {
-            if (object.ReferenceEquals(childType, typeof(bool)))
+            if (ReferenceEquals(childType, typeof(bool)))
             {
                 return typeof(bool);
             }

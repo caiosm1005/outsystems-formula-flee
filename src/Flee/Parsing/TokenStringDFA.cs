@@ -13,7 +13,7 @@ namespace Flee.Parsing
     {
 
         private readonly DFAState[] _ascii = new DFAState[128];
-        private readonly DFAState _nonAscii = new DFAState();
+        private readonly DFAState _nonAscii = new();
 
         public TokenStringDFA()
         {
@@ -27,7 +27,7 @@ namespace Flee.Parsing
 
             if (caseInsensitive)
             {
-                c = Char.ToLower(c);
+                c = char.ToLower(c);
             }
             if (c < 128)
             {
@@ -68,7 +68,7 @@ namespace Flee.Parsing
             }
             if (caseInsensitive)
             {
-                c = Char.ToLower((char)c);
+                c = char.ToLower((char)c);
             }
             if (c < 128)
             {
@@ -105,7 +105,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _ascii.Length; i++)
             {
@@ -116,7 +116,7 @@ namespace Flee.Parsing
                     {
                         buffer.Append(": ");
                         buffer.Append(_ascii[i].Value);
-                        buffer.Append("\n");
+                        buffer.Append('\n');
                     }
                     _ascii[i].Tree.PrintTo(buffer, " ");
                 }
@@ -131,7 +131,7 @@ namespace Flee.Parsing
 
         internal TokenPattern Value;
 
-        internal TransitionTree Tree = new TransitionTree();
+        internal TransitionTree Tree = new();
     }
 
 
@@ -150,7 +150,7 @@ namespace Flee.Parsing
         {
             if (lowerCase)
             {
-                c = Char.ToLower(c);
+                c = char.ToLower(c);
             }
             if (_value == '\0' || _value == c)
             {
@@ -170,14 +170,14 @@ namespace Flee.Parsing
         {
             if (lowerCase)
             {
-                c = Char.ToLower(c);
+                c = char.ToLower(c);
             }
             if (_value == '\0')
             {
-                this._value = c;
-                this._state = state;
-                this._left = new TransitionTree();
-                this._right = new TransitionTree();
+                _value = c;
+                _state = state;
+                _left = new TransitionTree();
+                _right = new TransitionTree();
             }
             else if (_value > c)
             {
@@ -189,23 +189,23 @@ namespace Flee.Parsing
             }
         }
 
-        public void PrintTo(StringBuilder buffer, String indent)
+        public void PrintTo(StringBuilder buffer, string indent)
         {
             _left?.PrintTo(buffer, indent);
-            if (this._value != '\0')
+            if (_value != '\0')
             {
                 if (buffer.Length > 0 && buffer[buffer.Length - 1] == '\n')
                 {
                     buffer.Append(indent);
                 }
-                buffer.Append(this._value);
-                if (this._state.Value != null)
+                buffer.Append(_value);
+                if (_state.Value != null)
                 {
                     buffer.Append(": ");
-                    buffer.Append(this._state.Value);
-                    buffer.Append("\n");
+                    buffer.Append(_state.Value);
+                    buffer.Append('\n');
                 }
-                this._state.Tree.PrintTo(buffer, indent + " ");
+                _state.Tree.PrintTo(buffer, indent + " ");
             }
             _right?.PrintTo(buffer, indent);
         }

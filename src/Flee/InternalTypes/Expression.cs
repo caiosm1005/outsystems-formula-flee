@@ -23,7 +23,7 @@ namespace Flee.InternalTypes
         private const string DynamicMethodName = "Flee Expression";
         public Expression(string expression, ExpressionContext context, bool isGeneric)
         {
-            Utility.AssertNotNull(expression, "expression");
+            Utility.AssertNotNull(expression, nameof(expression));
             _myExpression = expression;
             _myOwner = context.ExpressionOwner;
 
@@ -36,13 +36,13 @@ namespace Flee.InternalTypes
 
             _myInfo = new ExpressionInfo();
 
-            this.SetupOptions(_myContext.Options, isGeneric);
+            SetupOptions(_myContext.Options, isGeneric);
 
             _myContext.Imports.ImportOwner(_myOptions.OwnerType);
 
-            this.ValidateOwner(_myOwner);
+            ValidateOwner(_myOwner);
 
-            this.Compile(expression, _myOptions);
+            Compile(expression, _myOptions);
 
             _myContext.CalculationEngine?.FixTemporaryHead(this, _myContext, _myOptions.ResultType);
         }
@@ -65,7 +65,7 @@ namespace Flee.InternalTypes
         {
             // Add the services that will be used by elements during the compile
             IServiceContainer services = new ServiceContainer();
-            this.AddServices(services);
+            AddServices(services);
 
             // Parse and get the root element of the parse tree
             ExpressionElement topElement = _myContext.Parse(expression, services);
@@ -75,18 +75,18 @@ namespace Flee.InternalTypes
                 options.ResultType = topElement.ResultType;
             }
 
-            RootExpressionElement rootElement = new RootExpressionElement(topElement, options.ResultType);
+            RootExpressionElement rootElement = new(topElement, options.ResultType);
 
-            DynamicMethod dm = this.CreateDynamicMethod();
+            DynamicMethod dm = CreateDynamicMethod();
 
-            FleeILGenerator ilg = new FleeILGenerator(dm.GetILGenerator());
+            FleeILGenerator ilg = new(dm.GetILGenerator());
 
             // Emit the IL
             rootElement.Emit(ilg, services);
             if (ilg.NeedsSecondPass())
             {
                 // second pass required due to long branches.
-                dm = this.CreateDynamicMethod();
+                dm = CreateDynamicMethod();
                 ilg.PrepareSecondPass(dm.GetILGenerator());
                 rootElement.Emit(ilg, services);
             }
@@ -111,10 +111,7 @@ namespace Flee.InternalTypes
             typeof(ExpressionContext),
             typeof(VariableCollection)
         };
-            DynamicMethod dm = default(DynamicMethod);
-
-            dm = new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
-
+            DynamicMethod dm = new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
             return dm;
         }
 
@@ -136,7 +133,7 @@ namespace Flee.InternalTypes
         /// <param name="services"></param>
         private static void EmitToAssembly(FleeILGenerator ilg, ExpressionElement rootElement, IServiceContainer services)
         {
-            AssemblyName assemblyName = new AssemblyName(EmitAssemblyName);
+            AssemblyName assemblyName = new(EmitAssemblyName);
 
             string assemblyFileName = string.Format("{0}.dll", EmitAssemblyName);
 
@@ -157,7 +154,7 @@ namespace Flee.InternalTypes
 
         private void ValidateOwner(object owner)
         {
-            Utility.AssertNotNull(owner, "owner");
+            Utility.AssertNotNull(owner, nameof(owner));
             if (_myOptions.OwnerType.IsAssignableFrom(owner.GetType()) == false)
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.NewOwnerTypeNotAssignableToCurrentOwner);
@@ -181,7 +178,7 @@ namespace Flee.InternalTypes
 
         public IExpression Clone()
         {
-            Expression<T> copy = (Expression<T>)this.MemberwiseClone();
+            Expression<T> copy = (Expression<T>)MemberwiseClone();
             copy._myContext = _myContext.CloneInternal(true);
             copy._myOptions = copy._myContext.Options;
             return copy;
@@ -205,7 +202,7 @@ namespace Flee.InternalTypes
             get { return _myOwner; }
             set
             {
-                this.ValidateOwner(value);
+                ValidateOwner(value);
                 _myOwner = value;
             }
         }

@@ -5,16 +5,15 @@ namespace Flee.ExpressionElements.Literals.Integral
 {
     internal class UInt32LiteralElement : IntegralLiteralElement
     {
-        private readonly UInt32 _myValue;
-        public UInt32LiteralElement(UInt32 value)
+        private readonly uint _myValue;
+        public UInt32LiteralElement(uint value)
         {
             _myValue = value;
         }
 
         public static UInt32LiteralElement TryCreate(string image, System.Globalization.NumberStyles ns)
         {
-            UInt32 value = default(UInt32);
-            if (UInt32.TryParse(image, ns, null, out value) == true)
+            if (uint.TryParse(image, ns, null, out uint value) == true)
             {
                 return new UInt32LiteralElement(value);
             }
@@ -29,6 +28,6 @@ namespace Flee.ExpressionElements.Literals.Integral
             EmitLoad(Convert.ToInt32(_myValue), ilg);
         }
 
-        public override System.Type ResultType => typeof(UInt32);
+        public override Type ResultType => typeof(uint);
     }
 }

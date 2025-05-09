@@ -21,7 +21,7 @@ namespace Flee.ExpressionElements.Literals.Real
         public static SingleLiteralElement Parse(string image, IServiceProvider services)
         {
             ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
-            SingleLiteralElement element = new SingleLiteralElement();
+            SingleLiteralElement element = new();
 
             try
             {
@@ -40,6 +40,6 @@ namespace Flee.ExpressionElements.Literals.Real
             ilg.Emit(OpCodes.Ldc_R4, _myValue);
         }
 
-        public override System.Type ResultType => typeof(float);
+        public override Type ResultType => typeof(float);
     }
 }

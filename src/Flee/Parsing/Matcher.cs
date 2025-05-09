@@ -18,10 +18,10 @@
 
         internal Matcher(Element e, ReaderBuffer buffer, bool ignoreCase)
         {
-            this._element = e;
-            this._buffer = buffer;
-            this._ignoreCase = ignoreCase;
-            this._start = 0;
+            _element = e;
+            _buffer = buffer;
+            _ignoreCase = ignoreCase;
+            _start = 0;
             Reset();
         }
 
@@ -43,7 +43,7 @@
 
         public void Reset(ReaderBuffer buffer)
         {
-            this._buffer = buffer;
+            _buffer = buffer;
             Reset();
         }
 

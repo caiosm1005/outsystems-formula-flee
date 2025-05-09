@@ -23,7 +23,7 @@ namespace Flee.Parsing
 
         public Node Analyze(Node node)
         {
-            ParserLogException log = new ParserLogException();
+            ParserLogException log = new();
 
             node = Analyze(node, log);
             if (log.Count > 0)
@@ -116,7 +116,7 @@ namespace Flee.Parsing
             node.AddChild(child);
         }
 
-        protected Node GetChildAt(Node node, int pos)
+        protected static Node GetChildAt(Node node, int pos)
         {
             if (node == null)
             {
@@ -139,7 +139,7 @@ namespace Flee.Parsing
             return child;
         }
 
-        protected Node GetChildWithId(Node node, int id)
+        protected static Node GetChildWithId(Node node, int id)
         {
             if (node == null)
             {
@@ -164,7 +164,7 @@ namespace Flee.Parsing
                 node.StartColumn);
         }
 
-        protected object GetValue(Node node, int pos)
+        protected static object GetValue(Node node, int pos)
         {
             if (node == null)
             {
@@ -187,7 +187,7 @@ namespace Flee.Parsing
             return value;
         }
 
-        protected int GetIntValue(Node node, int pos)
+        protected static int GetIntValue(Node node, int pos)
         {
             var value = GetValue(node, pos);
             if (value is int)
@@ -205,7 +205,7 @@ namespace Flee.Parsing
             }
         }
        
-        protected string GetStringValue(Node node, int pos)
+        protected static string GetStringValue(Node node, int pos)
         {
             var value = GetValue(node, pos);
             if (value is string)
@@ -223,9 +223,9 @@ namespace Flee.Parsing
             }
         }
 
-        protected ArrayList GetChildValues(Node node)
+        protected static ArrayList GetChildValues(Node node)
         {
-            ArrayList result = new ArrayList();
+            ArrayList result = new();
 
             for (int i = 0; i < node.Count; i++)
             {
