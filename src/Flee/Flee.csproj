@@ -21,6 +21,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Flee.Test" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Remove="Resources\DocComments.xml" />
     </ItemGroup>
 
