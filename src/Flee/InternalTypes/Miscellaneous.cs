@@ -45,17 +45,18 @@ namespace Flee.InternalTypes
     internal abstract class CustomBinder : Binder
     {
 
-        public override System.Reflection.FieldInfo BindToField(System.Reflection.BindingFlags bindingAttr, System.Reflection.FieldInfo[] match, object value, System.Globalization.CultureInfo culture)
+        public override FieldInfo BindToField(BindingFlags bindingAttr, FieldInfo[] match, object value, CultureInfo culture)
         {
             return null;
         }
 
-        public System.Reflection.MethodBase BindToMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, ref object[] args, System.Reflection.ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] names, ref object state)
+        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, out object state)
         {
+            state = null;
             return null;
         }
 
-        public override object ChangeType(object value, System.Type type, System.Globalization.CultureInfo culture)
+        public override object ChangeType(object value, Type type, CultureInfo culture)
         {
             return null;
         }
@@ -65,7 +66,7 @@ namespace Flee.InternalTypes
         {
         }
 
-        public override System.Reflection.PropertyInfo SelectProperty(System.Reflection.BindingFlags bindingAttr, System.Reflection.PropertyInfo[] match, System.Type returnType, System.Type[] indexes, System.Reflection.ParameterModifier[] modifiers)
+        public override PropertyInfo SelectProperty(BindingFlags bindingAttr, PropertyInfo[] match, System.Type returnType, System.Type[] indexes, ParameterModifier[] modifiers)
         {
             return null;
         }
@@ -75,27 +76,20 @@ namespace Flee.InternalTypes
     {
         private readonly Type _myReturnType;
         private readonly Type _myArgType;
-        private CustomBinder _customBinderImplementation;
-
+        
         public ExplicitOperatorMethodBinder(Type returnType, Type argType)
         {
             _myReturnType = returnType;
             _myArgType = argType;
         }
 
-        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers,
-            CultureInfo culture, string[] names, out object state)
-        {
-            return _customBinderImplementation.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
-        }
-
-        public override System.Reflection.MethodBase SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[] modifiers)
+        public override MethodBase SelectMethod(BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
         {
             foreach (MethodInfo mi in match)
             {
                 ParameterInfo[] parameters = mi.GetParameters();
                 ParameterInfo firstParameter = parameters[0];
-                if (object.ReferenceEquals(firstParameter.ParameterType, _myArgType) & object.ReferenceEquals(mi.ReturnType, _myReturnType))
+                if (ReferenceEquals(firstParameter.ParameterType, _myArgType) & ReferenceEquals(mi.ReturnType, _myReturnType))
                 {
                     return mi;
                 }
@@ -109,7 +103,6 @@ namespace Flee.InternalTypes
 
         private readonly Type _myLeftType;
         private readonly Type _myRightType;
-        private CustomBinder _customBinderImplementation;
 
         public BinaryOperatorBinder(Type leftType, Type rightType)
         {
@@ -117,13 +110,7 @@ namespace Flee.InternalTypes
             _myRightType = rightType;
         }
 
-        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers,
-            CultureInfo culture, string[] names, out object state)
-        {
-            return _customBinderImplementation.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
-        }
-
-        public override System.Reflection.MethodBase SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[] modifiers)
+        public override MethodBase SelectMethod(BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
         {
             foreach (MethodInfo mi in match)
             {
@@ -260,7 +247,7 @@ namespace Flee.InternalTypes
 
             ParameterInfo[] fixedParameters = new ParameterInfo[fixedParameterCount];
 
-            System.Array.Copy(parameters, fixedParameters, fixedParameterCount);
+            Array.Copy(parameters, fixedParameters, fixedParameterCount);
 
             int fixedSum = ComputeSum(fixedParameters, MyFixedArgTypes);
 
@@ -273,7 +260,7 @@ namespace Flee.InternalTypes
                 paramArraySum += ImplicitConverter.GetImplicitConvertScore(argType, paramArrayElementType);
             }
 
-            float score = 0;
+            float score;
 
             if (argTypes.Length > 0)
             {
@@ -363,8 +350,8 @@ namespace Flee.InternalTypes
             ParameterInfo[] fixedParameters = new ParameterInfo[fixedParameterCount];
 
             // Get the argument types and parameters before the paramArray
-            System.Array.Copy(argTypes, fixedArgTypes, fixedParameterCount);
-            System.Array.Copy(parameters, fixedParameters, fixedParameterCount);
+            Array.Copy(argTypes, fixedArgTypes, fixedParameterCount);
+            Array.Copy(parameters, fixedParameters, fixedParameterCount);
 
             // If the fixed arguments don't match, we are not a match
             if (AreValidArgumentsForParameters(fixedArgTypes, fixedParameters) == false)
@@ -377,7 +364,7 @@ namespace Flee.InternalTypes
 
             // Get the types of the arguments passed to the paramArray
             Type[] paramArrayArgTypes = new Type[argTypes.Length - fixedParameterCount];
-            System.Array.Copy(argTypes, fixedParameterCount, paramArrayArgTypes, 0, paramArrayArgTypes.Length);
+            Array.Copy(argTypes, fixedParameterCount, paramArrayArgTypes, 0, paramArrayArgTypes.Length);
 
             // Check each argument
             foreach (Type argType in paramArrayArgTypes)
@@ -466,15 +453,15 @@ namespace Flee.InternalTypes
 
         public ShortCircuitInfo()
         {
-            this.Operands = new Stack();
-            this.Operators = new Stack();
-            this.Labels = new Dictionary<object, Label>();
+            Operands = new Stack();
+            Operators = new Stack();
+            Labels = new Dictionary<object, Label>();
         }
 
         public void ClearTempState()
         {
-            this.Operands.Clear();
-            this.Operators.Clear();
+            Operands.Clear();
+            Operators.Clear();
         }
 
         public Label AddLabel(object key, Label lbl)

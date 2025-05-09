@@ -6,20 +6,21 @@ namespace Flee.ExpressionElements.Literals.Integral
 {
     internal class UInt64LiteralElement : IntegralLiteralElement
     {
-        private readonly UInt64 _myValue;
+        private readonly ulong _myValue;
+        
         public UInt64LiteralElement(string image, System.Globalization.NumberStyles ns)
         {
             try
             {
-                _myValue = UInt64.Parse(image, ns);
+                _myValue = ulong.Parse(image, ns);
             }
-            catch (OverflowException ex)
+            catch (OverflowException)
             {
-                base.OnParseOverflow(image);
+                OnParseOverflow(image);
             }
         }
 
-        public UInt64LiteralElement(UInt64 value)
+        public UInt64LiteralElement(ulong value)
         {
             _myValue = value;
         }
@@ -29,6 +30,6 @@ namespace Flee.ExpressionElements.Literals.Integral
             EmitLoad(Convert.ToInt64(_myValue), ilg);
         }
 
-        public override System.Type ResultType => typeof(UInt64);
+        public override Type ResultType => typeof(ulong);
     }
 }
