@@ -2,7 +2,9 @@
 
 namespace Flee.Parsing
 {
-    [Obsolete("Creates a new parse tree analyzer.")]
+    /// <summary>
+    /// Creates a new parse tree analyzer.
+    /// </summary>
     internal class Analyzer
     {
         public Analyzer()
@@ -11,7 +13,7 @@ namespace Flee.Parsing
 
         /// <summary>
         /// Resets this analyzer when the parser is reset for another
-        ///input stream.The default implementation of this method does
+        /// input stream.The default implementation of this method does
         /// nothing.
         /// </summary>
         public virtual void Reset()
