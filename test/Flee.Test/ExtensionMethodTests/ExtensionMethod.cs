@@ -1,14 +1,13 @@
 ﻿using NUnit.Framework;
 
-namespace Flee.ExtensionMethodTests
+namespace Flee.Test.ExtensionMethodTests
 {
-    using Flee.ExtensionMethodTests.ExtensionMethodTestData;
     using Flee.PublicTypes;
     using Flee.Test.Infrastructure;
 
     /// <summary>The extension method test.</summary>
     [TestFixture]
-    public class ExtensionMethodTest : ExpressionTests
+    public class ExtensionMethod : ExpressionTests
     {
         [Test]
         public void TestExtensionMethodCallOnOwner()

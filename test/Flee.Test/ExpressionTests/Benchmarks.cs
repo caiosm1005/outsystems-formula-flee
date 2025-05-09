@@ -574,10 +574,9 @@ AND NOT
     OR ( 492 In (VAR30))
 )";
         private const string SmallExpression = "(4 ^ 3.4 * 18 - VAR1) * (14 / 3) + VAR2";
-        private const string SmallBranching = "If(If(23 > 15 AND 3*7 = 21 OR (25/5 > 10 AND 6+8 = 14), If(2.1=2.1,(4 ^ 3.4 * 18 - VAR1),If(2.1=2.1,0,1)), (14 / 3) + VAR2) <> 0 or true, If(2.1 <> 2.1 AND 3.1=3.1 OF 6.2=6.7, 2.1, 3.1), If(2.1=2.1 AND 3.2=3.2 OR 3.1<>3.1 OR 2.1<>2.3,3, 4))";
 
         [Test(Description = "Compile complicated expressions")]
-        public void ProfileCompilationTime()
+        public void TestProfileCompilationTime()
         {
             int expectedTime = 2000;
             int iterations = 10;
@@ -657,7 +656,7 @@ AND NOT
             }
         }
 
-        private void PrintSpeedMessage(string title, int iterations, Stopwatch sw)
+        private static void PrintSpeedMessage(string title, int iterations, Stopwatch sw)
         {
             WriteMessage("{0}: {1:n0} iterations in {2:n2}ms = {3:n2} iterations/sec", title, iterations, sw.ElapsedMilliseconds, iterations*1000 / sw.ElapsedMilliseconds);
         }

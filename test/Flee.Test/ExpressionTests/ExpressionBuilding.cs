@@ -2,13 +2,13 @@
 using Flee.PublicTypes;
 using NUnit.Framework;
 
-namespace ExpressionBuildingTest
+namespace Flee.Test.ExpressionTests
 {
     [TestFixture]
-    public class ExpressionBuildingTest
+    public class ExpressionBuilding
     {
         [Test]
-        public void ExpressionsAsVariables()
+        public void TestExpressionsAsVariables()
         {
             ExpressionContext context = new();
             context.Imports.AddType(typeof(Math));
@@ -32,7 +32,7 @@ namespace ExpressionBuildingTest
 
 
         [Test]
-        public void Test_IfExpression_enUS()
+        public void TestIfExpression_enUS()
         {
             ExpressionContext context = new();
             context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
@@ -45,7 +45,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void Test_IfExpression_fiFI()
+        public void TestIfExpression_fiFI()
         {
             ExpressionContext context = new();
             context.Imports.AddType(typeof(Math));
@@ -59,7 +59,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void NullCheck()
+        public void TestNullCheck()
         {
             ExpressionContext context = new();
             context.Variables.Add("a", "stringObject");
@@ -69,7 +69,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void NullIsNullCheck()
+        public void TestNullIsNullCheck()
         {
             ExpressionContext context = new();
             context.Variables.Add("a", "stringObject");
@@ -79,7 +79,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void CompareLongs()
+        public void TestCompareLongs()
         {
             // bug #83 test.
             ExpressionContext context = new();
@@ -92,7 +92,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void ArgumentInt_to_DoubleConversion()
+        public void TestArgumentIntToDoubleConversion()
         {
             ExpressionContext context = new();
             context.Imports.AddType(typeof(Math));
@@ -103,7 +103,7 @@ namespace ExpressionBuildingTest
 
 
         [Test]
-        public void IN_OperatorTest()
+        public void TestInOperator()
         {
             ExpressionContext context = new();
             context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US"); // Set default culture
@@ -115,6 +115,20 @@ namespace ExpressionBuildingTest
             Assert.IsTrue(e1.Evaluate());
             e1 = context.CompileGeneric<bool>("\"a\" IN (\"a\",\"b\",\"c\",\"d\") and true and 5 in (2,4,6,7,8,9)");
             Assert.IsFalse(e1.Evaluate());
+        }
+
+        [Test]
+        public void TestDateTimeFormat()
+        {
+            ExpressionContext context = new();
+
+            context.ParserOptions.DateTimeFormats = new string[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" };
+
+            IDynamicExpression e1 = context.CompileDynamic("#2025-05-10#");
+            IDynamicExpression e2 = context.CompileDynamic("#2025-05-10 12:12:12#");
+
+            Assert.AreEqual(new DateTime(2025, 5, 10), e1.Evaluate());
+            Assert.AreEqual(new DateTime(2025, 5, 10, 12, 12, 12), e2.Evaluate());
         }
     }
 }
