@@ -40,7 +40,7 @@ namespace Flee.Parsing
 
         public override Node ExitExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
@@ -52,55 +52,55 @@ namespace Flee.Parsing
 
         public override Node ExitXorExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddBinaryOp(node, typeof(XorElement));
+            AddBinaryOp(node, typeof(XorElement));
             return node;
         }
 
         public override Node ExitOrExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddBinaryOp(node, typeof(AndOrElement));
+            AddBinaryOp(node, typeof(AndOrElement));
             return node;
         }
 
         public override Node ExitAndExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddBinaryOp(node, typeof(AndOrElement));
+            AddBinaryOp(node, typeof(AndOrElement));
             return node;
         }
 
         public override Node ExitNotExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddUnaryOp(node, typeof(NotElement));
+            AddUnaryOp(node, typeof(NotElement));
             return node;
         }
 
         public override Node ExitCompareExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddBinaryOp(node, typeof(CompareElement));
+            AddBinaryOp(node, typeof(CompareElement));
             return node;
         }
 
         public override Node ExitShiftExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddBinaryOp(node, typeof(ShiftElement));
+            AddBinaryOp(node, typeof(ShiftElement));
             return node;
         }
 
         public override Node ExitAdditiveExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddBinaryOp(node, typeof(ArithmeticElement));
+            AddBinaryOp(node, typeof(ArithmeticElement));
             return node;
         }
 
         public override Node ExitMultiplicativeExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddBinaryOp(node, typeof(ArithmeticElement));
+            AddBinaryOp(node, typeof(ArithmeticElement));
             return node;
         }
 
         public override Node ExitPowerExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddBinaryOp(node, typeof(ArithmeticElement));
+            AddBinaryOp(node, typeof(ArithmeticElement));
             return node;
         }
 
@@ -128,7 +128,7 @@ namespace Flee.Parsing
             else
             {
                 // No so just add a regular negate
-                FleeExpressionAnalyzer.AddUnaryOp(node, typeof(NegateElement));
+                AddUnaryOp(node, typeof(NegateElement));
             }
 
             return node;
@@ -139,7 +139,7 @@ namespace Flee.Parsing
             IList childValues = GetChildValues(node);
             object first = childValues[0];
 
-            if (childValues.Count == 1 && !(first is MemberElement))
+            if (childValues.Count == 1 && first is not MemberElement)
             {
                 node.AddValue(first);
             }
@@ -169,7 +169,7 @@ namespace Flee.Parsing
 
         public override Node ExitSpecialFunctionExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
@@ -187,7 +187,7 @@ namespace Flee.Parsing
 
             if (childValues.Count == 1)
             {
-                FleeExpressionAnalyzer.AddFirstChildValue(node);
+                AddFirstChildValue(node);
                 return node;
             }
 
@@ -212,7 +212,7 @@ namespace Flee.Parsing
 
         public override Node ExitInTargetExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
@@ -258,7 +258,7 @@ namespace Flee.Parsing
 
         public override Node ExitMemberFunctionExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
@@ -291,13 +291,13 @@ namespace Flee.Parsing
 
         public override Node ExitBasicExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
         public override Node ExitLiteralExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
@@ -366,7 +366,7 @@ namespace Flee.Parsing
 
         public override Node ExitBooleanLiteralExpression(Production node)
         {
-            FleeExpressionAnalyzer.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 

@@ -50,7 +50,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
         protected static void EmitLoad(bool value, FleeILGenerator ilg)
         {
-            if (value == true)
+            if (value)
             {
                 ilg.Emit(OpCodes.Ldc_I4_1);
             }
@@ -62,7 +62,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
         private static void EmitSuperShort(int value, FleeILGenerator ilg)
         {
-            OpCode ldcOpcode = default(OpCode);
+            OpCode ldcOpcode = default;
 
             switch (value)
             {

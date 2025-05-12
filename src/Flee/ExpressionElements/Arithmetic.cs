@@ -13,14 +13,17 @@ namespace Flee.ExpressionElements
     {
         private static MethodInfo _ourPowerMethodInfo;
         private static MethodInfo _ourStringConcatMethodInfo;
-        private static MethodInfo _ourObjectConcatMethodInfo;
         private BinaryArithmeticOperation _myOperation;
 
         public ArithmeticElement()
         {
             _ourPowerMethodInfo = typeof(Math).GetMethod("Pow", BindingFlags.Public | BindingFlags.Static);
             _ourStringConcatMethodInfo = typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }, null);
-            _ourObjectConcatMethodInfo = typeof(string).GetMethod("Concat", new Type[] { typeof(object), typeof(object) }, null);
+        }
+
+        public static string CustomConcat(object left, object right)
+        {
+            return string.Concat(left, right);
         }
 
         protected override void GetOperation(object operation)
@@ -51,7 +54,7 @@ namespace Flee.ExpressionElements
                     return binaryResultType;
                 }
             }
-            else if (IsEitherChildOfType(typeof(string)) == true & (_myOperation == BinaryArithmeticOperation.Add))
+            else if (IsEitherChildOfType(typeof(string)) & (_myOperation == BinaryArithmeticOperation.Add))
             {
                 // String concatenation
                 return typeof(string);
@@ -65,7 +68,7 @@ namespace Flee.ExpressionElements
 
         private Type GetPowerResultType(Type leftType, Type rightType, Type binaryResultType)
         {
-            if (IsOptimizablePower == true)
+            if (IsOptimizablePower)
             {
                 return leftType;
             }
@@ -113,7 +116,7 @@ namespace Flee.ExpressionElements
                 // Emit a call to an overloaded operator
                 EmitOverloadedOperatorCall(overloadedMethod, ilg, services);
             }
-            else if (IsEitherChildOfType(typeof(string)) == true)
+            else if (IsEitherChildOfType(typeof(string)))
             {
                 // One of our operands is a string so emit a concatenation
                 EmitStringConcat(ilg, services);
@@ -145,7 +148,7 @@ namespace Flee.ExpressionElements
 
             EmitChildWithConvert(MyLeftChild, ResultType, ilg, services);
 
-            if (IsOptimizablePower == false)
+            if (!IsOptimizablePower)
             {
                 EmitChildWithConvert(MyRightChild, ResultType, ilg, services);
             }
@@ -153,9 +156,9 @@ namespace Flee.ExpressionElements
             switch (op)
             {
                 case BinaryArithmeticOperation.Add:
-                    if (emitOverflow == true)
+                    if (emitOverflow)
                     {
-                        if (unsigned == true)
+                        if (unsigned)
                         {
                             ilg.Emit(OpCodes.Add_Ovf_Un);
                         }
@@ -170,9 +173,9 @@ namespace Flee.ExpressionElements
                     }
                     break;
                 case BinaryArithmeticOperation.Subtract:
-                    if (emitOverflow == true)
+                    if (emitOverflow)
                     {
-                        if (unsigned == true)
+                        if (unsigned)
                         {
                             ilg.Emit(OpCodes.Sub_Ovf_Un);
                         }
@@ -190,7 +193,7 @@ namespace Flee.ExpressionElements
                     EmitMultiply(ilg, emitOverflow, unsigned);
                     break;
                 case BinaryArithmeticOperation.Divide:
-                    if (unsigned == true)
+                    if (unsigned)
                     {
                         ilg.Emit(OpCodes.Div_Un);
                     }
@@ -200,7 +203,7 @@ namespace Flee.ExpressionElements
                     }
                     break;
                 case BinaryArithmeticOperation.Mod:
-                    if (unsigned == true)
+                    if (unsigned)
                     {
                         ilg.Emit(OpCodes.Rem_Un);
                     }
@@ -220,7 +223,7 @@ namespace Flee.ExpressionElements
 
         private void EmitPower(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
         {
-            if (IsOptimizablePower == true)
+            if (IsOptimizablePower)
             {
                 EmitOptimizedPower(ilg, emitOverflow, unsigned);
             }
@@ -261,9 +264,9 @@ namespace Flee.ExpressionElements
 
         private static void EmitMultiply(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
         {
-            if (emitOverflow == true)
+            if (emitOverflow)
             {
-                if (unsigned == true)
+                if (unsigned)
                 {
                     ilg.Emit(OpCodes.Mul_Ovf_Un);
                 }
@@ -285,34 +288,21 @@ namespace Flee.ExpressionElements
         /// <param name="services"></param>
         private void EmitStringConcat(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type argType;
-            MethodInfo concatMethodInfo;
-            // Pick the most specific concat method
-            if (AreBothChildrenOfType(typeof(string)) == true)
-            {
-                concatMethodInfo = _ourStringConcatMethodInfo;
-                argType = typeof(string);
-            }
-            else
-            {
-                Debug.Assert(IsEitherChildOfType(typeof(string)), "one child must be a string");
-                concatMethodInfo = _ourObjectConcatMethodInfo;
-                argType = typeof(object);
-            }
+            Debug.Assert(IsEitherChildOfType(typeof(string)), "one child must be a string");
 
             // Emit the operands and call the function
             MyLeftChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, argType, ilg);
+            ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, typeof(string), ilg, services);
             MyRightChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(MyRightChild.ResultType, argType, ilg);
-            ilg.Emit(OpCodes.Call, concatMethodInfo);
+            ImplicitConverter.EmitImplicitConvert(MyRightChild.ResultType, typeof(string), ilg, services);
+            ilg.Emit(OpCodes.Call, _ourStringConcatMethodInfo);
         }
 
         private bool IsOptimizablePower
         {
             get
             {
-                if (_myOperation != BinaryArithmeticOperation.Power || !(MyRightChild is Int32LiteralElement))
+                if (_myOperation != BinaryArithmeticOperation.Power || MyRightChild is not Int32LiteralElement)
                 {
                     return false;
                 }

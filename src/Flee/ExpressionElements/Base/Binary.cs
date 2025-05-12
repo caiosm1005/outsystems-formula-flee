@@ -120,7 +120,7 @@ namespace Flee.ExpressionElements.Base
         protected static void EmitChildWithConvert(ExpressionElement child, Type resultType, FleeILGenerator ilg, IServiceProvider services)
         {
             child.Emit(ilg, services);
-            bool converted = ImplicitConverter.EmitImplicitConvert(child.ResultType, resultType, ilg);
+            bool converted = ImplicitConverter.EmitImplicitConvert(child.ResultType, resultType, ilg, services);
             Debug.Assert(converted, "convert failed");
         }
 

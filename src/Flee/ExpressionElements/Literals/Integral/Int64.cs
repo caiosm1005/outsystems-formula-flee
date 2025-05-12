@@ -24,13 +24,13 @@ namespace Flee.ExpressionElements.Literals.Integral
 
         public static Int64LiteralElement TryCreate(string image, bool isHex, bool negated)
         {
-            if (negated == true & image == MinValue)
+            if (negated & image == MinValue)
             {
                 return new Int64LiteralElement();
             }
-            else if (isHex == true)
+            else if (isHex)
             {
-                if (long.TryParse(image, NumberStyles.AllowHexSpecifier, null, out long value) == false)
+                if (!long.TryParse(image, NumberStyles.AllowHexSpecifier, null, out long value))
                 {
                     return null;
                 }
@@ -46,7 +46,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             else
             {
                 long value;
-                if (long.TryParse(image, out value) == true)
+                if (long.TryParse(image, out value))
                 {
                     return new Int64LiteralElement(value);
                 }
@@ -64,7 +64,7 @@ namespace Flee.ExpressionElements.Literals.Integral
 
         public void Negate()
         {
-            if (_myIsMinValue == true)
+            if (_myIsMinValue)
             {
                 _myValue = long.MinValue;
             }

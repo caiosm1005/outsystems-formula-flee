@@ -34,7 +34,7 @@ namespace Flee.CalcEngine.PublicTypes
             GenericExpressionResultPair<int> pair = new();
             pair.SetName(headName);
 
-            if (_myNameNodeMap.ContainsKey(headName) == false)
+            if (!_myNameNodeMap.ContainsKey(headName))
             {
                 _myDependencies.AddTail(pair);
                 _myNameNodeMap.Add(headName, pair);
@@ -171,7 +171,7 @@ namespace Flee.CalcEngine.PublicTypes
 
             foreach (MethodInfo method in methods)
             {
-                if (method.IsGenericMethod == true)
+                if (method.IsGenericMethod)
                 {
                     mi = method;
                     break; // TODO: might not be correct. Was : Exit For

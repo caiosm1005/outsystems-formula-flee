@@ -25,7 +25,7 @@ namespace Flee.InternalTypes
         public int GetTempLocalIndex(Type localType)
         {
             LocalBuilder local;
-            if (_localBuilderTemp.TryGetValue(localType, out local) == false)
+            if (!_localBuilderTemp.TryGetValue(localType, out local))
             {
                 local = _myIlGenerator.DeclareLocal(localType);
                 _localBuilderTemp.Add(localType, local);
@@ -66,79 +66,79 @@ namespace Flee.InternalTypes
 
         public void Emit(OpCode op, Type arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, ConstructorInfo arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, MethodInfo arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, FieldInfo arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, byte arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, sbyte arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, short arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, int arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, long arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, float arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, double arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, string arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, Label arg)
         {
-            RecordOpcode(op);
+            RecordOpcode(op, arg);
             _myIlGenerator.Emit(op, arg);
         }
 
@@ -149,7 +149,7 @@ namespace Flee.InternalTypes
                 _bm.AddBranch(this, arg);
                 Emit(OpCodes.Br_S, arg);
             }
-            else if (_bm.IsLongBranch(this) == false)
+            else if (!_bm.IsLongBranch(this))
             {
                 Emit(OpCodes.Br_S, arg);
             }
@@ -166,7 +166,7 @@ namespace Flee.InternalTypes
                 _bm.AddBranch(this, arg);
                 Emit(OpCodes.Brfalse_S, arg);
             }
-            else if (_bm.IsLongBranch(this) == false)
+            else if (!_bm.IsLongBranch(this))
             {
                 Emit(OpCodes.Brfalse_S, arg);
             }
@@ -183,7 +183,7 @@ namespace Flee.InternalTypes
                 _bm.AddBranch(this, arg);
                 Emit(OpCodes.Brtrue_S, arg);
             }
-            else if (_bm.IsLongBranch(this) == false)
+            else if (!_bm.IsLongBranch(this))
             {
                 Emit(OpCodes.Brtrue_S, arg);
             }
@@ -213,10 +213,19 @@ namespace Flee.InternalTypes
             return _myIlGenerator.DeclareLocal(localType);
         }
 
-        private void RecordOpcode(OpCode op)
+        private void RecordOpcode(OpCode op, object arg = null)
         {
-            //Trace.WriteLine(String.Format("{0:x}: {1}", MyLength, op.Name))
             int operandLength = GetOpcodeOperandSize(op.OperandType);
+            #if DEBUG
+            if (arg != null)
+            {
+                Trace.WriteLine(string.Format("{0:x}: {1} [arg: {2} - '{3}']", operandLength, op.Name, arg.GetType().Name, arg));
+            }
+            else
+            {
+                Trace.WriteLine(string.Format("{0:x}: {1}", operandLength, op.Name));
+            }
+            #endif
             _myLength += op.Size + operandLength;
         }
 

@@ -27,7 +27,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         private void AddCompiledExpression(string expressionName, IExpression expression)
         {
-            if (_myExpressions.ContainsKey(expressionName) == true)
+            if (_myExpressions.ContainsKey(expressionName))
             {
                 throw new InvalidOperationException($"The calc engine already contains an expression named '{expressionName}'");
             }
@@ -64,7 +64,7 @@ namespace Flee.CalcEngine.PublicTypes
         private void LinkIdentifier(string identifier, string expressionName, ExpressionContext context)
         {
             IExpression child;
-            if (_myExpressions.TryGetValue(identifier, out child) == false)
+            if (!_myExpressions.TryGetValue(identifier, out child))
             {
                 string msg = $"Expression '{expressionName}' references unknown name '{identifier}'";
                 throw new InvalidOperationException(msg);

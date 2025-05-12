@@ -61,7 +61,7 @@ namespace Flee.PublicTypes
         {
             Utility.AssertNotNull(variableType, nameof(variableType));
 
-            if (_myVariables.ContainsKey(name) == true)
+            if (_myVariables.ContainsKey(name))
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.VariableWithNameAlreadyDefined, name);
                 throw new ArgumentException(msg);
@@ -76,7 +76,7 @@ namespace Flee.PublicTypes
             IVariable value;
             bool success = _myVariables.TryGetValue(name, out value);
 
-            if (success == true)
+            if (success)
             {
                 return value.VariableType;
             }
@@ -92,7 +92,7 @@ namespace Flee.PublicTypes
             IVariable value;
             bool success = _myVariables.TryGetValue(name, out value);
 
-            if (success == false & throwOnNotFound == true)
+            if (!success & throwOnNotFound)
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.UndefinedVariable, name);
                 throw new ArgumentException(msg);
@@ -117,7 +117,7 @@ namespace Flee.PublicTypes
 
                 // Create a variable that wraps the expression
 
-                if (options.IsGeneric == false)
+                if (!options.IsGeneric)
                 {
                     variableType = typeof(DynamicExpressionVariable<>);
                 }
@@ -151,7 +151,7 @@ namespace Flee.PublicTypes
         {
             if (value == null)
             {
-                return default(T);
+                return default;
             }
             else
             {
@@ -169,7 +169,7 @@ namespace Flee.PublicTypes
 
             Type valueType = value.GetType();
 
-            if (requiredType.IsAssignableFrom(valueType) == false)
+            if (!requiredType.IsAssignableFrom(valueType))
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.VariableValueNotAssignableToType, valueType.Name, requiredType.Name);
                 throw new ArgumentException(msg);
@@ -369,7 +369,7 @@ namespace Flee.PublicTypes
             set
             {
                 IVariable v;
-                if (_myVariables.TryGetValue(name, out v) == true)
+                if (_myVariables.TryGetValue(name, out v))
                 {
                     v.ValueAsObject = value;
                 }

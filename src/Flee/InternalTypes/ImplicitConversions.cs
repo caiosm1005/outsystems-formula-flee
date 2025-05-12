@@ -19,18 +19,18 @@ namespace Flee.InternalTypes
         {
             // Create a table with all the primitive types
             Type[] types = {
-            typeof(char),
-            typeof(byte),
-            typeof(sbyte),
-            typeof(short),
-            typeof(ushort),
-            typeof(int),
-            typeof(uint),
-            typeof(long),
-            typeof(ulong),
-            typeof(float),
-            typeof(double)
-        };
+                typeof(char),
+                typeof(byte),
+                typeof(sbyte),
+                typeof(short),
+                typeof(ushort),
+                typeof(int),
+                typeof(uint),
+                typeof(long),
+                typeof(ulong),
+                typeof(float),
+                typeof(double)
+            };
             OurBinaryTypes = types;
             Type[,] table = new Type[types.Length, types.Length];
             OurBinaryResultTable = table;
@@ -105,10 +105,6 @@ namespace Flee.InternalTypes
             AddEntry(typeof(char), typeof(double), typeof(double));
         }
 
-        private ImplicitConverter()
-        {
-        }
-
         private static void FillIdentities(Type[] typeList, Type[,] table)
         {
             for (int i = 0; i <= typeList.Length - 1; i++)
@@ -131,23 +127,15 @@ namespace Flee.InternalTypes
             return Array.IndexOf(OurBinaryTypes, t);
         }
 
-        public static bool EmitImplicitConvert(Type sourceType, Type destType, FleeILGenerator ilg)
+        public static bool EmitImplicitConvert(Type sourceType, Type destType, FleeILGenerator ilg, IServiceProvider services)
         {
-            if (ReferenceEquals(sourceType, destType))
-            {
-                return true;
-            }
-            else if (EmitOverloadedImplicitConvert(sourceType, destType, ilg) == true)
-            {
-                return true;
-            }
-            else if (ImplicitConvertToReferenceType(sourceType, destType, ilg) == true)
+            if (ReferenceEquals(sourceType, destType) || EmitOverloadedImplicitConvert(sourceType, destType, ilg) || ImplicitConvertToReferenceType(sourceType, destType, ilg))
             {
                 return true;
             }
             else
             {
-                return ImplicitConvertToValueType(sourceType, destType, ilg);
+                return ImplicitConvertToValueType(sourceType, destType, ilg, services);
             }
         }
 
@@ -162,17 +150,14 @@ namespace Flee.InternalTypes
                 return false;
             }
 
-            if (ilg != null)
-            {
-                ilg.Emit(OpCodes.Call, mi);
-            }
+            ilg?.Emit(OpCodes.Call, mi);
 
             return true;
         }
 
         private static bool ImplicitConvertToReferenceType(Type sourceType, Type destType, FleeILGenerator ilg)
         {
-            if (destType.IsValueType == true)
+            if (destType.IsValueType)
             {
                 return false;
             }
@@ -183,42 +168,50 @@ namespace Flee.InternalTypes
                 return true;
             }
 
-            if (destType.IsAssignableFrom(sourceType) == false)
+            if (!destType.IsAssignableFrom(sourceType))
             {
                 return false;
             }
 
-            if (sourceType.IsValueType == true)
+            if (sourceType.IsValueType)
             {
-                if (ilg != null)
-                {
-                    ilg.Emit(OpCodes.Box, sourceType);
-                }
+                ilg?.Emit(OpCodes.Box, sourceType);
             }
 
             return true;
         }
 
-        private static bool ImplicitConvertToValueType(Type sourceType, Type destType, FleeILGenerator ilg)
+        private static bool ImplicitConvertToValueType(Type sourceType, Type destType, FleeILGenerator ilg, IServiceProvider services)
         {
             // We only handle value types
-            if (sourceType.IsValueType == false & destType.IsValueType == false)
+            if (!sourceType.IsValueType & !destType.IsValueType)
             {
                 return false;
             }
 
             // No implicit conversion to enum.  Have to do this check here since calling GetTypeCode on an enum will return the typecode
             // of the underlying type which screws us up.
-            if (sourceType.IsEnum == true | destType.IsEnum == true)
+            if (sourceType.IsEnum | destType.IsEnum)
             {
                 return false;
             }
 
+            // Handle string converions
+            if (destType == typeof(string))
+            {
+                if (ilg != null)
+                {
+                    Utility.EmitToString(sourceType, ilg, services);
+                }
+                return true;
+            }
+            
+            // Fallback to handling numeric conversions
             return EmitImplicitNumericConvert(sourceType, destType, ilg);
         }
 
         /// <summary>
-        ///Emit an implicit conversion (if the ilg is not null) and returns a value that determines whether the implicit conversion
+        /// Emit an implicit conversion (if the ilg is not null) and returns a value that determines whether the implicit conversion
         /// succeeded
         /// </summary>
         /// <param name="sourceType"></param>
@@ -230,27 +223,18 @@ namespace Flee.InternalTypes
             TypeCode sourceTypeCode = Type.GetTypeCode(sourceType);
             TypeCode destTypeCode = Type.GetTypeCode(destType);
 
-            switch (destTypeCode)
+            return destTypeCode switch
             {
-                case TypeCode.Int16:
-                    return ImplicitConvertToInt16(sourceTypeCode, ilg);
-                case TypeCode.UInt16:
-                    return ImplicitConvertToUInt16(sourceTypeCode, ilg);
-                case TypeCode.Int32:
-                    return ImplicitConvertToInt32(sourceTypeCode, ilg);
-                case TypeCode.UInt32:
-                    return ImplicitConvertToUInt32(sourceTypeCode, ilg);
-                case TypeCode.Double:
-                    return ImplicitConvertToDouble(sourceTypeCode, ilg);
-                case TypeCode.Single:
-                    return ImplicitConvertToSingle(sourceTypeCode, ilg);
-                case TypeCode.Int64:
-                    return ImplicitConvertToInt64(sourceTypeCode, ilg);
-                case TypeCode.UInt64:
-                    return ImplicitConvertToUInt64(sourceTypeCode, ilg);
-                default:
-                    return false;
-            }
+                TypeCode.Int16 => ImplicitConvertToInt16(sourceTypeCode, ilg),
+                TypeCode.UInt16 => ImplicitConvertToUInt16(sourceTypeCode, ilg),
+                TypeCode.Int32 => ImplicitConvertToInt32(sourceTypeCode, ilg),
+                TypeCode.UInt32 => ImplicitConvertToUInt32(sourceTypeCode, ilg),
+                TypeCode.Double => ImplicitConvertToDouble(sourceTypeCode, ilg),
+                TypeCode.Single => ImplicitConvertToSingle(sourceTypeCode, ilg),
+                TypeCode.Int64 => ImplicitConvertToInt64(sourceTypeCode, ilg),
+                TypeCode.UInt64 => ImplicitConvertToUInt64(sourceTypeCode, ilg),
+                _ => false,
+            };
         }
 
 
@@ -412,10 +396,7 @@ namespace Flee.InternalTypes
 
         private static void EmitConvert(FleeILGenerator ilg, OpCode convertOpcode)
         {
-            if (ilg != null)
-            {
-                ilg.Emit(convertOpcode);
-            }
+            ilg?.Emit(convertOpcode);
         }
 
         /// <summary>
@@ -457,9 +438,9 @@ namespace Flee.InternalTypes
                 return 1;
             }
 
-            if (sourceType.IsValueType == true)
+            if (sourceType.IsValueType)
             {
-                if (destType.IsValueType == true)
+                if (destType.IsValueType)
                 {
                     // Value type -> value type
                     int sourceScore = GetValueTypeImplicitConvertScore(sourceType);
@@ -475,7 +456,7 @@ namespace Flee.InternalTypes
             }
             else
             {
-                if (destType.IsValueType == true)
+                if (destType.IsValueType)
                 {
                     // Reference type -> value type
                     // Reference types can never be implicitly converted to value types
@@ -532,7 +513,7 @@ namespace Flee.InternalTypes
 
         private static int GetReferenceTypeImplicitConvertScore(Type sourceType, Type destType)
         {
-            if (destType.IsInterface == true)
+            if (destType.IsInterface)
             {
                 return 100;
             }

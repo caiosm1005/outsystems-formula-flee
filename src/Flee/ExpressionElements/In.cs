@@ -67,7 +67,7 @@ namespace Flee.ExpressionElements
             MethodInfo mi = GetCollectionContainsMethod();
             ParameterInfo p1 = mi.GetParameters()[0];
 
-            if (ImplicitConverter.EmitImplicitConvert(MyOperand.ResultType, p1.ParameterType, null) == false)
+            if (!ImplicitConverter.EmitImplicitConvert(MyOperand.ResultType, p1.ParameterType, null, null))
             {
                 ThrowCompileException(CompileErrorResourceKeys.OperandNotConvertibleToCollectionType, CompileExceptionReason.TypeMismatch, MyOperand.ResultType.Name, p1.ParameterType.Name);
             }
@@ -82,7 +82,7 @@ namespace Flee.ExpressionElements
 
             foreach (Type interfaceType in interfaces)
             {
-                if (interfaceType.IsGenericType == false)
+                if (!interfaceType.IsGenericType)
                 {
                     continue;
                 }
@@ -96,11 +96,11 @@ namespace Flee.ExpressionElements
             }
 
             // Try to see if it is a regular IList or IDictionary
-            if (typeof(IList<>).IsAssignableFrom(collType) == true)
+            if (typeof(IList<>).IsAssignableFrom(collType))
             {
                 return typeof(IList<>);
             }
-            else if (typeof(IDictionary<,>).IsAssignableFrom(collType) == true)
+            else if (typeof(IDictionary<,>).IsAssignableFrom(collType))
             {
                 return typeof(IDictionary<,>);
             }
@@ -133,7 +133,7 @@ namespace Flee.ExpressionElements
             // Load the argument
             MyOperand.Emit(ilg, services);
             // Do an implicit convert if necessary
-            ImplicitConverter.EmitImplicitConvert(MyOperand.ResultType, p1.ParameterType, ilg);
+            ImplicitConverter.EmitImplicitConvert(MyOperand.ResultType, p1.ParameterType, ilg, services);
             // Call the contains method
             ilg.Emit(OpCodes.Callvirt, mi);
         }
@@ -142,7 +142,7 @@ namespace Flee.ExpressionElements
         {
             string methodName = "Contains";
 
-            if (MyTargetCollectionType.IsGenericType == true && ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
+            if (MyTargetCollectionType.IsGenericType && ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
             {
                 methodName = "ContainsKey";
             }

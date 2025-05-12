@@ -263,7 +263,7 @@ namespace Flee.InternalTypes
 
         public void Mark(Label target, int position)
         {
-            if (_myLabel.Equals(target) == true)
+            if (_myLabel.Equals(target))
             {
                 _myEnd.SetPosition(position);
             }

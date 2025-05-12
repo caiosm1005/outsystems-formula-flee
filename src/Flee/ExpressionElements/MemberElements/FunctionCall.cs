@@ -117,7 +117,7 @@ namespace Flee.ExpressionElements.MemberElements
 
             foreach (CustomMethodInfo cmi in arr)
             {
-                if (cmi.IsMatch(argTypes, MyPrevious, MyContext) == true)
+                if (cmi.IsMatch(argTypes, MyPrevious, MyContext))
                 {
                     customInfos.Add(cmi);
                 }
@@ -174,7 +174,7 @@ namespace Flee.ExpressionElements.MemberElements
 
             foreach (CustomMethodInfo cmi in infos)
             {
-                if (cmi.IsAccessible(this) == true)
+                if (cmi.IsAccessible(this))
                 {
                     accessible.Add(cmi);
                 }
@@ -195,7 +195,7 @@ namespace Flee.ExpressionElements.MemberElements
             // Find all matches with the same score as the best match
             foreach (CustomMethodInfo cmi in infos)
             {
-                if (((IEquatable<CustomMethodInfo>)cmi).Equals(first) == true)
+                if (((IEquatable<CustomMethodInfo>)cmi).Equals(first))
                 {
                     sameScores.Add(cmi);
                 }
@@ -240,7 +240,7 @@ namespace Flee.ExpressionElements.MemberElements
             bool isOwnerMember = MyOptions.IsOwnerType(Method.ReflectedType);
 
             // Load the owner if required
-            if (MyPrevious == null && isOwnerMember == true && IsStatic == false)
+            if (MyPrevious == null && isOwnerMember && !IsStatic)
             {
                 EmitLoadOwner(ilg);
             }
@@ -314,7 +314,7 @@ namespace Flee.ExpressionElements.MemberElements
                 // Emit the element (with any required conversions)
                 ExpressionElement element = elements[i];
                 element.Emit(ilg, services);
-                ImplicitConverter.EmitImplicitConvert(element.ResultType, arrayElementType, ilg);
+                ImplicitConverter.EmitImplicitConvert(element.ResultType, arrayElementType, ilg, services);
                 // Store it into the array
                 Utility.EmitArrayStore(ilg, arrayElementType);
             }
@@ -329,9 +329,9 @@ namespace Flee.ExpressionElements.MemberElements
             ExpressionElement[] elements = _myArguments.ToArray();
 
             // Emit either a regular or paramArray call
-            if (_myTargetMethodInfo.IsParamArray == false)
+            if (!_myTargetMethodInfo.IsParamArray)
             {
-                if (_myTargetMethodInfo.IsExtensionMethod == false)
+                if (!_myTargetMethodInfo.IsExtensionMethod)
                     EmitRegularFunctionInternal(parameters, elements, ilg, services);
                 else
                     EmitExtensionFunctionInternal(parameters, elements, ilg, services);
@@ -354,7 +354,7 @@ namespace Flee.ExpressionElements.MemberElements
                 ExpressionElement element = elements[i - 1];
                 ParameterInfo pi = parameters[i];
                 element.Emit(ilg, services);
-                bool success = ImplicitConverter.EmitImplicitConvert(element.ResultType, pi.ParameterType, ilg);
+                bool success = ImplicitConverter.EmitImplicitConvert(element.ResultType, pi.ParameterType, ilg, services);
                 Debug.Assert(success, "conversion failed");
             }
         }
@@ -376,7 +376,7 @@ namespace Flee.ExpressionElements.MemberElements
                 ExpressionElement element = elements[i];
                 ParameterInfo pi = parameters[i];
                 element.Emit(ilg, services);
-                bool success = ImplicitConverter.EmitImplicitConvert(element.ResultType, pi.ParameterType, ilg);
+                bool success = ImplicitConverter.EmitImplicitConvert(element.ResultType, pi.ParameterType, ilg, services);
                 Debug.Assert(success, "conversion failed");
             }
         }

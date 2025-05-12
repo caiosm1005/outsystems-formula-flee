@@ -388,8 +388,10 @@ namespace Flee.Parsing
             public Sequence(bool repeat, int token)
             {
                 _repeat = false;
-                _tokens = new ArrayList(1);
-                _tokens.Add(token);
+                _tokens = new ArrayList(1)
+                {
+                    token
+                };
             }
 
             public Sequence(int length, Sequence seq)

@@ -45,12 +45,12 @@ namespace Flee.CalcEngine.InternalTypes
 
         private void ExitIdentifier(Token node)
         {
-            if (_myInFieldPropertyExpression == false)
+            if (!_myInFieldPropertyExpression)
             {
                 return;
             }
 
-            if (_myIdentifiers.ContainsKey(_myMemberExpressionCount) == false)
+            if (!_myIdentifiers.ContainsKey(_myMemberExpressionCount))
             {
                 _myIdentifiers.Add(_myMemberExpressionCount, node.Image);
             }
@@ -85,11 +85,11 @@ namespace Flee.CalcEngine.InternalTypes
             foreach (string identifier in _myIdentifiers.Values)
             {
                 // Skip names registered as namespaces
-                if (ei.HasNamespace(identifier) == true)
+                if (ei.HasNamespace(identifier))
                 {
                     continue;
                 }
-                else if (context.Variables.ContainsKey(identifier) == true)
+                else if (context.Variables.ContainsKey(identifier))
                 {
                     // Identifier is a variable
                     continue;

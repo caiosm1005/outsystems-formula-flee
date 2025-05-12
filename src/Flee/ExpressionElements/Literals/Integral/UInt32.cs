@@ -13,7 +13,7 @@ namespace Flee.ExpressionElements.Literals.Integral
 
         public static UInt32LiteralElement TryCreate(string image, System.Globalization.NumberStyles ns)
         {
-            if (uint.TryParse(image, ns, null, out uint value) == true)
+            if (uint.TryParse(image, ns, null, out uint value))
             {
                 return new UInt32LiteralElement(value);
             }

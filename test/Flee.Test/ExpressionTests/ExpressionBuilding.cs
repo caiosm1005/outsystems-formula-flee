@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Flee.PublicTypes;
 using NUnit.Framework;
 
@@ -35,7 +36,7 @@ namespace Flee.Test.ExpressionTests
         public void TestIfExpression_enUS()
         {
             ExpressionContext context = new();
-            context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
+            context.Options.ParseCulture = new CultureInfo("en-US");
 
             int resultWhenTrue = 3;
 
@@ -49,7 +50,7 @@ namespace Flee.Test.ExpressionTests
         {
             ExpressionContext context = new();
             context.Imports.AddType(typeof(Math));
-            context.Options.ParseCulture = new System.Globalization.CultureInfo("fi-FI");
+            context.Options.ParseCulture = new CultureInfo("fi-FI");
 
             int resultWhenFalse = 4;
 
@@ -106,8 +107,8 @@ namespace Flee.Test.ExpressionTests
         public void TestInOperator()
         {
             ExpressionContext context = new();
-            context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US"); // Set default culture
-            var e1 = context.CompileGeneric<bool>("NOT 15 IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22,23)");
+            context.Options.ParseCulture = new CultureInfo("en-US"); // Set default culture
+            IGenericExpression<bool> e1 = context.CompileGeneric<bool>("NOT 15 IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22,23)");
 
             Assert.IsTrue(e1.Evaluate());
 
@@ -121,14 +122,29 @@ namespace Flee.Test.ExpressionTests
         public void TestDateTimeFormat()
         {
             ExpressionContext context = new();
-
             context.ParserOptions.DateTimeFormats = new string[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" };
 
-            IDynamicExpression e1 = context.CompileDynamic("#2025-05-10#");
-            IDynamicExpression e2 = context.CompileDynamic("#2025-05-10 12:12:12#");
+            IGenericExpression<DateTime> e1 = context.CompileGeneric<DateTime>("#2025-05-10#");
+            IGenericExpression<DateTime> e2 = context.CompileGeneric<DateTime>("#2025-05-10 12:12:12#");
 
             Assert.AreEqual(new DateTime(2025, 5, 10), e1.Evaluate());
             Assert.AreEqual(new DateTime(2025, 5, 10, 12, 12, 12), e2.Evaluate());
+        }
+
+        [Test]
+        public void TestImplicitStringConversions()
+        {
+            ExpressionContext context = new();
+            context.Options.ParseCulture = new CultureInfo("en-US"); // Set default culture
+            context.ParserOptions.DateTimeFormats = new string[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" };
+
+            IGenericExpression<string> e1 = context.CompileGeneric<string>("#2025-05-10#");
+            IGenericExpression<string> e2 = context.CompileGeneric<string>("#2025-05-10 00:00:00# + \"foobar\"");
+            IGenericExpression<string> e3 = context.CompileGeneric<string>("#2025-05-10 12:12:12# + \"foobar\"");
+
+            Assert.AreEqual("2025-05-10", e1.Evaluate());
+            Assert.AreEqual("2025-05-10foobar", e2.Evaluate());
+            Assert.AreEqual("2025-05-10 12:12:12foobar", e3.Evaluate());
         }
     }
 }

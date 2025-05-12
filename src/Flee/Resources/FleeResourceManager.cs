@@ -18,7 +18,7 @@ namespace Flee.Resources
             lock (this)
             {
                 ResourceManager rm = null;
-                if (MyResourceManagers.TryGetValue(resourceFile, out rm) == false)
+                if (!MyResourceManagers.TryGetValue(resourceFile, out rm))
                 {
                     Type t = typeof(FleeResourceManager);
                     rm = new ResourceManager(string.Format("{0}.{1}", t.Namespace, resourceFile), t.Assembly);

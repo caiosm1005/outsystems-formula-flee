@@ -20,13 +20,13 @@ namespace Flee.ExpressionElements
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             _myChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, ilg);
+            ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, ilg, services);
 
             ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
 
-            if (options.IsGeneric == false)
+            if (!options.IsGeneric)
             {
-                ImplicitConverter.EmitImplicitConvert(_myResultType, typeof(object), ilg);
+                ImplicitConverter.EmitImplicitConvert(_myResultType, typeof(object), ilg, services);
             }
 
             ilg.Emit(OpCodes.Ret);
@@ -34,7 +34,7 @@ namespace Flee.ExpressionElements
 
         private void Validate()
         {
-            if (ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, null) == false)
+            if (!ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, null, null))
             {
                 ThrowCompileException(CompileErrorResourceKeys.CannotConvertTypeToExpressionResult, CompileExceptionReason.TypeMismatch, _myChild.ResultType.Name, _myResultType.Name);
             }

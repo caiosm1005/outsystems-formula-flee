@@ -24,11 +24,11 @@ namespace Flee.ExpressionElements
             }
 
             // The result type is the type that is common to the true/false operands
-            if (ImplicitConverter.EmitImplicitConvert(_myWhenFalse.ResultType, _myWhenTrue.ResultType, null) == true)
+            if (ImplicitConverter.EmitImplicitConvert(_myWhenFalse.ResultType, _myWhenTrue.ResultType, null, null))
             {
                 _myResultType = _myWhenTrue.ResultType;
             }
-            else if (ImplicitConverter.EmitImplicitConvert(_myWhenTrue.ResultType, _myWhenFalse.ResultType, null) == true)
+            else if (ImplicitConverter.EmitImplicitConvert(_myWhenTrue.ResultType, _myWhenFalse.ResultType, null, null))
             {
                 _myResultType = _myWhenFalse.ResultType;
             }
@@ -56,7 +56,7 @@ namespace Flee.ExpressionElements
 
             // Emit the true operand
             _myWhenTrue.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(_myWhenTrue.ResultType, _myResultType, ilg);
+            ImplicitConverter.EmitImplicitConvert(_myWhenTrue.ResultType, _myResultType, ilg, services);
 
             // Jump to end
             ilg.EmitBranch(endLabel);
@@ -65,7 +65,7 @@ namespace Flee.ExpressionElements
 
             // Emit the false operand
             _myWhenFalse.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(_myWhenFalse.ResultType, _myResultType, ilg);
+            ImplicitConverter.EmitImplicitConvert(_myWhenFalse.ResultType, _myResultType, ilg, services);
             // Fall through to end
             ilg.MarkLabel(endLabel);
         }

@@ -33,7 +33,7 @@ namespace Flee.ExpressionElements.MemberElements
         protected override void ResolveInternal()
         {
             // Try to bind to a field or property
-            if (ResolveFieldProperty(MyPrevious) == true)
+            if (ResolveFieldProperty(MyPrevious))
             {
                 AddReferencedVariable(MyPrevious);
                 return;
@@ -129,7 +129,7 @@ namespace Flee.ExpressionElements.MemberElements
                 return;
             }
 
-            if ((_myVariableType != null) || MyOptions.IsOwnerType(MemberOwnerType) == true)
+            if ((_myVariableType != null) || MyOptions.IsOwnerType(MemberOwnerType))
             {
                 ExpressionInfo info = (ExpressionInfo)MyServices.GetService(typeof(ExpressionInfo));
                 info.AddReferencedVariable(MyName);
@@ -156,7 +156,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
             else if (_myPropertyDescriptor != null)
             {
-                EmitVirtualPropertyLoad(ilg);
+                EmitVirtualPropertyLoad(ilg, services);
             }
             else
             {
@@ -179,12 +179,12 @@ namespace Flee.ExpressionElements.MemberElements
 
             bool isVariable = _myVariableType != null;
 
-            if (isVariable == true)
+            if (isVariable)
             {
                 // Load variables
                 EmitLoadVariables(ilg);
             }
-            else if (MyOptions.IsOwnerType(MemberOwnerType) == true & IsStatic == false)
+            else if (MyOptions.IsOwnerType(MemberOwnerType) & !IsStatic)
             {
                 EmitLoadOwner(ilg);
             }
@@ -199,11 +199,11 @@ namespace Flee.ExpressionElements.MemberElements
 
         private void EmitFieldLoad(FieldInfo fi, FleeILGenerator ilg, IServiceProvider services)
         {
-            if (fi.IsLiteral == true)
+            if (fi.IsLiteral)
             {
                 EmitLiteral(fi, ilg, services);
             }
-            else if (ResultType.IsValueType == true & NextRequiresAddress == true)
+            else if (ResultType.IsValueType & NextRequiresAddress)
             {
                 EmitLdfld(fi, true, ilg);
             }
@@ -215,9 +215,9 @@ namespace Flee.ExpressionElements.MemberElements
 
         private static void EmitLdfld(FieldInfo fi, bool indirect, FleeILGenerator ilg)
         {
-            if (fi.IsStatic == true)
+            if (fi.IsStatic)
             {
-                if (indirect == true)
+                if (indirect)
                 {
                     ilg.Emit(OpCodes.Ldsflda, fi);
                 }
@@ -228,7 +228,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
             else
             {
-                if (indirect == true)
+                if (indirect)
                 {
                     ilg.Emit(OpCodes.Ldflda, fi);
                 }
@@ -302,7 +302,7 @@ namespace Flee.ExpressionElements.MemberElements
         /// Load a PropertyDescriptor based property
         /// </summary>
         /// <param name="ilg"></param>
-        private void EmitVirtualPropertyLoad(FleeILGenerator ilg)
+        private void EmitVirtualPropertyLoad(FleeILGenerator ilg, IServiceProvider services)
         {
             // The previous value is already on the top of the stack but we need it at the bottom
 
@@ -319,7 +319,7 @@ namespace Flee.ExpressionElements.MemberElements
 
             // Load the previous value and convert it to object
             Utility.EmitLoadLocal(ilg, index);
-            ImplicitConverter.EmitImplicitConvert(MyPrevious.ResultType, typeof(object), ilg);
+            ImplicitConverter.EmitImplicitConvert(MyPrevious.ResultType, typeof(object), ilg, services);
 
             // Call the method to get the actual value
             MethodInfo mi = VariableCollection.GetVirtualPropertyLoadMethod(ResultType);
@@ -421,7 +421,7 @@ namespace Flee.ExpressionElements.MemberElements
                     // Neither do virtual properties
                     return false;
                 }
-                else if (MyOptions.IsOwnerType(MemberOwnerType) == true && MyPrevious == null)
+                else if (MyOptions.IsOwnerType(MemberOwnerType) && MyPrevious == null)
                 {
                     // Owner members support static if we are the first element
                     return true;
@@ -448,7 +448,7 @@ namespace Flee.ExpressionElements.MemberElements
                     // So do virtual properties
                     return true;
                 }
-                else if (MyOptions.IsOwnerType(MemberOwnerType) == true && MyPrevious == null)
+                else if (MyOptions.IsOwnerType(MemberOwnerType) && MyPrevious == null)
                 {
                     // Owner members support instance if we are the first element
                     return true;

@@ -29,7 +29,7 @@ namespace Flee.InternalTypes
 
             _myContext = context;
 
-            if (context.NoClone == false)
+            if (!context.NoClone)
             {
                 _myContext = context.CloneInternal(false);
             }
@@ -94,7 +94,7 @@ namespace Flee.InternalTypes
             ilg.ValidateLength();
 
             // Emit to an assembly if required
-            if (options.EmitToAssembly == true)
+            if (options.EmitToAssembly)
             {
                 EmitToAssembly(ilg, rootElement, services);
             }
@@ -107,11 +107,11 @@ namespace Flee.InternalTypes
         {
             // Create the dynamic method
             Type[] parameterTypes = {
-            typeof(object),
-            typeof(ExpressionContext),
-            typeof(VariableCollection)
-        };
-            DynamicMethod dm = new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
+                typeof(object),
+                typeof(ExpressionContext),
+                typeof(VariableCollection)
+            };
+            var dm = new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
             return dm;
         }
 
@@ -155,7 +155,7 @@ namespace Flee.InternalTypes
         private void ValidateOwner(object owner)
         {
             Utility.AssertNotNull(owner, nameof(owner));
-            if (_myOptions.OwnerType.IsAssignableFrom(owner.GetType()) == false)
+            if (!_myOptions.OwnerType.IsAssignableFrom(owner.GetType()))
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.NewOwnerTypeNotAssignableToCurrentOwner);
                 throw new ArgumentException(msg);

@@ -27,14 +27,14 @@ namespace Flee.ExpressionElements.MemberElements
             Type target = MyPrevious.TargetType;
 
             // Yes, so setup for an array index
-            if (target.IsArray == true)
+            if (target.IsArray)
             {
                 SetupArrayIndexer();
                 return;
             }
 
             // Not an array, so try to find an indexer on the type
-            if (FindIndexer(target) == false)
+            if (!FindIndexer(target))
             {
                 ThrowCompileException(CompileErrorResourceKeys.TypeNotArrayAndHasNoIndexerOfType, CompileExceptionReason.TypeMismatch, target.Name, _myIndexerElements);
             }
@@ -48,7 +48,7 @@ namespace Flee.ExpressionElements.MemberElements
             {
                 ThrowCompileException(CompileErrorResourceKeys.MultiArrayIndexNotSupported, CompileExceptionReason.TypeMismatch);
             }
-            else if (ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(int), null) == false)
+            else if (!ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(int), null, null))
             {
                 ThrowCompileException(CompileErrorResourceKeys.ArrayIndexersMustBeOfType, CompileExceptionReason.TypeMismatch, typeof(int).Name);
             }
@@ -82,7 +82,7 @@ namespace Flee.ExpressionElements.MemberElements
         {
             base.Emit(ilg, services);
 
-            if (IsArray == true)
+            if (IsArray)
             {
                 EmitArrayLoad(ilg, services);
             }
@@ -95,11 +95,11 @@ namespace Flee.ExpressionElements.MemberElements
         private void EmitArrayLoad(FleeILGenerator ilg, IServiceProvider services)
         {
             _myIndexerElement.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(int), ilg);
+            ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(int), ilg, services);
 
             Type elementType = ResultType;
 
-            if (elementType.IsValueType == false)
+            if (!elementType.IsValueType)
             {
                 // Simple reference load
                 ilg.Emit(OpCodes.Ldelem_Ref);
@@ -112,7 +112,7 @@ namespace Flee.ExpressionElements.MemberElements
 
         private void EmitValueTypeArrayLoad(FleeILGenerator ilg, Type elementType)
         {
-            if (NextRequiresAddress == true)
+            if (NextRequiresAddress)
             {
                 ilg.Emit(OpCodes.Ldelema, elementType);
             }
@@ -132,7 +132,7 @@ namespace Flee.ExpressionElements.MemberElements
         {
             get
             {
-                if (IsArray == true)
+                if (IsArray)
                 {
                     return MyPrevious.TargetType;
                 }
@@ -145,13 +145,13 @@ namespace Flee.ExpressionElements.MemberElements
 
         private bool IsArray => MyPrevious.TargetType.IsArray;
 
-        protected override bool RequiresAddress => IsArray == false;
+        protected override bool RequiresAddress => !IsArray;
 
         public override Type ResultType
         {
             get
             {
-                if (IsArray == true)
+                if (IsArray)
                 {
                     return ArrayType.GetElementType();
                 }
@@ -166,7 +166,7 @@ namespace Flee.ExpressionElements.MemberElements
         {
             get
             {
-                if (IsArray == true)
+                if (IsArray)
                 {
                     return true;
                 }

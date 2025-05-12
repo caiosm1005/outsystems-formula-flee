@@ -50,9 +50,9 @@ namespace Flee.ExpressionElements.LogicalBitwise
             else
             {
                 MyLeftChild.Emit(ilg, services);
-                ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, resultType, ilg);
+                ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, resultType, ilg, services);
                 MyRightChild.Emit(ilg, services);
-                ImplicitConverter.EmitImplicitConvert(MyRightChild.ResultType, resultType, ilg);
+                ImplicitConverter.EmitImplicitConvert(MyRightChild.ResultType, resultType, ilg, services);
                 EmitBitwiseOperation(ilg, _myOperation);
             }
         }
@@ -253,7 +253,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         private static void EmitOperand(ExpressionElement operand, ShortCircuitInfo info, FleeILGenerator ilg, IServiceProvider services)
         {
             // Is this operand the target of a label?
-            if (info.HasLabel(operand) == true)
+            if (info.HasLabel(operand))
             {
                 // Yes, so mark it
                 Label leftLabel = info.FindLabel(operand);
@@ -273,7 +273,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         private static void EmitTerminals(ShortCircuitInfo info, FleeILGenerator ilg, Label endLabel)
         {
             // Emit the false case if it was used
-            if (info.HasLabel(OurFalseTerminalKey) == true)
+            if (info.HasLabel(OurFalseTerminalKey))
             {
                 Label falseLabel = info.FindLabel(OurFalseTerminalKey);
 
@@ -283,7 +283,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
                 ilg.Emit(OpCodes.Ldc_I4_0);
 
                 // If we also have a true terminal, then skip over it
-                if (info.HasLabel(OurTrueTerminalKey) == true)
+                if (info.HasLabel(OurTrueTerminalKey))
                 {
                     // only 1-3 opcodes, always a short branch
                     ilg.Emit(OpCodes.Br_S, endLabel);
@@ -291,7 +291,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             }
 
             // Emit the true case if it was used
-            if (info.HasLabel(OurTrueTerminalKey) == true)
+            if (info.HasLabel(OurTrueTerminalKey))
             {
                 Label trueLabel = info.FindLabel(OurTrueTerminalKey);
 

@@ -82,9 +82,10 @@ namespace Flee.Parsing
 
         private Element ParseTerm()
         {
-            ArrayList list = new();
-
-            list.Add(ParseFact());
+            ArrayList list = new()
+            {
+                ParseFact()
+            };
             while (true)
             {
                 switch (PeekChar(0))

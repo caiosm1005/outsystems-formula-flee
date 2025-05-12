@@ -39,7 +39,7 @@ namespace Flee.ExpressionElements
         {
             Type resultType = ResultType;
             MyChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(MyChild.ResultType, resultType, ilg);
+            ImplicitConverter.EmitImplicitConvert(MyChild.ResultType, resultType, ilg, services);
 
             MethodInfo mi = Utility.GetSimpleOverloadedOperator("UnaryNegation", resultType, null);
 

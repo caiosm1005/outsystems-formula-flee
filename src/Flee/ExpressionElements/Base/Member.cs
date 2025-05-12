@@ -58,11 +58,11 @@ namespace Flee.ExpressionElements.Base
                 return;
             }
 
-            if (IsStatic == true && SupportsStatic == false && IsExtensionMethod == false)
+            if (IsStatic && !SupportsStatic && !IsExtensionMethod)
             {
                 ThrowCompileException(CompileErrorResourceKeys.StaticMemberCannotBeAccessedWithInstanceReference, CompileExceptionReason.TypeMismatch, MyName);
             }
-            else if (IsStatic == false && SupportsInstance == false)
+            else if (!IsStatic && !SupportsInstance)
             {
                 ThrowCompileException(CompileErrorResourceKeys.ReferenceToNonSharedMemberRequiresObjectReference, CompileExceptionReason.TypeMismatch, MyName);
             }
@@ -70,10 +70,7 @@ namespace Flee.ExpressionElements.Base
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            if (MyPrevious != null)
-            {
-                MyPrevious.Emit(ilg, services);
-            }
+            MyPrevious?.Emit(ilg, services);
         }
 
         protected static void EmitLoadVariables(FleeILGenerator ilg)
@@ -93,7 +90,7 @@ namespace Flee.ExpressionElements.Base
 
         protected static void EmitMethodCall(Type resultType, bool nextRequiresAddress, MethodInfo mi, FleeILGenerator ilg)
         {
-            if (mi.GetType().IsValueType == false)
+            if (!mi.GetType().IsValueType)
             {
                 EmitReferenceTypeMethodCall(mi, ilg);
             }
@@ -121,7 +118,7 @@ namespace Flee.ExpressionElements.Base
         /// <param name="ilg"></param>
         private static void EmitValueTypeMethodCall(MethodInfo mi, FleeILGenerator ilg)
         {
-            if (mi.IsStatic == true)
+            if (mi.IsStatic)
             {
                 ilg.Emit(OpCodes.Call, mi);
             }
@@ -129,7 +126,7 @@ namespace Flee.ExpressionElements.Base
             {
                 // Method is not defined on the value type
 
-                if (IsGetTypeMethod(mi) == true)
+                if (IsGetTypeMethod(mi))
                 {
                     // Special GetType method which requires a box
                     ilg.Emit(OpCodes.Box, mi.ReflectedType);
@@ -151,7 +148,7 @@ namespace Flee.ExpressionElements.Base
 
         private static void EmitReferenceTypeMethodCall(MethodInfo mi, FleeILGenerator ilg)
         {
-            if (mi.IsStatic == true)
+            if (mi.IsStatic)
             {
                 ilg.Emit(OpCodes.Call, mi);
             }
@@ -174,7 +171,7 @@ namespace Flee.ExpressionElements.Base
 
             Type ownerType = MyOptions.OwnerType;
 
-            if (ownerType.IsValueType == false)
+            if (!ownerType.IsValueType)
             {
                 return;
             }
@@ -183,7 +180,7 @@ namespace Flee.ExpressionElements.Base
             ilg.Emit(OpCodes.Ldobj, ownerType);
 
             // Emit usual stuff for value types but use the owner type as the target
-            if (RequiresAddress == true)
+            if (RequiresAddress)
             {
                 EmitValueTypeLoadAddress(ilg, ownerType);
             }
@@ -229,7 +226,7 @@ namespace Flee.ExpressionElements.Base
             // Keep all members that are accessible
             foreach (MemberInfo mi in members)
             {
-                if (IsMemberAccessible(mi) == true)
+                if (IsMemberAccessible(mi))
                 {
                     accessible.Add(mi);
                 }
@@ -243,7 +240,7 @@ namespace Flee.ExpressionElements.Base
             bool accessAllowed;
 
             // Get the allowed access defined in the options
-            if (IsMemberPublic(member) == true)
+            if (IsMemberPublic(member))
             {
                 accessAllowed = (options.OwnerMemberAccess & BindingFlags.Public) != 0;
             }
@@ -269,7 +266,7 @@ namespace Flee.ExpressionElements.Base
 
         public bool IsMemberAccessible(MemberInfo member)
         {
-            if (MyOptions.IsOwnerType(member.ReflectedType) == true)
+            if (MyOptions.IsOwnerType(member.ReflectedType))
             {
                 return IsOwnerMemberAccessible(member, MyOptions);
             }

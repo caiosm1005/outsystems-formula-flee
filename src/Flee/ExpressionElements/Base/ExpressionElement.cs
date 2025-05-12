@@ -7,12 +7,8 @@ namespace Flee.ExpressionElements.Base
 {
     internal abstract class ExpressionElement
     {
-        internal ExpressionElement()
-        {
-        }
-
         /// <summary>
-        /// // All expression elements must be able to emit their IL
+        /// All expression elements must be able to emit their IL
         /// </summary>
         /// <param name="ilg"></param>
         /// <param name="services"></param>

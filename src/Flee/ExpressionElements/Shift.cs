@@ -17,13 +17,13 @@ namespace Flee.ExpressionElements
         protected override Type GetResultType(Type leftType, Type rightType)
         {
             // Right argument (shift count) must be convertible to int32
-            if (ImplicitConverter.EmitImplicitNumericConvert(rightType, typeof(int), null) == false)
+            if (!ImplicitConverter.EmitImplicitNumericConvert(rightType, typeof(int), null))
             {
                 return null;
             }
 
             // Left argument must be an integer type
-            if (Utility.IsIntegralType(leftType) == false)
+            if (!Utility.IsIntegralType(leftType))
             {
                 return null;
             }
@@ -93,7 +93,7 @@ namespace Flee.ExpressionElements
         private void EmitShift(FleeILGenerator ilg)
         {
             TypeCode tc = Type.GetTypeCode(MyLeftChild.ResultType);
-            OpCode op = default(OpCode);
+            OpCode op = default;
 
             switch (tc)
             {

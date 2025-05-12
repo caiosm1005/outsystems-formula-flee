@@ -19,23 +19,24 @@ namespace Flee.PublicTypes
 
         private static Dictionary<string, Type> CreateBuiltinTypeMap()
         {
-            Dictionary<string, Type> map = new(StringComparer.OrdinalIgnoreCase);
-
-            map.Add("boolean", typeof(bool));
-            map.Add("byte", typeof(byte));
-            map.Add("sbyte", typeof(sbyte));
-            map.Add("short", typeof(short));
-            map.Add("ushort", typeof(ushort));
-            map.Add("int", typeof(int));
-            map.Add("uint", typeof(uint));
-            map.Add("long", typeof(long));
-            map.Add("ulong", typeof(ulong));
-            map.Add("single", typeof(float));
-            map.Add("double", typeof(double));
-            map.Add("decimal", typeof(decimal));
-            map.Add("char", typeof(char));
-            map.Add("object", typeof(object));
-            map.Add("string", typeof(string));
+            Dictionary<string, Type> map = new(StringComparer.OrdinalIgnoreCase)
+            {
+                { "boolean", typeof(bool) },
+                { "byte", typeof(byte) },
+                { "sbyte", typeof(sbyte) },
+                { "short", typeof(short) },
+                { "ushort", typeof(ushort) },
+                { "int", typeof(int) },
+                { "uint", typeof(uint) },
+                { "long", typeof(long) },
+                { "ulong", typeof(ulong) },
+                { "single", typeof(float) },
+                { "double", typeof(double) },
+                { "decimal", typeof(decimal) },
+                { "char", typeof(char) },
+                { "object", typeof(object) },
+                { "string", typeof(string) }
+            };
 
             return map;
         }
@@ -115,7 +116,7 @@ namespace Flee.PublicTypes
         static internal Type GetBuiltinType(string name)
         {
             Type t;
-            if (OurBuiltinTypeMap.TryGetValue(name, out t) == true)
+            if (OurBuiltinTypeMap.TryGetValue(name, out t))
             {
                 return t;
             }
@@ -167,7 +168,7 @@ namespace Flee.PublicTypes
 
             MyContext.AssertTypeIsAccessible(mi.ReflectedType);
 
-            if (mi.IsStatic == false | mi.IsPublic == false)
+            if (!mi.IsStatic | !mi.IsPublic)
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.OnlyPublicStaticMethodsCanBeImported);
                 throw new ArgumentException(msg);

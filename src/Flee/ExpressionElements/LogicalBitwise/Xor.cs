@@ -15,7 +15,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             {
                 return bitwiseType;
             }
-            else if (AreBothChildrenOfType(typeof(bool)) == true)
+            else if (AreBothChildrenOfType(typeof(bool)))
             {
                 return typeof(bool);
             }
@@ -30,9 +30,9 @@ namespace Flee.ExpressionElements.LogicalBitwise
             Type resultType = ResultType;
 
             MyLeftChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, resultType, ilg);
+            ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, resultType, ilg, services);
             MyRightChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(MyRightChild.ResultType, resultType, ilg);
+            ImplicitConverter.EmitImplicitConvert(MyRightChild.ResultType, resultType, ilg, services);
             ilg.Emit(OpCodes.Xor);
         }
 

@@ -42,7 +42,7 @@ namespace Flee.ExpressionElements
             bool isEqualityOp = IsOpTypeEqualOrNotEqual(_myOperation);
 
             // Use our string equality instead of overloaded operator
-            if (ReferenceEquals(leftType, typeof(string)) & ReferenceEquals(rightType, typeof(string)) & isEqualityOp == true)
+            if (ReferenceEquals(leftType, typeof(string)) & ReferenceEquals(rightType, typeof(string)) & isEqualityOp)
             {
                 // String equality
                 return typeof(bool);
@@ -56,17 +56,17 @@ namespace Flee.ExpressionElements
                 // Comparison of numeric operands
                 return typeof(bool);
             }
-            else if (ReferenceEquals(leftType, typeof(bool)) & ReferenceEquals(rightType, typeof(bool)) & isEqualityOp == true)
+            else if (ReferenceEquals(leftType, typeof(bool)) & ReferenceEquals(rightType, typeof(bool)) & isEqualityOp)
             {
                 // Boolean equality
                 return typeof(bool);
             }
-            else if (AreBothChildrenReferenceTypes() == true & isEqualityOp == true)
+            else if (AreBothChildrenReferenceTypes() & isEqualityOp)
             {
                 // Comparison of reference types
                 return typeof(bool);
             }
-            else if (AreBothChildrenSameEnum() == true)
+            else if (AreBothChildrenSameEnum())
             {
                 return typeof(bool);
             }
@@ -133,12 +133,12 @@ namespace Flee.ExpressionElements
                 // Boolean equality
                 EmitRegular(ilg, services);
             }
-            else if (AreBothChildrenReferenceTypes() == true)
+            else if (AreBothChildrenReferenceTypes())
             {
                 // Reference equality
                 EmitRegular(ilg, services);
             }
-            else if (MyLeftChild.ResultType.IsEnum == true & MyRightChild.ResultType.IsEnum == true)
+            else if (MyLeftChild.ResultType.IsEnum & MyRightChild.ResultType.IsEnum)
             {
                 EmitRegular(ilg, services);
             }
@@ -181,12 +181,12 @@ namespace Flee.ExpressionElements
 
         private bool AreBothChildrenReferenceTypes()
         {
-            return MyLeftChild.ResultType.IsValueType == false & MyRightChild.ResultType.IsValueType == false;
+            return !MyLeftChild.ResultType.IsValueType & !MyRightChild.ResultType.IsValueType;
         }
 
         private bool AreBothChildrenSameEnum()
         {
-            return MyLeftChild.ResultType.IsEnum == true && ReferenceEquals(MyLeftChild.ResultType, MyRightChild.ResultType);
+            return MyLeftChild.ResultType.IsEnum && ReferenceEquals(MyLeftChild.ResultType, MyRightChild.ResultType);
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace Flee.ExpressionElements
             {
                 if (ReferenceEquals(leftType, typeof(uint)) | ReferenceEquals(leftType, typeof(ulong)))
                 {
-                    if (greaterThan == true)
+                    if (greaterThan)
                     {
                         return OpCodes.Cgt_Un;
                     }
@@ -266,7 +266,7 @@ namespace Flee.ExpressionElements
 
         private static OpCode GetCompareOpcode(bool greaterThan)
         {
-            if (greaterThan == true)
+            if (greaterThan)
             {
                 return OpCodes.Cgt;
             }

@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
+using Flee.ExpressionElements.Literals.Integral;
+using Flee.PublicTypes;
 using Flee.Resources;
 
 namespace Flee.InternalTypes
@@ -11,10 +14,6 @@ namespace Flee.InternalTypes
     /// </summary>
     internal class Utility
     {
-        private Utility()
-        {
-        }
-
         public static void AssertNotNull(object o, string paramName)
         {
             if (o == null)
@@ -188,8 +187,6 @@ namespace Flee.InternalTypes
             }
         }
 
- 
-
         public static bool IsIntegralType(Type t)
         {
             TypeCode tc = Type.GetTypeCode(t);
@@ -209,9 +206,76 @@ namespace Flee.InternalTypes
             }
         }
 
+        public static void EmitToString(Type sourceType, FleeILGenerator ilg, IServiceProvider services)
+        {
+            TypeCode sourceTypeCode = Type.GetTypeCode(sourceType);            
+
+            switch (sourceTypeCode)
+            {
+                case TypeCode.String:
+                    return; // No conversion needed if source type is string
+
+                case TypeCode.DateTime:
+                    EmitDateTimeToString(ilg, services);
+                    return;
+            }
+
+            // For all other types, use the regular ToString() method
+            MethodInfo mi = sourceType.GetMethod("ToString", Type.EmptyTypes);
+            Debug.Assert(mi != null, "Could not find ToString() method");
+            ilg.Emit(OpCodes.Box, sourceType);
+            ilg.Emit(OpCodes.Callvirt, mi);
+        }
+
+        private static void EmitDateTimeToString(FleeILGenerator ilg, IServiceProvider services)
+        {
+            MethodInfo mi = typeof(Utility).GetMethod("FormatDateTime", BindingFlags.Static | BindingFlags.Public);
+            Debug.Assert(mi != null, "Could not find FormatDateTime() method from Utility class");
+
+            // Load second parameter (string[] formats)
+            ExpressionParserOptions parserOptions = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
+            string[] formats = parserOptions.DateTimeFormats;
+            if (formats != null && formats.Length > 0)
+            {
+                Int32LiteralElement arrayLength = new(formats.Length);
+                arrayLength.Emit(ilg, services);
+                ilg.Emit(OpCodes.Newarr, typeof(string));
+                for (int i = 0; i < formats.Length; i++)
+                {
+                    ilg.Emit(OpCodes.Dup);
+                    Int32LiteralElement arrayIndex = new(i);
+                    arrayIndex.Emit(ilg, services);
+                    ilg.Emit(OpCodes.Ldstr, formats[i]);
+                    ilg.Emit(OpCodes.Stelem_Ref);
+                }
+            }
+            else
+            {
+                ilg.Emit(OpCodes.Ldnull);
+            }
+
+            // Load third parameter (CultureInfo culture)
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            CultureInfo culture = options.ParseCulture;
+            if (culture.LCID != 0x1000) // Only load culture if it's not unspecified
+            {
+                Int32LiteralElement cultureId = new(culture.LCID);
+                cultureId.Emit(ilg, services);
+                ConstructorInfo cultureConstructorInfo = typeof(CultureInfo).GetConstructor(new[] { typeof(int) });
+                ilg.Emit(OpCodes.Newobj, cultureConstructorInfo);
+            }
+            else 
+            {
+                ilg.Emit(OpCodes.Ldnull);
+            }
+
+            // Call FormatDateTime method
+            ilg.Emit(OpCodes.Call, mi);
+        }
+
         public static Type GetBitwiseOpType(Type leftType, Type rightType)
         {
-            if (IsIntegralType(leftType) == false || IsIntegralType(rightType) == false)
+            if (!IsIntegralType(leftType) || !IsIntegralType(rightType))
             {
                 return null;
             }
@@ -230,10 +294,12 @@ namespace Flee.InternalTypes
         /// <returns>The operator's method or null of no match is found</returns>
         public static MethodInfo GetSimpleOverloadedOperator(string name, Type sourceType, Type destType)
         {
-            Hashtable data = new();
-            data.Add("Name", string.Concat("op_", name));
-            data.Add("sourceType", sourceType);
-            data.Add("destType", destType);
+            Hashtable data = new()
+            {
+                { "Name", string.Concat("op_", name) },
+                { "sourceType", sourceType },
+                { "destType", destType }
+            };
 
             const BindingFlags flags = BindingFlags.Public | BindingFlags.Static;
 
@@ -278,9 +344,9 @@ namespace Flee.InternalTypes
             IDictionary data = (IDictionary)value;
             MethodInfo method = (MethodInfo)member;
 
-            bool nameMatch = method.IsSpecialName == true && method.Name.Equals((string)data["Name"], StringComparison.OrdinalIgnoreCase);
+            bool nameMatch = method.IsSpecialName && method.Name.Equals((string)data["Name"], StringComparison.OrdinalIgnoreCase);
 
-            if (nameMatch == false)
+            if (!nameMatch)
             {
                 return false;
             }
@@ -292,7 +358,7 @@ namespace Flee.InternalTypes
             {
                 bool returnTypeMatch = ReferenceEquals(destType, method.ReturnType);
 
-                if (returnTypeMatch == false)
+                if (!returnTypeMatch)
                 {
                     return false;
                 }
@@ -310,7 +376,7 @@ namespace Flee.InternalTypes
             do
             {
                 MethodInfo mi = sourceType.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
-                if (mi != null && mi.IsSpecialName == true)
+                if (mi != null && mi.IsSpecialName)
                 {
                     return mi;
                 }
@@ -326,8 +392,30 @@ namespace Flee.InternalTypes
 
         public static string FormatList(string[] items)
         {
-            string separator = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator + " ";
+            string separator = CultureInfo.CurrentCulture.TextInfo.ListSeparator + " ";
             return string.Join(separator, items);
+        }
+
+        public static string FormatDateTime(DateTime dt, string[] formats = null, CultureInfo culture = null)
+        {
+            if (formats != null && formats.Length > 0)
+            {
+                bool dateUsesTime = dt.TimeOfDay != TimeSpan.Zero;
+
+                foreach (string format in formats)
+                {
+                    bool formatUsesTime = format.Any(c => "Hmsft".Contains(c));
+
+                    if (formatUsesTime == dateUsesTime)
+                    {
+                        return dt.ToString(format, culture);
+                    }
+                }
+
+                return dt.ToString(formats[0], culture);
+            }
+
+            return dt.ToString(culture);
         }
 
         public static string GetGeneralErrorMessage(string key, params object[] args)
