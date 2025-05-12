@@ -102,7 +102,6 @@ namespace Flee.Test.ExpressionTests
             Assert.AreEqual(4.0, e1.Evaluate());
         }
 
-
         [Test]
         public void TestInOperator()
         {
@@ -132,19 +131,39 @@ namespace Flee.Test.ExpressionTests
         }
 
         [Test]
-        public void TestImplicitStringConversions()
+        public void TestImplicitConversions()
         {
             ExpressionContext context = new();
+            context.Options.CaseSensitive = false;
             context.Options.ParseCulture = new CultureInfo("en-US"); // Set default culture
             context.ParserOptions.DateTimeFormats = new string[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" };
+            context.Imports.AddType(typeof(TestHelperType));
 
             IGenericExpression<string> e1 = context.CompileGeneric<string>("#2025-05-10#");
             IGenericExpression<string> e2 = context.CompileGeneric<string>("#2025-05-10 00:00:00# + \"foobar\"");
             IGenericExpression<string> e3 = context.CompileGeneric<string>("#2025-05-10 12:12:12# + \"foobar\"");
+            IGenericExpression<string> e4 = context.CompileGeneric<string>("MethodWithStringInput(#2025-05-10 12:12:12#)");
+            IGenericExpression<string> e5 = context.CompileGeneric<string>("MethodWithStringInput(42.42)");
+            IGenericExpression<string> e6 = context.CompileGeneric<string>("MethodWithStringInput(true)");
+            IGenericExpression<bool> e7 = context.CompileGeneric<bool>("42.42 = \"42.42\"");
+            IGenericExpression<bool> e8 = context.CompileGeneric<bool>("42.0 = 42");
 
             Assert.AreEqual("2025-05-10", e1.Evaluate());
             Assert.AreEqual("2025-05-10foobar", e2.Evaluate());
             Assert.AreEqual("2025-05-10 12:12:12foobar", e3.Evaluate());
+            Assert.AreEqual("2025-05-10 12:12:12", e4.Evaluate());
+            Assert.AreEqual("42.42", e5.Evaluate());
+            Assert.AreEqual("True", e6.Evaluate());
+            Assert.IsTrue(e7.Evaluate());
+            Assert.IsTrue(e8.Evaluate());
+        }
+    }
+
+    public static class TestHelperType
+    {
+        public static string MethodWithStringInput(string input)
+        {
+            return input;
         }
     }
 }

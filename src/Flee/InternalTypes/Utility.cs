@@ -208,23 +208,48 @@ namespace Flee.InternalTypes
 
         public static void EmitToString(Type sourceType, FleeILGenerator ilg, IServiceProvider services)
         {
-            TypeCode sourceTypeCode = Type.GetTypeCode(sourceType);            
+            TypeCode sourceTypeCode = Type.GetTypeCode(sourceType);
 
-            switch (sourceTypeCode)
+            if (sourceTypeCode == TypeCode.String)
             {
-                case TypeCode.String:
-                    return; // No conversion needed if source type is string
+                return; // No conversion needed if source type is string
+            }
+            else if (sourceTypeCode == TypeCode.Boolean)
+            {
+                EmitBooleanToString(ilg, services);
+            }
+            else if (sourceTypeCode == TypeCode.DateTime)
+            {
+                EmitDateTimeToString(ilg, services);
+            }
+            else
+            {
+                // For all other types, use the regular ToString() method
+                MethodInfo mi = sourceType.GetMethod("ToString", Type.EmptyTypes);
+                Debug.Assert(mi != null, "Could not find ToString() method");
+                ilg.Emit(OpCodes.Box, sourceType);
+                ilg.Emit(OpCodes.Callvirt, mi);
+            }
+        }
 
-                case TypeCode.DateTime:
-                    EmitDateTimeToString(ilg, services);
-                    return;
+        private static void EmitBooleanToString(FleeILGenerator ilg, IServiceProvider services)
+        {
+            MethodInfo mi = typeof(Utility).GetMethod("FormatBoolean", BindingFlags.Static | BindingFlags.Public);
+            Debug.Assert(mi != null, "Could not find FormatBoolean() method from Utility class");
+            
+            // Load second parameter (caseSensitive)
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            if (options.CaseSensitive)
+            {
+                ilg.Emit(OpCodes.Ldc_I4_0); // Pass false to capitalize when case-sensitive
+            }
+            else
+            {
+                ilg.Emit(OpCodes.Ldc_I4_1); // Pass true to capitalize when case-insensitive
             }
 
-            // For all other types, use the regular ToString() method
-            MethodInfo mi = sourceType.GetMethod("ToString", Type.EmptyTypes);
-            Debug.Assert(mi != null, "Could not find ToString() method");
-            ilg.Emit(OpCodes.Box, sourceType);
-            ilg.Emit(OpCodes.Callvirt, mi);
+            // Call FormatBoolean method
+            ilg.Emit(OpCodes.Call, mi);
         }
 
         private static void EmitDateTimeToString(FleeILGenerator ilg, IServiceProvider services)
@@ -416,6 +441,18 @@ namespace Flee.InternalTypes
             }
 
             return dt.ToString(culture);
+        }
+
+        public static string FormatBoolean(bool value, bool capitalize)
+        {
+            if (capitalize)
+            {
+                return value ? "True" : "False";
+            }
+            else
+            {
+                return value ? "true" : "false";
+            }
         }
 
         public static string GetGeneralErrorMessage(string key, params object[] args)
