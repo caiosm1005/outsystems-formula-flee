@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 
 namespace Flee.InternalTypes
 {
@@ -216,16 +217,29 @@ namespace Flee.InternalTypes
         private void RecordOpcode(OpCode op, object arg = null)
         {
             int operandLength = GetOpcodeOperandSize(op.OperandType);
+
             #if DEBUG
+            List<string> strList = new() { op.Name };
             if (arg != null)
             {
-                Trace.WriteLine(string.Format("{0:x}: {1} [arg: {2} - '{3}']", operandLength, op.Name, arg.GetType().Name, arg));
+                if (arg is MethodInfo mi)
+                {
+                    string miStr = mi.ToString();
+                    int miSpaceIndex = miStr.IndexOf(' ');
+                    string returningType = miStr.Substring(0, miSpaceIndex);
+                    string methodName = miStr.Substring(miSpaceIndex + 1);
+                    strList.Add($"instance {returningType} {mi.DeclaringType}::{methodName}");
+                }
+                else
+                {
+                    strList.Add(arg.ToString());
+                    strList.Add(arg.GetType().Name);
+                }
+                strList.Add($"(oplength: {operandLength})");
             }
-            else
-            {
-                Trace.WriteLine(string.Format("{0:x}: {1}", operandLength, op.Name));
-            }
+            Trace.WriteLine(string.Join(" ", strList));
             #endif
+
             _myLength += op.Size + operandLength;
         }
 

@@ -222,10 +222,24 @@ namespace Flee.InternalTypes
             {
                 EmitDateTimeToString(ilg, services);
             }
+            else if (sourceTypeCode == TypeCode.Byte ||
+                     sourceTypeCode == TypeCode.SByte ||
+                     sourceTypeCode == TypeCode.Int16 ||
+                     sourceTypeCode == TypeCode.UInt16 ||
+                     sourceTypeCode == TypeCode.Int32 ||
+                     sourceTypeCode == TypeCode.UInt32 ||
+                     sourceTypeCode == TypeCode.Int64 ||
+                     sourceTypeCode == TypeCode.UInt64 ||
+                     sourceTypeCode == TypeCode.Single ||
+                     sourceTypeCode == TypeCode.Double ||
+                     sourceTypeCode == TypeCode.Decimal)
+            {
+                EmitNumberToString(sourceType, ilg, services);
+            }
             else
             {
                 // For all other types, use the regular ToString() method
-                MethodInfo mi = sourceType.GetMethod("ToString", Type.EmptyTypes);
+                MethodInfo mi = sourceType.GetMethod(nameof(sourceType.ToString), Type.EmptyTypes);
                 Debug.Assert(mi != null, "Could not find ToString() method");
                 ilg.Emit(OpCodes.Box, sourceType);
                 ilg.Emit(OpCodes.Callvirt, mi);
@@ -234,10 +248,10 @@ namespace Flee.InternalTypes
 
         private static void EmitBooleanToString(FleeILGenerator ilg, IServiceProvider services)
         {
-            MethodInfo mi = typeof(Utility).GetMethod("FormatBoolean", BindingFlags.Static | BindingFlags.Public);
+            MethodInfo mi = typeof(Utility).GetMethod(nameof(FormatBoolean), BindingFlags.Static | BindingFlags.Public);
             Debug.Assert(mi != null, "Could not find FormatBoolean() method from Utility class");
             
-            // Load second parameter (caseSensitive)
+            // Load parameter (caseSensitive)
             ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
             if (options.CaseSensitive)
             {
@@ -252,12 +266,28 @@ namespace Flee.InternalTypes
             ilg.Emit(OpCodes.Call, mi);
         }
 
+        private static void EmitNumberToString(Type sourceType, FleeILGenerator ilg, IServiceProvider services)
+        {
+            MethodInfo mi = typeof(Utility).GetMethod(nameof(FormatNumber), BindingFlags.Static | BindingFlags.Public);
+            Debug.Assert(mi != null, "Could not find FormatNumber() method from Utility class");
+
+            // Box number value
+            ilg.Emit(OpCodes.Box, sourceType);
+
+            // Load parameter (CultureInfo culture)
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            EmitCultureInfo(options.ParseCulture, ilg, services);
+
+            // Call FormatNumber method
+            ilg.Emit(OpCodes.Call, mi);
+        }
+
         private static void EmitDateTimeToString(FleeILGenerator ilg, IServiceProvider services)
         {
-            MethodInfo mi = typeof(Utility).GetMethod("FormatDateTime", BindingFlags.Static | BindingFlags.Public);
+            MethodInfo mi = typeof(Utility).GetMethod(nameof(FormatDateTime), BindingFlags.Static | BindingFlags.Public);
             Debug.Assert(mi != null, "Could not find FormatDateTime() method from Utility class");
 
-            // Load second parameter (string[] formats)
+            // Load parameter (string[] formats)
             ExpressionParserOptions parserOptions = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
             string[] formats = parserOptions.DateTimeFormats;
             if (formats != null && formats.Length > 0)
@@ -279,9 +309,16 @@ namespace Flee.InternalTypes
                 ilg.Emit(OpCodes.Ldnull);
             }
 
-            // Load third parameter (CultureInfo culture)
+            // Load parameter (CultureInfo culture)
             ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
-            CultureInfo culture = options.ParseCulture;
+            EmitCultureInfo(options.ParseCulture, ilg, services);
+
+            // Call FormatDateTime method
+            ilg.Emit(OpCodes.Call, mi);
+        }
+
+        private static void EmitCultureInfo(CultureInfo culture, FleeILGenerator ilg, IServiceProvider services)
+        {
             if (culture.LCID != 0x1000) // Only load culture if it's not unspecified
             {
                 Int32LiteralElement cultureId = new(culture.LCID);
@@ -293,9 +330,6 @@ namespace Flee.InternalTypes
             {
                 ilg.Emit(OpCodes.Ldnull);
             }
-
-            // Call FormatDateTime method
-            ilg.Emit(OpCodes.Call, mi);
         }
 
         public static Type GetBitwiseOpType(Type leftType, Type rightType)
@@ -453,6 +487,55 @@ namespace Flee.InternalTypes
             {
                 return value ? "true" : "false";
             }
+        }
+
+        public static string FormatNumber(object value, CultureInfo culture)
+        {
+            if (value is double doubleValue)
+            {
+                return doubleValue.ToString(culture);
+            }
+            else if (value is decimal decimalValue)
+            {
+                return decimalValue.ToString(culture);
+            }
+            else if (value is float floatValue)
+            {
+                return floatValue.ToString(culture);
+            }
+            else if (value is int intValue)
+            {
+                return intValue.ToString(culture);
+            }
+            else if (value is uint uintValue)
+            {
+                return uintValue.ToString(culture);
+            }
+            else if (value is byte byteValue)
+            {
+                return byteValue.ToString(culture);
+            }
+            else if (value is sbyte sbyteValue)
+            {
+                return sbyteValue.ToString(culture);
+            }
+            else if (value is long longValue)
+            {
+                return longValue.ToString(culture);
+            }
+            else if (value is ulong ulongValue)
+            {
+                return ulongValue.ToString(culture);
+            }
+            else if (value is short shortValue)
+            {
+                return shortValue.ToString(culture);
+            }
+            else if (value is ushort ushortValue)
+            {
+                return ushortValue.ToString(culture);
+            }
+            return "";
         }
 
         public static string GetGeneralErrorMessage(string key, params object[] args)
