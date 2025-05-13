@@ -133,14 +133,12 @@ namespace Flee.Test.ExpressionTests
         [Test]
         public void TestImplicitConversions()
         {
-            ExpressionContext context = new();
+            HelperExpressionClass helper = new();
+            ExpressionContext context = new(helper);
             context.Options.CaseSensitive = false;
             context.Options.ParseCulture = new CultureInfo("en-US"); // Set default culture
             context.ParserOptions.DateTimeFormats = new string[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" };
-
-            context.Imports.;
-
-            context.Imports.AddType(typeof(TestHelperType));
+            helper.Context = context;
 
             IGenericExpression<string> e1 = context.CompileGeneric<string>("#2025-05-10#");
             IGenericExpression<string> e2 = context.CompileGeneric<string>("#2025-05-10 00:00:00# + \"foobar\"");
@@ -164,18 +162,13 @@ namespace Flee.Test.ExpressionTests
         }
     }
 
-    public class TestHelperType
+    public class HelperExpressionClass
     {
-        private readonly ExpressionContext _context;
-
-        public TestHelperType(ExpressionContext context)
-        {
-            _context = context;
-        }
+        public ExpressionContext Context;
 
         public string MethodWithStringInput(string input)
         {
-            if (_context == null)
+            if (Context == null)
             {
                 throw new InvalidOperationException("Context is not set.");
             }
