@@ -184,8 +184,7 @@ namespace Flee.PublicTypes
 
         protected override bool EqualsInternal(ImportBase import)
         {
-            TypeImport otherSameType = import as TypeImport;
-            return (otherSameType != null) && ReferenceEquals(_myType, otherSameType._myType);
+            return (import is TypeImport otherSameType) && ReferenceEquals(_myType, otherSameType._myType);
         }
         #endregion
 
@@ -260,8 +259,7 @@ namespace Flee.PublicTypes
 
         protected override bool EqualsInternal(ImportBase import)
         {
-            MethodImport otherSameType = import as MethodImport;
-            return (otherSameType != null) && _myMethod.MethodHandle.Equals(otherSameType._myMethod.MethodHandle);
+            return (import is MethodImport otherSameType) && _myMethod.MethodHandle.Equals(otherSameType._myMethod.MethodHandle);
         }
 
         public override string Name => _myMethod.Name;
@@ -364,8 +362,7 @@ namespace Flee.PublicTypes
 
         protected override bool EqualsInternal(ImportBase import)
         {
-            NamespaceImport otherSameType = import as NamespaceImport;
-            return (otherSameType != null) && _myNamespace.Equals(otherSameType._myNamespace, Context.Options.MemberStringComparison);
+            return (import is NamespaceImport otherSameType) && _myNamespace.Equals(otherSameType._myNamespace, Context.Options.MemberStringComparison);
         }
 
         public override bool IsContainer => true;

@@ -61,8 +61,7 @@ namespace Flee.CalcEngine.PublicTypes
         private ExpressionResultPair GetTail(string tailName)
         {
             Utility.AssertNotNull(tailName, "name");
-            ExpressionResultPair pair;
-            _myNameNodeMap.TryGetValue(tailName, out pair);
+            _myNameNodeMap.TryGetValue(tailName, out ExpressionResultPair pair);
             return pair;
         }
 

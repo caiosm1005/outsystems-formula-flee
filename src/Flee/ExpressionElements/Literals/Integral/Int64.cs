@@ -45,8 +45,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             else
             {
-                long value;
-                if (long.TryParse(image, out value))
+                if (long.TryParse(image, out long value))
                 {
                     return new Int64LiteralElement(value);
                 }

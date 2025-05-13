@@ -25,8 +25,7 @@ namespace Flee.InternalTypes
 
         public int GetTempLocalIndex(Type localType)
         {
-            LocalBuilder local;
-            if (!_localBuilderTemp.TryGetValue(localType, out local))
+            if (!_localBuilderTemp.TryGetValue(localType, out LocalBuilder local))
             {
                 local = _myIlGenerator.DeclareLocal(localType);
                 _localBuilderTemp.Add(localType, local);

@@ -73,8 +73,7 @@ namespace Flee.PublicTypes
 
         internal Type GetVariableTypeInternal(string name)
         {
-            IVariable value;
-            bool success = _myVariables.TryGetValue(name, out value);
+            bool success = _myVariables.TryGetValue(name, out IVariable value);
 
             if (success)
             {
@@ -89,8 +88,7 @@ namespace Flee.PublicTypes
 
         private IVariable GetVariable(string name, bool throwOnNotFound)
         {
-            IVariable value;
-            bool success = _myVariables.TryGetValue(name, out value);
+            bool success = _myVariables.TryGetValue(name, out IVariable value);
 
             if (!success & throwOnNotFound)
             {
@@ -105,11 +103,9 @@ namespace Flee.PublicTypes
 
         private IVariable CreateVariable(Type variableValueType, object variableValue)
         {
-
             // Is the variable value an expression?
-            IExpression expression = variableValue as IExpression;
             Type variableType;
-            if (expression != null)
+            if (variableValue is IExpression expression)
             {
                 ExpressionOptions options = expression.Context.Options;
                 // Get its result type
@@ -368,8 +364,7 @@ namespace Flee.PublicTypes
             }
             set
             {
-                IVariable v;
-                if (_myVariables.TryGetValue(name, out v))
+                if (_myVariables.TryGetValue(name, out IVariable v))
                 {
                     v.ValueAsObject = value;
                 }

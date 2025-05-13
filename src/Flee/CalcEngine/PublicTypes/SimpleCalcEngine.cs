@@ -63,8 +63,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         private void LinkIdentifier(string identifier, string expressionName, ExpressionContext context)
         {
-            IExpression child;
-            if (!_myExpressions.TryGetValue(identifier, out child))
+            if (!_myExpressions.TryGetValue(identifier, out IExpression child))
             {
                 string msg = $"Expression '{expressionName}' references unknown name '{identifier}'";
                 throw new InvalidOperationException(msg);
@@ -103,8 +102,7 @@ namespace Flee.CalcEngine.PublicTypes
         {
             get
             {
-                IExpression e;
-                _myExpressions.TryGetValue(name, out e);
+                _myExpressions.TryGetValue(name, out IExpression e);
                 return e;
             }
         }
