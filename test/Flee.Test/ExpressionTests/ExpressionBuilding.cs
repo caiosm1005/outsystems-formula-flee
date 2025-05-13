@@ -137,6 +137,9 @@ namespace Flee.Test.ExpressionTests
             context.Options.CaseSensitive = false;
             context.Options.ParseCulture = new CultureInfo("en-US"); // Set default culture
             context.ParserOptions.DateTimeFormats = new string[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" };
+
+            context.Imports.;
+
             context.Imports.AddType(typeof(TestHelperType));
 
             IGenericExpression<string> e1 = context.CompileGeneric<string>("#2025-05-10#");
@@ -161,10 +164,21 @@ namespace Flee.Test.ExpressionTests
         }
     }
 
-    public static class TestHelperType
+    public class TestHelperType
     {
-        public static string MethodWithStringInput(string input)
+        private readonly ExpressionContext _context;
+
+        public TestHelperType(ExpressionContext context)
         {
+            _context = context;
+        }
+
+        public string MethodWithStringInput(string input)
+        {
+            if (_context == null)
+            {
+                throw new InvalidOperationException("Context is not set.");
+            }
             return input;
         }
     }

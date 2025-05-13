@@ -101,8 +101,10 @@ namespace Flee.Parsing
             pattern = new TokenPattern(Convert.ToInt32(ExpressionConstants.RIGHT_SHIFT), "RIGHT_SHIFT", TokenPattern.PatternType.STRING, ">>");
             AddPattern(pattern);
 
-            pattern = new TokenPattern(Convert.ToInt32(ExpressionConstants.WHITESPACE), "WHITESPACE", TokenPattern.PatternType.REGEXP, "\\s+");
-            pattern.Ignore = true;
+            pattern = new TokenPattern(Convert.ToInt32(ExpressionConstants.WHITESPACE), "WHITESPACE", TokenPattern.PatternType.REGEXP, "\\s+")
+            {
+                Ignore = true
+            };
             AddPattern(pattern);
 
             pattern = new TokenPattern(Convert.ToInt32(ExpressionConstants.INTEGER), "INTEGER", TokenPattern.PatternType.REGEXP, "\\d+(u|l|ul|lu|f|m)?");

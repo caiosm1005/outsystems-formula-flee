@@ -50,10 +50,11 @@ namespace Flee.PublicTypes
 
         internal ExpressionImports Clone()
         {
-            ExpressionImports copy = new();
-
-            copy.MyRootImport = (NamespaceImport)MyRootImport.Clone();
-            copy.MyOwnerImport = MyOwnerImport;
+            ExpressionImports copy = new()
+            {
+                MyRootImport = (NamespaceImport)MyRootImport.Clone(),
+                MyOwnerImport = MyOwnerImport
+            };
 
             return copy;
         }

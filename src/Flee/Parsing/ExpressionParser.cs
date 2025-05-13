@@ -300,40 +300,50 @@ namespace Flee.Parsing
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_1), "Subproduction1");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_1), "Subproduction1")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.XOR), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.OR_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_2), "Subproduction2");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_2), "Subproduction2")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.OR), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.AND_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_3), "Subproduction3");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_3), "Subproduction3")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.AND), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.NOT_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_4), "Subproduction4");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_4), "Subproduction4")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.IN), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.IN_TARGET_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_5), "Subproduction5");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_5), "Subproduction5")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.EQ), 1, 1);
             pattern.AddAlternative(alt);
@@ -354,16 +364,20 @@ namespace Flee.Parsing
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_6), "Subproduction6");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_6), "Subproduction6")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddProduction(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_5), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.SHIFT_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_7), "Subproduction7");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_7), "Subproduction7")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.LEFT_SHIFT), 1, 1);
             pattern.AddAlternative(alt);
@@ -372,16 +386,20 @@ namespace Flee.Parsing
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_8), "Subproduction8");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_8), "Subproduction8")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddProduction(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_7), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.ADDITIVE_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_9), "Subproduction9");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_9), "Subproduction9")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.ADD), 1, 1);
             pattern.AddAlternative(alt);
@@ -390,16 +408,20 @@ namespace Flee.Parsing
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_10), "Subproduction10");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_10), "Subproduction10")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddProduction(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_9), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.MULTIPLICATIVE_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_11), "Subproduction11");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_11), "Subproduction11")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.MUL), 1, 1);
             pattern.AddAlternative(alt);
@@ -411,24 +433,30 @@ namespace Flee.Parsing
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_12), "Subproduction12");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_12), "Subproduction12")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddProduction(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_11), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.POWER_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_13), "Subproduction13");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_13), "Subproduction13")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.POWER), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.NEGATE_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_14), "Subproduction14");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_14), "Subproduction14")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.MEMBER_ACCESS_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
@@ -437,16 +465,20 @@ namespace Flee.Parsing
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_15), "Subproduction15");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_15), "Subproduction15")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.DOT), 1, 1);
             alt.AddToken(Convert.ToInt32(ExpressionConstants.IDENTIFIER), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);
 
-            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_16), "Subproduction16");
-            pattern.Synthetic = true;
+            pattern = new ProductionPattern(Convert.ToInt32(SynteticPatterns.SUBPRODUCTION_16), "Subproduction16")
+            {
+                Synthetic = true
+            };
             alt = new ProductionPatternAlternative();
             alt.AddToken(Convert.ToInt32(ExpressionConstants.ARGUMENT_SEPARATOR), 1, 1);
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.EXPRESSION), 1, 1);
