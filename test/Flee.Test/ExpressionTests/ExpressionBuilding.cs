@@ -146,9 +146,11 @@ namespace Flee.Test.ExpressionTests
             IGenericExpression<string> e4 = context.CompileGeneric<string>("MethodWithStringInput(#2025-05-10 12:12:12#)");
             IGenericExpression<string> e5 = context.CompileGeneric<string>("MethodWithStringInput(42.420)");
             IGenericExpression<string> e6 = context.CompileGeneric<string>("MethodWithStringInput(true)");
-            IGenericExpression<bool> e7 = context.CompileGeneric<bool>("42.42 = \"42.420\"");
-            IGenericExpression<bool> e8 = context.CompileGeneric<bool>("42.420 = \"42.42\"");
-            IGenericExpression<bool> e9 = context.CompileGeneric<bool>("42.0 = 42");
+            IGenericExpression<string> e7 = context.CompileGeneric<string>("42.420");
+            IGenericExpression<string> e8 = context.CompileGeneric<string>("42.000");
+            IGenericExpression<bool> e9 = context.CompileGeneric<bool>("42.42 = \"42.420\"");
+            IGenericExpression<bool> e10 = context.CompileGeneric<bool>("42.420 = \"42.42\"");
+            IGenericExpression<bool> e11 = context.CompileGeneric<bool>("42.0 = 42");
 
             Assert.AreEqual("2025-05-10", e1.Evaluate());
             Assert.AreEqual("2025-05-10foobar", e2.Evaluate());
@@ -156,9 +158,11 @@ namespace Flee.Test.ExpressionTests
             Assert.AreEqual("2025-05-10 12:12:12", e4.Evaluate());
             Assert.AreEqual("42.42", e5.Evaluate());
             Assert.AreEqual("True", e6.Evaluate());
-            Assert.IsFalse(e7.Evaluate());
-            Assert.IsTrue(e8.Evaluate());
-            Assert.IsTrue(e9.Evaluate());
+            Assert.AreEqual("42.42", e7.Evaluate());
+            Assert.AreEqual("42", e8.Evaluate());
+            Assert.IsFalse(e9.Evaluate());
+            Assert.IsTrue(e10.Evaluate());
+            Assert.IsTrue(e11.Evaluate());
         }
     }
 
