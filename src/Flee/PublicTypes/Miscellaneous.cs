@@ -1,4 +1,6 @@
-﻿namespace Flee.PublicTypes
+﻿using System.Globalization;
+
+namespace Flee.PublicTypes
 {
     public interface IExpression
     {
@@ -165,6 +167,98 @@
         {
             get { return _myFunctionResult; }
             set { _myFunctionResult = value; }
+        }
+    }
+
+    public static class FormattingUtils
+    {
+        public static string FormatList(string[] items)
+        {
+            string separator = CultureInfo.CurrentCulture.TextInfo.ListSeparator + " ";
+            return string.Join(separator, items);
+        }
+
+        public static string FormatDateTime(DateTime dt, string[] formats = null, CultureInfo culture = null)
+        {
+            if (formats != null && formats.Length > 0)
+            {
+                bool dateUsesTime = dt.TimeOfDay != TimeSpan.Zero;
+
+                foreach (string format in formats)
+                {
+                    bool formatUsesTime = format.Any(c => "Hmsft".Contains(c));
+
+                    if (formatUsesTime == dateUsesTime)
+                    {
+                        return dt.ToString(format, culture);
+                    }
+                }
+
+                return dt.ToString(formats[0], culture);
+            }
+
+            return dt.ToString(culture);
+        }
+
+        public static string FormatBoolean(bool value, bool capitalize)
+        {
+            if (capitalize)
+            {
+                return value ? "True" : "False";
+            }
+            else
+            {
+                return value ? "true" : "false";
+            }
+        }
+
+        public static string FormatNumber(object value, CultureInfo culture)
+        {
+            if (value is double doubleValue)
+            {
+                return doubleValue.ToString(culture);
+            }
+            else if (value is decimal decimalValue)
+            {
+                return decimalValue.ToString(culture);
+            }
+            else if (value is float floatValue)
+            {
+                return floatValue.ToString(culture);
+            }
+            else if (value is int intValue)
+            {
+                return intValue.ToString(culture);
+            }
+            else if (value is uint uintValue)
+            {
+                return uintValue.ToString(culture);
+            }
+            else if (value is byte byteValue)
+            {
+                return byteValue.ToString(culture);
+            }
+            else if (value is sbyte sbyteValue)
+            {
+                return sbyteValue.ToString(culture);
+            }
+            else if (value is long longValue)
+            {
+                return longValue.ToString(culture);
+            }
+            else if (value is ulong ulongValue)
+            {
+                return ulongValue.ToString(culture);
+            }
+            else if (value is short shortValue)
+            {
+                return shortValue.ToString(culture);
+            }
+            else if (value is ushort ushortValue)
+            {
+                return ushortValue.ToString(culture);
+            }
+            return "";
         }
     }
 

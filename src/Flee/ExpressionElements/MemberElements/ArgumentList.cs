@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using Flee.ExpressionElements.Base;
-using Flee.InternalTypes;
+using Flee.PublicTypes;
 
 namespace Flee.ExpressionElements.MemberElements
 {
@@ -44,7 +44,7 @@ namespace Flee.ExpressionElements.MemberElements
         public override string ToString()
         {
             string[] typeNames = GetArgumentTypeNames();
-            return Utility.FormatList(typeNames);
+            return FormattingUtils.FormatList(typeNames);
         }
 
         public ExpressionElement[] ToArray()
