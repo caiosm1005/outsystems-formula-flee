@@ -67,8 +67,7 @@ namespace Flee.PublicTypes
 
         internal bool HasNamespace(string ns)
         {
-            NamespaceImport import = MyRootImport.FindImport(ns) as NamespaceImport;
-            return import != null;
+            return MyRootImport.FindImport(ns) is NamespaceImport import;
         }
 
         internal NamespaceImport GetImport(string ns)
@@ -78,9 +77,7 @@ namespace Flee.PublicTypes
                 return MyRootImport;
             }
 
-            NamespaceImport import = MyRootImport.FindImport(ns) as NamespaceImport;
-
-            if (import == null)
+            if (MyRootImport.FindImport(ns) is not NamespaceImport import)
             {
                 import = new NamespaceImport(ns);
                 MyRootImport.Add(import);
