@@ -66,6 +66,10 @@ namespace Flee.ExpressionElements.Base
             {
                 ThrowCompileException(CompileErrorResourceKeys.ReferenceToNonSharedMemberRequiresObjectReference, CompileExceptionReason.TypeMismatch, MyName);
             }
+            else if (!MyContext.ParserOptions.AllowMemberAccess)
+            {
+                ThrowCompileException(CompileErrorResourceKeys.UnallowedMemberAccess, CompileExceptionReason.TypeMismatch, MyName);
+            }
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
@@ -293,7 +297,6 @@ namespace Flee.ExpressionElements.Base
             }
             else
             {
-                // We are not the first element; find all members with our name on the type of the previous member
                 // We are not the first element; find all members with our name on the type of the previous member
                 var foundMembers = MyPrevious.TargetType.FindMembers(targets, BindFlags, MyOptions.MemberFilter, MyName);
                 var importedMembers = MyContext.Imports.RootImport.FindMembers(MyName, targets);

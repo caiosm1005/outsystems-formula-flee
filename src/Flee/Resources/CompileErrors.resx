@@ -204,6 +204,9 @@
   <data name="ReferenceToNonSharedMemberRequiresObjectReference" xml:space="preserve">
     <value>Reference to a non-shared member '{0}' requires an object reference</value>
   </data>
+  <data name="UnallowedMemberAccess" xml:space="preserve">
+    <value>Unallowed '{0}' member access.</value>
+  </data>
   <data name="SearchArgIsNotKnownCollectionType" xml:space="preserve">
     <value>Search argument type '{0}' is not a known collection type</value>
   </data>

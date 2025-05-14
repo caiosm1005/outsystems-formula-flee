@@ -21,6 +21,7 @@
         public const string TypeCannotBeUsedAsAnExpression = "TypeCannotBeUsedAsAnExpression";
         public const string StaticMemberCannotBeAccessedWithInstanceReference = "StaticMemberCannotBeAccessedWithInstanceReference";
         public const string ReferenceToNonSharedMemberRequiresObjectReference = "ReferenceToNonSharedMemberRequiresObjectReference";
+        public const string UnallowedMemberAccess = "UnallowedMemberAccess";
         public const string FunctionHasNoReturnValue = "FunctionHasNoReturnValue";
         public const string OperationNotDefinedForType = "OperationNotDefinedForType";
         public const string OperationNotDefinedForTypes = "OperationNotDefinedForTypes";

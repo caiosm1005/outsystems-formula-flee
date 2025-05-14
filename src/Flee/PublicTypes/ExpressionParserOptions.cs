@@ -61,6 +61,7 @@ namespace Flee.PublicTypes
             RequireDigitsBeforeDecimalPoint = false;
             DecimalSeparator = '.';
             FunctionArgumentSeparator = ',';
+            AllowMemberAccess = true;
         }
 
         #endregion
@@ -99,6 +100,12 @@ namespace Flee.PublicTypes
         {
             get { return _myProperties.GetValue<char>("FunctionArgumentSeparator"); }
             set { _myProperties.SetValue("FunctionArgumentSeparator", value); }
+        }
+
+        public bool AllowMemberAccess
+        {
+            get { return _myProperties.GetValue<bool>("AllowMemberAccess"); }
+            set { _myProperties.SetValue("AllowMemberAccess", value); }
         }
 
         #endregion

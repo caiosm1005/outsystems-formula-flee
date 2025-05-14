@@ -321,6 +321,15 @@ namespace Flee.Resources {
                 return ResourceManager.GetString("ReferenceToNonSharedMemberRequiresObjectReference", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Unallowed Member Access.
+        /// </summary>
+        internal static string UnallowedMemberAccess {
+            get {
+                return ResourceManager.GetString("UnallowedMemberAccess", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Search argument type &apos;{0}&apos; is not a known collection type.

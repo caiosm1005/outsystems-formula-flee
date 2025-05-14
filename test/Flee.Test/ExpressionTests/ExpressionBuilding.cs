@@ -164,6 +164,19 @@ namespace Flee.Test.ExpressionTests
             Assert.IsTrue(e10.Evaluate());
             Assert.IsTrue(e11.Evaluate());
         }
+
+        [Test]
+        public void TestInstanceMembersAccess()
+        {
+            ExpressionContext c1 = new();
+            ExpressionContext c2 = new();
+            c2.ParserOptions.AllowMemberAccess = false;
+
+            IGenericExpression<string> e1 = c1.CompileGeneric<string>("\"Hello World\".ToUpper()");
+            
+            Assert.AreEqual("HELLO WORLD", e1.Evaluate());
+            Assert.Catch<ExpressionCompileException>(() => c2.CompileGeneric<string>("\"Hello World\".ToUpper()"));
+        }
     }
 
     public class HelperExpressionClass
