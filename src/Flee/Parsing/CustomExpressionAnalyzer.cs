@@ -196,9 +196,9 @@ namespace Flee.Parsing
 
             object second = childValues[0];
             InElement op;
-            if (second is IList)
+            if (second is IList list)
             {
-                op = new InElement(operand, (IList)second);
+                op = new InElement(operand, list);
             }
             else
             {

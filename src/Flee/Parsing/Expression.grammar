@@ -86,7 +86,7 @@ NotExpression = NOT? InExpression;
 
 InExpression = CompareExpression [IN InTargetExpression];
 
-InTargetExpression = FieldPropertyExpression | InListTargetExpression;
+InTargetExpression = FieldPropertyExpression | InListTargetExpression | FunctionCallExpression;
 
 InListTargetExpression = "(" ArgumentList ")";
 

@@ -4,6 +4,7 @@ using Flee.PublicTypes;
 using NUnit.Framework;
 
 #pragma warning disable CA1822 // Mark members as static
+#pragma warning disable CA1861 // Avoid constant arrays as arguments
 
 namespace Flee.Test.ExpressionTests
 {
@@ -130,16 +131,19 @@ namespace Flee.Test.ExpressionTests
             ExpressionContext context = new(helper);
             context.Imports.AddType(typeof(HelperExpressionClass));
             context.Options.ParseCulture = new CultureInfo("en-US"); // Set default culture
+            context.Variables.Add("a", new[] { "string1", "string2" });
 
             IGenericExpression<bool> e1 = context.CompileGeneric<bool>("NOT 15 IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22,23)");
             IGenericExpression<bool> e2 = context.CompileGeneric<bool>("\"a\" IN (\"a\",\"b\",\"c\",\"d\") and true and 5 in (2,4,5)");
             IGenericExpression<bool> e3 = context.CompileGeneric<bool>("\"a\" IN (\"a\",\"b\",\"c\",\"d\") and true and 5 in (2,4,6,7,8,9)");
-            IGenericExpression<bool> e4 = context.CompileGeneric<bool>("\"string1\" IN StringSplit(\"string1,string2\", \",\") and not \"foobar\" in StringSplit(\"x,y,z\", \",\")");
+            IGenericExpression<bool> e4 = context.CompileGeneric<bool>("\"string1\" IN a");
+            IGenericExpression<bool> e5 = context.CompileGeneric<bool>("\"string2\" IN StringSplit(\"string1,string2\", \",\") and not \"invalid\" in StringSplit(\"x,y,z\", \",\")");
 
             Assert.IsTrue(e1.Evaluate());
             Assert.IsTrue(e2.Evaluate());
             Assert.IsFalse(e3.Evaluate());
             Assert.IsTrue(e4.Evaluate());
+            Assert.IsTrue(e5.Evaluate());
         }
 
         [Test]

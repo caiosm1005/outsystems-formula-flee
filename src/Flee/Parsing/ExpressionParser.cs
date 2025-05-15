@@ -92,6 +92,9 @@ namespace Flee.Parsing
             alt = new ProductionPatternAlternative();
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.IN_LIST_TARGET_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
+            alt = new ProductionPatternAlternative();
+            alt.AddProduction(Convert.ToInt32(ExpressionConstants.FUNCTION_CALL_EXPRESSION), 1, 1);
+            pattern.AddAlternative(alt);
             AddPattern(pattern);
 
             pattern = new ProductionPattern(Convert.ToInt32(ExpressionConstants.IN_LIST_TARGET_EXPRESSION), "InListTargetExpression");

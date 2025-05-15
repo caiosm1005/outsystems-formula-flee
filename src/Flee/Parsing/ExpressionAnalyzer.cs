@@ -15,275 +15,207 @@
             {
                 case (int)ExpressionConstants.ADD:
                     EnterAdd((Token)node);
-
                     break;
                 case (int)ExpressionConstants.SUB:
                     EnterSub((Token)node);
-
                     break;
                 case (int)ExpressionConstants.MUL:
                     EnterMul((Token)node);
-
                     break;
                 case (int)ExpressionConstants.DIV:
                     EnterDiv((Token)node);
-
                     break;
                 case (int)ExpressionConstants.POWER:
                     EnterPower((Token)node);
-
                     break;
                 case (int)ExpressionConstants.MOD:
                     EnterMod((Token)node);
-
                     break;
                 case (int)ExpressionConstants.LEFT_PAREN:
                     EnterLeftParen((Token)node);
-
                     break;
                 case (int)ExpressionConstants.RIGHT_PAREN:
                     EnterRightParen((Token)node);
-
                     break;
                 case (int)ExpressionConstants.LEFT_BRACE:
                     EnterLeftBrace((Token)node);
-
                     break;
                 case (int)ExpressionConstants.RIGHT_BRACE:
                     EnterRightBrace((Token)node);
-
                     break;
                 case (int)ExpressionConstants.EQ:
                     EnterEq((Token)node);
-
                     break;
                 case (int)ExpressionConstants.LT:
                     EnterLt((Token)node);
-
                     break;
                 case (int)ExpressionConstants.GT:
                     EnterGt((Token)node);
-
                     break;
                 case (int)ExpressionConstants.LTE:
                     EnterLte((Token)node);
-
                     break;
                 case (int)ExpressionConstants.GTE:
                     EnterGte((Token)node);
-
                     break;
                 case (int)ExpressionConstants.NE:
                     EnterNe((Token)node);
-
                     break;
                 case (int)ExpressionConstants.AND:
                     EnterAnd((Token)node);
-
                     break;
                 case (int)ExpressionConstants.OR:
                     EnterOr((Token)node);
-
                     break;
                 case (int)ExpressionConstants.XOR:
                     EnterXor((Token)node);
-
                     break;
                 case (int)ExpressionConstants.NOT:
                     EnterNot((Token)node);
-
                     break;
                 case (int)ExpressionConstants.IN:
                     EnterIn((Token)node);
-
                     break;
                 case (int)ExpressionConstants.DOT:
                     EnterDot((Token)node);
-
                     break;
                 case (int)ExpressionConstants.ARGUMENT_SEPARATOR:
                     EnterArgumentSeparator((Token)node);
-
                     break;
                 case (int)ExpressionConstants.ARRAY_BRACES:
                     EnterArrayBraces((Token)node);
-
                     break;
                 case (int)ExpressionConstants.LEFT_SHIFT:
                     EnterLeftShift((Token)node);
-
                     break;
                 case (int)ExpressionConstants.RIGHT_SHIFT:
                     EnterRightShift((Token)node);
-
                     break;
                 case (int)ExpressionConstants.INTEGER:
                     EnterInteger((Token)node);
-
                     break;
                 case (int)ExpressionConstants.REAL:
                     EnterReal((Token)node);
-
                     break;
                 case (int)ExpressionConstants.STRING_LITERAL:
                     EnterStringLiteral((Token)node);
-
                     break;
                 case (int)ExpressionConstants.CHAR_LITERAL:
                     EnterCharLiteral((Token)node);
-
                     break;
                 case (int)ExpressionConstants.TRUE:
                     EnterTrue((Token)node);
-
                     break;
                 case (int)ExpressionConstants.FALSE:
                     EnterFalse((Token)node);
-
                     break;
                 case (int)ExpressionConstants.IDENTIFIER:
                     EnterIdentifier((Token)node);
-
                     break;
                 case (int)ExpressionConstants.HEX_LITERAL:
                     EnterHexLiteral((Token)node);
-
                     break;
                 case (int)ExpressionConstants.NULL_LITERAL:
                     EnterNullLiteral((Token)node);
-
                     break;
                 case (int)ExpressionConstants.TIMESPAN:
                     EnterTimespan((Token)node);
-
                     break;
                 case (int)ExpressionConstants.DATETIME:
                     EnterDatetime((Token)node);
-
                     break;
                 case (int)ExpressionConstants.IF:
                     EnterIf((Token)node);
-
                     break;
                 case (int)ExpressionConstants.CAST:
                     EnterCast((Token)node);
-
                     break;
                 case (int)ExpressionConstants.EXPRESSION:
                     EnterExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.XOR_EXPRESSION:
                     EnterXorExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.OR_EXPRESSION:
                     EnterOrExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.AND_EXPRESSION:
                     EnterAndExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.NOT_EXPRESSION:
                     EnterNotExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.IN_EXPRESSION:
                     EnterInExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.IN_TARGET_EXPRESSION:
                     EnterInTargetExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.IN_LIST_TARGET_EXPRESSION:
                     EnterInListTargetExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.COMPARE_EXPRESSION:
                     EnterCompareExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.SHIFT_EXPRESSION:
                     EnterShiftExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.ADDITIVE_EXPRESSION:
                     EnterAdditiveExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.MULTIPLICATIVE_EXPRESSION:
                     EnterMultiplicativeExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.POWER_EXPRESSION:
                     EnterPowerExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.NEGATE_EXPRESSION:
                     EnterNegateExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.MEMBER_EXPRESSION:
                     EnterMemberExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.MEMBER_ACCESS_EXPRESSION:
                     EnterMemberAccessExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.BASIC_EXPRESSION:
                     EnterBasicExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.MEMBER_FUNCTION_EXPRESSION:
                     EnterMemberFunctionExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
                     EnterFieldPropertyExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.SPECIAL_FUNCTION_EXPRESSION:
                     EnterSpecialFunctionExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.IF_EXPRESSION:
                     EnterIfExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.CAST_EXPRESSION:
                     EnterCastExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.CAST_TYPE_EXPRESSION:
                     EnterCastTypeExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.INDEX_EXPRESSION:
                     EnterIndexExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.FUNCTION_CALL_EXPRESSION:
                     EnterFunctionCallExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.ARGUMENT_LIST:
                     EnterArgumentList((Production)node);
-
                     break;
                 case (int)ExpressionConstants.LITERAL_EXPRESSION:
                     EnterLiteralExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.BOOLEAN_LITERAL_EXPRESSION:
                     EnterBooleanLiteralExpression((Production)node);
-
                     break;
                 case (int)ExpressionConstants.EXPRESSION_GROUP:
                     EnterExpressionGroup((Production)node);
-
                     break;
             }
         }
@@ -295,214 +227,78 @@
         /// <returns></returns>
         public override Node Exit(Node node)
         {
-            switch (node.Id)
+            return node.Id switch
             {
-                case (int)ExpressionConstants.ADD:
-
-                    return ExitAdd((Token)node);
-                case (int)ExpressionConstants.SUB:
-
-                    return ExitSub((Token)node);
-                case (int)ExpressionConstants.MUL:
-
-                    return ExitMul((Token)node);
-                case (int)ExpressionConstants.DIV:
-
-                    return ExitDiv((Token)node);
-                case (int)ExpressionConstants.POWER:
-
-                    return ExitPower((Token)node);
-                case (int)ExpressionConstants.MOD:
-
-                    return ExitMod((Token)node);
-                case (int)ExpressionConstants.LEFT_PAREN:
-
-                    return ExitLeftParen((Token)node);
-                case (int)ExpressionConstants.RIGHT_PAREN:
-
-                    return ExitRightParen((Token)node);
-                case (int)ExpressionConstants.LEFT_BRACE:
-
-                    return ExitLeftBrace((Token)node);
-                case (int)ExpressionConstants.RIGHT_BRACE:
-
-                    return ExitRightBrace((Token)node);
-                case (int)ExpressionConstants.EQ:
-
-                    return ExitEq((Token)node);
-                case (int)ExpressionConstants.LT:
-
-                    return ExitLt((Token)node);
-                case (int)ExpressionConstants.GT:
-
-                    return ExitGt((Token)node);
-                case (int)ExpressionConstants.LTE:
-
-                    return ExitLte((Token)node);
-                case (int)ExpressionConstants.GTE:
-
-                    return ExitGte((Token)node);
-                case (int)ExpressionConstants.NE:
-
-                    return ExitNe((Token)node);
-                case (int)ExpressionConstants.AND:
-
-                    return ExitAnd((Token)node);
-                case (int)ExpressionConstants.OR:
-
-                    return ExitOr((Token)node);
-                case (int)ExpressionConstants.XOR:
-
-                    return ExitXor((Token)node);
-                case (int)ExpressionConstants.NOT:
-
-                    return ExitNot((Token)node);
-                case (int)ExpressionConstants.IN:
-
-                    return ExitIn((Token)node);
-                case (int)ExpressionConstants.DOT:
-
-                    return ExitDot((Token)node);
-                case (int)ExpressionConstants.ARGUMENT_SEPARATOR:
-
-                    return ExitArgumentSeparator((Token)node);
-                case (int)ExpressionConstants.ARRAY_BRACES:
-
-                    return ExitArrayBraces((Token)node);
-                case (int)ExpressionConstants.LEFT_SHIFT:
-
-                    return ExitLeftShift((Token)node);
-                case (int)ExpressionConstants.RIGHT_SHIFT:
-
-                    return ExitRightShift((Token)node);
-                case (int)ExpressionConstants.INTEGER:
-
-                    return ExitInteger((Token)node);
-                case (int)ExpressionConstants.REAL:
-
-                    return ExitReal((Token)node);
-                case (int)ExpressionConstants.STRING_LITERAL:
-
-                    return ExitStringLiteral((Token)node);
-                case (int)ExpressionConstants.CHAR_LITERAL:
-
-                    return ExitCharLiteral((Token)node);
-                case (int)ExpressionConstants.TRUE:
-
-                    return ExitTrue((Token)node);
-                case (int)ExpressionConstants.FALSE:
-
-                    return ExitFalse((Token)node);
-                case (int)ExpressionConstants.IDENTIFIER:
-
-                    return ExitIdentifier((Token)node);
-                case (int)ExpressionConstants.HEX_LITERAL:
-
-                    return ExitHexliteral((Token)node);
-                case (int)ExpressionConstants.NULL_LITERAL:
-
-                    return ExitNullLiteral((Token)node);
-                case (int)ExpressionConstants.TIMESPAN:
-
-                    return ExitTimespan((Token)node);
-                case (int)ExpressionConstants.DATETIME:
-
-                    return ExitDatetime((Token)node);
-                case (int)ExpressionConstants.IF:
-
-                    return ExitIf((Token)node);
-                case (int)ExpressionConstants.CAST:
-
-                    return ExitCast((Token)node);
-                case (int)ExpressionConstants.EXPRESSION:
-
-                    return ExitExpression((Production)node);
-                case (int)ExpressionConstants.XOR_EXPRESSION:
-
-                    return ExitXorExpression((Production)node);
-                case (int)ExpressionConstants.OR_EXPRESSION:
-
-                    return ExitOrExpression((Production)node);
-                case (int)ExpressionConstants.AND_EXPRESSION:
-
-                    return ExitAndExpression((Production)node);
-                case (int)ExpressionConstants.NOT_EXPRESSION:
-
-                    return ExitNotExpression((Production)node);
-                case (int)ExpressionConstants.IN_EXPRESSION:
-
-                    return ExitInExpression((Production)node);
-                case (int)ExpressionConstants.IN_TARGET_EXPRESSION:
-
-                    return ExitInTargetExpression((Production)node);
-                case (int)ExpressionConstants.IN_LIST_TARGET_EXPRESSION:
-
-                    return ExitInListTargetExpression((Production)node);
-                case (int)ExpressionConstants.COMPARE_EXPRESSION:
-
-                    return ExitCompareExpression((Production)node);
-                case (int)ExpressionConstants.SHIFT_EXPRESSION:
-
-                    return ExitShiftExpression((Production)node);
-                case (int)ExpressionConstants.ADDITIVE_EXPRESSION:
-
-                    return ExitAdditiveExpression((Production)node);
-                case (int)ExpressionConstants.MULTIPLICATIVE_EXPRESSION:
-
-                    return ExitMultiplicativeExpression((Production)node);
-                case (int)ExpressionConstants.POWER_EXPRESSION:
-
-                    return ExitPowerExpression((Production)node);
-                case (int)ExpressionConstants.NEGATE_EXPRESSION:
-
-                    return ExitNegateExpression((Production)node);
-                case (int)ExpressionConstants.MEMBER_EXPRESSION:
-
-                    return ExitMemberExpression((Production)node);
-                case (int)ExpressionConstants.MEMBER_ACCESS_EXPRESSION:
-
-                    return ExitMemberAccessExpression((Production)node);
-                case (int)ExpressionConstants.BASIC_EXPRESSION:
-
-                    return ExitBasicExpression((Production)node);
-                case (int)ExpressionConstants.MEMBER_FUNCTION_EXPRESSION:
-
-                    return ExitMemberFunctionExpression((Production)node);
-                case (int)ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
-
-                    return ExitFieldPropertyExpression((Production)node);
-                case (int)ExpressionConstants.SPECIAL_FUNCTION_EXPRESSION:
-
-                    return ExitSpecialFunctionExpression((Production)node);
-                case (int)ExpressionConstants.IF_EXPRESSION:
-
-                    return ExitIfExpression((Production)node);
-                case (int)ExpressionConstants.CAST_EXPRESSION:
-
-                    return ExitCastExpression((Production)node);
-                case (int)ExpressionConstants.CAST_TYPE_EXPRESSION:
-
-                    return ExitCastTypeExpression((Production)node);
-                case (int)ExpressionConstants.INDEX_EXPRESSION:
-
-                    return ExitIndexExpression((Production)node);
-                case (int)ExpressionConstants.FUNCTION_CALL_EXPRESSION:
-
-                    return ExitFunctionCallExpression((Production)node);
-                case (int)ExpressionConstants.ARGUMENT_LIST:
-
-                    return ExitArgumentList((Production)node);
-                case (int)ExpressionConstants.LITERAL_EXPRESSION:
-
-                    return ExitLiteralExpression((Production)node);
-                case (int)ExpressionConstants.BOOLEAN_LITERAL_EXPRESSION:
-
-                    return ExitBooleanLiteralExpression((Production)node);
-                case (int)ExpressionConstants.EXPRESSION_GROUP:
-
-                    return ExitExpressionGroup((Production)node);
-            }
-            return node;
+                (int)ExpressionConstants.ADD => ExitAdd((Token)node),
+                (int)ExpressionConstants.SUB => ExitSub((Token)node),
+                (int)ExpressionConstants.MUL => ExitMul((Token)node),
+                (int)ExpressionConstants.DIV => ExitDiv((Token)node),
+                (int)ExpressionConstants.POWER => ExitPower((Token)node),
+                (int)ExpressionConstants.MOD => ExitMod((Token)node),
+                (int)ExpressionConstants.LEFT_PAREN => ExitLeftParen((Token)node),
+                (int)ExpressionConstants.RIGHT_PAREN => ExitRightParen((Token)node),
+                (int)ExpressionConstants.LEFT_BRACE => ExitLeftBrace((Token)node),
+                (int)ExpressionConstants.RIGHT_BRACE => ExitRightBrace((Token)node),
+                (int)ExpressionConstants.EQ => ExitEq((Token)node),
+                (int)ExpressionConstants.LT => ExitLt((Token)node),
+                (int)ExpressionConstants.GT => ExitGt((Token)node),
+                (int)ExpressionConstants.LTE => ExitLte((Token)node),
+                (int)ExpressionConstants.GTE => ExitGte((Token)node),
+                (int)ExpressionConstants.NE => ExitNe((Token)node),
+                (int)ExpressionConstants.AND => ExitAnd((Token)node),
+                (int)ExpressionConstants.OR => ExitOr((Token)node),
+                (int)ExpressionConstants.XOR => ExitXor((Token)node),
+                (int)ExpressionConstants.NOT => ExitNot((Token)node),
+                (int)ExpressionConstants.IN => ExitIn((Token)node),
+                (int)ExpressionConstants.DOT => ExitDot((Token)node),
+                (int)ExpressionConstants.ARGUMENT_SEPARATOR => ExitArgumentSeparator((Token)node),
+                (int)ExpressionConstants.ARRAY_BRACES => ExitArrayBraces((Token)node),
+                (int)ExpressionConstants.LEFT_SHIFT => ExitLeftShift((Token)node),
+                (int)ExpressionConstants.RIGHT_SHIFT => ExitRightShift((Token)node),
+                (int)ExpressionConstants.INTEGER => ExitInteger((Token)node),
+                (int)ExpressionConstants.REAL => ExitReal((Token)node),
+                (int)ExpressionConstants.STRING_LITERAL => ExitStringLiteral((Token)node),
+                (int)ExpressionConstants.CHAR_LITERAL => ExitCharLiteral((Token)node),
+                (int)ExpressionConstants.TRUE => ExitTrue((Token)node),
+                (int)ExpressionConstants.FALSE => ExitFalse((Token)node),
+                (int)ExpressionConstants.IDENTIFIER => ExitIdentifier((Token)node),
+                (int)ExpressionConstants.HEX_LITERAL => ExitHexliteral((Token)node),
+                (int)ExpressionConstants.NULL_LITERAL => ExitNullLiteral((Token)node),
+                (int)ExpressionConstants.TIMESPAN => ExitTimespan((Token)node),
+                (int)ExpressionConstants.DATETIME => ExitDatetime((Token)node),
+                (int)ExpressionConstants.IF => ExitIf((Token)node),
+                (int)ExpressionConstants.CAST => ExitCast((Token)node),
+                (int)ExpressionConstants.EXPRESSION => ExitExpression((Production)node),
+                (int)ExpressionConstants.XOR_EXPRESSION => ExitXorExpression((Production)node),
+                (int)ExpressionConstants.OR_EXPRESSION => ExitOrExpression((Production)node),
+                (int)ExpressionConstants.AND_EXPRESSION => ExitAndExpression((Production)node),
+                (int)ExpressionConstants.NOT_EXPRESSION => ExitNotExpression((Production)node),
+                (int)ExpressionConstants.IN_EXPRESSION => ExitInExpression((Production)node),
+                (int)ExpressionConstants.IN_TARGET_EXPRESSION => ExitInTargetExpression((Production)node),
+                (int)ExpressionConstants.IN_LIST_TARGET_EXPRESSION => ExitInListTargetExpression((Production)node),
+                (int)ExpressionConstants.COMPARE_EXPRESSION => ExitCompareExpression((Production)node),
+                (int)ExpressionConstants.SHIFT_EXPRESSION => ExitShiftExpression((Production)node),
+                (int)ExpressionConstants.ADDITIVE_EXPRESSION => ExitAdditiveExpression((Production)node),
+                (int)ExpressionConstants.MULTIPLICATIVE_EXPRESSION => ExitMultiplicativeExpression((Production)node),
+                (int)ExpressionConstants.POWER_EXPRESSION => ExitPowerExpression((Production)node),
+                (int)ExpressionConstants.NEGATE_EXPRESSION => ExitNegateExpression((Production)node),
+                (int)ExpressionConstants.MEMBER_EXPRESSION => ExitMemberExpression((Production)node),
+                (int)ExpressionConstants.MEMBER_ACCESS_EXPRESSION => ExitMemberAccessExpression((Production)node),
+                (int)ExpressionConstants.BASIC_EXPRESSION => ExitBasicExpression((Production)node),
+                (int)ExpressionConstants.MEMBER_FUNCTION_EXPRESSION => ExitMemberFunctionExpression((Production)node),
+                (int)ExpressionConstants.FIELD_PROPERTY_EXPRESSION => ExitFieldPropertyExpression((Production)node),
+                (int)ExpressionConstants.SPECIAL_FUNCTION_EXPRESSION => ExitSpecialFunctionExpression((Production)node),
+                (int)ExpressionConstants.IF_EXPRESSION => ExitIfExpression((Production)node),
+                (int)ExpressionConstants.CAST_EXPRESSION => ExitCastExpression((Production)node),
+                (int)ExpressionConstants.CAST_TYPE_EXPRESSION => ExitCastTypeExpression((Production)node),
+                (int)ExpressionConstants.INDEX_EXPRESSION => ExitIndexExpression((Production)node),
+                (int)ExpressionConstants.FUNCTION_CALL_EXPRESSION => ExitFunctionCallExpression((Production)node),
+                (int)ExpressionConstants.ARGUMENT_LIST => ExitArgumentList((Production)node),
+                (int)ExpressionConstants.LITERAL_EXPRESSION => ExitLiteralExpression((Production)node),
+                (int)ExpressionConstants.BOOLEAN_LITERAL_EXPRESSION => ExitBooleanLiteralExpression((Production)node),
+                (int)ExpressionConstants.EXPRESSION_GROUP => ExitExpressionGroup((Production)node),
+                _ => node,
+            };
         }
 
         /// <summary>
@@ -516,119 +312,90 @@
             {
                 case (int)ExpressionConstants.EXPRESSION:
                     ChildExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.XOR_EXPRESSION:
                     ChildXorExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.OR_EXPRESSION:
                     ChildOrExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.AND_EXPRESSION:
                     ChildAndExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.NOT_EXPRESSION:
                     ChildNotExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.IN_EXPRESSION:
                     ChildInExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.IN_TARGET_EXPRESSION:
                     ChildInTargetExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.IN_LIST_TARGET_EXPRESSION:
                     ChildInListTargetExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.COMPARE_EXPRESSION:
                     ChildCompareExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.SHIFT_EXPRESSION:
                     ChildShiftExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.ADDITIVE_EXPRESSION:
                     ChildAdditiveExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.MULTIPLICATIVE_EXPRESSION:
                     ChildMultiplicativeExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.POWER_EXPRESSION:
                     ChildPowerExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.NEGATE_EXPRESSION:
                     ChildNegateExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.MEMBER_EXPRESSION:
                     ChildMemberExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.MEMBER_ACCESS_EXPRESSION:
                     ChildMemberAccessExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.BASIC_EXPRESSION:
                     ChildBasicExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.MEMBER_FUNCTION_EXPRESSION:
                     ChildMemberFunctionExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
                     ChildFieldPropertyExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.SPECIAL_FUNCTION_EXPRESSION:
                     ChildSpecialFunctionExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.IF_EXPRESSION:
                     ChildIfExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.CAST_EXPRESSION:
                     ChildCastExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.CAST_TYPE_EXPRESSION:
                     ChildCastTypeExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.INDEX_EXPRESSION:
                     ChildIndexExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.FUNCTION_CALL_EXPRESSION:
                     ChildFunctionCallExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.ARGUMENT_LIST:
                     ChildArgumentList(node, child);
-
                     break;
                 case (int)ExpressionConstants.LITERAL_EXPRESSION:
                     ChildLiteralExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.BOOLEAN_LITERAL_EXPRESSION:
                     ChildBooleanLiteralExpression(node, child);
-
                     break;
                 case (int)ExpressionConstants.EXPRESSION_GROUP:
                     ChildExpressionGroup(node, child);
-
                     break;
             }
         }
