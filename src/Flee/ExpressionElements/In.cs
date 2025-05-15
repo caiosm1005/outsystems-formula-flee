@@ -13,11 +13,11 @@ namespace Flee.ExpressionElements
     internal class InElement : ExpressionElement
     {
         // Element we will search for
-        private ExpressionElement MyOperand;
+        private readonly ExpressionElement MyOperand;
         // Elements we will compare against
-        private List<ExpressionElement> MyArguments;
+        private readonly List<ExpressionElement> MyArguments;
         // Collection to look in
-        private ExpressionElement MyTargetCollectionElement;
+        private readonly ExpressionElement MyTargetCollectionElement;
         // Type of the collection
 
         private Type MyTargetCollectionType;

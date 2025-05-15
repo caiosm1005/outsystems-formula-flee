@@ -5,9 +5,9 @@ namespace Flee.Resources
     internal class FleeResourceManager
     {
 
-        private Dictionary<string, ResourceManager> MyResourceManagers;
+        private readonly Dictionary<string, ResourceManager> MyResourceManagers;
 
-        private static FleeResourceManager OurInstance = new();
+        private static readonly FleeResourceManager OurInstance = new();
         private FleeResourceManager()
         {
             MyResourceManagers = new Dictionary<string, ResourceManager>(StringComparer.OrdinalIgnoreCase);

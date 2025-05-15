@@ -7,7 +7,7 @@ namespace Flee.PublicTypes
     public sealed class ExpressionImports
     {
 
-        private static Dictionary<string, Type> OurBuiltinTypeMap = CreateBuiltinTypeMap();
+        private static readonly Dictionary<string, Type> OurBuiltinTypeMap = CreateBuiltinTypeMap();
         private NamespaceImport MyRootImport;
         private TypeImport MyOwnerImport;
 

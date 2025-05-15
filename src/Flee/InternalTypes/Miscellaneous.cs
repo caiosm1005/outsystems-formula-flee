@@ -449,7 +449,7 @@ namespace Flee.InternalTypes
 
         public Stack Operands;
         public Stack Operators;
-        private Dictionary<object, Label> Labels;
+        private readonly Dictionary<object, Label> Labels;
 
         public ShortCircuitInfo()
         {
