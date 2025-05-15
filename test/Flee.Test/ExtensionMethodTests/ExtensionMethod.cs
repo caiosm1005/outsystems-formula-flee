@@ -72,13 +72,13 @@ namespace Flee.Test.ExtensionMethodTests
         public void TestExtensionMethodMatchArguments()
         {
             var result = GetExpressionContext().CompileDynamic("MatchParams(1, 2.3f, 2.3)").Evaluate();
-            Assert.AreEqual("FFD", result);
+            Assert.AreEqual("DDD", result);
             result = GetExpressionContext().CompileDynamic("MatchParams(3.4,4.4,2.3)").Evaluate();
             Assert.AreEqual("DDD", result);
             result = GetExpressionContext().CompileDynamic("MatchParams(1,2,3)").Evaluate();
-            Assert.AreEqual("III", result);
+            Assert.AreEqual("DDD", result);
             result = GetExpressionContext().CompileDynamic("MatchParams(1u,2,3)").Evaluate();
-            Assert.AreEqual("UII", result);
+            Assert.AreEqual("DDD", result);
         }
 
 

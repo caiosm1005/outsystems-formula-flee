@@ -17,7 +17,7 @@ namespace Flee.ExpressionElements
         protected override Type GetResultType(Type leftType, Type rightType)
         {
             // Right argument (shift count) must be convertible to int32
-            if (!ImplicitConverter.EmitImplicitNumericConvert(rightType, typeof(int), null))
+            if (!ImplicitConverter.EmitImplicitNumericConvert(rightType, typeof(int), null, null))
             {
                 return null;
             }

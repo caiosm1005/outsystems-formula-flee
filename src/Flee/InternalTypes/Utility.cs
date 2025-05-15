@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
+using Flee.ExpressionElements.Literals;
 using Flee.ExpressionElements.Literals.Integral;
 using Flee.PublicTypes;
 using Flee.Resources;
@@ -330,6 +331,164 @@ namespace Flee.InternalTypes
             {
                 ilg.Emit(OpCodes.Ldnull);
             }
+        }
+
+        public static void EmitNumericCast(Type sourceType, Type destType, FleeILGenerator ilg, IServiceProvider services)
+        {
+            TypeCode desttc = Type.GetTypeCode(destType);
+            TypeCode sourcetc = Type.GetTypeCode(sourceType);
+            bool unsigned = IsUnsignedType(sourceType);
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            bool @checked = options.Checked;
+            OpCode op = OpCodes.Nop;
+
+            switch (desttc)
+            {
+                case TypeCode.SByte:
+                    if (unsigned & @checked)
+                    {
+                        op = OpCodes.Conv_Ovf_I1_Un;
+                    }
+                    else if (@checked)
+                    {
+                        op = OpCodes.Conv_Ovf_I1;
+                    }
+                    else
+                    {
+                        op = OpCodes.Conv_I1;
+                    }
+                    break;
+                case TypeCode.Byte:
+                    if (unsigned & @checked)
+                    {
+                        op = OpCodes.Conv_Ovf_U1_Un;
+                    }
+                    else if (@checked)
+                    {
+                        op = OpCodes.Conv_Ovf_U1;
+                    }
+                    else
+                    {
+                        op = OpCodes.Conv_U1;
+                    }
+                    break;
+                case TypeCode.Int16:
+                    if (unsigned & @checked)
+                    {
+                        op = OpCodes.Conv_Ovf_I2_Un;
+                    }
+                    else if (@checked)
+                    {
+                        op = OpCodes.Conv_Ovf_I2;
+                    }
+                    else
+                    {
+                        op = OpCodes.Conv_I2;
+                    }
+                    break;
+                case TypeCode.UInt16:
+                    if (unsigned & @checked)
+                    {
+                        op = OpCodes.Conv_Ovf_U2_Un;
+                    }
+                    else if (@checked)
+                    {
+                        op = OpCodes.Conv_Ovf_U2;
+                    }
+                    else
+                    {
+                        op = OpCodes.Conv_U2;
+                    }
+                    break;
+                case TypeCode.Int32:
+                    if (unsigned & @checked)
+                    {
+                        op = OpCodes.Conv_Ovf_I4_Un;
+                    }
+                    else if (@checked)
+                    {
+                        op = OpCodes.Conv_Ovf_I4;
+                    }
+                    else if (sourcetc != TypeCode.UInt32)
+                    {
+                        // Don't need to emit a convert for this case since, to the CLR, it is the same data type
+                        op = OpCodes.Conv_I4;
+                    }
+                    break;
+                case TypeCode.UInt32:
+                    if (unsigned & @checked)
+                    {
+                        op = OpCodes.Conv_Ovf_U4_Un;
+                    }
+                    else if (@checked)
+                    {
+                        op = OpCodes.Conv_Ovf_U4;
+                    }
+                    else if (sourcetc != TypeCode.Int32)
+                    {
+                        op = OpCodes.Conv_U4;
+                    }
+                    break;
+                case TypeCode.Int64:
+                    if (unsigned & @checked)
+                    {
+                        op = OpCodes.Conv_Ovf_I8_Un;
+                    }
+                    else if (@checked)
+                    {
+                        op = OpCodes.Conv_Ovf_I8;
+                    }
+                    else if (sourcetc != TypeCode.UInt64)
+                    {
+                        op = OpCodes.Conv_I8;
+                    }
+                    break;
+                case TypeCode.UInt64:
+                    if (unsigned & @checked)
+                    {
+                        op = OpCodes.Conv_Ovf_U8_Un;
+                    }
+                    else if (@checked)
+                    {
+                        op = OpCodes.Conv_Ovf_U8;
+                    }
+                    else if (sourcetc != TypeCode.Int64)
+                    {
+                        op = OpCodes.Conv_U8;
+                    }
+                    break;
+                case TypeCode.Single:
+                    op = OpCodes.Conv_R4;
+                    break;
+                case TypeCode.Double:
+                    op = OpCodes.Conv_R8;
+                    break;
+                default:
+                    Debug.Assert(false, "Unknown cast dest type");
+                    break;
+            }
+
+            if (!op.Equals(OpCodes.Nop))
+            {
+                ilg.Emit(op);
+            }
+        }
+
+        public static bool IsCastableNumericType(Type t)
+        {
+            return t.IsPrimitive && !ReferenceEquals(t, typeof(bool));
+        }
+
+        public static bool IsUnsignedType(Type t)
+        {
+            return Type.GetTypeCode(t) switch
+            {
+                TypeCode.Byte or
+                TypeCode.UInt16 or
+                TypeCode.UInt32 or
+                TypeCode.UInt64 => true,
+                _ => false,
+            };
         }
 
         public static Type GetBitwiseOpType(Type leftType, Type rightType)

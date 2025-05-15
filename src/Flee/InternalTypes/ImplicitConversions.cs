@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection.Emit;
 using System.Reflection;
+using Flee.PublicTypes;
 
 namespace Flee.InternalTypes
 {
@@ -205,198 +206,24 @@ namespace Flee.InternalTypes
                 }
                 return true;
             }
-            
-            // Fallback to handling numeric conversions
-            return EmitImplicitNumericConvert(sourceType, destType, ilg);
+
+            // Fallback to numeric conversions
+            return EmitImplicitNumericConvert(sourceType, destType, ilg, services);
         }
 
-        /// <summary>
-        /// Emit an implicit conversion (if the ilg is not null) and returns a value that determines whether the implicit conversion
-        /// succeeded
-        /// </summary>
-        /// <param name="sourceType"></param>
-        /// <param name="destType"></param>
-        /// <param name="ilg"></param>
-        /// <returns></returns>
-        public static bool EmitImplicitNumericConvert(Type sourceType, Type destType, FleeILGenerator ilg)
+        public static bool EmitImplicitNumericConvert(Type sourceType, Type destType, FleeILGenerator ilg, IServiceProvider services)
         {
-            TypeCode sourceTypeCode = Type.GetTypeCode(sourceType);
-            TypeCode destTypeCode = Type.GetTypeCode(destType);
-
-            return destTypeCode switch
+            if (Utility.IsCastableNumericType(sourceType) && Utility.IsCastableNumericType(destType))
             {
-                TypeCode.Int16 => ImplicitConvertToInt16(sourceTypeCode, ilg),
-                TypeCode.UInt16 => ImplicitConvertToUInt16(sourceTypeCode, ilg),
-                TypeCode.Int32 => ImplicitConvertToInt32(sourceTypeCode, ilg),
-                TypeCode.UInt32 => ImplicitConvertToUInt32(sourceTypeCode, ilg),
-                TypeCode.Double => ImplicitConvertToDouble(sourceTypeCode, ilg),
-                TypeCode.Single => ImplicitConvertToSingle(sourceTypeCode, ilg),
-                TypeCode.Int64 => ImplicitConvertToInt64(sourceTypeCode, ilg),
-                TypeCode.UInt64 => ImplicitConvertToUInt64(sourceTypeCode, ilg),
-                _ => false,
-            };
-        }
-
-
-        private static bool ImplicitConvertToInt16(TypeCode sourceTypeCode, FleeILGenerator ilg)
-        {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private static bool ImplicitConvertToUInt16(TypeCode sourceTypeCode, FleeILGenerator ilg)
-        {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.UInt16:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private static bool ImplicitConvertToInt32(TypeCode sourceTypeCode, FleeILGenerator ilg)
-        {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private static bool ImplicitConvertToUInt32(TypeCode sourceTypeCode, FleeILGenerator ilg)
-        {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private static bool ImplicitConvertToDouble(TypeCode sourceTypeCode, FleeILGenerator ilg)
-        {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Char:
-                case TypeCode.SByte:
-                case TypeCode.Byte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                case TypeCode.Single:
-                case TypeCode.Int64:
-                    EmitConvert(ilg, OpCodes.Conv_R8);
-                    break;
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    EmitConvert(ilg, OpCodes.Conv_R_Un);
-                    EmitConvert(ilg, OpCodes.Conv_R8);
-                    break;
-                case TypeCode.Double:
-                    break;
-                default:
-                    return false;
+                if (ilg != null)
+                {
+                    Utility.EmitNumericCast(sourceType, destType, ilg, services);
+                }
+                return true;
             }
 
-            return true;
-        }
-
-        private static bool ImplicitConvertToSingle(TypeCode sourceTypeCode, FleeILGenerator ilg)
-        {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                    EmitConvert(ilg, OpCodes.Conv_R4);
-                    break;
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    EmitConvert(ilg, OpCodes.Conv_R_Un);
-                    EmitConvert(ilg, OpCodes.Conv_R4);
-                    break;
-                case TypeCode.Single:
-                    break;
-                default:
-                    return false;
-            }
-
-            return true;
-        }
-
-        private static bool ImplicitConvertToInt64(TypeCode sourceTypeCode, FleeILGenerator ilg)
-        {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.Int32:
-                    EmitConvert(ilg, OpCodes.Conv_I8);
-                    break;
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                    EmitConvert(ilg, OpCodes.Conv_U8);
-                    break;
-                case TypeCode.Int64:
-                    break;
-                default:
-                    return false;
-            }
-
-            return true;
-        }
-
-        private static bool ImplicitConvertToUInt64(TypeCode sourceTypeCode, FleeILGenerator ilg)
-        {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                    EmitConvert(ilg, OpCodes.Conv_U8);
-                    break;
-                case TypeCode.UInt64:
-                    break;
-                default:
-                    return false;
-            }
-
-            return true;
-        }
-
-        private static void EmitConvert(FleeILGenerator ilg, OpCode convertOpcode)
-        {
-            ilg?.Emit(convertOpcode);
+            // Unsupported conversion
+            return false;
         }
 
         /// <summary>
@@ -478,36 +305,36 @@ namespace Flee.InternalTypes
             switch (tc)
             {
                 case TypeCode.Byte:
-                    return 1;
+                    return 13;
                 case TypeCode.SByte:
-                    return 2;
+                    return 12;
                 case TypeCode.Char:
-                    return 3;
+                    return 11;
                 case TypeCode.Int16:
-                    return 4;
+                    return 10;
                 case TypeCode.UInt16:
-                    return 5;
+                    return 9;
                 case TypeCode.Int32:
-                    return 6;
+                    return 8;
                 case TypeCode.UInt32:
                     return 7;
                 case TypeCode.Int64:
-                    return 8;
+                    return 6;
                 case TypeCode.UInt64:
-                    return 9;
+                    return 5;
                 case TypeCode.Single:
-                    return 10;
+                    return 4;
                 case TypeCode.Double:
-                    return 11;
+                    return 3;
                 case TypeCode.Decimal:
-                    return 11;
+                    return 3;
                 case TypeCode.Boolean:
-                    return 12;
+                    return 2;
                 case TypeCode.DateTime:
-                    return 13;
+                    return 1;
                 default:
                     Debug.Assert(false, "unknown value type");
-                    return -1;
+                    return 1000;
             }
         }
 

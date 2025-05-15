@@ -224,7 +224,7 @@ namespace Flee.InternalTypes
             // Our score is the average of the scores of each parameter.  The lower the score, the better the match.
             int sum = ComputeSum(parameters, argTypes);
 
-            return (float)sum / (float)argTypes.Length;
+            return (float)sum / argTypes.Length;
         }
 
         private static int ComputeSum(ParameterInfo[] parameters, Type[] argTypes)

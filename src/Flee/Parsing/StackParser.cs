@@ -474,7 +474,7 @@ namespace Flee.Parsing
                 throw new ParserCreationException(
                     ParserCreationException.ErrorType.INFINITE_LOOP,
                     pattern.Name,
-                    (string)null);
+                    null);
             }
 
             // Find pattern look-ahead

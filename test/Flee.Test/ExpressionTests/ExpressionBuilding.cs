@@ -3,8 +3,29 @@ using System.Globalization;
 using Flee.PublicTypes;
 using NUnit.Framework;
 
+#pragma warning disable CA1822 // Mark members as static
+
 namespace Flee.Test.ExpressionTests
 {
+    public class HelperExpressionClass
+    {
+        public ExpressionContext Context;
+
+        public string MethodWithStringInput(string input)
+        {
+            if (Context == null)
+            {
+                throw new InvalidOperationException("Context is not set.");
+            }
+            return input;
+        }
+
+        public string[] StringSplit(string input, string separator)
+        {
+            return input.Split(new[] { separator }, StringSplitOptions.None);
+        }
+    }
+
     [TestFixture]
     public class ExpressionBuilding
     {
@@ -105,16 +126,20 @@ namespace Flee.Test.ExpressionTests
         [Test]
         public void TestInOperator()
         {
-            ExpressionContext context = new();
+            HelperExpressionClass helper = new();
+            ExpressionContext context = new(helper);
+            context.Imports.AddType(typeof(HelperExpressionClass));
             context.Options.ParseCulture = new CultureInfo("en-US"); // Set default culture
+
             IGenericExpression<bool> e1 = context.CompileGeneric<bool>("NOT 15 IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22,23)");
+            IGenericExpression<bool> e2 = context.CompileGeneric<bool>("\"a\" IN (\"a\",\"b\",\"c\",\"d\") and true and 5 in (2,4,5)");
+            IGenericExpression<bool> e3 = context.CompileGeneric<bool>("\"a\" IN (\"a\",\"b\",\"c\",\"d\") and true and 5 in (2,4,6,7,8,9)");
+            IGenericExpression<bool> e4 = context.CompileGeneric<bool>("\"string1\" IN StringSplit(\"string1,string2\", \",\") and not \"foobar\" in StringSplit(\"x,y,z\", \",\")");
 
             Assert.IsTrue(e1.Evaluate());
-
-            e1 = context.CompileGeneric<bool>("\"a\" IN (\"a\",\"b\",\"c\",\"d\") and true and 5 in (2,4,5)");
-            Assert.IsTrue(e1.Evaluate());
-            e1 = context.CompileGeneric<bool>("\"a\" IN (\"a\",\"b\",\"c\",\"d\") and true and 5 in (2,4,6,7,8,9)");
-            Assert.IsFalse(e1.Evaluate());
+            Assert.IsTrue(e2.Evaluate());
+            Assert.IsFalse(e3.Evaluate());
+            Assert.IsTrue(e4.Evaluate());
         }
 
         [Test]
@@ -140,29 +165,43 @@ namespace Flee.Test.ExpressionTests
             context.ParserOptions.DateTimeFormats = new string[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" };
             helper.Context = context;
 
-            IGenericExpression<string> e1 = context.CompileGeneric<string>("#2025-05-10#");
-            IGenericExpression<string> e2 = context.CompileGeneric<string>("#2025-05-10 00:00:00# + \"foobar\"");
-            IGenericExpression<string> e3 = context.CompileGeneric<string>("#2025-05-10 12:12:12# + \"foobar\"");
-            IGenericExpression<string> e4 = context.CompileGeneric<string>("MethodWithStringInput(#2025-05-10 12:12:12#)");
-            IGenericExpression<string> e5 = context.CompileGeneric<string>("MethodWithStringInput(42.420)");
-            IGenericExpression<string> e6 = context.CompileGeneric<string>("MethodWithStringInput(true)");
-            IGenericExpression<string> e7 = context.CompileGeneric<string>("42.420");
-            IGenericExpression<string> e8 = context.CompileGeneric<string>("42.000");
-            IGenericExpression<bool> e9 = context.CompileGeneric<bool>("42.42 = \"42.420\"");
-            IGenericExpression<bool> e10 = context.CompileGeneric<bool>("42.420 = \"42.42\"");
-            IGenericExpression<bool> e11 = context.CompileGeneric<bool>("42.0 = 42");
+            IGenericExpression<string> dateTimeE1 = context.CompileGeneric<string>("#2025-05-10#");
+            IGenericExpression<string> dateTimeE2 = context.CompileGeneric<string>("#2025-05-10 00:00:00# + \"foobar\"");
+            IGenericExpression<string> dateTimeE3 = context.CompileGeneric<string>("#2025-05-10 12:12:12# + \"foobar\"");
+            IGenericExpression<string> dateTimeE4 = context.CompileGeneric<string>("#2025-05-10#.AddYears(1.9999999999999999)");
+            
+            IGenericExpression<string> methodE1 = context.CompileGeneric<string>("MethodWithStringInput(#2025-05-10 12:12:12#)");
+            IGenericExpression<string> methodE2 = context.CompileGeneric<string>("MethodWithStringInput(42.420)");
+            IGenericExpression<string> methodE3 = context.CompileGeneric<string>("MethodWithStringInput(true)");
 
-            Assert.AreEqual("2025-05-10", e1.Evaluate());
-            Assert.AreEqual("2025-05-10foobar", e2.Evaluate());
-            Assert.AreEqual("2025-05-10 12:12:12foobar", e3.Evaluate());
-            Assert.AreEqual("2025-05-10 12:12:12", e4.Evaluate());
-            Assert.AreEqual("42.42", e5.Evaluate());
-            Assert.AreEqual("True", e6.Evaluate());
-            Assert.AreEqual("42.42", e7.Evaluate());
-            Assert.AreEqual("42", e8.Evaluate());
-            Assert.IsFalse(e9.Evaluate());
-            Assert.IsTrue(e10.Evaluate());
-            Assert.IsTrue(e11.Evaluate());
+            IGenericExpression<string> doubleE1 = context.CompileGeneric<string>("42.420");
+            IGenericExpression<string> doubleE2 = context.CompileGeneric<string>("42.000");
+            IGenericExpression<bool> doubleE3 = context.CompileGeneric<bool>("42.42 = \"42.420\"");
+            IGenericExpression<bool> doubleE4 = context.CompileGeneric<bool>("42.420 = \"42.42\"");
+            IGenericExpression<bool> doubleE5 = context.CompileGeneric<bool>("42.0 = 42");
+            IGenericExpression<double> doubleE6 = context.CompileGeneric<double>("42");
+            IGenericExpression<int> doubleE7 = context.CompileGeneric<int>("42.42");
+            IGenericExpression<uint> doubleE8 = context.CompileGeneric<uint>("42.42");
+            IGenericExpression<long> doubleE9 = context.CompileGeneric<long>("41.9999999999999999");
+
+            Assert.AreEqual("2025-05-10", dateTimeE1.Evaluate());
+            Assert.AreEqual("2025-05-10foobar", dateTimeE2.Evaluate());
+            Assert.AreEqual("2025-05-10 12:12:12foobar", dateTimeE3.Evaluate());
+            Assert.AreEqual("2027-05-10", dateTimeE4.Evaluate());
+            
+            Assert.AreEqual("2025-05-10 12:12:12", methodE1.Evaluate());
+            Assert.AreEqual("42.42", methodE2.Evaluate());
+            Assert.AreEqual("True", methodE3.Evaluate());
+            
+            Assert.AreEqual("42.42", doubleE1.Evaluate());
+            Assert.AreEqual("42", doubleE2.Evaluate());
+            Assert.IsFalse(doubleE3.Evaluate());
+            Assert.IsTrue(doubleE4.Evaluate());
+            Assert.IsTrue(doubleE5.Evaluate());
+            Assert.AreEqual(42.0, doubleE6.Evaluate());
+            Assert.AreEqual(42, doubleE7.Evaluate());
+            Assert.AreEqual(42, doubleE8.Evaluate());
+            Assert.AreEqual(42, doubleE9.Evaluate());
         }
 
         [Test]
@@ -176,20 +215,6 @@ namespace Flee.Test.ExpressionTests
             
             Assert.AreEqual("HELLO WORLD", e1.Evaluate());
             Assert.Catch<ExpressionCompileException>(() => c2.CompileGeneric<string>("\"Hello World\".ToUpper()"));
-        }
-    }
-
-    public class HelperExpressionClass
-    {
-        public ExpressionContext Context;
-
-        public string MethodWithStringInput(string input)
-        {
-            if (Context == null)
-            {
-                throw new InvalidOperationException("Context is not set.");
-            }
-            return input;
         }
     }
 }

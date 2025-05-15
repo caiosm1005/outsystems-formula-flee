@@ -190,7 +190,7 @@ namespace Flee.ExpressionElements
                     }
                     break;
                 case BinaryArithmeticOperation.Multiply:
-                    EmitMultiply(ilg, emitOverflow, unsigned);
+                    EmitMultiply(emitOverflow, unsigned, ilg);
                     break;
                 case BinaryArithmeticOperation.Divide:
                     if (unsigned)
@@ -213,7 +213,7 @@ namespace Flee.ExpressionElements
                     }
                     break;
                 case BinaryArithmeticOperation.Power:
-                    EmitPower(ilg, emitOverflow, unsigned);
+                    EmitPower(emitOverflow, unsigned, ilg, services);
                     break;
                 default:
                     Debug.Fail("Unknown op type");
@@ -221,11 +221,11 @@ namespace Flee.ExpressionElements
             }
         }
 
-        private void EmitPower(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
+        private void EmitPower(bool emitOverflow, bool unsigned, FleeILGenerator ilg, IServiceProvider services)
         {
             if (IsOptimizablePower)
             {
-                EmitOptimizedPower(ilg, emitOverflow, unsigned);
+                EmitOptimizedPower(emitOverflow, unsigned, ilg, services);
             }
             else
             {
@@ -233,7 +233,7 @@ namespace Flee.ExpressionElements
             }
         }
 
-        private void EmitOptimizedPower(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
+        private void EmitOptimizedPower(bool emitOverflow, bool unsigned, FleeILGenerator ilg, IServiceProvider services)
         {
             Int32LiteralElement right = (Int32LiteralElement)MyRightChild;
 
@@ -241,7 +241,7 @@ namespace Flee.ExpressionElements
             {
                 ilg.Emit(OpCodes.Pop);
                 LiteralElement.EmitLoad(1, ilg);
-                ImplicitConverter.EmitImplicitNumericConvert(typeof(int), MyLeftChild.ResultType, ilg);
+                ImplicitConverter.EmitImplicitNumericConvert(typeof(int), MyLeftChild.ResultType, ilg, services);
                 return;
             }
 
@@ -258,11 +258,11 @@ namespace Flee.ExpressionElements
 
             for (int i = 1; i <= right.Value - 1; i++)
             {
-                EmitMultiply(ilg, emitOverflow, unsigned);
+                EmitMultiply(emitOverflow, unsigned, ilg);
             }
         }
 
-        private static void EmitMultiply(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
+        private static void EmitMultiply(bool emitOverflow, bool unsigned, FleeILGenerator ilg)
         {
             if (emitOverflow)
             {

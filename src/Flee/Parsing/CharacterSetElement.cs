@@ -80,7 +80,7 @@ namespace Flee.Parsing
             }
             if (m.IsCaseInsensitive())
             {
-                c = (int)char.ToLower((char)c);
+                c = char.ToLower((char)c);
             }
             return InSet((char)c) ? 1 : -1;
         }
