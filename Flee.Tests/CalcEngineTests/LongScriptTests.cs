@@ -28,6 +28,7 @@ namespace Flee.Tests.CalcEngineTests
         {
             var engine = new SimpleCalcEngine();
             var context = new ExpressionContext();
+			context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
 			context.Imports.AddType(typeof(TestFunction));
 			context.Imports.AddType(typeof(Math));
 			//            context.Imports.AddType(typeof(Math), "math");

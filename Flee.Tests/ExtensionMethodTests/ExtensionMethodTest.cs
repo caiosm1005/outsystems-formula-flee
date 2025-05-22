@@ -87,6 +87,7 @@ namespace Flee.ExtensionMethodTests
         {
             var expressionOwner = new TestData { Id = "World" };
             var context = new ExpressionContext(expressionOwner);
+            context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
             context.Imports.AddType(typeof(TestDataExtensions));
             return context;
         }

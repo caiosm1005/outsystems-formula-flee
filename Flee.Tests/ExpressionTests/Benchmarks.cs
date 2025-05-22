@@ -583,6 +583,7 @@ AND NOT
             int iterations = 10;
 
             var context = new ExpressionContext();
+            context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
             context.Variables.ResolveVariableType += Variables_ResolveVariableType;
             context.Variables.ResolveVariableValue += Variables_ResolveVariableValue;
             Stopwatch sw;
