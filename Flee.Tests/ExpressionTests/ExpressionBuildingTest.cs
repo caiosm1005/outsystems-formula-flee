@@ -2,13 +2,13 @@
 using Flee.PublicTypes;
 using NUnit.Framework;
 
-namespace ExpressionBuildingTest
+namespace Flee.Tests.ExpressionTests
 {
     [TestFixture]
     public class ExpressionBuildingTest
     {
         [Test]
-        public void ExpressionsAsVariables()
+        public void TestExpressionsAsVariables()
         {
             ExpressionContext context = new ExpressionContext();
             context.Imports.AddType(typeof(Math));
@@ -32,7 +32,7 @@ namespace ExpressionBuildingTest
 
 
         [Test]
-        public void Test_IfExpression_enUS()
+        public void TestIfExpressionEnUS()
         {
             ExpressionContext context = new ExpressionContext();
             context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
@@ -45,7 +45,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void Test_IfExpression_fiFI()
+        public void TestIfExpressionFiFI()
         {
             ExpressionContext context = new ExpressionContext();
             context.Imports.AddType(typeof(Math));
@@ -59,7 +59,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void NullCheck()
+        public void TestNullCheck()
         {
             ExpressionContext context = new ExpressionContext();
             context.Variables.Add("a", "stringObject");
@@ -69,7 +69,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void NullIsNullCheck()
+        public void TestNullIsNullCheck()
         {
             ExpressionContext context = new ExpressionContext();
             context.Variables.Add("a", "stringObject");
@@ -79,7 +79,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void CompareLongs()
+        public void TestCompareLongs()
         {
             // bug #83 test.
             ExpressionContext context = new ExpressionContext();
@@ -92,7 +92,7 @@ namespace ExpressionBuildingTest
         }
 
         [Test]
-        public void ArgumentInt_to_DoubleConversion()
+        public void TestArgumentIntToDoubleConversion()
         {
             ExpressionContext context = new ExpressionContext();
             context.Imports.AddType(typeof(Math));
@@ -103,7 +103,7 @@ namespace ExpressionBuildingTest
 
 
         [Test]
-        public void IN_OperatorTest()
+        public void TestInOperator()
         {
             ExpressionContext context = new ExpressionContext();
             context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");

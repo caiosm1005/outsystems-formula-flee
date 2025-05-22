@@ -1,14 +1,11 @@
 ﻿using NUnit.Framework;
+using Flee.PublicTypes;
 
-namespace Flee.ExtensionMethodTests
+namespace Flee.Tests.ExtensionMethodTests
 {
-    using Flee.ExtensionMethodTests.ExtensionMethodTestData;
-    using global::Flee.PublicTypes;
-    using global::Flee.Tests.Infrastructure;
-
     /// <summary>The extension method test.</summary>
     [TestFixture]
-    public class ExtensionMethodTest : ExpressionTests
+    public class ExtensionMethodTest : Infrastructure.ExpressionTests
     {
         [Test]
         public void TestExtensionMethodCallOnOwner()
