@@ -1,7 +1,7 @@
 ﻿using System;
 using Flee.PublicTypes;
 
-namespace Flee.Test.ExpressionTests
+namespace Flee.Tests.ExpressionTests
 {
     public class Core
     {

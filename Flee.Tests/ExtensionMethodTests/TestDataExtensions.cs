@@ -1,4 +1,4 @@
-﻿namespace Flee.ExtensionMethodTests.ExtensionMethodTestData
+﻿namespace Flee.Tests.ExtensionMethodTests
 {
     internal static class TestDataExtensions
     {

@@ -1,14 +1,10 @@
 ﻿using NUnit.Framework;
+using Flee.PublicTypes;
 
-namespace Flee.ExtensionMethodTests
+namespace Flee.Tests.ExtensionMethodTests
 {
-    using Flee.ExtensionMethodTests.ExtensionMethodTestData;
-    using global::Flee.PublicTypes;
-    using global::Flee.Test.Infrastructure;
-
-    /// <summary>The extension method test.</summary>
     [TestFixture]
-    public class ExtensionMethodTest : ExpressionTests
+    public class ExtensionMethodTest : Infrastructure.ExpressionTests
     {
         [Test]
         public void TestExtensionMethodCallOnOwner()
@@ -66,10 +62,7 @@ namespace Flee.ExtensionMethodTests
             Assert.AreEqual("Hello SubWorld!!!", result);
         }
 
-        /// <summary>
-        /// check that methods are not ambiguous.
-        /// </summary>
-        [Test]
+        [Test(Description = "Check that methods are not ambiguous.")]
         public void TestExtensionMethodMatchArguments()
         {
             var result = GetExpressionContext().CompileDynamic("MatchParams(1, 2.3f, 2.3)").Evaluate();
@@ -87,6 +80,7 @@ namespace Flee.ExtensionMethodTests
         {
             var expressionOwner = new TestData { Id = "World" };
             var context = new ExpressionContext(expressionOwner);
+            context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
             context.Imports.AddType(typeof(TestDataExtensions));
             return context;
         }

@@ -1,7 +1,7 @@
 ﻿using Flee.PublicTypes;
 using NUnit.Framework;
 
-namespace Flee.Test.ExpressionTests
+namespace Flee.Tests.ExpressionTests
 {
     public class Base
     {
@@ -28,7 +28,7 @@ namespace Flee.Test.ExpressionTests
     public class CustomOperators
     {
         [Test]
-        public void LeftBaseRightBase()
+        public void TestLeftBaseRightBase()
         {
             var m1 = new Base { Value = 2 };
             var m2 = new Base { Value = 5 };
@@ -43,7 +43,7 @@ namespace Flee.Test.ExpressionTests
         }
 
         [Test]
-        public void LeftBaseRightDerived()
+        public void TestLeftBaseRightDerived()
         {
             var m1 = new Base { Value = 2 };
             var m2 = new Derived { Value = 5 };
@@ -58,7 +58,7 @@ namespace Flee.Test.ExpressionTests
         }
 
         [Test]
-        public void LeftDerivedRightBase()
+        public void TestLeftDerivedRightBase()
         {
             var m1 = new Derived { Value = 2 };
             var m2 = new Base { Value = 5 };
@@ -73,7 +73,7 @@ namespace Flee.Test.ExpressionTests
         }
 
         [Test]
-        public void LeftDerivedRightDerived()
+        public void TestLeftDerivedRightDerived()
         {
             var m1 = new Derived { Value = 2 };
             var m2 = new Derived { Value = 5 };
@@ -88,7 +88,7 @@ namespace Flee.Test.ExpressionTests
         }
 
         [Test]
-        public void LeftDerivedRightOtherDerived()
+        public void TestLeftDerivedRightOtherDerived()
         {
             var m1 = new Derived { Value = 2 };
             var m2 = new OtherDerived { Value = 5 };
@@ -103,7 +103,7 @@ namespace Flee.Test.ExpressionTests
         }
 
         [Test]
-        public void MissingOperator()
+        public void TestMissingOperator()
         {
             var m1 = new Derived { Value = 2 };
             var m2 = new OtherDerived { Value = 5 };
@@ -117,7 +117,7 @@ namespace Flee.Test.ExpressionTests
         }
 
         [Test]
-        public void BaseUnaryOperator()
+        public void TestBaseUnaryOperator()
         {
             var m1 = new Base { Value = 2 };
 
@@ -130,7 +130,7 @@ namespace Flee.Test.ExpressionTests
         }
 
         [Test]
-        public void DerivedUnaryOperator()
+        public void TestDerivedUnaryOperator()
         {
             var m1 = new Derived { Value = 2 };
 
@@ -143,7 +143,7 @@ namespace Flee.Test.ExpressionTests
         }
 
         [Test]
-        public void DerivedUnaryOperatorPlusOperator()
+        public void TestDerivedUnaryOperatorPlusOperator()
         {
             var m1 = new Derived { Value = 2 };
 

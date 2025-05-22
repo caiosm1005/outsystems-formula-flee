@@ -3,7 +3,7 @@ using Flee.CalcEngine.PublicTypes;
 using Flee.PublicTypes;
 using NUnit.Framework;
 
-namespace Flee.Test.CalcEngineTests
+namespace Flee.Tests.CalcEngineTests
 {
     [TestFixture]
     public class LongScriptTests
@@ -28,11 +28,9 @@ namespace Flee.Test.CalcEngineTests
         {
             var engine = new SimpleCalcEngine();
             var context = new ExpressionContext();
+			context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
 			context.Imports.AddType(typeof(TestFunction));
 			context.Imports.AddType(typeof(Math));
-			//            context.Imports.AddType(typeof(Math), "math");
-
-			//' add convert methods e.g. .ToInt64, .ToString, .ToDateTime...  https://msdn.microsoft.com/en-us/library/system.convert.aspx?f=255&MSPPError=-2147217396 
 			context.Imports.AddType(typeof(Convert));
 			context.Imports.AddType(typeof(string));
 
@@ -41,9 +39,8 @@ namespace Flee.Test.CalcEngineTests
         }
 
         [Test]
-        public void LongScriptWithManyFunctions()
+        public void TestLongScriptWithManyFunctions()
         {
-			//var script = System.IO.File.ReadAllText(@"test\Flee.Test\TestScripts\LongScriptWithManyFunctions.js");
 			var script = @"If((""LongTextToPushScriptLengthOver256CharactersJustToMakeSureItDoesntMatter"")=""C"", 
 	(
 	If((""D"") = ""E"",
@@ -67,9 +64,8 @@ namespace Flee.Test.CalcEngineTests
 
 
 		[Test]
-		public void FailingLongScriptWithManyFunctions()
+		public void TestFailingLongScriptWithManyFunctions()
 		{
-			//var script = System.IO.File.ReadAllText(@"test\Flee.Test\TestScripts\FailingLongScriptWithManyFunctions.js");
 			var script = @"
 If(""A"" = ""A"",
 			(
@@ -97,9 +93,8 @@ If(""A"" = ""A"",
 		}
 
 		[Test]
-		public void NestedConditionalsForLongBranches()
+		public void TestNestedConditionalsForLongBranches()
 		{
-			//var script = System.IO.File.ReadAllText(@"test\Flee.Test\TestScripts\NestedConditionals.js");
 			var script = @"IF(2.1 <> 2.1, 
 IF(2.1 > 2.1, 2.1, 
 IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 
@@ -114,9 +109,8 @@ IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 2.1))))";
 		}
 
 		[Test]
-		public void ShortCircuitLongBranches()
+		public void TestShortCircuitLongBranches()
 		{
-			//var script = System.IO.File.ReadAllText(@"test\Flee.Test\TestScripts\NestedConditionals.js");
 			var script = @"IF(
 1 = 2 AND (16 * 24 + 8 * -1 < 0 OR 1+1+1+1+1+1+1+1+1+1+1+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3*3-900 < 0)
 AND (5*6+13-6*9-3+1+2+3+4+5+6+7+8 = 5+6+7+8+9+1+2+3+4+5+6+1+2+3+4+9-48 OR 6+5+2+3+8+1*9-6*7 > 8+6*4*(15-6)*(5+1+1+1+1+1+1+1+2))
@@ -144,7 +138,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 
 
 		[Test]
-		public void CrashTest()
+		public void TestCrash()
 		{
 			_myEngine.Context.Options.RealLiteralDataType = RealLiteralDataType.Decimal;
 			bool gotex = false;
@@ -161,7 +155,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 
 
 		[Test]
-		public void SeparatorExpressionParse()
+		public void TestSeparatorExpressionParse()
 		{
 			var context = new ExpressionContext();
 			context.Options.ParseCulture = new System.Globalization.CultureInfo("de-DE");
@@ -175,7 +169,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 
 
 		[Test]
-		public void StringTest()
+		public void TestString()
         {
 			var e = _myEngine.Context.CompileDynamic("\"TEST\".Substring(0,2)");
 			var result = e.Evaluate();
@@ -185,7 +179,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 
 
 		[Test]
-		public void DivideByZero()
+		public void TestDivideByZero()
         {
 			var context = new ExpressionContext();
 			context.Options.IntegersAsDoubles = true;
