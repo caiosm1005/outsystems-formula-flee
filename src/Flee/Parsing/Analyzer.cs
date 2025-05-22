@@ -2,7 +2,9 @@
 
 namespace Flee.Parsing
 {
-    [Obsolete("Creates a new parse tree analyzer.")]
+    /// <summary>
+    /// Creates a new parse tree analyzer.
+    /// </summary>
     internal class Analyzer
     {
         public Analyzer()
