@@ -231,13 +231,13 @@ namespace Flee.Parsing
             }
             else
             {
-                buffer.Append("[");
+                buffer.Append('[');
             }
             for (int i = 0; i < _contents.Count; i++)
             {
                 buffer.Append(_contents[i]);
             }
-            buffer.Append("]");
+            buffer.Append(']');
 
             return buffer.ToString();
         }

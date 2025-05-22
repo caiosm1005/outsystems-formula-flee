@@ -19,7 +19,7 @@ namespace Flee.Parsing
                 {
                     if (i > 0)
                     {
-                        buffer.Append("\n");
+                        buffer.Append('\n');
                     }
                     buffer.Append(this[i].Message);
                 }

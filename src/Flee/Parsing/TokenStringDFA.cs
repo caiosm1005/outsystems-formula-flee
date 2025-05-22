@@ -116,7 +116,7 @@ namespace Flee.Parsing
                     {
                         buffer.Append(": ");
                         buffer.Append(_ascii[i].Value);
-                        buffer.Append("\n");
+                        buffer.Append('\n');
                     }
                     _ascii[i].Tree.PrintTo(buffer, " ");
                 }
@@ -203,7 +203,7 @@ namespace Flee.Parsing
                 {
                     buffer.Append(": ");
                     buffer.Append(_state.Value);
-                    buffer.Append("\n");
+                    buffer.Append('\n');
                 }
                 _state.Tree.PrintTo(buffer, indent + " ");
             }

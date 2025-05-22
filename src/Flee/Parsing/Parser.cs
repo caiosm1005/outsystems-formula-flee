@@ -375,7 +375,7 @@ namespace Flee.Parsing
             for (int i = 0; i < _patterns.Count; i++)
             {
                 buffer.Append(ToString((ProductionPattern)_patterns[i]));
-                buffer.Append("\n");
+                buffer.Append('\n');
             }
             return buffer.ToString();
         }
@@ -392,7 +392,7 @@ namespace Flee.Parsing
             buffer.Append(") ");
             for (i = 0; i < buffer.Length; i++)
             {
-                indent.Append(" ");
+                indent.Append(' ');
             }
             buffer.Append("= ");
             indent.Append("| ");
@@ -403,7 +403,7 @@ namespace Flee.Parsing
                     buffer.Append(indent);
                 }
                 buffer.Append(ToString(prod[i]));
-                buffer.Append("\n");
+                buffer.Append('\n');
             }
             for (i = 0; i < prod.Count; i++)
             {
@@ -416,7 +416,7 @@ namespace Flee.Parsing
                     buffer.Append(i + 1);
                     buffer.Append(": ");
                     buffer.Append(set.ToString(_tokenizer));
-                    buffer.Append("\n");
+                    buffer.Append('\n');
                 }
             }
             return buffer.ToString();
@@ -430,7 +430,7 @@ namespace Flee.Parsing
             {
                 if (i > 0)
                 {
-                    buffer.Append(" ");
+                    buffer.Append(' ');
                 }
                 buffer.Append(ToString(alt[i]));
             }
@@ -445,7 +445,7 @@ namespace Flee.Parsing
 
             if (min == 0 && max == 1)
             {
-                buffer.Append("[");
+                buffer.Append('[');
             }
             if (elem.IsToken())
             {
@@ -457,23 +457,23 @@ namespace Flee.Parsing
             }
             if (min == 0 && max == 1)
             {
-                buffer.Append("]");
+                buffer.Append(']');
             }
             else if (min == 0 && max == Int32.MaxValue)
             {
-                buffer.Append("*");
+                buffer.Append('*');
             }
             else if (min == 1 && max == Int32.MaxValue)
             {
-                buffer.Append("+");
+                buffer.Append('+');
             }
             else if (min != 1 || max != 1)
             {
-                buffer.Append("{");
+                buffer.Append('{');
                 buffer.Append(min);
-                buffer.Append(",");
+                buffer.Append(',');
                 buffer.Append(max);
-                buffer.Append("}");
+                buffer.Append('}');
             }
             return buffer.ToString();
         }

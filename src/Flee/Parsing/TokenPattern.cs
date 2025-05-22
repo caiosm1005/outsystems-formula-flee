@@ -225,9 +225,9 @@ namespace Flee.Parsing
             switch (_type)
             {
                 case PatternType.STRING:
-                    buffer.Append("\"");
+                    buffer.Append('"');
                     buffer.Append(_pattern);
-                    buffer.Append("\"");
+                    buffer.Append('"');
                     break;
                 case PatternType.REGEXP:
                     buffer.Append("<<");
@@ -239,7 +239,7 @@ namespace Flee.Parsing
             {
                 buffer.Append(" ERROR: \"");
                 buffer.Append(_errorMessage);
-                buffer.Append("\"");
+                buffer.Append('"');
             }
             if (_ignore)
             {
@@ -248,7 +248,7 @@ namespace Flee.Parsing
                 {
                     buffer.Append(": \"");
                     buffer.Append(_ignoreMessage);
-                    buffer.Append("\"");
+                    buffer.Append('"');
                 }
             }
             if (_debugInfo != null)
@@ -266,7 +266,7 @@ namespace Flee.Parsing
 
             if (_type == PatternType.STRING)
             {
-                buffer.Append("\"");
+                buffer.Append('"');
                 if (newline >= 0)
                 {
                     if (newline > 0 && _pattern[newline - 1] == '\r')
@@ -280,13 +280,13 @@ namespace Flee.Parsing
                 {
                     buffer.Append(_pattern);
                 }
-                buffer.Append("\"");
+                buffer.Append('"');
             }
             else
             {
-                buffer.Append("<");
+                buffer.Append('<');
                 buffer.Append(_name);
-                buffer.Append(">");
+                buffer.Append('>');
             }
 
             return buffer.ToString();

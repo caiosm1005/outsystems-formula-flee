@@ -186,12 +186,12 @@ namespace Flee.Parsing
             int i;
 
             buffer.Append(_name);
-            buffer.Append("(");
+            buffer.Append('(');
             buffer.Append(_id);
             buffer.Append(") ");
             for (i = 0; i < buffer.Length; i++)
             {
-                indent.Append(" ");
+                indent.Append(' ');
             }
             for (i = 0; i < _alternatives.Count; i++)
             {
@@ -201,7 +201,7 @@ namespace Flee.Parsing
                 }
                 else
                 {
-                    buffer.Append("\n");
+                    buffer.Append('\n');
                     buffer.Append(indent);
                     buffer.Append("| ");
                 }

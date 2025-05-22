@@ -363,7 +363,7 @@ namespace Flee.Parsing
         {
             StringBuilder buffer = new();
 
-            buffer.Append("{");
+            buffer.Append('{');
             for (int i = 0; i < _elements.Count; i++)
             {
                 var seq = (Sequence)_elements[i];
@@ -530,18 +530,18 @@ namespace Flee.Parsing
                 }
                 else
                 {
-                    buffer.Append("[");
+                    buffer.Append('[');
                     for (int i = 0; i < _tokens.Count; i++)
                     {
                         var id = (int)_tokens[i];
                         var str = tokenizer.GetPatternDescription(id);
                         if (i > 0)
                         {
-                            buffer.Append(" ");
+                            buffer.Append(' ');
                         }
                         buffer.Append(str);
                     }
-                    buffer.Append("]");
+                    buffer.Append(']');
                 }
                 if (_repeat)
                 {

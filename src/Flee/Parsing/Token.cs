@@ -111,7 +111,7 @@ namespace Flee.Parsing
             int newline = _image.IndexOf('\n');
 
             buffer.Append(_pattern.Name);
-            buffer.Append("(");
+            buffer.Append('(');
             buffer.Append(_pattern.Id);
             buffer.Append("): \"");
             if (newline >= 0)
@@ -159,7 +159,7 @@ namespace Flee.Parsing
             {
                 buffer.Append(" <");
                 buffer.Append(_pattern.Name);
-                buffer.Append(">");
+                buffer.Append('>');
             }
 
             return buffer.ToString();

@@ -126,11 +126,11 @@ namespace Flee.Parsing
             }
             if (_min != 1 || _max != 1)
             {
-                buffer.Append("{");
+                buffer.Append('{');
                 buffer.Append(_min);
-                buffer.Append(",");
+                buffer.Append(',');
                 buffer.Append(_max);
-                buffer.Append("}");
+                buffer.Append('}');
             }
             return buffer.ToString();
         }

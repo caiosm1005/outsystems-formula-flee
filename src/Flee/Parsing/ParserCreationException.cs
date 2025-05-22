@@ -175,15 +175,15 @@ namespace Flee.Parsing
                     case ErrorType.INFINITE_LOOP:
                         buffer.Append("infinite loop found in production pattern '");
                         buffer.Append(_name);
-                        buffer.Append("'");
+                        buffer.Append('\'');
                         break;
                     case ErrorType.INHERENT_AMBIGUITY:
                         buffer.Append("inherent ambiguity in production '");
                         buffer.Append(_name);
-                        buffer.Append("'");
+                        buffer.Append('\'');
                         if (_info != null)
                         {
-                            buffer.Append(" ");
+                            buffer.Append(' ');
                             buffer.Append(_info);
                         }
                         if (_details != null)

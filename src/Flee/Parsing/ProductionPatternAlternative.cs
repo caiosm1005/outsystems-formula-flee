@@ -201,7 +201,7 @@ namespace Flee.Parsing
             {
                 if (i > 0)
                 {
-                    buffer.Append(" ");
+                    buffer.Append(' ');
                 }
                 buffer.Append(_elements[i]);
             }
