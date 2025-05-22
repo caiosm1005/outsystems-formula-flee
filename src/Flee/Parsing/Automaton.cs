@@ -35,13 +35,10 @@
         {
 
             object result = null;
-            Automaton state = null;
-            int c = 0;
-
-            c = input.Peek(pos);
+            int c = input.Peek(pos);
             if (_tree != null && c >= 0)
             {
-                state = _tree.Find(Convert.ToChar(c), caseInsensitive);
+                Automaton state = _tree.Find(Convert.ToChar(c), caseInsensitive);
                 if (state != null)
                 {
                     result = state.MatchFrom(input, pos + 1, caseInsensitive);

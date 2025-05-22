@@ -251,8 +251,7 @@ namespace Flee.ExpressionElements.MemberElements
             object value = fi.GetValue(null);
             Type t = value.GetType();
             TypeCode code = Type.GetTypeCode(t);
-            LiteralElement elem = default;
-
+            LiteralElement elem;
             switch (code)
             {
                 case TypeCode.Char:

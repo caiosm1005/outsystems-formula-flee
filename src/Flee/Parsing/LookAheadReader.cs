@@ -134,8 +134,6 @@
 
         private void ReadAhead(int offset)
         {
-            int size = 0;
-            int readSize = 0;
 
             // Check for end of stream or already read characters 
             if (_input == null || _pos + offset < _length)
@@ -152,14 +150,14 @@
             }
 
             // Calculate number of characters to read 
-            size = _pos + offset - _length + 1;
+            int size = _pos + offset - _length + 1;
             if (size % StreamBlockSize != 0)
             {
                 size = size / StreamBlockSize * StreamBlockSize;
                 size += StreamBlockSize;
             }
             EnsureBufferCapacity(_length + size);
-
+            int readSize;
             // Read characters 
             try
             {
@@ -191,8 +189,6 @@
 
         private void EnsureBufferCapacity(int size)
         {
-            char[] newbuf = null;
-
             if (_buffer.Length >= size)
             {
                 return;
@@ -202,7 +198,7 @@
                 size = size / BufferBlockSize * BufferBlockSize;
                 size += BufferBlockSize;
             }
-            newbuf = new char[size];
+            char[] newbuf = new char[size];
             Array.Copy(_buffer, 0, newbuf, 0, _length);
             _buffer = newbuf;
         }

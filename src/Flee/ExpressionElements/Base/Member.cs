@@ -240,7 +240,7 @@ namespace Flee.ExpressionElements.Base
 
         protected static bool IsOwnerMemberAccessible(MemberInfo member, ExpressionOptions options)
         {
-            bool accessAllowed = false;
+            bool accessAllowed;
 
             // Get the allowed access defined in the options
             if (IsMemberPublic(member) == true)

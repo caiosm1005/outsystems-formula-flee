@@ -307,10 +307,9 @@ namespace Flee.InternalTypes
         public static MethodInfo GetOverloadedOperator(string name, Type sourceType, Binder binder, params Type[] argumentTypes)
         {
             name = string.Concat("op_", name);
-            MethodInfo mi = null;
             do
             {
-                mi = sourceType.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
+                MethodInfo mi = sourceType.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
                 if (mi != null && mi.IsSpecialName == true)
                 {
                     return mi;

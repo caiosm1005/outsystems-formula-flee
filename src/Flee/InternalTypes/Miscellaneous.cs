@@ -273,8 +273,7 @@ namespace Flee.InternalTypes
                 paramArraySum += ImplicitConverter.GetImplicitConvertScore(argType, paramArrayElementType);
             }
 
-            float score = 0;
-
+            float score;
             if (argTypes.Length > 0)
             {
                 score = (fixedSum + paramArraySum) / argTypes.Length;
@@ -541,7 +540,7 @@ namespace Flee.InternalTypes
 
         public T GetValue<T>(string name)
         {
-            object value = default(T);
+            object value;
             if (_myProperties.TryGetValue(name, out value) == false)
             {
                 Debug.Fail($"Unknown property '{name}'");

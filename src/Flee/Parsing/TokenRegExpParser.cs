@@ -187,10 +187,10 @@ namespace Flee.Parsing
 
         private NFAState ParseAtomModifier(NFAState start, NFAState end)
         {
-            int min = 0;
-            int max = -1;
             int firstPos = _pos;
 
+            int min;
+            int max;
             // Read min and max
             switch (ReadChar())
             {

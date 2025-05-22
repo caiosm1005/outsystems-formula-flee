@@ -34,8 +34,7 @@ namespace Flee.CalcEngine.InternalTypes
 
         private IDictionary<T, object> GetInnerDictionary(T tail)
         {
-            Dictionary<T, object> value = null;
-
+            Dictionary<T, object> value;
             if (_myDependentsMap.TryGetValue(tail, out value) == true)
             {
                 return value;
@@ -204,7 +203,7 @@ namespace Flee.CalcEngine.InternalTypes
 
         private void AddPrecedent(T head)
         {
-            int count = 0;
+            int count;
             _myPrecedentsMap.TryGetValue(head, out count);
             _myPrecedentsMap[head] = count + 1;
         }

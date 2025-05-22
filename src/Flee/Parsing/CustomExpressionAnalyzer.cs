@@ -195,8 +195,7 @@ namespace Flee.Parsing
             childValues.RemoveAt(0);
 
             object second = childValues[0];
-            InElement op = default;
-
+            InElement op;
             if (second is IList)
             {
                 op = new InElement(operand, (IList)second);

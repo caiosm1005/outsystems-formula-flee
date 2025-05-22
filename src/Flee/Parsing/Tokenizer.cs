@@ -148,8 +148,7 @@ namespace Flee.Parsing
 
         public Token Next()
         {
-            Token token = null;
-
+            Token token;
             do
             {
                 token = NextToken();

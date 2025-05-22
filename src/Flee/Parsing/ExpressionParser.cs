@@ -44,11 +44,8 @@ namespace Flee.Parsing
 
         private void CreatePatterns()
         {
-            ProductionPattern pattern = default;
-            ProductionPatternAlternative alt = default;
-
-            pattern = new ProductionPattern(Convert.ToInt32(ExpressionConstants.EXPRESSION), "Expression");
-            alt = new ProductionPatternAlternative();
+            ProductionPattern pattern = new ProductionPattern(Convert.ToInt32(ExpressionConstants.EXPRESSION), "Expression");
+            ProductionPatternAlternative alt = new ProductionPatternAlternative();
             alt.AddProduction(Convert.ToInt32(ExpressionConstants.XOR_EXPRESSION), 1, 1);
             pattern.AddAlternative(alt);
             AddPattern(pattern);

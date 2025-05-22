@@ -38,8 +38,6 @@ namespace Flee.ExpressionElements.Base.Literals
             bool hasLSuffix = image.EndsWith("l", comparison) & !image.EndsWith("ul", comparison);
             bool hasUlSuffix = image.EndsWith("ul", comparison) | image.EndsWith("lu", comparison);
             bool hasSuffix = hasUSuffix | hasLSuffix | hasUlSuffix;
-
-            LiteralElement constant = default;
             NumberStyles numStyles = NumberStyles.Integer;
 
             if (isHex == true)
@@ -48,6 +46,8 @@ namespace Flee.ExpressionElements.Base.Literals
                 image = image.Remove(0, 2);
             }
 
+
+            LiteralElement constant;
             if (hasSuffix == false)
             {
                 // If the literal has no suffix, it has the first of these types in which its value can be represented: int, uint, long, ulong.

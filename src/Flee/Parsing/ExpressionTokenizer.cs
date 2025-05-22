@@ -23,10 +23,7 @@ namespace Flee.Parsing
 
         private void CreatePatterns()
         {
-            TokenPattern pattern = default;
-            CustomTokenPattern customPattern = default;
-
-            pattern = new TokenPattern(Convert.ToInt32(ExpressionConstants.ADD), "ADD", TokenPattern.PatternType.STRING, "+");
+            TokenPattern pattern = new TokenPattern(Convert.ToInt32(ExpressionConstants.ADD), "ADD", TokenPattern.PatternType.STRING, "+");
             AddPattern(pattern);
 
             pattern = new TokenPattern(Convert.ToInt32(ExpressionConstants.SUB), "SUB", TokenPattern.PatternType.STRING, "-");
@@ -91,8 +88,7 @@ namespace Flee.Parsing
 
             pattern = new TokenPattern(Convert.ToInt32(ExpressionConstants.DOT), "DOT", TokenPattern.PatternType.STRING, ".");
             AddPattern(pattern);
-
-            customPattern = new ArgumentSeparatorPattern(Convert.ToInt32(ExpressionConstants.ARGUMENT_SEPARATOR), "ARGUMENT_SEPARATOR", TokenPattern.PatternType.STRING, ",");
+            CustomTokenPattern customPattern = new ArgumentSeparatorPattern(Convert.ToInt32(ExpressionConstants.ARGUMENT_SEPARATOR), "ARGUMENT_SEPARATOR", TokenPattern.PatternType.STRING, ",");
             customPattern.Initialize(Convert.ToInt32(ExpressionConstants.ARGUMENT_SEPARATOR), "ARGUMENT_SEPARATOR", TokenPattern.PatternType.STRING, ",", _myContext);
             AddPattern(customPattern);
 

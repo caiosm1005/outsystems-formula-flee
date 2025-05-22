@@ -158,13 +158,13 @@ namespace Flee.Parsing
 
         private Element ParseAtomModifier(Element elem)
         {
-            int min = 0;
-            int max = -1;
             RepeatElement.RepeatType type;
             int firstPos;
 
             // Read min and max
             type = RepeatElement.RepeatType.GREEDY;
+            int min;
+            int max;
             switch (ReadChar())
             {
                 case '?':
