@@ -26,7 +26,7 @@ namespace Flee.ExpressionElements.Literals
 
             EmitLoad(_myValue.Ticks, ilg);
 
-            ConstructorInfo ci = typeof(TimeSpan).GetConstructor(new Type[] { typeof(long) });
+            ConstructorInfo ci = typeof(TimeSpan).GetConstructor([typeof(long)]);
 
             ilg.Emit(OpCodes.Call, ci);
 

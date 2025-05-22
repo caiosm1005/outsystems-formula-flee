@@ -23,13 +23,13 @@ namespace Flee.ExpressionElements.Literals.Real
 
         private static ConstructorInfo GetConstructor()
         {
-            Type[] types = {
+            Type[] types = [
             typeof(Int32),
             typeof(Int32),
             typeof(Int32),
             typeof(bool),
             typeof(byte)
-        };
+        ];
             return typeof(decimal).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.Any, types, null);
         }
 

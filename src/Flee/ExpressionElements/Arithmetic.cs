@@ -19,8 +19,8 @@ namespace Flee.ExpressionElements
         public ArithmeticElement()
         {
             _ourPowerMethodInfo = typeof(Math).GetMethod("Pow", BindingFlags.Public | BindingFlags.Static);
-            _ourStringConcatMethodInfo = typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }, null);
-            _ourObjectConcatMethodInfo = typeof(string).GetMethod("Concat", new Type[] { typeof(object), typeof(object) }, null);
+            _ourStringConcatMethodInfo = typeof(string).GetMethod("Concat", [typeof(string), typeof(string)], null);
+            _ourObjectConcatMethodInfo = typeof(string).GetMethod("Concat", [typeof(object), typeof(object)], null);
         }
 
         protected override void GetOperation(object operation)

@@ -18,7 +18,7 @@ namespace Flee.InternalTypes
         static ImplicitConverter()
         {
             // Create a table with all the primitive types
-            Type[] types = {
+            Type[] types = [
             typeof(char),
             typeof(byte),
             typeof(sbyte),
@@ -30,7 +30,7 @@ namespace Flee.InternalTypes
             typeof(UInt64),
             typeof(float),
             typeof(double)
-        };
+        ];
             OurBinaryTypes = types;
             Type[,] table = new Type[types.Length, types.Length];
             OurBinaryResultTable = table;

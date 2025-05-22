@@ -241,7 +241,7 @@ namespace Flee.Parsing
 
     internal abstract class TokenMatcher
     {
-        protected TokenPattern[] Patterns = new TokenPattern[0];
+        protected TokenPattern[] Patterns = [];
 
         protected bool IgnoreCase = false;
 
@@ -338,7 +338,7 @@ namespace Flee.Parsing
 
     internal class RegExpMatcher : TokenMatcher
     {
-        private REHandler[] _regExps = new REHandler[0];
+        private REHandler[] _regExps = [];
 
         public RegExpMatcher(bool ignoreCase) : base(ignoreCase)
         {

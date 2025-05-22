@@ -238,7 +238,7 @@ namespace Flee.InternalTypes
             const BindingFlags flags = BindingFlags.Public | BindingFlags.Static;
 
             // Look on the source type and its ancestors
-            MemberInfo[] members = new MemberInfo[0];
+            MemberInfo[] members = [];
             do
             {
                 members = sourceType.FindMembers(MemberTypes.Method, flags, SimpleOverloadedOperatorFilter, data);

@@ -151,8 +151,8 @@
     internal class NFAState
     {
         internal TokenPattern Value = null;
-        internal NFATransition[] Incoming = new NFATransition[0];
-        internal NFATransition[] Outgoing = new NFATransition[0];
+        internal NFATransition[] Incoming = [];
+        internal NFATransition[] Outgoing = [];
         internal bool EpsilonOut = false;
 
         public bool HasTransitions()
@@ -391,7 +391,7 @@
         protected bool Inverse;
         protected bool IgnoreCase;
 
-        private object[] _contents = new object[0];
+        private object[] _contents = [];
 
         public NFACharRangeTransition(bool inverse,
                                       bool ignoreCase,

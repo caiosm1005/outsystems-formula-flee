@@ -106,11 +106,11 @@ namespace Flee.InternalTypes
         private DynamicMethod CreateDynamicMethod()
         {
             // Create the dynamic method
-            Type[] parameterTypes = {
+            Type[] parameterTypes = [
             typeof(object),
             typeof(ExpressionContext),
             typeof(VariableCollection)
-        };
+        ];
             DynamicMethod dm = default;
 
             dm = new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
@@ -143,8 +143,8 @@ namespace Flee.InternalTypes
             AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyFileName);
 
-            MethodBuilder mb = moduleBuilder.DefineGlobalMethod("Evaluate", MethodAttributes.Public | MethodAttributes.Static, typeof(T), new Type[] {
-            typeof(object),typeof(ExpressionContext),typeof(VariableCollection)});
+            MethodBuilder mb = moduleBuilder.DefineGlobalMethod("Evaluate", MethodAttributes.Public | MethodAttributes.Static, typeof(T), [
+            typeof(object),typeof(ExpressionContext),typeof(VariableCollection)]);
             // already emitted once for local use,
             ilg.PrepareSecondPass(mb.GetILGenerator());
 
