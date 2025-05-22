@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Flee.InternalTypes;
+﻿using Flee.InternalTypes;
 using Flee.PublicTypes;
 using Flee.Resources;
 
@@ -40,16 +39,6 @@ namespace Flee.ExpressionElements.Base
             this.ThrowCompileException(CompileErrorResourceKeys.AmbiguousOverloadedOperator, CompileExceptionReason.AmbiguousMatch, leftType.Name, rightType.Name, operation);
         }
 
-
-        protected string Name
-        {
-            get
-            {
-                string key = this.GetType().Name;
-                string value = FleeResourceManager.Instance.GetElementNameString(key);
-                Debug.Assert(value != null, $"Element name for '{key}' not in resource file");
-                return value;
-            }
-        }
+        protected string Name => GetType().Name;
     }
 }

@@ -39,11 +39,6 @@ namespace Flee.Resources
             return this.GetResourceString("CompileErrors", key);
         }
 
-        public string GetElementNameString(string key)
-        {
-            return this.GetResourceString("ElementNames", key);
-        }
-
         public string GetGeneralErrorString(string key)
         {
             return this.GetResourceString("GeneralErrors", key);
