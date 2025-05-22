@@ -113,7 +113,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             buffer.Append(_id);
             if (_token)

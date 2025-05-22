@@ -11,10 +11,10 @@ namespace Flee.Parsing
         private bool _initialized;
         private readonly Tokenizer _tokenizer;
         private Analyzer _analyzer;
-        private readonly ArrayList _patterns = new ArrayList();
-        private readonly Hashtable _patternIds = new Hashtable();
-        private readonly ArrayList _tokens = new ArrayList();
-        private ParserLogException _errorLog = new ParserLogException();
+        private readonly ArrayList _patterns = new();
+        private readonly Hashtable _patternIds = new();
+        private readonly ArrayList _tokens = new();
+        private ParserLogException _errorLog = new();
         private int _errorRecovery = -1;
 
         /// <summary>
@@ -370,7 +370,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _patterns.Count; i++)
             {
@@ -382,8 +382,8 @@ namespace Flee.Parsing
 
         private string ToString(ProductionPattern prod)
         {
-            StringBuilder buffer = new StringBuilder();
-            StringBuilder indent = new StringBuilder();
+            StringBuilder buffer = new();
+            StringBuilder indent = new();
             int i;
 
             buffer.Append(prod.Name);
@@ -424,7 +424,7 @@ namespace Flee.Parsing
 
         private string ToString(ProductionPatternAlternative alt)
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < alt.Count; i++)
             {
@@ -439,7 +439,7 @@ namespace Flee.Parsing
 
         private string ToString(ProductionPatternElement elem)
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
             int min = elem.MinCount;
             int max = elem.MaxCount;
 

@@ -12,15 +12,15 @@ namespace Flee.Parsing
      */
     internal class CharacterSetElement : Element
     {
-        public static CharacterSetElement Dot = new CharacterSetElement(false);
-        public static CharacterSetElement Digit = new CharacterSetElement(false);
-        public static CharacterSetElement NonDigit = new CharacterSetElement(true);
-        public static CharacterSetElement Whitespace = new CharacterSetElement(false);
-        public static CharacterSetElement NonWhitespace = new CharacterSetElement(true);
-        public static CharacterSetElement Word = new CharacterSetElement(false);
-        public static CharacterSetElement NonWord = new CharacterSetElement(true);
+        public static CharacterSetElement Dot = new(false);
+        public static CharacterSetElement Digit = new(false);
+        public static CharacterSetElement NonDigit = new(true);
+        public static CharacterSetElement Whitespace = new(false);
+        public static CharacterSetElement NonWhitespace = new(true);
+        public static CharacterSetElement Word = new(false);
+        public static CharacterSetElement NonWord = new(true);
         private readonly bool _inverted;
-        private readonly ArrayList _contents = new ArrayList();
+        private readonly ArrayList _contents = new();
 
         public CharacterSetElement(bool inverted)
         {

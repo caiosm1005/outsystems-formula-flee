@@ -15,7 +15,7 @@ namespace Flee.Parsing
     internal class ProductionPatternAlternative
     {
         private ProductionPattern _pattern;
-        private readonly ArrayList _elements = new ArrayList();
+        private readonly ArrayList _elements = new();
         private LookAheadSet _lookAhead = null;
 
         public ProductionPatternAlternative()
@@ -195,7 +195,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _elements.Count; i++)
             {

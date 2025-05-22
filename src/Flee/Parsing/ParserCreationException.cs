@@ -120,7 +120,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 if (_details == null)
                 {
@@ -152,7 +152,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 switch (_type)
                 {

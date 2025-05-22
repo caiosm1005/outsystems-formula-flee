@@ -149,7 +149,7 @@ namespace Flee.InternalTypes
     {
 
 
-        private static readonly DefaultExpressionOwner OurInstance = new DefaultExpressionOwner();
+        private static readonly DefaultExpressionOwner OurInstance = new();
 
         private DefaultExpressionOwner()
         {
@@ -529,7 +529,7 @@ namespace Flee.InternalTypes
 
         public PropertyDictionary Clone()
         {
-            PropertyDictionary copy = new PropertyDictionary();
+            PropertyDictionary copy = new();
 
             foreach (KeyValuePair<string, object> pair in _myProperties)
             {

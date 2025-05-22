@@ -3,7 +3,7 @@
     internal class Automaton
     {
         private object _value;
-        private readonly AutomatonTree _tree = new AutomatonTree();
+        private readonly AutomatonTree _tree = new();
 
         public Automaton()
         {

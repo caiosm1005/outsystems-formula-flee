@@ -84,7 +84,7 @@ namespace Flee.InternalTypes
         /// <remarks></remarks>
         public bool IsLongBranch(FleeILGenerator ilg)
         {
-            ILLocation startLoc = new ILLocation(ilg.Length);
+            ILLocation startLoc = new(ilg.Length);
 
             foreach (var bi in MyBranchInfos)
             {
@@ -106,9 +106,9 @@ namespace Flee.InternalTypes
         /// <remarks></remarks>
         public void AddBranch(FleeILGenerator ilg, Label target)
         {
-            ILLocation startLoc = new ILLocation(ilg.Length);
+            ILLocation startLoc = new(ilg.Length);
 
-            BranchInfo bi = new BranchInfo(startLoc, target);
+            BranchInfo bi = new(startLoc, target);
             // branches will be sorted in order
             MyBranchInfos.Add(bi);
         }

@@ -10,7 +10,7 @@ namespace ExpressionBuildingTest
         [Test]
         public void ExpressionsAsVariables()
         {
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Imports.AddType(typeof(Math));
             context.Variables.Add("a", 3.14);
             IDynamicExpression e1 = context.CompileDynamic("cos(a) ^ 2");
@@ -34,7 +34,7 @@ namespace ExpressionBuildingTest
         [Test]
         public void Test_IfExpression_enUS()
         {
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
 
             int resultWhenTrue = 3;
@@ -47,7 +47,7 @@ namespace ExpressionBuildingTest
         [Test]
         public void Test_IfExpression_fiFI()
         {
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Imports.AddType(typeof(Math));
             context.Options.ParseCulture = new System.Globalization.CultureInfo("fi-FI");
 
@@ -61,7 +61,7 @@ namespace ExpressionBuildingTest
         [Test]
         public void NullCheck()
         {
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("a", "stringObject");
             IDynamicExpression e1 = context.CompileDynamic("a = null");
 
@@ -71,7 +71,7 @@ namespace ExpressionBuildingTest
         [Test]
         public void NullIsNullCheck()
         {
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("a", "stringObject");
             IDynamicExpression e1 = context.CompileDynamic("null = null");
 
@@ -82,7 +82,7 @@ namespace ExpressionBuildingTest
         public void CompareLongs()
         {
             // bug #83 test.
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             IDynamicExpression e1 = context.CompileDynamic("2432696330L = 2432696330L AND 2432696330L > 0 AND 2432696330L < 2432696331L");
 
             Assert.IsTrue((bool)e1.Evaluate());
@@ -94,7 +94,7 @@ namespace ExpressionBuildingTest
         [Test]
         public void ArgumentInt_to_DoubleConversion()
         {
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Imports.AddType(typeof(Math));
             IDynamicExpression e1 = context.CompileDynamic("sqrt(16)");
 
@@ -105,7 +105,7 @@ namespace ExpressionBuildingTest
         [Test]
         public void IN_OperatorTest()
         {
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             var e1 = context.CompileGeneric<bool>("NOT 15 IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22,23)");
 
             Assert.IsTrue(e1.Evaluate());

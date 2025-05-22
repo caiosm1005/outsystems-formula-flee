@@ -224,7 +224,7 @@ namespace Flee.ExpressionElements.Base
 
         protected MemberInfo[] GetAccessibleMembers(MemberInfo[] members)
         {
-            List<MemberInfo> accessible = new List<MemberInfo>();
+            List<MemberInfo> accessible = new();
 
             // Keep all members that are accessible
             foreach (MemberInfo mi in members)

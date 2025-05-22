@@ -65,7 +65,7 @@ namespace Flee.Parsing
 
         public string GetMessage()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             // Append error type name
             switch (_type)

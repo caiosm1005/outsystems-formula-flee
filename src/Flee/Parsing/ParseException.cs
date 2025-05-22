@@ -120,7 +120,7 @@ namespace Flee.Parsing
             return Info;
         }
 
-        public ArrayList Details => new ArrayList(_details);
+        public ArrayList Details => new(_details);
 
         public ArrayList GetDetails()
         {
@@ -145,7 +145,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 // Add error description
                 buffer.Append(ErrorMessage);
@@ -172,7 +172,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 // Add type and info
                 switch (_type)
@@ -229,7 +229,7 @@ namespace Flee.Parsing
 
         private string GetMessageDetails()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _details.Count; i++)
             {

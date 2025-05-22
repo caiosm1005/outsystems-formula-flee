@@ -145,7 +145,7 @@ namespace Flee.Parsing
             }
             else
             {
-                InvocationListElement list = new InvocationListElement(childValues, _myServices);
+                InvocationListElement list = new(childValues, _myServices);
                 node.AddValue(list);
             }
 
@@ -155,8 +155,8 @@ namespace Flee.Parsing
         public override Node ExitIndexExpression(Production node)
         {
             IList childValues = GetChildValues(node);
-            ArgumentList args = new ArgumentList(childValues);
-            IndexerElement e = new IndexerElement(args);
+            ArgumentList args = new(childValues);
+            IndexerElement e = new(args);
             node.AddValue(e);
             return node;
         }
@@ -176,7 +176,7 @@ namespace Flee.Parsing
         public override Node ExitIfExpression(Production node)
         {
             IList childValues = GetChildValues(node);
-            ConditionalElement op = new ConditionalElement((ExpressionElement)childValues[0], (ExpressionElement)childValues[1], (ExpressionElement)childValues[2]);
+            ConditionalElement op = new((ExpressionElement)childValues[0], (ExpressionElement)childValues[1], (ExpressionElement)childValues[2]);
             node.AddValue(op);
             return node;
         }
@@ -203,7 +203,7 @@ namespace Flee.Parsing
             }
             else
             {
-                InvocationListElement il = new InvocationListElement(childValues, _myServices);
+                InvocationListElement il = new(childValues, _myServices);
                 op = new InElement(operand, il);
             }
 
@@ -229,7 +229,7 @@ namespace Flee.Parsing
             IList childValues = GetChildValues(node);
             string[] destTypeParts = (string[])childValues[1];
             bool isArray = (bool)childValues[2];
-            CastElement op = new CastElement((ExpressionElement)childValues[0], destTypeParts, isArray, _myServices);
+            CastElement op = new((ExpressionElement)childValues[0], destTypeParts, isArray, _myServices);
             node.AddValue(op);
             return node;
         }
@@ -237,7 +237,7 @@ namespace Flee.Parsing
         public override Node ExitCastTypeExpression(Production node)
         {
             IList childValues = GetChildValues(node);
-            List<string> parts = new List<string>();
+            List<string> parts = new();
 
             foreach (string part in childValues)
             {
@@ -267,7 +267,7 @@ namespace Flee.Parsing
         {
             //string name = ((Token)node.GetChildAt(0))?.Image;
             string name = node.GetChildAt(0).GetValue(0).ToString();
-            IdentifierElement elem = new IdentifierElement(name);
+            IdentifierElement elem = new(name);
             node.AddValue(elem);
             return node;
         }
@@ -277,8 +277,8 @@ namespace Flee.Parsing
             IList childValues = GetChildValues(node);
             string name = (string)childValues[0];
             childValues.RemoveAt(0);
-            ArgumentList args = new ArgumentList(childValues);
-            FunctionCallElement funcCall = new FunctionCallElement(name, args);
+            ArgumentList args = new(childValues);
+            FunctionCallElement funcCall = new(name, args);
             node.AddValue(funcCall);
             return node;
         }
@@ -386,7 +386,7 @@ namespace Flee.Parsing
         public override Node ExitStringLiteral(Token node)
         {
             string s = DoEscapes(node.Image);
-            StringLiteralElement element = new StringLiteralElement(s);
+            StringLiteralElement element = new(s);
             node.AddValue(element);
             return node;
         }
@@ -402,7 +402,7 @@ namespace Flee.Parsing
         {
             ExpressionContext context = (ExpressionContext)_myServices.GetService(typeof(ExpressionContext));
             string image = node.Image.Substring(1, node.Image.Length - 2);
-            DateTimeLiteralElement element = new DateTimeLiteralElement(image, context);
+            DateTimeLiteralElement element = new(image, context);
             node.AddValue(element);
             return node;
         }
@@ -410,7 +410,7 @@ namespace Flee.Parsing
         public override Node ExitTimespan(Token node)
         {
             string image = node.Image.Substring(2, node.Image.Length - 3);
-            TimeSpanLiteralElement element = new TimeSpanLiteralElement(image);
+            TimeSpanLiteralElement element = new(image);
             node.AddValue(element);
             return node;
         }

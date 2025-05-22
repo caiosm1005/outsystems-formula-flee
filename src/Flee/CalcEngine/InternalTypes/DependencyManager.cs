@@ -50,7 +50,7 @@ namespace Flee.CalcEngine.InternalTypes
         public DependencyManager<T> CloneDependents(T[] tails)
         {
             IDictionary<T, object> seenNodes = CreateInnerDictionary();
-            DependencyManager<T> copy = new DependencyManager<T>(_myEqualityComparer);
+            DependencyManager<T> copy = new(_myEqualityComparer);
 
             foreach (T tail in tails)
             {
@@ -262,7 +262,7 @@ namespace Flee.CalcEngine.InternalTypes
         /// <returns></returns>
         public Queue<T> GetSources(T[] rootTails)
         {
-            Queue<T> q = new Queue<T>();
+            Queue<T> q = new();
 
             foreach (T rootTail in rootTails)
             {
@@ -278,7 +278,7 @@ namespace Flee.CalcEngine.InternalTypes
         public IList<T> TopologicalSort(Queue<T> sources)
         {
             IList<T> output = new List<T>();
-            List<T> directDependents = new List<T>();
+            List<T> directDependents = new();
 
             while (sources.Count > 0)
             {
@@ -312,7 +312,7 @@ namespace Flee.CalcEngine.InternalTypes
         {
             get
             {
-                List<string> list = new List<string>();
+                List<string> list = new();
 
                 foreach (KeyValuePair<T, int> pair in _myPrecedentsMap)
                 {

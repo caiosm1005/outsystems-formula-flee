@@ -59,7 +59,7 @@ namespace Flee.ExpressionElements.MemberElements
             // Get the default members
             MemberInfo[] members = targetType.GetDefaultMembers();
 
-            List<MethodInfo> methods = new List<MethodInfo>();
+            List<MethodInfo> methods = new();
 
             // Use the first one that's valid for our indexer type
             foreach (MemberInfo mi in members)
@@ -71,7 +71,7 @@ namespace Flee.ExpressionElements.MemberElements
                 }
             }
 
-            FunctionCallElement func = new FunctionCallElement("Indexer", methods.ToArray(), _myIndexerElements);
+            FunctionCallElement func = new("Indexer", methods.ToArray(), _myIndexerElements);
             func.Resolve(MyServices);
             _myIndexerElement = func;
 

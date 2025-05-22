@@ -138,7 +138,7 @@ namespace Flee.ExpressionElements
 
         private MethodInfo GetExplictOverloadedOperator(Type sourceType, Type destType)
         {
-            ExplicitOperatorMethodBinder binder = new ExplicitOperatorMethodBinder(destType, sourceType);
+            ExplicitOperatorMethodBinder binder = new(destType, sourceType);
 
             // Look for an operator on the source type and dest types
             MethodInfo miSource = Utility.GetOverloadedOperator("Explicit", sourceType, binder, sourceType);

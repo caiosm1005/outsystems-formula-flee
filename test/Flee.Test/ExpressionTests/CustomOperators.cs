@@ -33,7 +33,7 @@ namespace Flee.Test.ExpressionTests
             var m1 = new Base { Value = 2 };
             var m2 = new Base { Value = 5 };
 
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("m1", m1);
             context.Variables.Add("m2", m2);
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
@@ -48,7 +48,7 @@ namespace Flee.Test.ExpressionTests
             var m1 = new Base { Value = 2 };
             var m2 = new Derived { Value = 5 };
 
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("m1", m1);
             context.Variables.Add("m2", m2);
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
@@ -63,7 +63,7 @@ namespace Flee.Test.ExpressionTests
             var m1 = new Derived { Value = 2 };
             var m2 = new Base { Value = 5 };
 
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("m1", m1);
             context.Variables.Add("m2", m2);
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
@@ -78,7 +78,7 @@ namespace Flee.Test.ExpressionTests
             var m1 = new Derived { Value = 2 };
             var m2 = new Derived { Value = 5 };
 
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("m1", m1);
             context.Variables.Add("m2", m2);
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
@@ -93,7 +93,7 @@ namespace Flee.Test.ExpressionTests
             var m1 = new Derived { Value = 2 };
             var m2 = new OtherDerived { Value = 5 };
 
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("m1", m1);
             context.Variables.Add("m2", m2);
             IDynamicExpression e1 = context.CompileDynamic("m1 + m2");
@@ -108,7 +108,7 @@ namespace Flee.Test.ExpressionTests
             var m1 = new Derived { Value = 2 };
             var m2 = new OtherDerived { Value = 5 };
 
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("m1", m1);
             context.Variables.Add("m2", m2);
 
@@ -121,7 +121,7 @@ namespace Flee.Test.ExpressionTests
         {
             var m1 = new Base { Value = 2 };
 
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("m1", m1);
             IDynamicExpression e1 = context.CompileDynamic("-m1");
 
@@ -134,7 +134,7 @@ namespace Flee.Test.ExpressionTests
         {
             var m1 = new Derived { Value = 2 };
 
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("m1", m1);
             IDynamicExpression e1 = context.CompileDynamic("-m1");
 
@@ -147,7 +147,7 @@ namespace Flee.Test.ExpressionTests
         {
             var m1 = new Derived { Value = 2 };
 
-            ExpressionContext context = new ExpressionContext();
+            ExpressionContext context = new();
             context.Variables.Add("m1", m1);
             IDynamicExpression e1 = context.CompileDynamic("-m1 + m1");
 

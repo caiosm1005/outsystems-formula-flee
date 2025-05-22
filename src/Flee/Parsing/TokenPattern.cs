@@ -216,7 +216,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             buffer.Append(_name);
             buffer.Append(" (");
@@ -261,7 +261,7 @@ namespace Flee.Parsing
 
         public string ToShortString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
             int newline = _pattern.IndexOf('\n');
 
             if (_type == PatternType.STRING)

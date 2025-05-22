@@ -9,9 +9,9 @@ namespace Flee.ExpressionElements.LogicalBitwise
     internal class AndOrElement : BinaryExpressionElement
     {
         private AndOrOperation _myOperation;
-        private static readonly object OurTrueTerminalKey = new object();
-        private static readonly object OurFalseTerminalKey = new object();
-        private static readonly object OurEndLabelKey = new object();
+        private static readonly object OurTrueTerminalKey = new();
+        private static readonly object OurFalseTerminalKey = new();
+        private static readonly object OurEndLabelKey = new();
 
         public void New()
         {
@@ -76,7 +76,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         private void DoEmitLogical(FleeILGenerator ilg, IServiceProvider services)
         {
             // We have to do a 'fake' emit so we can get the positions of the labels
-            ShortCircuitInfo info = new ShortCircuitInfo();
+            ShortCircuitInfo info = new();
 
             // Do the real emit
             EmitLogical(ilg, info, services);

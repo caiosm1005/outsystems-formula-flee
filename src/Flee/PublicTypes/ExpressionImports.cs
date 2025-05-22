@@ -19,7 +19,7 @@ namespace Flee.PublicTypes
 
         private static Dictionary<string, Type> CreateBuiltinTypeMap()
         {
-            Dictionary<string, Type> map = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, Type> map = new(StringComparer.OrdinalIgnoreCase);
 
             map.Add("boolean", typeof(bool));
             map.Add("byte", typeof(byte));
@@ -49,7 +49,7 @@ namespace Flee.PublicTypes
 
         internal ExpressionImports Clone()
         {
-            ExpressionImports copy = new ExpressionImports();
+            ExpressionImports copy = new();
 
             copy.MyRootImport = (NamespaceImport)MyRootImport.Clone();
             copy.MyOwnerImport = MyOwnerImport;

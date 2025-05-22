@@ -22,7 +22,7 @@ namespace Flee.ExpressionElements.Literals.Real
         public static DoubleLiteralElement Parse(string image, IServiceProvider services)
         {
             ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
-            DoubleLiteralElement element = new DoubleLiteralElement();
+            DoubleLiteralElement element = new();
 
             try
             {

@@ -21,7 +21,7 @@ namespace Flee.ExpressionElements.Literals.Real
         public static SingleLiteralElement Parse(string image, IServiceProvider services)
         {
             ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
-            SingleLiteralElement element = new SingleLiteralElement();
+            SingleLiteralElement element = new();
 
             try
             {

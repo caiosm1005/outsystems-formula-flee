@@ -19,7 +19,7 @@ namespace Flee.ExpressionElements.MemberElements
 
         private string[] GetArgumentTypeNames()
         {
-            List<string> l = new List<string>();
+            List<string> l = new();
 
             foreach (ExpressionElement e in _myElements)
             {
@@ -31,7 +31,7 @@ namespace Flee.ExpressionElements.MemberElements
 
         public Type[] GetArgumentTypes()
         {
-            List<Type> l = new List<Type>();
+            List<Type> l = new();
 
             foreach (ExpressionElement e in _myElements)
             {

@@ -75,11 +75,11 @@ namespace Flee.InternalTypes
                 options.ResultType = topElement.ResultType;
             }
 
-            RootExpressionElement rootElement = new RootExpressionElement(topElement, options.ResultType);
+            RootExpressionElement rootElement = new(topElement, options.ResultType);
 
             DynamicMethod dm = CreateDynamicMethod();
 
-            FleeILGenerator ilg = new FleeILGenerator(dm.GetILGenerator());
+            FleeILGenerator ilg = new(dm.GetILGenerator());
 
             // Emit the IL
             rootElement.Emit(ilg, services);
@@ -136,7 +136,7 @@ namespace Flee.InternalTypes
         /// <param name="services"></param>
         private static void EmitToAssembly(FleeILGenerator ilg, ExpressionElement rootElement, IServiceContainer services)
         {
-            AssemblyName assemblyName = new AssemblyName(EmitAssemblyName);
+            AssemblyName assemblyName = new(EmitAssemblyName);
 
             string assemblyFileName = string.Format("{0}.dll", EmitAssemblyName);
 

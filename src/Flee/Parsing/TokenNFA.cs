@@ -12,8 +12,8 @@
     internal class TokenNFA
     {
         private readonly NFAState[] _initialChar = new NFAState[128];
-        private readonly NFAState _initial = new NFAState();
-        private readonly NFAStateQueue _queue = new NFAStateQueue();
+        private readonly NFAState _initial = new();
+        private readonly NFAStateQueue _queue = new();
 
         public void AddTextMatch(string str, bool ignoreCase, TokenPattern value)
         {
@@ -43,7 +43,7 @@
                                    bool ignoreCase,
                                    TokenPattern value)
         {
-            TokenRegExpParser parser = new TokenRegExpParser(pattern, ignoreCase);
+            TokenRegExpParser parser = new(pattern, ignoreCase);
             string debug = "DFA regexp; " + parser.GetDebugInfo();
 
             var isAscii = parser.Start.IsAsciiOutgoing();

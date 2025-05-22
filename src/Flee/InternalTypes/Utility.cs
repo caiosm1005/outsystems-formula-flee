@@ -230,7 +230,7 @@ namespace Flee.InternalTypes
         /// <returns>The operator's method or null of no match is found</returns>
         public static MethodInfo GetSimpleOverloadedOperator(string name, Type sourceType, Type destType)
         {
-            Hashtable data = new Hashtable();
+            Hashtable data = new();
             data.Add("Name", string.Concat("op_", name));
             data.Add("sourceType", sourceType);
             data.Add("destType", destType);

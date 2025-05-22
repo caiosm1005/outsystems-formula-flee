@@ -43,7 +43,7 @@ namespace Flee.ExpressionElements
 
         private void ResolveForListSearch()
         {
-            CompareElement ce = new CompareElement();
+            CompareElement ce = new();
 
             // Validate that our operand is comparable to all elements in the list
             foreach (ExpressionElement argumentElement in MyArguments)
@@ -152,7 +152,7 @@ namespace Flee.ExpressionElements
 
         private void EmitListIn(FleeILGenerator ilg, IServiceProvider services)
         {
-            CompareElement ce = new CompareElement();
+            CompareElement ce = new();
             Label endLabel = ilg.DefineLabel();
             Label trueTerminal = ilg.DefineLabel();
 
@@ -164,7 +164,7 @@ namespace Flee.ExpressionElements
             Utility.EmitStoreLocal(ilg, targetIndex);
 
             // Wrap our operand in a local shim
-            LocalBasedElement targetShim = new LocalBasedElement(MyOperand, targetIndex);
+            LocalBasedElement targetShim = new(MyOperand, targetIndex);
 
             // Emit the compares
             foreach (ExpressionElement argumentElement in MyArguments)

@@ -221,10 +221,10 @@ namespace Flee.Parsing
         private void CalculateLookAhead(ProductionPattern pattern)
         {
             ProductionPatternAlternative alt;
-            LookAheadSet previous = new LookAheadSet(0);
+            LookAheadSet previous = new(0);
             int length = 1;
             int i;
-            CallStack stack = new CallStack();
+            CallStack stack = new();
 
             // Calculate simple look-ahead
             stack.Push(pattern.Name, 1);
@@ -291,7 +291,7 @@ namespace Flee.Parsing
         private void CalculateLookAhead(ProductionPatternAlternative alt,
                                         int pos)
         {
-            LookAheadSet previous = new LookAheadSet(0);
+            LookAheadSet previous = new(0);
             int length = 1;
 
             // Check trivial cases
@@ -497,7 +497,7 @@ namespace Flee.Parsing
                                            int maxLength)
         {
 
-            LookAheadSet result = new LookAheadSet(maxLength);
+            LookAheadSet result = new(maxLength);
             for (int i = 0; i < pattern.Count; i++)
             {
                 var set1 = pattern[i].LookAhead;
@@ -553,7 +553,7 @@ namespace Flee.Parsing
 
         private void ThrowParseException(LookAheadSet set)
         {
-            ArrayList list = new ArrayList();
+            ArrayList list = new();
 
             // Read tokens until mismatch
             while (set.IsNext(this, 1))
@@ -582,7 +582,7 @@ namespace Flee.Parsing
                                              LookAheadSet set)
         {
 
-            ArrayList list = new ArrayList();
+            ArrayList list = new();
 
             // Find next token descriptions
             var initials = set.GetInitialTokens();
@@ -602,8 +602,8 @@ namespace Flee.Parsing
 
         private class CallStack
         {
-            private readonly ArrayList _nameStack = new ArrayList();
-            private readonly ArrayList _valueStack = new ArrayList();
+            private readonly ArrayList _nameStack = new();
+            private readonly ArrayList _valueStack = new();
             public bool Contains(string name)
             {
                 return _nameStack.Contains(name);

@@ -31,7 +31,7 @@ namespace Flee.CalcEngine.PublicTypes
         #region "Methods - Private"
         private void AddTemporaryHead(string headName)
         {
-            GenericExpressionResultPair<int> pair = new GenericExpressionResultPair<int>();
+            GenericExpressionResultPair<int> pair = new();
             pair.SetName(headName);
 
             if (_myNameNodeMap.ContainsKey(headName) == false)
@@ -224,7 +224,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         public BatchLoader CreateBatchLoader()
         {
-            BatchLoader loader = new BatchLoader();
+            BatchLoader loader = new();
             return loader;
         }
 
@@ -270,7 +270,7 @@ namespace Flee.CalcEngine.PublicTypes
         public string[] GetDependents(string name)
         {
             ExpressionResultPair pair = GetTail(name);
-            List<ExpressionResultPair> dependents = new List<ExpressionResultPair>();
+            List<ExpressionResultPair> dependents = new();
 
             if (pair != null)
             {
@@ -283,7 +283,7 @@ namespace Flee.CalcEngine.PublicTypes
         public string[] GetPrecedents(string name)
         {
             ExpressionResultPair pair = GetTail(name);
-            List<ExpressionResultPair> dependents = new List<ExpressionResultPair>();
+            List<ExpressionResultPair> dependents = new();
 
             if (pair != null)
             {
@@ -322,7 +322,7 @@ namespace Flee.CalcEngine.PublicTypes
             // Do the topological sort
             IList<ExpressionResultPair> calcList = tempDependents.TopologicalSort(sources);
 
-            NodeEventArgs args = new NodeEventArgs();
+            NodeEventArgs args = new();
 
             // Recalculate the sorted expressions
             foreach (ExpressionResultPair pair in calcList)

@@ -13,7 +13,7 @@ namespace Flee.Parsing
     {
 
         private readonly DFAState[] _ascii = new DFAState[128];
-        private readonly DFAState _nonAscii = new DFAState();
+        private readonly DFAState _nonAscii = new();
 
         public TokenStringDFA()
         {
@@ -105,7 +105,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _ascii.Length; i++)
             {
@@ -131,7 +131,7 @@ namespace Flee.Parsing
 
         internal TokenPattern Value;
 
-        internal TransitionTree Tree = new TransitionTree();
+        internal TransitionTree Tree = new();
     }
 
 

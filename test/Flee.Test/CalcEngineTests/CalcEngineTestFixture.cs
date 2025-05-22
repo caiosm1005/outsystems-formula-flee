@@ -184,7 +184,7 @@ namespace Flee.Test.CalcEngineTests
         public void Test_Boolean_Expression()
         {
             string expression = "a AND NOT b AND NOT c AND d";
-            Dictionary<string, object> expressionVariables = new Dictionary<string, object>();
+            Dictionary<string, object> expressionVariables = new();
             expressionVariables.Add("a", 1);
             expressionVariables.Add("b", 0);
             expressionVariables.Add("c", 0);

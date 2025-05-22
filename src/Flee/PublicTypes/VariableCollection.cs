@@ -81,7 +81,7 @@ namespace Flee.PublicTypes
                 return value.VariableType;
             }
 
-            ResolveVariableTypeEventArgs args = new ResolveVariableTypeEventArgs(name);
+            ResolveVariableTypeEventArgs args = new(name);
             ResolveVariableType?.Invoke(this, args);
 
             return args.VariableType;
@@ -144,7 +144,7 @@ namespace Flee.PublicTypes
 
         internal Type ResolveOnDemandFunction(string name, Type[] argumentTypes)
         {
-            ResolveFunctionEventArgs args = new ResolveFunctionEventArgs(name, argumentTypes);
+            ResolveFunctionEventArgs args = new(name, argumentTypes);
             ResolveFunction?.Invoke(this, args);
             return args.ReturnType;
         }
@@ -201,7 +201,7 @@ namespace Flee.PublicTypes
 
         private Dictionary<string, object> GetNameValueDictionary()
         {
-            Dictionary<string, object> dict = new Dictionary<string, object>();
+            Dictionary<string, object> dict = new();
 
             foreach (KeyValuePair<string, IVariable> pair in _myVariables)
             {
@@ -236,9 +236,9 @@ namespace Flee.PublicTypes
                 }
             }
 
-            GenericVariable<T> result = new GenericVariable<T>();
-            GenericVariable<T> vTemp = new GenericVariable<T>();
-            ResolveVariableValueEventArgs args = new ResolveVariableValueEventArgs(name, typeof(T));
+            GenericVariable<T> result = new();
+            GenericVariable<T> vTemp = new();
+            ResolveVariableValueEventArgs args = new(name, typeof(T));
             ResolveVariableValue?.Invoke(this, args);
 
             ValidateSetValueType(typeof(T), args.VariableValue);
@@ -259,7 +259,7 @@ namespace Flee.PublicTypes
 
         public T GetFunctionResultInternal<T>(string name, object[] arguments)
         {
-            InvokeFunctionEventArgs args = new InvokeFunctionEventArgs(name, arguments);
+            InvokeFunctionEventArgs args = new(name, arguments);
             if (InvokeFunction != null)
             {
                 InvokeFunction(this, args);

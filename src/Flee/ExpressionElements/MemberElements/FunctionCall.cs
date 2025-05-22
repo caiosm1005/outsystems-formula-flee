@@ -102,12 +102,12 @@ namespace Flee.ExpressionElements.MemberElements
         /// <param name="argTypes"></param>
         private void BindToMethod(ICollection<MethodInfo> methods, MemberElement previous, Type[] argTypes)
         {
-            List<CustomMethodInfo> customInfos = new List<CustomMethodInfo>();
+            List<CustomMethodInfo> customInfos = new();
 
             // Wrap the MethodInfos in our custom class
             foreach (MethodInfo mi in methods)
             {
-                CustomMethodInfo cmi = new CustomMethodInfo(mi);
+                CustomMethodInfo cmi = new(mi);
                 customInfos.Add(cmi);
             }
 
@@ -170,7 +170,7 @@ namespace Flee.ExpressionElements.MemberElements
 
         private CustomMethodInfo[] GetAccessibleInfos(CustomMethodInfo[] infos)
         {
-            List<CustomMethodInfo> accessible = new List<CustomMethodInfo>();
+            List<CustomMethodInfo> accessible = new();
 
             foreach (CustomMethodInfo cmi in infos)
             {
@@ -189,7 +189,7 @@ namespace Flee.ExpressionElements.MemberElements
         /// <param name="infos"></param>
         private void DetectAmbiguousMatches(CustomMethodInfo[] infos)
         {
-            List<CustomMethodInfo> sameScores = new List<CustomMethodInfo>();
+            List<CustomMethodInfo> sameScores = new();
             CustomMethodInfo first = infos[0];
 
             // Find all matches with the same score as the best match

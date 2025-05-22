@@ -13,7 +13,7 @@ namespace Flee.Parsing
         private readonly string _pattern;
         private readonly bool _ignoreCase;
         private int _pos;
-        internal NFAState Start = new NFAState();
+        internal NFAState Start = new();
         internal NFAState End;
         private int _stateCount;
         private int _transitionCount;
@@ -69,7 +69,7 @@ namespace Flee.Parsing
 
         private NFAState ParseExpr(NFAState start)
         {
-            NFAState end = new NFAState();
+            NFAState end = new();
             do
             {
                 if (PeekChar(0) == '|')
@@ -124,7 +124,7 @@ namespace Flee.Parsing
 
         private NFAState ParseFact(NFAState start)
         {
-            NFAState placeholder = new NFAState();
+            NFAState placeholder = new();
 
             var end = ParseAtom(placeholder);
             switch (PeekChar(0))
@@ -294,7 +294,7 @@ namespace Flee.Parsing
 
         private NFAState ParseCharSet(NFAState start)
         {
-            NFAState end = new NFAState();
+            NFAState end = new();
             NFACharRangeTransition range;
 
             if (PeekChar(0) == '^')
@@ -357,7 +357,7 @@ namespace Flee.Parsing
 
         private NFAState ParseEscapeChar(NFAState start)
         {
-            NFAState end = new NFAState();
+            NFAState end = new();
 
             if (PeekChar(0) == '\\' && PeekChar(1) > 0)
             {
@@ -481,7 +481,7 @@ namespace Flee.Parsing
 
         private int ReadNumber()
         {
-            StringBuilder buf = new StringBuilder();
+            StringBuilder buf = new();
             int c;
 
             c = PeekChar(0);

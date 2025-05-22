@@ -7,7 +7,7 @@ namespace Flee.Resources
 
         private Dictionary<string, ResourceManager> MyResourceManagers;
 
-        private static FleeResourceManager OurInstance = new FleeResourceManager();
+        private static FleeResourceManager OurInstance = new();
         private FleeResourceManager()
         {
             MyResourceManagers = new Dictionary<string, ResourceManager>(StringComparer.OrdinalIgnoreCase);

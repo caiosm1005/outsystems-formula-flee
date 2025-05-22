@@ -81,7 +81,7 @@ namespace Flee.Parsing
 
         private Element ParseTerm()
         {
-            ArrayList list = new ArrayList();
+            ArrayList list = new();
 
             list.Add(ParseFact());
             while (true)
@@ -406,7 +406,7 @@ namespace Flee.Parsing
 
         private int ReadNumber()
         {
-            StringBuilder buf = new StringBuilder();
+            StringBuilder buf = new();
             int c;
 
             c = PeekChar(0);

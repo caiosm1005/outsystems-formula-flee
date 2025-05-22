@@ -36,7 +36,7 @@ namespace Flee.ExpressionElements.Literals.Real
         public static DecimalLiteralElement Parse(string image, IServiceProvider services)
         {
             ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
-            DecimalLiteralElement element = new DecimalLiteralElement();
+            DecimalLiteralElement element = new();
 
             try
             {

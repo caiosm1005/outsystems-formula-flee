@@ -19,7 +19,7 @@ namespace Flee.InternalTypes
         private IDynamicExpression _myExpression;
         public IVariable Clone()
         {
-            DynamicExpressionVariable<T> copy = new DynamicExpressionVariable<T>();
+            DynamicExpressionVariable<T> copy = new();
             copy._myExpression = _myExpression;
             return copy;
         }
@@ -43,7 +43,7 @@ namespace Flee.InternalTypes
         private IGenericExpression<T> _myExpression;
         public IVariable Clone()
         {
-            GenericExpressionVariable<T> copy = new GenericExpressionVariable<T>();
+            GenericExpressionVariable<T> copy = new();
             copy._myExpression = _myExpression;
             return copy;
         }
@@ -69,7 +69,7 @@ namespace Flee.InternalTypes
         public object MyValue;
         public IVariable Clone()
         {
-            GenericVariable<T> copy = new GenericVariable<T> { MyValue = MyValue };
+            GenericVariable<T> copy = new() { MyValue = MyValue };
             return copy;
         }
 

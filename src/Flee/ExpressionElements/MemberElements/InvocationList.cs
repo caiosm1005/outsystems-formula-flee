@@ -43,7 +43,7 @@ namespace Flee.ExpressionElements.MemberElements
             // If the first element is not a member element, then we assume it is an expression and replace it with the correct member element
             if (!(first is MemberElement))
             {
-                ExpressionMemberElement actualFirst = new ExpressionMemberElement(first);
+                ExpressionMemberElement actualFirst = new(first);
                 elements[0] = actualFirst;
             }
             else

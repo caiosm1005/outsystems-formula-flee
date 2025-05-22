@@ -22,7 +22,7 @@ namespace Flee.CalcEngine.PublicTypes
             Utility.AssertNotNull(expression, "expression");
             Utility.AssertNotNull(context, "context");
 
-            BatchLoadInfo info = new BatchLoadInfo(atomName, expression, context);
+            BatchLoadInfo info = new(atomName, expression, context);
             _myNameInfoMap.Add(atomName, info);
             _myDependencies.AddTail(atomName);
 

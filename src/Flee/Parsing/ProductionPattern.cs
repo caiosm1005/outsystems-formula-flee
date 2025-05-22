@@ -181,8 +181,8 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
-            StringBuilder indent = new StringBuilder();
+            StringBuilder buffer = new();
+            StringBuilder indent = new();
             int i;
 
             buffer.Append(_name);

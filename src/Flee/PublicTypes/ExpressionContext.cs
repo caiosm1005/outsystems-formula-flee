@@ -14,7 +14,7 @@ namespace Flee.PublicTypes
 
         private PropertyDictionary _myProperties;
 
-        private readonly object _mySyncRoot = new object();
+        private readonly object _mySyncRoot = new();
 
         private VariableCollection _myVariables;
         #endregion
@@ -118,7 +118,7 @@ namespace Flee.PublicTypes
         {
             lock (_mySyncRoot)
             {
-                System.IO.StringReader sr = new System.IO.StringReader(expression);
+                System.IO.StringReader sr = new(expression);
                 ExpressionParser parser = Parser;
                 parser.Reset(sr);
                 parser.Tokenizer.Reset(sr);
@@ -137,8 +137,8 @@ namespace Flee.PublicTypes
         {
             lock (_mySyncRoot)
             {
-                FleeExpressionAnalyzer analyzer = new FleeExpressionAnalyzer();
-                ExpressionParser parser = new ExpressionParser(TextReader.Null, analyzer, this);
+                FleeExpressionAnalyzer analyzer = new();
+                ExpressionParser parser = new(TextReader.Null, analyzer, this);
                 _myProperties.SetValue("ExpressionParser", parser);
             }
         }
@@ -165,7 +165,7 @@ namespace Flee.PublicTypes
         internal IdentifierAnalyzer ParseIdentifiers(string expression)
         {
             ExpressionParser parser = IdentifierParser;
-            StringReader sr = new StringReader(expression);
+            StringReader sr = new(expression);
             parser.Reset(sr);
             parser.Tokenizer.Reset(sr);
 
@@ -207,7 +207,7 @@ namespace Flee.PublicTypes
 
                 if (parser == null)
                 {
-                    IdentifierAnalyzer analyzer = new IdentifierAnalyzer();
+                    IdentifierAnalyzer analyzer = new();
                     parser = new ExpressionParser(TextReader.Null, analyzer, this);
                     //parser = new ExpressionParser(System.IO.StringReader.Null, analyzer, this);
                     _myProperties.SetValue("IdentifierParser", parser);

@@ -107,7 +107,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
             int newline = _image.IndexOf('\n');
 
             buffer.Append(_pattern.Name);
@@ -137,7 +137,7 @@ namespace Flee.Parsing
 
         public string ToShortString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
             int newline = _image.IndexOf('\n');
 
             buffer.Append('"');

@@ -62,7 +62,7 @@ namespace Flee.PublicTypes
 
         internal MemberInfo[] FindMembers(string memberName, MemberTypes memberType)
         {
-            List<MemberInfo> found = new List<MemberInfo>();
+            List<MemberInfo> found = new();
             AddMembers(memberName, memberType, found);
             return found.ToArray();
         }
@@ -71,7 +71,7 @@ namespace Flee.PublicTypes
         #region "Methods - Public"
         public MemberInfo[] GetMembers(MemberTypes memberType)
         {
-            List<MemberInfo> found = new List<MemberInfo>();
+            List<MemberInfo> found = new();
             AddMembers(memberType, found);
             return found.ToArray();
         }
@@ -80,7 +80,7 @@ namespace Flee.PublicTypes
         #region "IEnumerable Implementation"
         public virtual System.Collections.Generic.IEnumerator<ImportBase> GetEnumerator()
         {
-            List<ImportBase> coll = new List<ImportBase>();
+            List<ImportBase> coll = new();
             return coll.GetEnumerator();
         }
 
@@ -194,7 +194,7 @@ namespace Flee.PublicTypes
         {
             if (_myUseTypeNameAsNamespace == true)
             {
-                List<ImportBase> coll = new List<ImportBase>();
+                List<ImportBase> coll = new();
                 coll.Add(new TypeImport(_myType, false));
                 return coll.GetEnumerator();
             }
@@ -346,7 +346,7 @@ namespace Flee.PublicTypes
         {
             get
             {
-                List<ImportBase> found = new List<ImportBase>();
+                List<ImportBase> found = new();
 
                 foreach (ImportBase import in _myImports)
                 {

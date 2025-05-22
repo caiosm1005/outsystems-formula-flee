@@ -23,7 +23,7 @@ namespace Flee.Parsing
 
         public Node Analyze(Node node)
         {
-            ParserLogException log = new ParserLogException();
+            ParserLogException log = new();
 
             node = Analyze(node, log);
             if (log.Count > 0)
@@ -225,7 +225,7 @@ namespace Flee.Parsing
 
         protected ArrayList GetChildValues(Node node)
         {
-            ArrayList result = new ArrayList();
+            ArrayList result = new();
 
             for (int i = 0; i < node.Count; i++)
             {

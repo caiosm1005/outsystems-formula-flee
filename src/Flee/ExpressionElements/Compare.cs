@@ -159,7 +159,7 @@ namespace Flee.ExpressionElements
         {
             // Get the StringComparison from the options
             ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
-            Int32LiteralElement ic = new Int32LiteralElement((int)options.StringComparison);
+            Int32LiteralElement ic = new((int)options.StringComparison);
 
             ic.Emit(ilg, services);
 

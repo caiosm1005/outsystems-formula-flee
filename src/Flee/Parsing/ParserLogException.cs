@@ -5,7 +5,7 @@ namespace Flee.Parsing
 {
     internal class ParserLogException : Exception
     {
-        private readonly ArrayList _errors = new ArrayList();
+        private readonly ArrayList _errors = new();
         public ParserLogException()
         {
         }
@@ -13,7 +13,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 for (int i = 0; i < Count; i++)
                 {

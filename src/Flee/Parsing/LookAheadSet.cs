@@ -17,7 +17,7 @@ namespace Flee.Parsing
       */
     internal class LookAheadSet
     {
-        private readonly ArrayList _elements = new ArrayList();
+        private readonly ArrayList _elements = new();
         private readonly int _maxLength;
 
         public LookAheadSet(int maxLength)
@@ -68,7 +68,7 @@ namespace Flee.Parsing
 
         public int[] GetInitialTokens()
         {
-            ArrayList list = new ArrayList();
+            ArrayList list = new();
             int i;
             for (i = 0; i < _elements.Count; i++)
             {
@@ -224,7 +224,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateNextSet(int token)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength - 1);
+            LookAheadSet result = new(_maxLength - 1);
             for (int i = 0; i < _elements.Count; i++)
             {
                 var seq = (Sequence)_elements[i];
@@ -239,7 +239,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateIntersection(LookAheadSet set)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
             for (int i = 0; i < _elements.Count; i++)
             {
                 var seq1 = (Sequence)_elements[i];
@@ -258,7 +258,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateCombination(LookAheadSet set)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
 
             // Handle special cases
             if (Size() <= 0)
@@ -296,7 +296,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateOverlaps(LookAheadSet set)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
 
             for (int i = 0; i < _elements.Count; i++)
             {
@@ -311,7 +311,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateFilter(LookAheadSet set)
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
 
             // Handle special cases
             if (Size() <= 0 || set.Size() <= 0)
@@ -337,7 +337,7 @@ namespace Flee.Parsing
 
         public LookAheadSet CreateRepetitive()
         {
-            LookAheadSet result = new LookAheadSet(_maxLength);
+            LookAheadSet result = new(_maxLength);
 
             for (int i = 0; i < _elements.Count; i++)
             {
@@ -361,7 +361,7 @@ namespace Flee.Parsing
 
         public string ToString(Tokenizer tokenizer)
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             buffer.Append("{");
             for (int i = 0; i < _elements.Count; i++)
@@ -522,7 +522,7 @@ namespace Flee.Parsing
 
             public string ToString(Tokenizer tokenizer)
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 if (tokenizer == null)
                 {
@@ -552,7 +552,7 @@ namespace Flee.Parsing
 
             public Sequence Concat(int length, Sequence seq)
             {
-                Sequence res = new Sequence(length, this);
+                Sequence res = new(length, this);
 
                 if (seq._repeat)
                 {
@@ -575,7 +575,7 @@ namespace Flee.Parsing
 
             public Sequence Subsequence(int start)
             {
-                Sequence res = new Sequence(Length(), this);
+                Sequence res = new(Length(), this);
 
                 while (start > 0 && res._tokens.Count > 0)
                 {
