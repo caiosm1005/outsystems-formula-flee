@@ -139,7 +139,7 @@ namespace Flee.Parsing
             IList childValues = GetChildValues(node);
             object first = childValues[0];
 
-            if (childValues.Count == 1 && !(first is MemberElement))
+            if (childValues.Count == 1 && first is not MemberElement)
             {
                 node.AddValue(first);
             }

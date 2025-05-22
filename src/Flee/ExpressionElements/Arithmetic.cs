@@ -313,7 +313,7 @@ namespace Flee.ExpressionElements
         {
             get
             {
-                if (_myOperation != BinaryArithmeticOperation.Power || !(MyRightChild is Int32LiteralElement))
+                if (_myOperation != BinaryArithmeticOperation.Power || MyRightChild is not Int32LiteralElement)
                 {
                     return false;
                 }
