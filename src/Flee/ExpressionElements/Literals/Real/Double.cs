@@ -29,7 +29,7 @@ namespace Flee.ExpressionElements.Literals.Real
                 double value = options.ParseDouble(image);
                 return new DoubleLiteralElement(value);
             }
-            catch (OverflowException ex)
+            catch (OverflowException)
             {
                 element.OnParseOverflow(image);
                 return null;

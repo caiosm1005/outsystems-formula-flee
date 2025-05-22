@@ -28,7 +28,7 @@ namespace Flee.ExpressionElements.Literals.Real
                 float value = options.ParseSingle(image);
                 return new SingleLiteralElement(value);
             }
-            catch (OverflowException ex)
+            catch (OverflowException)
             {
                 element.OnParseOverflow(image);
                 return null;
