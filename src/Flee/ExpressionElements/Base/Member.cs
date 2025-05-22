@@ -110,7 +110,7 @@ namespace Flee.ExpressionElements.Base
 
         protected static bool IsGetTypeMethod(MethodInfo mi)
         {
-            MethodInfo miGetType = typeof(object).GetMethod("gettype", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+            MethodInfo miGetType = typeof(object).GetMethod(nameof(GetType), BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
             return mi.MethodHandle.Equals(miGetType.MethodHandle);
         }
 

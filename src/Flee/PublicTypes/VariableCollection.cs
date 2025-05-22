@@ -59,7 +59,7 @@ namespace Flee.PublicTypes
 
         internal void DefineVariableInternal(string name, Type variableType, object variableValue)
         {
-            Utility.AssertNotNull(variableType, "variableType");
+            Utility.AssertNotNull(variableType, nameof(variableType));
 
             if (_myVariables.ContainsKey(name) == true)
             {
@@ -178,21 +178,21 @@ namespace Flee.PublicTypes
 
         internal static MethodInfo GetVariableLoadMethod(Type variableType)
         {
-            MethodInfo mi = typeof(VariableCollection).GetMethod("GetVariableValueInternal", BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo mi = typeof(VariableCollection).GetMethod(nameof(GetVariableValueInternal), BindingFlags.Public | BindingFlags.Instance);
             mi = mi.MakeGenericMethod(variableType);
             return mi;
         }
 
         internal static MethodInfo GetFunctionInvokeMethod(Type returnType)
         {
-            MethodInfo mi = typeof(VariableCollection).GetMethod("GetFunctionResultInternal", BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo mi = typeof(VariableCollection).GetMethod(nameof(GetFunctionResultInternal), BindingFlags.Public | BindingFlags.Instance);
             mi = mi.MakeGenericMethod(returnType);
             return mi;
         }
 
         internal static MethodInfo GetVirtualPropertyLoadMethod(Type returnType)
         {
-            MethodInfo mi = typeof(VariableCollection).GetMethod("GetVirtualPropertyValueInternal", BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo mi = typeof(VariableCollection).GetMethod(nameof(GetVirtualPropertyValueInternal), BindingFlags.Public | BindingFlags.Instance);
             mi = mi.MakeGenericMethod(returnType);
             return mi;
         }
@@ -317,7 +317,7 @@ namespace Flee.PublicTypes
 
         public void Add(string name, object value)
         {
-            Utility.AssertNotNull(value, "value");
+            Utility.AssertNotNull(value, nameof(value));
             DefineVariableInternal(name, value.GetType(), value);
             this[name] = value;
         }

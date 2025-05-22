@@ -164,7 +164,7 @@ namespace Flee.ExpressionElements
             ic.Emit(ilg, services);
 
             // and emit the method call
-            MethodInfo mi = typeof(string).GetMethod("Equals", [typeof(string), typeof(string), typeof(StringComparison)], null);
+            MethodInfo mi = typeof(string).GetMethod(nameof(string.Equals), [typeof(string), typeof(string), typeof(StringComparison)], null);
             ilg.Emit(OpCodes.Call, mi);
 
             if (op == LogicalCompareOperation.NotEqual)

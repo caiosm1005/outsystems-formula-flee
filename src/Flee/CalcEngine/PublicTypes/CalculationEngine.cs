@@ -162,7 +162,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         internal void EmitLoad(string tailName, FleeILGenerator ilg)
         {
-            PropertyInfo pi = typeof(ExpressionContext).GetProperty("CalculationEngine");
+            PropertyInfo pi = typeof(ExpressionContext).GetProperty(nameof(ExpressionContext.CalculationEngine));
             ilg.Emit(OpCodes.Callvirt, pi.GetGetMethod());
 
             // Load the tail
@@ -191,9 +191,9 @@ namespace Flee.CalcEngine.PublicTypes
         #region "Methods - Public"
         public void Add(string atomName, string expression, ExpressionContext context)
         {
-            Utility.AssertNotNull(atomName, "atomName");
-            Utility.AssertNotNull(expression, "expression");
-            Utility.AssertNotNull(context, "context");
+            Utility.AssertNotNull(atomName, nameof(atomName));
+            Utility.AssertNotNull(expression, nameof(expression));
+            Utility.AssertNotNull(context, nameof(context));
 
             AddTemporaryHead(atomName);
 
@@ -230,7 +230,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         public void BatchLoad(BatchLoader loader)
         {
-            Utility.AssertNotNull(loader, "loader");
+            Utility.AssertNotNull(loader, nameof(loader));
             Clear();
 
             BatchLoadInfo[] infos = loader.GetBachInfos();
@@ -307,7 +307,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         public bool Contains(string name)
         {
-            Utility.AssertNotNull(name, "name");
+            Utility.AssertNotNull(name, nameof(name));
             return _myNameNodeMap.ContainsKey(name);
         }
 

@@ -76,7 +76,7 @@ namespace Flee.PublicTypes
             get { return _myProperties.GetValue<Type>("ResultType"); }
             set
             {
-                Utility.AssertNotNull(value, "value");
+                Utility.AssertNotNull(value, nameof(value));
                 _myProperties.SetValue("ResultType", value);
             }
         }

@@ -129,7 +129,7 @@ namespace Flee.PublicTypes
         #region "Methods - Public"
         public void AddType(Type t, string ns)
         {
-            Utility.AssertNotNull(t, "t");
+            Utility.AssertNotNull(t, nameof(t));
             Utility.AssertNotNull(ns, "namespace");
 
             MyContext.AssertTypeIsAccessible(t);
@@ -145,8 +145,8 @@ namespace Flee.PublicTypes
 
         public void AddMethod(string methodName, Type t, string ns)
         {
-            Utility.AssertNotNull(methodName, "methodName");
-            Utility.AssertNotNull(t, "t");
+            Utility.AssertNotNull(methodName, nameof(methodName));
+            Utility.AssertNotNull(t, nameof(t));
             Utility.AssertNotNull(ns, "namespace");
 
             MethodInfo mi = t.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
@@ -162,7 +162,7 @@ namespace Flee.PublicTypes
 
         public void AddMethod(MethodInfo mi, string ns)
         {
-            Utility.AssertNotNull(mi, "mi");
+            Utility.AssertNotNull(mi, nameof(mi));
             Utility.AssertNotNull(ns, "namespace");
 
             MyContext.AssertTypeIsAccessible(mi.ReflectedType);
