@@ -22,7 +22,7 @@ namespace Flee.ExpressionElements.Base
 
         protected abstract Type GetResultType(Type childType);
 
-        public override System.Type ResultType => _myResultType;
+        public override Type ResultType => _myResultType;
     }
 
 }

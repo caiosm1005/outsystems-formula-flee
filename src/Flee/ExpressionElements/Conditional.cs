@@ -70,6 +70,6 @@ namespace Flee.ExpressionElements
             ilg.MarkLabel(endLabel);
         }
 
-        public override System.Type ResultType => _myResultType;
+        public override Type ResultType => _myResultType;
     }
 }

@@ -18,7 +18,7 @@ namespace Flee.ExpressionElements.Literals
             }
         }
 
-        public override void Emit(FleeILGenerator ilg, System.IServiceProvider services)
+        public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             int index = ilg.GetTempLocalIndex(typeof(TimeSpan));
 
@@ -33,6 +33,6 @@ namespace Flee.ExpressionElements.Literals
             Utility.EmitLoadLocal(ilg, index);
         }
 
-        public override System.Type ResultType => typeof(TimeSpan);
+        public override Type ResultType => typeof(TimeSpan);
     }
 }

@@ -99,7 +99,7 @@ namespace Flee.Parsing
 
             if (_stackdepth > 200)
             {
-                throw new System.StackOverflowException();
+                throw new StackOverflowException();
             }
 
             try

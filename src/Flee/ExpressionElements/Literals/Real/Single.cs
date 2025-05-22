@@ -40,6 +40,6 @@ namespace Flee.ExpressionElements.Literals.Real
             ilg.Emit(OpCodes.Ldc_R4, _myValue);
         }
 
-        public override System.Type ResultType => typeof(float);
+        public override Type ResultType => typeof(float);
     }
 }

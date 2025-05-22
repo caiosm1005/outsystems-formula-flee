@@ -197,7 +197,7 @@ namespace Flee.ExpressionElements.MemberElements
             EmitMethodCall(mi, ilg);
         }
 
-        private void EmitFieldLoad(System.Reflection.FieldInfo fi, FleeILGenerator ilg, IServiceProvider services)
+        private void EmitFieldLoad(FieldInfo fi, FleeILGenerator ilg, IServiceProvider services)
         {
             if (fi.IsLiteral == true)
             {
@@ -213,7 +213,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
-        private static void EmitLdfld(System.Reflection.FieldInfo fi, bool indirect, FleeILGenerator ilg)
+        private static void EmitLdfld(FieldInfo fi, bool indirect, FleeILGenerator ilg)
         {
             if (fi.IsStatic == true)
             {
@@ -246,7 +246,7 @@ namespace Flee.ExpressionElements.MemberElements
         /// <param name="fi"></param>
         /// <param name="ilg"></param>
         /// <param name="services"></param>
-        private static void EmitLiteral(System.Reflection.FieldInfo fi, FleeILGenerator ilg, IServiceProvider services)
+        private static void EmitLiteral(FieldInfo fi, FleeILGenerator ilg, IServiceProvider services)
         {
             object value = fi.GetValue(null);
             Type t = value.GetType();
@@ -293,9 +293,9 @@ namespace Flee.ExpressionElements.MemberElements
             elem.Emit(ilg, services);
         }
 
-        private void EmitPropertyLoad(System.Reflection.PropertyInfo pi, FleeILGenerator ilg)
+        private void EmitPropertyLoad(PropertyInfo pi, FleeILGenerator ilg)
         {
-            System.Reflection.MethodInfo getter = pi.GetGetMethod(true);
+            MethodInfo getter = pi.GetGetMethod(true);
             EmitMethodCall(getter, ilg);
         }
 
@@ -350,7 +350,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
-        public override System.Type ResultType
+        public override Type ResultType
         {
             get
             {

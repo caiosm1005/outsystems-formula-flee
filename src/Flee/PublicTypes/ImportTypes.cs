@@ -78,7 +78,7 @@ namespace Flee.PublicTypes
         #endregion
 
         #region "IEnumerable Implementation"
-        public virtual System.Collections.Generic.IEnumerator<ImportBase> GetEnumerator()
+        public virtual IEnumerator<ImportBase> GetEnumerator()
         {
             List<ImportBase> coll = new();
             return coll.GetEnumerator();
@@ -403,7 +403,7 @@ namespace Flee.PublicTypes
             return _myImports.Remove(item);
         }
 
-        public override System.Collections.Generic.IEnumerator<ImportBase> GetEnumerator()
+        public override IEnumerator<ImportBase> GetEnumerator()
         {
             return _myImports.GetEnumerator();
         }

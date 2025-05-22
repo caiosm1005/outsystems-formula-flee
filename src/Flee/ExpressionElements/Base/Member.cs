@@ -353,6 +353,6 @@ namespace Flee.ExpressionElements.Base
 
         protected virtual bool SupportsStatic => false;
 
-        public System.Type TargetType => ResultType;
+        public Type TargetType => ResultType;
     }
 }

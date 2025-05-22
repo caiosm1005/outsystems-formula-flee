@@ -508,6 +508,6 @@ namespace Flee.ExpressionElements
             }
         }
 
-        public override System.Type ResultType => _myDestType;
+        public override Type ResultType => _myDestType;
     }
 }

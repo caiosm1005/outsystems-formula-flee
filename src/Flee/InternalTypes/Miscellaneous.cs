@@ -45,17 +45,17 @@ namespace Flee.InternalTypes
     internal abstract class CustomBinder : Binder
     {
 
-        public override System.Reflection.FieldInfo BindToField(System.Reflection.BindingFlags bindingAttr, System.Reflection.FieldInfo[] match, object value, System.Globalization.CultureInfo culture)
+        public override FieldInfo BindToField(BindingFlags bindingAttr, FieldInfo[] match, object value, CultureInfo culture)
         {
             return null;
         }
 
-        public System.Reflection.MethodBase BindToMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, ref object[] args, System.Reflection.ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] names, ref object state)
+        public MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, ref object state)
         {
             return null;
         }
 
-        public override object ChangeType(object value, System.Type type, System.Globalization.CultureInfo culture)
+        public override object ChangeType(object value, Type type, CultureInfo culture)
         {
             return null;
         }
@@ -65,7 +65,7 @@ namespace Flee.InternalTypes
         {
         }
 
-        public override System.Reflection.PropertyInfo SelectProperty(System.Reflection.BindingFlags bindingAttr, System.Reflection.PropertyInfo[] match, System.Type returnType, System.Type[] indexes, System.Reflection.ParameterModifier[] modifiers)
+        public override PropertyInfo SelectProperty(BindingFlags bindingAttr, PropertyInfo[] match, Type returnType, Type[] indexes, ParameterModifier[] modifiers)
         {
             return null;
         }
@@ -89,7 +89,7 @@ namespace Flee.InternalTypes
             return _customBinderImplementation.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
         }
 
-        public override System.Reflection.MethodBase SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[] modifiers)
+        public override MethodBase SelectMethod(BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
         {
             foreach (MethodInfo mi in match)
             {
@@ -123,7 +123,7 @@ namespace Flee.InternalTypes
             return _customBinderImplementation.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
         }
 
-        public override System.Reflection.MethodBase SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[] modifiers)
+        public override MethodBase SelectMethod(BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
         {
             foreach (MethodInfo mi in match)
             {
@@ -449,7 +449,7 @@ namespace Flee.InternalTypes
         {
             return _myScore == other._myScore;
         }
-        bool System.IEquatable<CustomMethodInfo>.Equals(CustomMethodInfo other)
+        bool IEquatable<CustomMethodInfo>.Equals(CustomMethodInfo other)
         {
             return Equals1(other);
         }
@@ -513,7 +513,7 @@ namespace Flee.InternalTypes
             Utility.EmitLoadLocal(ilg, _myIndex);
         }
 
-        public override System.Type ResultType => _myTarget.ResultType;
+        public override Type ResultType => _myTarget.ResultType;
     }
 
     /// <summary>

@@ -28,7 +28,7 @@ namespace Flee.ExpressionElements
             _myOperation = (BinaryArithmeticOperation)operation;
         }
 
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override Type GetResultType(Type leftType, Type rightType)
         {
             Type binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
             MethodInfo overloadedMethod = GetOverloadedArithmeticOperator();
@@ -286,7 +286,7 @@ namespace Flee.ExpressionElements
         private void EmitStringConcat(FleeILGenerator ilg, IServiceProvider services)
         {
             Type argType = default(Type);
-            System.Reflection.MethodInfo concatMethodInfo = default(System.Reflection.MethodInfo);
+            MethodInfo concatMethodInfo = default(MethodInfo);
 
             // Pick the most specific concat method
             if (AreBothChildrenOfType(typeof(string)) == true)

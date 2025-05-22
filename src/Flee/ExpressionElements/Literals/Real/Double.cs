@@ -41,6 +41,6 @@ namespace Flee.ExpressionElements.Literals.Real
             ilg.Emit(OpCodes.Ldc_R8, _myValue);
         }
 
-        public override System.Type ResultType => typeof(double);
+        public override Type ResultType => typeof(double);
     }
 }

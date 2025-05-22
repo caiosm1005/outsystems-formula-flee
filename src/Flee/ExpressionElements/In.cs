@@ -190,6 +190,6 @@ namespace Flee.ExpressionElements
             ilg.EmitBranchTrue(trueTerminal);
         }
 
-        public override System.Type ResultType => typeof(bool);
+        public override Type ResultType => typeof(bool);
     }
 }

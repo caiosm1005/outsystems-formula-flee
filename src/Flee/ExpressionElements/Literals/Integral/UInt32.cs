@@ -29,6 +29,6 @@ namespace Flee.ExpressionElements.Literals.Integral
             EmitLoad(Convert.ToInt32(_myValue), ilg);
         }
 
-        public override System.Type ResultType => typeof(UInt32);
+        public override Type ResultType => typeof(UInt32);
     }
 }

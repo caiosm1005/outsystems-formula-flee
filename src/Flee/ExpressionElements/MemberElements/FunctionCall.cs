@@ -150,7 +150,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
 
             // Sort array from best to worst matches
-            Array.Sort<CustomMethodInfo>(infos);
+            Array.Sort(infos);
 
             // Discard any matches that aren't accessible
             infos = GetAccessibleInfos(infos);

@@ -115,6 +115,6 @@ namespace Flee.ExpressionElements.MemberElements
             _myTail.Emit(ilg, services);
         }
 
-        public override System.Type ResultType => _myTail.ResultType;
+        public override Type ResultType => _myTail.ResultType;
     }
 }

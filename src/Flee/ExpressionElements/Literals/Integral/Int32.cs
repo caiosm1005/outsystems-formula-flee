@@ -77,7 +77,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             EmitLoad(_myValue, ilg);
         }
 
-        public override System.Type ResultType => typeof(Int32);
+        public override Type ResultType => typeof(Int32);
 
         public int Value => _myValue;
     }

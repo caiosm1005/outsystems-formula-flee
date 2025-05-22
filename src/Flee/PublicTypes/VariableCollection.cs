@@ -275,12 +275,12 @@ namespace Flee.PublicTypes
 
         #region "IDictionary Implementation"
 
-        private void Add1(System.Collections.Generic.KeyValuePair<string, object> item)
+        private void Add1(KeyValuePair<string, object> item)
         {
             Add(item.Key, item.Value);
         }
 
-        void System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>.Add(System.Collections.Generic.KeyValuePair<string, object> item)
+        void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
         {
             Add1(item);
         }
@@ -290,29 +290,29 @@ namespace Flee.PublicTypes
             _myVariables.Clear();
         }
 
-        private bool Contains1(System.Collections.Generic.KeyValuePair<string, object> item)
+        private bool Contains1(KeyValuePair<string, object> item)
         {
             return ContainsKey(item.Key);
         }
 
-        bool System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>.Contains(System.Collections.Generic.KeyValuePair<string, object> item)
+        bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
         {
             return Contains1(item);
         }
 
-        private void CopyTo(System.Collections.Generic.KeyValuePair<string, object>[] array, int arrayIndex)
+        private void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
             Dictionary<string, object> dict = GetNameValueDictionary();
             ICollection<KeyValuePair<string, object>> coll = dict;
             coll.CopyTo(array, arrayIndex);
         }
 
-        private bool Remove1(System.Collections.Generic.KeyValuePair<string, object> item)
+        private bool Remove1(KeyValuePair<string, object> item)
         {
             return Remove(item.Key);
         }
 
-        bool System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>.Remove(System.Collections.Generic.KeyValuePair<string, object> item)
+        bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
         {
             return Remove1(item);
         }
@@ -341,7 +341,7 @@ namespace Flee.PublicTypes
             return v != null;
         }
 
-        public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string, object>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
             Dictionary<string, object> dict = GetNameValueDictionary();
             return dict.GetEnumerator();
@@ -383,9 +383,9 @@ namespace Flee.PublicTypes
             }
         }
 
-        public System.Collections.Generic.ICollection<string> Keys => _myVariables.Keys;
+        public ICollection<string> Keys => _myVariables.Keys;
 
-        public System.Collections.Generic.ICollection<object> Values
+        public ICollection<object> Values
         {
             get
             {

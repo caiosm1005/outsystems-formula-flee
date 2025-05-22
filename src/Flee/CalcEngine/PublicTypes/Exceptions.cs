@@ -3,7 +3,7 @@
 namespace Flee.CalcEngine.PublicTypes
 {
 
-    public class CircularReferenceException : System.Exception
+    public class CircularReferenceException : Exception
     {
         private readonly string _myCircularReferenceSource;
 

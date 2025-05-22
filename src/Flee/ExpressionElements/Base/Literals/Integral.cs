@@ -40,7 +40,7 @@ namespace Flee.ExpressionElements.Base.Literals
             bool hasSuffix = hasUSuffix | hasLSuffix | hasUlSuffix;
 
             LiteralElement constant = default(LiteralElement);
-            System.Globalization.NumberStyles numStyles = NumberStyles.Integer;
+            NumberStyles numStyles = NumberStyles.Integer;
 
             if (isHex == true)
             {

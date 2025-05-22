@@ -147,7 +147,7 @@ namespace Flee.ExpressionElements.MemberElements
 
         protected override bool RequiresAddress => IsArray == false;
 
-        public override System.Type ResultType
+        public override Type ResultType
         {
             get
             {

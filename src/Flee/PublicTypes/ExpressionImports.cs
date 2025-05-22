@@ -87,7 +87,7 @@ namespace Flee.PublicTypes
             return import;
         }
 
-        internal MemberInfo[] FindOwnerMembers(string memberName, System.Reflection.MemberTypes memberType)
+        internal MemberInfo[] FindOwnerMembers(string memberName, MemberTypes memberType)
         {
             return MyOwnerImport.FindMembers(memberName, memberType);
         }

@@ -7,7 +7,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
 {
     internal class XorElement : BinaryExpressionElement
     {
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override Type GetResultType(Type leftType, Type rightType)
         {
             Type bitwiseType = Utility.GetBitwiseOpType(leftType, rightType);
 

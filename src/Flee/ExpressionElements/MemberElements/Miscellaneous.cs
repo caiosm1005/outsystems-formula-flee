@@ -33,6 +33,6 @@ namespace Flee.ExpressionElements.MemberElements
         public override bool IsStatic => false;
         public override bool IsExtensionMethod => false;
 
-        public override System.Type ResultType => _myElement.ResultType;
+        public override Type ResultType => _myElement.ResultType;
     }
 }

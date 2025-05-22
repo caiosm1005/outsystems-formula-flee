@@ -40,6 +40,6 @@ namespace Flee.ExpressionElements
             }
         }
 
-        public override System.Type ResultType => typeof(object);
+        public override Type ResultType => typeof(object);
     }
 }

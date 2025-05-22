@@ -118,7 +118,7 @@ namespace Flee.PublicTypes
         {
             lock (_mySyncRoot)
             {
-                System.IO.StringReader sr = new(expression);
+                StringReader sr = new(expression);
                 ExpressionParser parser = Parser;
                 parser.Reset(sr);
                 parser.Tokenizer.Reset(sr);
@@ -187,12 +187,12 @@ namespace Flee.PublicTypes
 
         public IDynamicExpression CompileDynamic(string expression)
         {
-            return new Flee.InternalTypes.Expression<object>(expression, this, false);
+            return new Expression<object>(expression, this, false);
         }
 
         public IGenericExpression<TResultType> CompileGeneric<TResultType>(string expression)
         {
-            return new Flee.InternalTypes.Expression<TResultType>(expression, this, true);
+            return new Expression<TResultType>(expression, this, true);
         }
 
         #endregion

@@ -35,7 +35,7 @@ namespace Flee.ExpressionElements
             _myOperation = (LogicalCompareOperation)operation;
         }
 
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override Type GetResultType(Type leftType, Type rightType)
         {
             Type binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
             MethodInfo overloadedOperator = GetOverloadedCompareOperator();
@@ -164,7 +164,7 @@ namespace Flee.ExpressionElements
             ic.Emit(ilg, services);
 
             // and emit the method call
-            System.Reflection.MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
+            MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
             ilg.Emit(OpCodes.Call, mi);
 
             if (op == LogicalCompareOperation.NotEqual)

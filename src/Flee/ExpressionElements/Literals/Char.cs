@@ -19,6 +19,6 @@ namespace Flee.ExpressionElements.Literals
             EmitLoad(intValue, ilg);
         }
 
-        public override System.Type ResultType => typeof(char);
+        public override Type ResultType => typeof(char);
     }
 }

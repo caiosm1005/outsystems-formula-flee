@@ -157,6 +157,6 @@ namespace Flee.ExpressionElements.Base
             ValidateInternal(op);
         }
 
-        public sealed override System.Type ResultType => _myResultType;
+        public sealed override Type ResultType => _myResultType;
     }
 }

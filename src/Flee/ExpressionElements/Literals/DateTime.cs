@@ -37,6 +37,6 @@ namespace Flee.ExpressionElements.Literals
             Utility.EmitLoadLocal(ilg, index);
         }
 
-        public override System.Type ResultType => typeof(DateTime);
+        public override Type ResultType => typeof(DateTime);
     }
 }

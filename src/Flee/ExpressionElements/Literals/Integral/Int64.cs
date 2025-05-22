@@ -77,6 +77,6 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
         }
 
-        public override System.Type ResultType => typeof(Int64);
+        public override Type ResultType => typeof(Int64);
     }
 }

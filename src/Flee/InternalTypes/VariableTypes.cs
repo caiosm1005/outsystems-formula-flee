@@ -35,7 +35,7 @@ namespace Flee.InternalTypes
             set { _myExpression = value as IDynamicExpression; }
         }
 
-        public System.Type VariableType => _myExpression.Context.Options.ResultType;
+        public Type VariableType => _myExpression.Context.Options.ResultType;
     }
 
     internal class GenericExpressionVariable<T> : IVariable, IGenericVariable<T>
@@ -59,7 +59,7 @@ namespace Flee.InternalTypes
             set { _myExpression = (IGenericExpression<T>)value; }
         }
 
-        public System.Type VariableType => _myExpression.Context.Options.ResultType;
+        public Type VariableType => _myExpression.Context.Options.ResultType;
     }
 
     internal class GenericVariable<T> : IVariable, IGenericVariable<T>
@@ -78,7 +78,7 @@ namespace Flee.InternalTypes
             return MyValue;
         }
 
-        public System.Type VariableType => typeof(T);
+        public Type VariableType => typeof(T);
 
         public object ValueAsObject
         {

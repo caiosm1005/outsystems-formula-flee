@@ -71,6 +71,6 @@ namespace Flee.ExpressionElements.Literals.Real
             Utility.EmitLoadLocal(ilg, index);
         }
 
-        public override System.Type ResultType => typeof(decimal);
+        public override Type ResultType => typeof(decimal);
     }
 }

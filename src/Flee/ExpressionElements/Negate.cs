@@ -11,7 +11,7 @@ namespace Flee.ExpressionElements
         {
         }
 
-        protected override System.Type GetResultType(System.Type childType)
+        protected override Type GetResultType(Type childType)
         {
             TypeCode tc = Type.GetTypeCode(childType);
 
