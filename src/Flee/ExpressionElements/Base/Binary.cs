@@ -70,8 +70,8 @@ namespace Flee.ExpressionElements.Base
             }
 
             // Get the operator for both types
-            MethodInfo leftMethod = default(MethodInfo);
-            MethodInfo rightMethod = default(MethodInfo);
+            MethodInfo leftMethod = default;
+            MethodInfo rightMethod = default;
             leftMethod = Utility.GetOverloadedOperator(name, leftType, binder, leftType, rightType);
             rightMethod = Utility.GetOverloadedOperator(name, rightType, binder, leftType, rightType);
 

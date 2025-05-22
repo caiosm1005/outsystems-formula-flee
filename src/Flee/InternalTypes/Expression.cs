@@ -111,7 +111,7 @@ namespace Flee.InternalTypes
             typeof(ExpressionContext),
             typeof(VariableCollection)
         };
-            DynamicMethod dm = default(DynamicMethod);
+            DynamicMethod dm = default;
 
             dm = new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
 

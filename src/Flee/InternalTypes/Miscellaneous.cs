@@ -551,7 +551,7 @@ namespace Flee.InternalTypes
 
         public void SetToDefault<T>(string name)
         {
-            T value = default(T);
+            T value = default;
             SetValue(name, value);
         }
 

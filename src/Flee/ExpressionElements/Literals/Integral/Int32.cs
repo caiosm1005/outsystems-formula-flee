@@ -29,7 +29,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             else if (isHex == true)
             {
-                Int32 value = default(Int32);
+                Int32 value = default;
 
                 // Since Int32.TryParse will succeed for a string like 0xFFFFFFFF we have to do some special handling
                 if (Int32.TryParse(image, NumberStyles.AllowHexSpecifier, null, out value) == false)
@@ -47,7 +47,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             else
             {
-                Int32 value = default(Int32);
+                Int32 value = default;
 
                 if (Int32.TryParse(image,out value) == true)
                 {

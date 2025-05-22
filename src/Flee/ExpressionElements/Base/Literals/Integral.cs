@@ -39,7 +39,7 @@ namespace Flee.ExpressionElements.Base.Literals
             bool hasUlSuffix = image.EndsWith("ul", comparison) | image.EndsWith("lu", comparison);
             bool hasSuffix = hasUSuffix | hasLSuffix | hasUlSuffix;
 
-            LiteralElement constant = default(LiteralElement);
+            LiteralElement constant = default;
             NumberStyles numStyles = NumberStyles.Integer;
 
             if (isHex == true)

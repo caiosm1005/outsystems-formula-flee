@@ -105,7 +105,7 @@ namespace Flee.PublicTypes
 
         private IVariable CreateVariable(Type variableValueType, object variableValue)
         {
-            Type variableType = default(Type);
+            Type variableType = default;
 
             // Is the variable value an expression?
             IExpression expression = variableValue as IExpression;
@@ -153,7 +153,7 @@ namespace Flee.PublicTypes
         {
             if (value == null)
             {
-                return default(T);
+                return default;
             }
             else
             {

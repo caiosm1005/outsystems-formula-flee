@@ -93,7 +93,7 @@ namespace Flee.ExpressionElements
         private void EmitShift(FleeILGenerator ilg)
         {
             TypeCode tc = Type.GetTypeCode(MyLeftChild.ResultType);
-            OpCode op = default(OpCode);
+            OpCode op = default;
 
             switch (tc)
             {

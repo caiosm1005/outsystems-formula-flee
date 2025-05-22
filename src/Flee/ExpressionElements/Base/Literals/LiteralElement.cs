@@ -62,7 +62,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
         private static void EmitSuperShort(Int32 value, FleeILGenerator ilg)
         {
-            OpCode ldcOpcode = default(OpCode);
+            OpCode ldcOpcode = default;
 
             switch (value)
             {

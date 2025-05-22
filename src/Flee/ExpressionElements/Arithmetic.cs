@@ -285,8 +285,8 @@ namespace Flee.ExpressionElements
         /// <param name="services"></param>
         private void EmitStringConcat(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type argType = default(Type);
-            MethodInfo concatMethodInfo = default(MethodInfo);
+            Type argType = default;
+            MethodInfo concatMethodInfo = default;
 
             // Pick the most specific concat method
             if (AreBothChildrenOfType(typeof(string)) == true)
