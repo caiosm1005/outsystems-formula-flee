@@ -9,7 +9,7 @@ namespace Flee.PublicTypes
         private readonly ExpressionContext _myOwner;
         private readonly CultureInfo _myParseCulture;
 
-        private NumberStyles NumberStyles = NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent | NumberStyles.None;
+        private readonly NumberStyles NumberStyles = NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent | NumberStyles.None;
         internal ExpressionParserOptions(ExpressionContext owner)
         {
             _myOwner = owner;

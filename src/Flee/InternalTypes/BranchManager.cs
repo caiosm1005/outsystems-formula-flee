@@ -223,7 +223,7 @@ namespace Flee.InternalTypes
     {
         private readonly ILLocation _myStart;
         private readonly ILLocation _myEnd;
-        private Label _myLabel;
+        private readonly Label _myLabel;
         private bool _myIsLongBranch;
 
         public BranchInfo(ILLocation startLocation, Label endLabel)

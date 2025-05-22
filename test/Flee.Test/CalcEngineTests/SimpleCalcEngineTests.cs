@@ -8,7 +8,7 @@ namespace Flee.Test.CalcEngineTests
     [TestFixture]
     public class SimpleCalcEngineTests
     {
-        private SimpleCalcEngine _myEngine;
+        private readonly SimpleCalcEngine _myEngine;
         public SimpleCalcEngineTests()
         {
             var engine = new SimpleCalcEngine();

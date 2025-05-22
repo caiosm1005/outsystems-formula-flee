@@ -8,7 +8,7 @@ namespace Flee.Test.CalcEngineTests
     [TestFixture]
     public class LongScriptTests
     {
-        private SimpleCalcEngine _myEngine;
+        private readonly SimpleCalcEngine _myEngine;
 
 
 		public class TestFunction
@@ -130,7 +130,7 @@ AND (5*6+13-6*9-3+1+2+3+4+5+6+7+8 = 5+6+7+8+9+1+2+3+4+5+6+1+2+3+4+9-48 OR 6+5+2+
 		}
 
 
-static string crashscript= @"
+static readonly string crashscript= @"
 if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 10.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
 if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 20.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
 if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 30.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,

@@ -9,7 +9,7 @@ namespace Flee.ExpressionElements.Literals
 {
     internal class TimeSpanLiteralElement : LiteralElement
     {
-        private TimeSpan _myValue;
+        private readonly TimeSpan _myValue;
         public TimeSpanLiteralElement(string image)
         {
             if (TimeSpan.TryParse(image, out _myValue) == false)

@@ -75,7 +75,7 @@ namespace Flee.InternalTypes
     {
         private readonly Type _myReturnType;
         private readonly Type _myArgType;
-        private CustomBinder _customBinderImplementation;
+        private readonly CustomBinder _customBinderImplementation;
 
         public ExplicitOperatorMethodBinder(Type returnType, Type argType)
         {
@@ -109,7 +109,7 @@ namespace Flee.InternalTypes
 
         private readonly Type _myLeftType;
         private readonly Type _myRightType;
-        private CustomBinder _customBinderImplementation;
+        private readonly CustomBinder _customBinderImplementation;
 
         public BinaryOperatorBinder(Type leftType, Type rightType)
         {
@@ -462,7 +462,7 @@ namespace Flee.InternalTypes
 
         public Stack Operands;
         public Stack Operators;
-        private Dictionary<object, Label> Labels;
+        private readonly Dictionary<object, Label> Labels;
 
         public ShortCircuitInfo()
         {

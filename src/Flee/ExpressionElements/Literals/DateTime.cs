@@ -11,7 +11,7 @@ namespace Flee.ExpressionElements.Literals
 {
     internal class DateTimeLiteralElement : LiteralElement
     {
-        private DateTime _myValue;
+        private readonly DateTime _myValue;
         public DateTimeLiteralElement(string image, ExpressionContext context)
         {
             ExpressionParserOptions options = context.ParserOptions;
