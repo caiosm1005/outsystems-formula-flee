@@ -198,17 +198,6 @@ namespace Flee.Tests.CalcEngineTests
             foreach (var expressionVariable in expressionVariables.Keys)
                 vars[expressionVariable] = expressionVariables[expressionVariable];
             var a = dynamicExpression.Evaluate();
-
-            //ExpressionContext context = new ExpressionContext();
-            //VariableCollection variables = context.Variables;
-            ////variables.Add("a", 1);
-            ////variables.Add("b", 0);
-            ////IGenericExpression<bool> e = context.CompileGeneric<bool>("a=1 OR b=0");
-
-            //IGenericExpression<bool> e = context.CompileGeneric<bool>("false OR false");
-
-            //bool result = e.Evaluate();
-            //Assert.AreEqual(false, result);
         }
     }
 }

@@ -31,9 +31,6 @@ namespace Flee.Tests.CalcEngineTests
 			context.Options.ParseCulture = new System.Globalization.CultureInfo("en-US");
 			context.Imports.AddType(typeof(TestFunction));
 			context.Imports.AddType(typeof(Math));
-			//            context.Imports.AddType(typeof(Math), "math");
-
-			//' add convert methods e.g. .ToInt64, .ToString, .ToDateTime...  https://msdn.microsoft.com/en-us/library/system.convert.aspx?f=255&MSPPError=-2147217396 
 			context.Imports.AddType(typeof(Convert));
 			context.Imports.AddType(typeof(string));
 
@@ -44,7 +41,6 @@ namespace Flee.Tests.CalcEngineTests
         [Test]
         public void TestLongScriptWithManyFunctions()
         {
-			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\LongScriptWithManyFunctions.js");
 			var script = @"If((""LongTextToPushScriptLengthOver256CharactersJustToMakeSureItDoesntMatter"")=""C"", 
 	(
 	If((""D"") = ""E"",
@@ -70,7 +66,6 @@ namespace Flee.Tests.CalcEngineTests
 		[Test]
 		public void TestFailingLongScriptWithManyFunctions()
 		{
-			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\FailingLongScriptWithManyFunctions.js");
 			var script = @"
 If(""A"" = ""A"",
 			(
@@ -100,7 +95,6 @@ If(""A"" = ""A"",
 		[Test]
 		public void TestNestedConditionalsForLongBranches()
 		{
-			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\NestedConditionals.js");
 			var script = @"IF(2.1 <> 2.1, 
 IF(2.1 > 2.1, 2.1, 
 IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 
@@ -117,7 +111,6 @@ IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 2.1))))";
 		[Test]
 		public void TestShortCircuitLongBranches()
 		{
-			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\NestedConditionals.js");
 			var script = @"IF(
 1 = 2 AND (16 * 24 + 8 * -1 < 0 OR 1+1+1+1+1+1+1+1+1+1+1+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3*3-900 < 0)
 AND (5*6+13-6*9-3+1+2+3+4+5+6+7+8 = 5+6+7+8+9+1+2+3+4+5+6+1+2+3+4+9-48 OR 6+5+2+3+8+1*9-6*7 > 8+6*4*(15-6)*(5+1+1+1+1+1+1+1+2))

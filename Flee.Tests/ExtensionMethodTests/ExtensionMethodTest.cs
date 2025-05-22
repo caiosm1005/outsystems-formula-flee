@@ -3,7 +3,6 @@ using Flee.PublicTypes;
 
 namespace Flee.Tests.ExtensionMethodTests
 {
-    /// <summary>The extension method test.</summary>
     [TestFixture]
     public class ExtensionMethodTest : Infrastructure.ExpressionTests
     {
@@ -63,10 +62,7 @@ namespace Flee.Tests.ExtensionMethodTests
             Assert.AreEqual("Hello SubWorld!!!", result);
         }
 
-        /// <summary>
-        /// check that methods are not ambiguous.
-        /// </summary>
-        [Test]
+        [Test(Description = "Check that methods are not ambiguous.")]
         public void TestExtensionMethodMatchArguments()
         {
             var result = GetExpressionContext().CompileDynamic("MatchParams(1, 2.3f, 2.3)").Evaluate();
