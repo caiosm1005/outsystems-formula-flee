@@ -3,7 +3,7 @@ using Flee.CalcEngine.PublicTypes;
 using Flee.PublicTypes;
 using NUnit.Framework;
 
-namespace Flee.Test.CalcEngineTests
+namespace Flee.Tests.CalcEngineTests
 {
     [TestFixture]
     public class SimpleCalcEngineTests

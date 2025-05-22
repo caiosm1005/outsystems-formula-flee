@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Flee.PublicTypes;
 using NUnit.Framework;
 
-namespace Flee.Test.ExpressionTests
+namespace Flee.Tests.ExpressionTests
 {
     [TestFixture]
     public class Benchmarks : Core
