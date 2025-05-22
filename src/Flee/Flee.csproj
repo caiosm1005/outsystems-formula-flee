@@ -16,9 +16,9 @@
         <PackageVersion>2.0.0</PackageVersion>
         <Title>Flee</Title>
         <PackageProjectUrl>https://github.com/mparlak/Flee</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/mparlak/Flee</PackageLicenseUrl>
-        <PackageIconUrl>https://github.com/mparlak/Flee</PackageIconUrl>
         <RepositoryUrl>https://github.com/mparlak/Flee</RepositoryUrl>
+        <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>flee,expression evaluator,Expression Evaluator for c#</PackageTags>
     </PropertyGroup>
 
@@ -28,6 +28,10 @@
 
     <ItemGroup>
         <Content Include="Resources\DocComments.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" pack="true" PackagePath="." />
     </ItemGroup>
 
     <ItemGroup>
