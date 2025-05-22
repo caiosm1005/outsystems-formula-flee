@@ -44,14 +44,14 @@ namespace Flee.InternalTypes
 
     internal abstract class CustomBinder : Binder
     {
-
         public override FieldInfo BindToField(BindingFlags bindingAttr, FieldInfo[] match, object value, CultureInfo culture)
         {
             return null;
         }
 
-        public MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, ref object state)
+        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, out object state)
         {
+            state = null;
             return null;
         }
 
@@ -59,7 +59,6 @@ namespace Flee.InternalTypes
         {
             return null;
         }
-
 
         public override void ReorderArgumentArray(ref object[] args, object state)
         {
@@ -75,18 +74,11 @@ namespace Flee.InternalTypes
     {
         private readonly Type _myReturnType;
         private readonly Type _myArgType;
-        private readonly CustomBinder _customBinderImplementation;
 
         public ExplicitOperatorMethodBinder(Type returnType, Type argType)
         {
             _myReturnType = returnType;
             _myArgType = argType;
-        }
-
-        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers,
-            CultureInfo culture, string[] names, out object state)
-        {
-            return _customBinderImplementation.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
         }
 
         public override MethodBase SelectMethod(BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
@@ -106,21 +98,13 @@ namespace Flee.InternalTypes
 
     internal class BinaryOperatorBinder : CustomBinder
     {
-
         private readonly Type _myLeftType;
         private readonly Type _myRightType;
-        private readonly CustomBinder _customBinderImplementation;
 
         public BinaryOperatorBinder(Type leftType, Type rightType)
         {
             _myLeftType = leftType;
             _myRightType = rightType;
-        }
-
-        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers,
-            CultureInfo culture, string[] names, out object state)
-        {
-            return _customBinderImplementation.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
         }
 
         public override MethodBase SelectMethod(BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
