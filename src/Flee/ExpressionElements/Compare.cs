@@ -47,11 +47,11 @@ namespace Flee.ExpressionElements
                 // String equality
                 return typeof(bool);
             }
-            else if ((overloadedOperator != null))
+            else if (overloadedOperator != null)
             {
                 return overloadedOperator.ReturnType;
             }
-            else if ((binaryResultType != null))
+            else if (binaryResultType != null)
             {
                 // Comparison of numeric operands
                 return typeof(bool);
@@ -117,11 +117,11 @@ namespace Flee.ExpressionElements
                 MyRightChild.Emit(ilg, services);
                 EmitStringEquality(ilg, _myOperation, services);
             }
-            else if ((overloadedOperator != null))
+            else if (overloadedOperator != null)
             {
                 base.EmitOverloadedOperatorCall(overloadedOperator, ilg, services);
             }
-            else if ((binaryResultType != null))
+            else if (binaryResultType != null)
             {
                 // Emit a compare of numeric operands
                 EmitChildWithConvert(MyLeftChild, binaryResultType, ilg, services);

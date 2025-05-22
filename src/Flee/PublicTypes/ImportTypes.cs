@@ -316,7 +316,7 @@ namespace Flee.PublicTypes
             {
                 Type t = import.FindType(typeName);
 
-                if ((t != null))
+                if (t != null)
                 {
                     return t;
                 }
@@ -375,7 +375,7 @@ namespace Flee.PublicTypes
         {
             Utility.AssertNotNull(item, "item");
 
-            if ((Context != null))
+            if (Context != null)
             {
                 item.SetContext(Context);
             }

@@ -16,14 +16,14 @@ namespace Flee.ExpressionElements.Base.Literals
 
             element = CreateSingle(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
 
             element = CreateDecimal(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
@@ -45,21 +45,21 @@ namespace Flee.ExpressionElements.Base.Literals
 
             element = CreateSingle(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
 
             element = CreateDecimal(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
 
             element = CreateDouble(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }

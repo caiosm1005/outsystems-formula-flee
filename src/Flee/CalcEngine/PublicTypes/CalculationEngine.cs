@@ -245,7 +245,7 @@ namespace Flee.CalcEngine.PublicTypes
         {
             ExpressionResultPair tail = GetTailWithValidate(name);
 
-            if ((!object.ReferenceEquals(typeof(T), tail.ResultType)))
+            if (!object.ReferenceEquals(typeof(T), tail.ResultType))
             {
                 string msg = $"The result type of '{name}' ('{tail.ResultType.Name}') does not match the supplied type argument ('{typeof(T).Name}')";
                 throw new ArgumentException(msg);
@@ -272,7 +272,7 @@ namespace Flee.CalcEngine.PublicTypes
             ExpressionResultPair pair = GetTail(name);
             List<ExpressionResultPair> dependents = new List<ExpressionResultPair>();
 
-            if ((pair != null))
+            if (pair != null)
             {
                 _myDependencies.GetDirectDependents(pair, dependents);
             }
@@ -285,7 +285,7 @@ namespace Flee.CalcEngine.PublicTypes
             ExpressionResultPair pair = GetTail(name);
             List<ExpressionResultPair> dependents = new List<ExpressionResultPair>();
 
-            if ((pair != null))
+            if (pair != null)
             {
                 _myDependencies.GetDirectPrecedents(pair, dependents);
             }

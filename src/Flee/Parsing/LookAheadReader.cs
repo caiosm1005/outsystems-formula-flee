@@ -155,7 +155,7 @@
             size = _pos + offset - _length + 1;
             if (size % StreamBlockSize != 0)
             {
-                size = (size / StreamBlockSize) * StreamBlockSize;
+                size = size / StreamBlockSize * StreamBlockSize;
                 size += StreamBlockSize;
             }
             EnsureBufferCapacity(_length + size);
@@ -199,7 +199,7 @@
             }
             if (size % BufferBlockSize != 0)
             {
-                size = (size / BufferBlockSize) * BufferBlockSize;
+                size = size / BufferBlockSize * BufferBlockSize;
                 size += BufferBlockSize;
             }
             newbuf = new char[size];

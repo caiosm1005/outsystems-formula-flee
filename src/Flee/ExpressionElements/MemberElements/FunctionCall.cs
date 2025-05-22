@@ -212,7 +212,7 @@ namespace Flee.ExpressionElements.MemberElements
         {
             base.Validate();
 
-            if ((_myOnDemandFunctionReturnType != null))
+            if (_myOnDemandFunctionReturnType != null)
             {
                 return;
             }
@@ -231,7 +231,7 @@ namespace Flee.ExpressionElements.MemberElements
             ExpressionElement[] elements = _myArguments.ToArray();
 
             // If we are an on-demand function, then emit that and exit
-            if ((_myOnDemandFunctionReturnType != null))
+            if (_myOnDemandFunctionReturnType != null)
             {
                 EmitOnDemandFunction(elements, ilg, services);
                 return;
@@ -390,7 +390,7 @@ namespace Flee.ExpressionElements.MemberElements
         {
             get
             {
-                if ((_myOnDemandFunctionReturnType != null))
+                if (_myOnDemandFunctionReturnType != null)
                 {
                     return _myOnDemandFunctionReturnType;
                 }

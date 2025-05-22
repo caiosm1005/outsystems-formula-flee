@@ -65,7 +65,7 @@ namespace Flee.ExpressionElements.MemberElements
             foreach (MemberInfo mi in members)
             {
                 PropertyInfo pi = mi as PropertyInfo;
-                if ((pi != null))
+                if (pi != null)
                 {
                     methods.Add(pi.GetGetMethod(true));
                 }

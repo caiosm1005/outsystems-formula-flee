@@ -774,7 +774,7 @@
 
         private int _mark = 0;
 
-        public bool Empty => (_last <= _first);
+        public bool Empty => _last <= _first;
 
         public bool Marked => _first == _mark;
 

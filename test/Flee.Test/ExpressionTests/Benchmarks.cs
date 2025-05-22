@@ -658,7 +658,7 @@ AND NOT
 
         private void PrintSpeedMessage(string title, int iterations, Stopwatch sw)
         {
-            WriteMessage("{0}: {1:n0} iterations in {2:n2}ms = {3:n2} iterations/sec", title, iterations, sw.ElapsedMilliseconds, iterations*1000 / (sw.ElapsedMilliseconds));
+            WriteMessage("{0}: {1:n0} iterations in {2:n2}ms = {3:n2} iterations/sec", title, iterations, sw.ElapsedMilliseconds, iterations*1000 / sw.ElapsedMilliseconds);
         }
     }
 }

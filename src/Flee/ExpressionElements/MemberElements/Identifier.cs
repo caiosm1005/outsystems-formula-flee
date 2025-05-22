@@ -51,7 +51,7 @@ namespace Flee.ExpressionElements.MemberElements
 
             CalculationEngine ce = MyContext.CalculationEngine;
 
-            if ((ce != null))
+            if (ce != null)
             {
                 ce.AddDependency(MyName, MyContext);
                 _myCalcEngineReferenceType = ce.ResolveTailType(MyName);
@@ -96,7 +96,7 @@ namespace Flee.ExpressionElements.MemberElements
             {
                 // Only one member; bind to it
                 _myField = members[0] as FieldInfo;
-                if ((_myField != null))
+                if (_myField != null)
                 {
                     return true;
                 }
@@ -119,12 +119,12 @@ namespace Flee.ExpressionElements.MemberElements
 
             PropertyDescriptorCollection coll = TypeDescriptor.GetProperties(previous.ResultType);
             _myPropertyDescriptor = coll.Find(MyName, true);
-            return (_myPropertyDescriptor != null);
+            return _myPropertyDescriptor != null;
         }
 
         private void AddReferencedVariable(MemberElement previous)
         {
-            if ((previous != null))
+            if (previous != null)
             {
                 return;
             }
@@ -142,19 +142,19 @@ namespace Flee.ExpressionElements.MemberElements
 
             EmitFirst(ilg);
 
-            if ((_myCalcEngineReferenceType != null))
+            if (_myCalcEngineReferenceType != null)
             {
                 EmitReferenceLoad(ilg);
             }
-            else if ((_myVariableType != null))
+            else if (_myVariableType != null)
             {
                 EmitVariableLoad(ilg);
             }
-            else if ((_myField != null))
+            else if (_myField != null)
             {
                 EmitFieldLoad(_myField, ilg, services);
             }
-            else if ((_myPropertyDescriptor != null))
+            else if (_myPropertyDescriptor != null)
             {
                 EmitVirtualPropertyLoad(ilg);
             }
@@ -172,12 +172,12 @@ namespace Flee.ExpressionElements.MemberElements
 
         private void EmitFirst(FleeILGenerator ilg)
         {
-            if ((MyPrevious != null))
+            if (MyPrevious != null)
             {
                 return;
             }
 
-            bool isVariable = (_myVariableType != null);
+            bool isVariable = _myVariableType != null;
 
             if (isVariable == true)
             {
@@ -331,15 +331,15 @@ namespace Flee.ExpressionElements.MemberElements
         {
             get
             {
-                if ((_myField != null))
+                if (_myField != null)
                 {
                     return _myField.ReflectedType;
                 }
-                else if ((_myPropertyDescriptor != null))
+                else if (_myPropertyDescriptor != null)
                 {
                     return _myPropertyDescriptor.ComponentType;
                 }
-                else if ((_myProperty != null))
+                else if (_myProperty != null)
                 {
                     return _myProperty.ReflectedType;
                 }
@@ -354,19 +354,19 @@ namespace Flee.ExpressionElements.MemberElements
         {
             get
             {
-                if ((_myCalcEngineReferenceType != null))
+                if (_myCalcEngineReferenceType != null)
                 {
                     return _myCalcEngineReferenceType;
                 }
-                else if ((_myVariableType != null))
+                else if (_myVariableType != null)
                 {
                     return _myVariableType;
                 }
-                else if ((_myPropertyDescriptor != null))
+                else if (_myPropertyDescriptor != null)
                 {
                     return _myPropertyDescriptor.PropertyType;
                 }
-                else if ((_myField != null))
+                else if (_myField != null)
                 {
                     return _myField.FieldType;
                 }
@@ -388,15 +388,15 @@ namespace Flee.ExpressionElements.MemberElements
                 {
                     return true;
                 }
-                else if ((_myVariableType != null))
+                else if (_myVariableType != null)
                 {
                     return true;
                 }
-                else if ((_myPropertyDescriptor != null))
+                else if (_myPropertyDescriptor != null)
                 {
                     return true;
                 }
-                else if ((_myField != null))
+                else if (_myField != null)
                 {
                     return _myField.IsPublic;
                 }
@@ -412,12 +412,12 @@ namespace Flee.ExpressionElements.MemberElements
         {
             get
             {
-                if ((_myVariableType != null))
+                if (_myVariableType != null)
                 {
                     // Variables never support static
                     return false;
                 }
-                else if ((_myPropertyDescriptor != null))
+                else if (_myPropertyDescriptor != null)
                 {
                     // Neither do virtual properties
                     return false;
@@ -439,12 +439,12 @@ namespace Flee.ExpressionElements.MemberElements
         {
             get
             {
-                if ((_myVariableType != null))
+                if (_myVariableType != null)
                 {
                     // Variables always support instance
                     return true;
                 }
-                else if ((_myPropertyDescriptor != null))
+                else if (_myPropertyDescriptor != null)
                 {
                     // So do virtual properties
                     return true;
@@ -457,7 +457,7 @@ namespace Flee.ExpressionElements.MemberElements
                 else
                 {
                     // We always support instance if we are not the first element
-                    return (MyPrevious != null);
+                    return MyPrevious != null;
                 }
             }
         }
@@ -470,15 +470,15 @@ namespace Flee.ExpressionElements.MemberElements
                 {
                     return false;
                 }
-                else if ((_myVariableType != null))
+                else if (_myVariableType != null)
                 {
                     return false;
                 }
-                else if ((_myField != null))
+                else if (_myField != null)
                 {
                     return _myField.IsStatic;
                 }
-                else if ((_myPropertyDescriptor != null))
+                else if (_myPropertyDescriptor != null)
                 {
                     return false;
                 }

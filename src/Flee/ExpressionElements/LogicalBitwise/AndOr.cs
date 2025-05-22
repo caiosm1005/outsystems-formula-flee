@@ -25,7 +25,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
         {
             Type bitwiseOpType = Utility.GetBitwiseOpType(leftType, rightType);
-            if ((bitwiseOpType != null))
+            if (bitwiseOpType != null)
             {
                 return bitwiseOpType;
             }
@@ -207,7 +207,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             AndOrElement andOrChild = MyRightChild as AndOrElement;
 
             // What kind of child do we have?
-            if ((andOrChild != null))
+            if (andOrChild != null)
             {
                 // Another and/or expression so recurse
                 andOrChild.Pop(operands, operators);

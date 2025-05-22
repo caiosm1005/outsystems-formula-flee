@@ -162,7 +162,7 @@ namespace Flee.InternalTypes
                 return false;
             }
 
-            if ((ilg != null))
+            if (ilg != null)
             {
                 ilg.Emit(OpCodes.Call, mi);
             }
@@ -190,7 +190,7 @@ namespace Flee.InternalTypes
 
             if (sourceType.IsValueType == true)
             {
-                if ((ilg != null))
+                if (ilg != null)
                 {
                     ilg.Emit(OpCodes.Box, sourceType);
                 }
@@ -412,7 +412,7 @@ namespace Flee.InternalTypes
 
         private static void EmitConvert(FleeILGenerator ilg, OpCode convertOpcode)
         {
-            if ((ilg != null))
+            if (ilg != null)
             {
                 ilg.Emit(convertOpcode);
             }
@@ -547,7 +547,7 @@ namespace Flee.InternalTypes
             int count = 0;
             Type current = sourceType;
 
-            while ((!object.ReferenceEquals(current, destType)))
+            while (!object.ReferenceEquals(current, destType))
             {
                 count += 1;
                 current = current.BaseType;
@@ -561,7 +561,7 @@ namespace Flee.InternalTypes
             int score = 1000;
             Type current = t.BaseType;
 
-            while ((current != null))
+            while (current != null)
             {
                 score -= 100;
                 current = current.BaseType;

@@ -11,7 +11,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         {
             Type bitwiseType = Utility.GetBitwiseOpType(leftType, rightType);
 
-            if ((bitwiseType != null))
+            if (bitwiseType != null)
             {
                 return bitwiseType;
             }

@@ -26,7 +26,7 @@ namespace Flee.ExpressionElements.Base
         public void Link(MemberElement nextElement)
         {
             MyNext = nextElement;
-            if ((nextElement != null))
+            if (nextElement != null)
             {
                 nextElement.MyPrevious = this;
             }
@@ -70,7 +70,7 @@ namespace Flee.ExpressionElements.Base
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            if ((MyPrevious != null))
+            if (MyPrevious != null)
             {
                 MyPrevious.Emit(ilg, services);
             }
@@ -125,7 +125,7 @@ namespace Flee.ExpressionElements.Base
             {
                 ilg.Emit(OpCodes.Call, mi);
             }
-            else if ((!object.ReferenceEquals(mi.DeclaringType, mi.ReflectedType)))
+            else if (!object.ReferenceEquals(mi.DeclaringType, mi.ReflectedType))
             {
                 // Method is not defined on the value type
 
@@ -198,14 +198,14 @@ namespace Flee.ExpressionElements.Base
         {
             FieldInfo fi = member as FieldInfo;
 
-            if ((fi != null))
+            if (fi != null)
             {
                 return fi.IsPublic;
             }
 
             PropertyInfo pi = member as PropertyInfo;
 
-            if ((pi != null))
+            if (pi != null)
             {
                 MethodInfo pmi = pi.GetGetMethod(true);
                 return pmi.IsPublic;
@@ -213,7 +213,7 @@ namespace Flee.ExpressionElements.Base
 
             MethodInfo mi = member as MethodInfo;
 
-            if ((mi != null))
+            if (mi != null)
             {
                 return mi.IsPublic;
             }

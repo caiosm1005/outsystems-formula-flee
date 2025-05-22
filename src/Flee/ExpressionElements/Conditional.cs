@@ -18,7 +18,7 @@ namespace Flee.ExpressionElements
             _myWhenTrue = whenTrue;
             _myWhenFalse = whenFalse;
 
-            if ((!object.ReferenceEquals(_myCondition.ResultType, typeof(bool))))
+            if (!object.ReferenceEquals(_myCondition.ResultType, typeof(bool)))
             {
                 base.ThrowCompileException(CompileErrorResourceKeys.FirstArgNotBoolean, CompileExceptionReason.TypeMismatch);
             }

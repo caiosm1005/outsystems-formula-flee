@@ -26,7 +26,7 @@ namespace Flee.Parsing
         {
             ExpressionParserOptions options = context.ParserOptions;
 
-            char digitsBeforePattern = (options.RequireDigitsBeforeDecimalPoint ? '+' : '*');
+            char digitsBeforePattern = options.RequireDigitsBeforeDecimalPoint ? '+' : '*';
 
             pattern = string.Format(pattern, digitsBeforePattern, options.DecimalSeparator);
 

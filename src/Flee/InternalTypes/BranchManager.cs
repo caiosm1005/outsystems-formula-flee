@@ -72,7 +72,7 @@ namespace Flee.InternalTypes
                 longBranchCount += Convert.ToInt32(bi.IsLongBranch);
             }
 
-            return  (longBranchCount > 0);
+            return  longBranchCount > 0;
         }
 
 

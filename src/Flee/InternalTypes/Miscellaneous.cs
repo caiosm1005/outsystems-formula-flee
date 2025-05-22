@@ -325,7 +325,7 @@ namespace Flee.InternalTypes
                     IsExtensionMethod = true;
                     return AreValidExtensionMethodArgumentsForParameters(argTypes, parameters, previous, context);
                 }
-                if ((parameters.Length != argTypes.Length))
+                if (parameters.Length != argTypes.Length)
                 {
                     // Not a paramArray and parameter and argument counts don't match
                     return false;

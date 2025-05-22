@@ -16,7 +16,7 @@ namespace Flee.ExpressionElements
             TypeCode tc = Type.GetTypeCode(childType);
 
             MethodInfo mi = Utility.GetSimpleOverloadedOperator("UnaryNegation", childType, null);
-            if ((mi != null))
+            if (mi != null)
             {
                 return mi.ReturnType;
             }

@@ -64,7 +64,7 @@ namespace Flee.ExpressionElements
                 t = ExpressionImports.GetBuiltinType(destTypeParts[0]);
             }
 
-            if ((t != null))
+            if (t != null)
             {
                 return t;
             }
@@ -72,7 +72,7 @@ namespace Flee.ExpressionElements
             // Try to find the type in an import
             t = context.Imports.FindType(destTypeParts);
 
-            if ((t != null))
+            if (t != null)
             {
                 return t;
             }
@@ -106,7 +106,7 @@ namespace Flee.ExpressionElements
             {
                 return IsValidExplicitEnumCast(sourceType, destType);
             }
-            else if ((GetExplictOverloadedOperator(sourceType, destType) != null))
+            else if (GetExplictOverloadedOperator(sourceType, destType) != null)
             {
                 // Overloaded explict cast exists
                 return true;
@@ -237,7 +237,7 @@ namespace Flee.ExpressionElements
         private static bool IsBaseType(Type target, Type potentialBase)
         {
             Type current = target;
-            while ((current != null))
+            while (current != null)
             {
                 if (object.ReferenceEquals(current, potentialBase))
                 {
@@ -295,7 +295,7 @@ namespace Flee.ExpressionElements
                 // Identity cast; do nothing
                 return;
             }
-            else if ((explicitOperator != null))
+            else if (explicitOperator != null)
             {
                 ilg.Emit(OpCodes.Call, explicitOperator);
             }

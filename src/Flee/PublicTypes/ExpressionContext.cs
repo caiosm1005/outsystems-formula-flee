@@ -75,7 +75,7 @@ namespace Flee.PublicTypes
 
         private void AssertNestedTypeIsAccessible(Type t)
         {
-            while ((t != null))
+            while (t != null)
             {
                 AssertTypeIsAccessibleInternal(t);
                 t = t.DeclaringType;

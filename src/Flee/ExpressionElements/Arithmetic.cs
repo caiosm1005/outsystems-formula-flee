@@ -34,12 +34,12 @@ namespace Flee.ExpressionElements
             MethodInfo overloadedMethod = GetOverloadedArithmeticOperator();
 
             // Is an overloaded operator defined for our left and right children?
-            if ((overloadedMethod != null))
+            if (overloadedMethod != null)
             {
                 // Yes, so use its return type
                 return overloadedMethod.ReturnType;
             }
-            else if ((binaryResultType != null))
+            else if (binaryResultType != null)
             {
                 // Operands are primitive types.  Return computed result type unless we are doing a power operation
                 if (_myOperation == BinaryArithmeticOperation.Power)
@@ -108,7 +108,7 @@ namespace Flee.ExpressionElements
         {
             MethodInfo overloadedMethod = GetOverloadedArithmeticOperator();
 
-            if ((overloadedMethod != null))
+            if (overloadedMethod != null)
             {
                 // Emit a call to an overloaded operator
                 EmitOverloadedOperatorCall(overloadedMethod, ilg, services);

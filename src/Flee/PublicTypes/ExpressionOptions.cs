@@ -133,7 +133,7 @@ namespace Flee.PublicTypes
             set
             {
                 Utility.AssertNotNull(value, "ParseCulture");
-                if ((value.LCID != ParseCulture.LCID))
+                if (value.LCID != ParseCulture.LCID)
                 {
                     _myProperties.SetValue("ParseCulture", value);
                     SetParseCulture(value);

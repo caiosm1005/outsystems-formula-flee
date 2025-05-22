@@ -111,7 +111,7 @@ namespace Flee.ExpressionElements
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            if ((MyTargetCollectionType != null))
+            if (MyTargetCollectionType != null)
             {
                 EmitCollectionIn(ilg, services);
             }
