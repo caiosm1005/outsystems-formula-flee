@@ -30,7 +30,7 @@ namespace Flee.ExpressionElements
             listElements.CopyTo(arr, 0);
 
             MyArguments = new List<ExpressionElement>(arr);
-            this.ResolveForListSearch();
+            ResolveForListSearch();
         }
 
         // Initialize for searching a collection
@@ -38,7 +38,7 @@ namespace Flee.ExpressionElements
         {
             MyOperand = operand;
             MyTargetCollectionElement = targetCollection;
-            this.ResolveForCollectionSearch();
+            ResolveForCollectionSearch();
         }
 
         private void ResolveForListSearch()
@@ -56,7 +56,7 @@ namespace Flee.ExpressionElements
         private void ResolveForCollectionSearch()
         {
             // Try to find a collection type
-            MyTargetCollectionType = this.GetTargetCollectionType();
+            MyTargetCollectionType = GetTargetCollectionType();
 
             if (MyTargetCollectionType == null)
             {
@@ -64,7 +64,7 @@ namespace Flee.ExpressionElements
             }
 
             // Validate that the operand type is compatible with the collection
-            MethodInfo mi = this.GetCollectionContainsMethod();
+            MethodInfo mi = GetCollectionContainsMethod();
             ParameterInfo p1 = mi.GetParameters()[0];
 
             if (ImplicitConverter.EmitImplicitConvert(MyOperand.ResultType, p1.ParameterType, null) == false)
@@ -113,19 +113,19 @@ namespace Flee.ExpressionElements
         {
             if ((MyTargetCollectionType != null))
             {
-                this.EmitCollectionIn(ilg, services);
+                EmitCollectionIn(ilg, services);
             }
             else
             {
                 // Do the real emit
-                this.EmitListIn(ilg, services);
+                EmitListIn(ilg, services);
             }
         }
 
         private void EmitCollectionIn(FleeILGenerator ilg, IServiceProvider services)
         {
             // Get the contains method
-            MethodInfo mi = this.GetCollectionContainsMethod();
+            MethodInfo mi = GetCollectionContainsMethod();
             ParameterInfo p1 = mi.GetParameters()[0];
 
             // Load the collection

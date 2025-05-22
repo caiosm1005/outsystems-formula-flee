@@ -6,7 +6,7 @@
 
         public TestData Sub
         {
-            get { return new TestData { Id = "Sub" + this.Id }; }
+            get { return new TestData { Id = "Sub" + Id }; }
         }
 
         public string SayHello(int times)

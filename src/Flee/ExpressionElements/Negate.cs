@@ -37,7 +37,7 @@ namespace Flee.ExpressionElements
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type resultType = this.ResultType;
+            Type resultType = ResultType;
             MyChild.Emit(ilg, services);
             ImplicitConverter.EmitImplicitConvert(MyChild.ResultType, resultType, ilg);
 

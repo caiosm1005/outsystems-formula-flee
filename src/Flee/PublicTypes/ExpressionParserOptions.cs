@@ -15,7 +15,7 @@ namespace Flee.PublicTypes
             _myOwner = owner;
             _myProperties = new PropertyDictionary();
             _myParseCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
-            this.InitializeProperties();
+            InitializeProperties();
         }
 
         #region "Methods - Public"
@@ -31,7 +31,7 @@ namespace Flee.PublicTypes
 
         internal ExpressionParserOptions Clone()
         {
-            ExpressionParserOptions copy = (ExpressionParserOptions)this.MemberwiseClone();
+            ExpressionParserOptions copy = (ExpressionParserOptions)MemberwiseClone();
             copy._myProperties = _myProperties.Clone();
             return copy;
         }
@@ -56,10 +56,10 @@ namespace Flee.PublicTypes
 
         private void InitializeProperties()
         {
-            this.DateTimeFormat = "dd/MM/yyyy";
-            this.RequireDigitsBeforeDecimalPoint = false;
-            this.DecimalSeparator = '.';
-            this.FunctionArgumentSeparator = ',';
+            DateTimeFormat = "dd/MM/yyyy";
+            RequireDigitsBeforeDecimalPoint = false;
+            DecimalSeparator = '.';
+            FunctionArgumentSeparator = ',';
         }
 
         #endregion

@@ -29,7 +29,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             {
                 return bitwiseOpType;
             }
-            else if (this.AreBothChildrenOfType(typeof(bool)))
+            else if (AreBothChildrenOfType(typeof(bool)))
             {
                 return typeof(bool);
             }
@@ -41,11 +41,11 @@ namespace Flee.ExpressionElements.LogicalBitwise
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type resultType = this.ResultType;
+            Type resultType = ResultType;
 
             if (object.ReferenceEquals(resultType, typeof(bool)))
             {
-                this.DoEmitLogical(ilg, services);
+                DoEmitLogical(ilg, services);
             }
             else
             {
@@ -79,7 +79,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             ShortCircuitInfo info = new ShortCircuitInfo();
 
             // Do the real emit
-            this.EmitLogical(ilg, info, services);
+            EmitLogical(ilg, info, services);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             Label endLabel = ilg.DefineLabel();
 
             // Populate our data structures
-            this.PopulateData(info);
+            PopulateData(info);
 
             // Emit the sequence
             EmitLogicalShortCircuit(ilg, info, services);

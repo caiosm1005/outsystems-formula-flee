@@ -29,12 +29,12 @@ namespace Flee.ExpressionElements.MemberElements
             // Yes, so setup for an array index
             if (target.IsArray == true)
             {
-                this.SetupArrayIndexer();
+                SetupArrayIndexer();
                 return;
             }
 
             // Not an array, so try to find an indexer on the type
-            if (this.FindIndexer(target) == false)
+            if (FindIndexer(target) == false)
             {
                 base.ThrowCompileException(CompileErrorResourceKeys.TypeNotArrayAndHasNoIndexerOfType, CompileExceptionReason.TypeMismatch, target.Name, _myIndexerElements);
             }
@@ -82,13 +82,13 @@ namespace Flee.ExpressionElements.MemberElements
         {
             base.Emit(ilg, services);
 
-            if (this.IsArray == true)
+            if (IsArray == true)
             {
-                this.EmitArrayLoad(ilg, services);
+                EmitArrayLoad(ilg, services);
             }
             else
             {
-                this.EmitIndexer(ilg, services);
+                EmitIndexer(ilg, services);
             }
         }
 
@@ -97,7 +97,7 @@ namespace Flee.ExpressionElements.MemberElements
             _myIndexerElement.Emit(ilg, services);
             ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(Int32), ilg);
 
-            Type elementType = this.ResultType;
+            Type elementType = ResultType;
 
             if (elementType.IsValueType == false)
             {
@@ -106,13 +106,13 @@ namespace Flee.ExpressionElements.MemberElements
             }
             else
             {
-                this.EmitValueTypeArrayLoad(ilg, elementType);
+                EmitValueTypeArrayLoad(ilg, elementType);
             }
         }
 
         private void EmitValueTypeArrayLoad(FleeILGenerator ilg, Type elementType)
         {
-            if (this.NextRequiresAddress == true)
+            if (NextRequiresAddress == true)
             {
                 ilg.Emit(OpCodes.Ldelema, elementType);
             }
@@ -125,14 +125,14 @@ namespace Flee.ExpressionElements.MemberElements
         private void EmitIndexer(FleeILGenerator ilg, IServiceProvider services)
         {
             FunctionCallElement func = (FunctionCallElement)_myIndexerElement;
-            func.EmitFunctionCall(this.NextRequiresAddress, ilg, services);
+            func.EmitFunctionCall(NextRequiresAddress, ilg, services);
         }
 
         private Type ArrayType
         {
             get
             {
-                if (this.IsArray == true)
+                if (IsArray == true)
                 {
                     return MyPrevious.TargetType;
                 }
@@ -145,15 +145,15 @@ namespace Flee.ExpressionElements.MemberElements
 
         private bool IsArray => MyPrevious.TargetType.IsArray;
 
-        protected override bool RequiresAddress => this.IsArray == false;
+        protected override bool RequiresAddress => IsArray == false;
 
         public override System.Type ResultType
         {
             get
             {
-                if (this.IsArray == true)
+                if (IsArray == true)
                 {
-                    return this.ArrayType.GetElementType();
+                    return ArrayType.GetElementType();
                 }
                 else
                 {
@@ -166,7 +166,7 @@ namespace Flee.ExpressionElements.MemberElements
         {
             get
             {
-                if (this.IsArray == true)
+                if (IsArray == true)
                 {
                     return true;
                 }

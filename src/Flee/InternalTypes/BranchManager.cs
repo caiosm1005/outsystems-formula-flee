@@ -243,7 +243,7 @@ namespace Flee.InternalTypes
 
         public void BakeIsLongBranch()
         {
-            _myIsLongBranch = this.ComputeIsLongBranch();
+            _myIsLongBranch = ComputeIsLongBranch();
         }
 
         public void AdjustForLongBranchesBetween(int betweenLongBranchCount)

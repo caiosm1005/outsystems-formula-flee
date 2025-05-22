@@ -174,10 +174,10 @@ namespace Flee.Parsing
             }
             if (_value == '\0')
             {
-                this._value = c;
-                this._state = state;
-                this._left = new TransitionTree();
-                this._right = new TransitionTree();
+                _value = c;
+                _state = state;
+                _left = new TransitionTree();
+                _right = new TransitionTree();
             }
             else if (_value > c)
             {
@@ -192,20 +192,20 @@ namespace Flee.Parsing
         public void PrintTo(StringBuilder buffer, String indent)
         {
             _left?.PrintTo(buffer, indent);
-            if (this._value != '\0')
+            if (_value != '\0')
             {
                 if (buffer.Length > 0 && buffer[buffer.Length - 1] == '\n')
                 {
                     buffer.Append(indent);
                 }
-                buffer.Append(this._value);
-                if (this._state.Value != null)
+                buffer.Append(_value);
+                if (_state.Value != null)
                 {
                     buffer.Append(": ");
-                    buffer.Append(this._state.Value);
+                    buffer.Append(_state.Value);
                     buffer.Append("\n");
                 }
-                this._state.Tree.PrintTo(buffer, indent + " ");
+                _state.Tree.PrintTo(buffer, indent + " ");
             }
             _right?.PrintTo(buffer, indent);
         }

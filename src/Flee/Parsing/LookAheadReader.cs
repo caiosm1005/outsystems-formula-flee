@@ -21,7 +21,7 @@
 
         public LookAheadReader(TextReader input) : base()
         {
-            this._input = input;
+            _input = input;
         }
 
         public int LineNumber => _line;

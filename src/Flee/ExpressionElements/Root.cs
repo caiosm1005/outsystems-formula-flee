@@ -14,7 +14,7 @@ namespace Flee.ExpressionElements
         {
             _myChild = child;
             _myResultType = resultType;
-            this.Validate();
+            Validate();
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)

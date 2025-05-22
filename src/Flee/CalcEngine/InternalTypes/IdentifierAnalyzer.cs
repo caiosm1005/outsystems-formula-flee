@@ -20,10 +20,10 @@ namespace Flee.CalcEngine.InternalTypes
             switch (node.Id)
             {
                 case (int)ExpressionConstants.IDENTIFIER:
-                    this.ExitIdentifier((Token)node);
+                    ExitIdentifier((Token)node);
                     break;
                 case (int)ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
-                    this.ExitFieldPropertyExpression();
+                    ExitFieldPropertyExpression();
                     break;
             }
 
@@ -35,10 +35,10 @@ namespace Flee.CalcEngine.InternalTypes
             switch (node.Id)
             {
                 case (int)ExpressionConstants.MEMBER_EXPRESSION:
-                    this.EnterMemberExpression();
+                    EnterMemberExpression();
                     break;
                 case (int)ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
-                    this.EnterFieldPropertyExpression();
+                    EnterFieldPropertyExpression();
                     break;
             }
         }

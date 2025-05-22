@@ -24,8 +24,8 @@ namespace Flee.PublicTypes
         internal VariableCollection(ExpressionContext context)
         {
             _myContext = context;
-            this.CreateDictionary();
-            this.HookOptions();
+            CreateDictionary();
+            HookOptions();
         }
 
         #region "Methods - Non Public"
@@ -42,7 +42,7 @@ namespace Flee.PublicTypes
 
         private void OnOptionsCaseSensitiveChanged(object sender, EventArgs e)
         {
-            this.CreateDictionary();
+            CreateDictionary();
         }
 
         internal void Copy(VariableCollection dest)
@@ -67,7 +67,7 @@ namespace Flee.PublicTypes
                 throw new ArgumentException(msg);
             }
 
-            IVariable v = this.CreateVariable(variableType, variableValue);
+            IVariable v = CreateVariable(variableType, variableValue);
             _myVariables.Add(name, v);
         }
 
@@ -217,13 +217,13 @@ namespace Flee.PublicTypes
 
         public Type GetVariableType(string name)
         {
-            IVariable v = this.GetVariable(name, true);
+            IVariable v = GetVariable(name, true);
             return v.VariableType;
         }
 
         public void DefineVariable(string name, Type variableType)
         {
-            this.DefineVariableInternal(name, variableType, null);
+            DefineVariableInternal(name, variableType, null);
         }
 
         public T GetVariableValueInternal<T>(string name)
@@ -277,7 +277,7 @@ namespace Flee.PublicTypes
 
         private void Add1(System.Collections.Generic.KeyValuePair<string, object> item)
         {
-            this.Add(item.Key, item.Value);
+            Add(item.Key, item.Value);
         }
 
         void System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>.Add(System.Collections.Generic.KeyValuePair<string, object> item)
@@ -292,7 +292,7 @@ namespace Flee.PublicTypes
 
         private bool Contains1(System.Collections.Generic.KeyValuePair<string, object> item)
         {
-            return this.ContainsKey(item.Key);
+            return ContainsKey(item.Key);
         }
 
         bool System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>.Contains(System.Collections.Generic.KeyValuePair<string, object> item)
@@ -302,14 +302,14 @@ namespace Flee.PublicTypes
 
         private void CopyTo(System.Collections.Generic.KeyValuePair<string, object>[] array, int arrayIndex)
         {
-            Dictionary<string, object> dict = this.GetNameValueDictionary();
+            Dictionary<string, object> dict = GetNameValueDictionary();
             ICollection<KeyValuePair<string, object>> coll = dict;
             coll.CopyTo(array, arrayIndex);
         }
 
         private bool Remove1(System.Collections.Generic.KeyValuePair<string, object> item)
         {
-            return this.Remove(item.Key);
+            return Remove(item.Key);
         }
 
         bool System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>.Remove(System.Collections.Generic.KeyValuePair<string, object> item)
@@ -320,7 +320,7 @@ namespace Flee.PublicTypes
         public void Add(string name, object value)
         {
             Utility.AssertNotNull(value, "value");
-            this.DefineVariableInternal(name, value.GetType(), value);
+            DefineVariableInternal(name, value.GetType(), value);
             this[name] = value;
         }
 
@@ -336,20 +336,20 @@ namespace Flee.PublicTypes
 
         public bool TryGetValue(string key, out object value)
         {
-            IVariable v = this.GetVariable(key, false);
+            IVariable v = GetVariable(key, false);
             value = v?.ValueAsObject;
             return v != null;
         }
 
         public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string, object>> GetEnumerator()
         {
-            Dictionary<string, object> dict = this.GetNameValueDictionary();
+            Dictionary<string, object> dict = GetNameValueDictionary();
             return dict.GetEnumerator();
         }
 
         private System.Collections.IEnumerator GetEnumerator1()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -365,7 +365,7 @@ namespace Flee.PublicTypes
         {
             get
             {
-                IVariable v = this.GetVariable(name, true);
+                IVariable v = GetVariable(name, true);
                 return v.ValueAsObject;
             }
             set
@@ -378,7 +378,7 @@ namespace Flee.PublicTypes
                 }
                 else
                 {
-                    this.Add(name, value);
+                    Add(name, value);
                 }
             }
         }
@@ -389,7 +389,7 @@ namespace Flee.PublicTypes
         {
             get
             {
-                Dictionary<string, object> dict = this.GetNameValueDictionary();
+                Dictionary<string, object> dict = GetNameValueDictionary();
                 return dict.Values;
             }
         }

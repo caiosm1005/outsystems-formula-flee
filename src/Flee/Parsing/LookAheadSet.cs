@@ -22,7 +22,7 @@ namespace Flee.Parsing
 
         public LookAheadSet(int maxLength)
         {
-            this._maxLength = maxLength;
+            _maxLength = maxLength;
         }
 
         public LookAheadSet(int maxLength, LookAheadSet set)
@@ -261,7 +261,7 @@ namespace Flee.Parsing
             LookAheadSet result = new LookAheadSet(_maxLength);
 
             // Handle special cases
-            if (this.Size() <= 0)
+            if (Size() <= 0)
             {
                 return set;
             }
@@ -314,7 +314,7 @@ namespace Flee.Parsing
             LookAheadSet result = new LookAheadSet(_maxLength);
 
             // Handle special cases
-            if (this.Size() <= 0 || set.Size() <= 0)
+            if (Size() <= 0 || set.Size() <= 0)
             {
                 return this;
             }
@@ -381,8 +381,8 @@ namespace Flee.Parsing
 
             public Sequence()
             {
-                this._repeat = false;
-                this._tokens = new ArrayList(0);
+                _repeat = false;
+                _tokens = new ArrayList(0);
             }
 
             public Sequence(bool repeat, int token)
@@ -394,8 +394,8 @@ namespace Flee.Parsing
 
             public Sequence(int length, Sequence seq)
             {
-                this._repeat = seq._repeat;
-                this._tokens = new ArrayList(length);
+                _repeat = seq._repeat;
+                _tokens = new ArrayList(length);
                 if (seq.Length() < length)
                 {
                     length = seq.Length();
@@ -408,8 +408,8 @@ namespace Flee.Parsing
 
             public Sequence(bool repeat, Sequence seq)
             {
-                this._repeat = repeat;
-                this._tokens = seq._tokens;
+                _repeat = repeat;
+                _tokens = seq._tokens;
             }
 
             public int Length()
@@ -558,7 +558,7 @@ namespace Flee.Parsing
                 {
                     res._repeat = true;
                 }
-                length -= this.Length();
+                length -= Length();
                 if (length > seq.Length())
                 {
                     res._tokens.AddRange(seq._tokens);

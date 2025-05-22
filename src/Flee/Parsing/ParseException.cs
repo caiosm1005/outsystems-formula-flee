@@ -98,11 +98,11 @@ namespace Flee.Parsing
                               int column)
         {
 
-            this._type = type;
-            this._info = info;
-            this._details = details;
-            this._line = line;
-            this._column = column;
+            _type = type;
+            _info = info;
+            _details = details;
+            _line = line;
+            _column = column;
         }
 
         

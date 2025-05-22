@@ -133,7 +133,7 @@ namespace Flee.Parsing
 
         internal void SetParent(Node parent)
         {
-            this._parent = parent;
+            _parent = parent;
         }
 
         public virtual int Count => 0;
@@ -173,7 +173,7 @@ namespace Flee.Parsing
             }
             set
             {
-                this._values = value;
+                _values = value;
             }
         }
 

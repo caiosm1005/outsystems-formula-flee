@@ -103,40 +103,40 @@
 
             // The first step of the match loop has been unrolled and
             // optimized for performance below.
-            this._queue.Clear();
+            _queue.Clear();
             var peekChar = buffer.Peek(0);
             if (0 <= peekChar && peekChar < 128)
             {
-                state = this._initialChar[peekChar];
+                state = _initialChar[peekChar];
                 if (state != null)
                 {
-                    this._queue.AddLast(state);
+                    _queue.AddLast(state);
                 }
             }
             if (peekChar >= 0)
             {
-                this._initial.MatchTransitions((char)peekChar, this._queue, true);
+                _initial.MatchTransitions((char)peekChar, _queue, true);
             }
-            this._queue.MarkEnd();
+            _queue.MarkEnd();
             peekChar = buffer.Peek(1);
 
             // The remaining match loop processes all subsequent states
-            while (!this._queue.Empty)
+            while (!_queue.Empty)
             {
-                if (this._queue.Marked)
+                if (_queue.Marked)
                 {
                     pos++;
                     peekChar = buffer.Peek(pos);
-                    this._queue.MarkEnd();
+                    _queue.MarkEnd();
                 }
-                state = this._queue.RemoveFirst();
+                state = _queue.RemoveFirst();
                 if (state.Value != null)
                 {
                     match.Update(pos, state.Value);
                 }
                 if (peekChar >= 0)
                 {
-                    state.MatchTransitions((char)peekChar, this._queue, false);
+                    state.MatchTransitions((char)peekChar, _queue, false);
                 }
             }
             return length;
@@ -311,8 +311,8 @@
 
         protected NFATransition(NFAState state)
         {
-            this.State = state;
-            this.State.AddIn(this);
+            State = state;
+            State.AddIn(this);
         }
 
         public abstract bool IsAscii();
@@ -371,7 +371,7 @@
 
         public override bool Match(char ch)
         {
-            return this._match == ch;
+            return _match == ch;
         }
 
         public override NFATransition Copy(NFAState state)
@@ -397,8 +397,8 @@
                                       bool ignoreCase,
                                       NFAState state) : base(state)
         {
-            this.Inverse = inverse;
-            this.IgnoreCase = ignoreCase;
+            Inverse = inverse;
+            IgnoreCase = ignoreCase;
         }
 
         public override bool IsAscii()
@@ -500,8 +500,8 @@
 
             public Range(char min, char max)
             {
-                this._min = min;
-                this._max = max;
+                _min = min;
+                _max = max;
             }
 
             public bool IsAscii()

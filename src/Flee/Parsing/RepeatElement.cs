@@ -29,19 +29,19 @@ namespace Flee.Parsing
                              RepeatType type)
         {
 
-            this._elem = elem;
-            this._min = min;
+            _elem = elem;
+            _min = min;
             if (max <= 0)
             {
-                this._max = Int32.MaxValue;
+                _max = Int32.MaxValue;
             }
             else
             {
-                this._max = max;
+                _max = max;
             }
-            this._type = type;
-            this._matchStart = -1;
-            this._matches = null;
+            _type = type;
+            _matchStart = -1;
+            _matches = null;
         }
 
         public override object Clone()

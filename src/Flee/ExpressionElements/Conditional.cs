@@ -40,7 +40,7 @@ namespace Flee.ExpressionElements
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            this.EmitConditional(ilg, services);
+            EmitConditional(ilg, services);
         }
 
         private void EmitConditional(FleeILGenerator ilg, IServiceProvider services)

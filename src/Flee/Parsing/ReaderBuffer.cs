@@ -23,7 +23,7 @@
 
         public ReaderBuffer(TextReader input)
         {
-            this._input = input;
+            _input = input;
         }
         public void Dispose()
         {

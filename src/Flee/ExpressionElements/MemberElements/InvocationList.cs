@@ -12,7 +12,7 @@ namespace Flee.ExpressionElements.MemberElements
         private readonly MemberElement _myTail;
         public InvocationListElement(IList elements, IServiceProvider services)
         {
-            this.HandleFirstElement(elements, services);
+            HandleFirstElement(elements, services);
             LinkElements(elements);
             Resolve(elements, services);
             _myTail = (MemberElement)elements[elements.Count - 1];
@@ -48,7 +48,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
             else
             {
-                this.ResolveNamespaces(elements, services);
+                ResolveNamespaces(elements, services);
             }
         }
 

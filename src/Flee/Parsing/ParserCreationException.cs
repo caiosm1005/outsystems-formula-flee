@@ -89,10 +89,10 @@ namespace Flee.Parsing
                                        ArrayList details)
         {
 
-            this._type = type;
-            this._name = name;
-            this._info = info;
-            this._details = details;
+            _type = type;
+            _name = name;
+            _info = info;
+            _details = details;
         }
 
         public ErrorType Type => _type;

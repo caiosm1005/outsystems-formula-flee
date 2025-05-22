@@ -11,7 +11,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         {
             if (object.ReferenceEquals(MyChild.ResultType, typeof(bool)))
             {
-                this.EmitLogical(ilg, services);
+                EmitLogical(ilg, services);
             }
             else
             {

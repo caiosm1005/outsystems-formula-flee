@@ -44,10 +44,10 @@ namespace Flee.Parsing
                             string pattern)
         {
 
-            this._id = id;
-            this._name = name;
-            this._type = type;
-            this._pattern = pattern;
+            _id = id;
+            _name = name;
+            _type = type;
+            _pattern = pattern;
         }
 
         public int Id

@@ -42,7 +42,7 @@ namespace Flee.CalcEngine.PublicTypes
             IdentifierAnalyzer analyzer = Context.ParseIdentifiers(expression);
 
             ExpressionContext context2 = _myContext.CloneInternal(true);
-            this.LinkExpression(expressionName, context2, analyzer);
+            LinkExpression(expressionName, context2, analyzer);
 
             // Tell the expression not to clone the context since it's already been cloned
             context2.NoClone = true;
@@ -57,7 +57,7 @@ namespace Flee.CalcEngine.PublicTypes
         {
             foreach (string identifier in analyzer.GetIdentifiers(context))
             {
-                this.LinkIdentifier(identifier, expressionName, context);
+                LinkIdentifier(identifier, expressionName, context);
             }
         }
 
@@ -80,16 +80,16 @@ namespace Flee.CalcEngine.PublicTypes
 
         public void AddDynamic(string expressionName, string expression)
         {
-            ExpressionContext linkedContext = this.ParseAndLink(expressionName, expression);
+            ExpressionContext linkedContext = ParseAndLink(expressionName, expression);
             IExpression e = linkedContext.CompileDynamic(expression);
-            this.AddCompiledExpression(expressionName, e);
+            AddCompiledExpression(expressionName, e);
         }
 
         public void AddGeneric<T>(string expressionName, string expression)
         {
-            ExpressionContext linkedContext = this.ParseAndLink(expressionName, expression);
+            ExpressionContext linkedContext = ParseAndLink(expressionName, expression);
             IExpression e = linkedContext.CompileGeneric<T>(expression);
-            this.AddCompiledExpression(expressionName, e);
+            AddCompiledExpression(expressionName, e);
         }
 
         public void Clear()

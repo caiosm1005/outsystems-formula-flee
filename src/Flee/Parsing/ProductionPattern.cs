@@ -25,12 +25,12 @@ namespace Flee.Parsing
 
         public ProductionPattern(int id, string name)
         {
-            this._id = id;
-            this._name = name;
-            this._synthetic = false;
-            this._alternatives = new ArrayList();
-            this._defaultAlt = -1;
-            this._lookAhead = null;
+            _id = id;
+            _name = name;
+            _synthetic = false;
+            _alternatives = new ArrayList();
+            _defaultAlt = -1;
+            _lookAhead = null;
         }
         public int Id => _id;
 

@@ -27,10 +27,10 @@ namespace Flee.Parsing
 
         public Tokenizer(TextReader input, bool ignoreCase)
         {
-            this._stringDfaMatcher = new StringDFAMatcher(ignoreCase);
-            this._nfaMatcher = new NFAMatcher(ignoreCase);
-            this._regExpMatcher = new RegExpMatcher(ignoreCase);
-            this._buffer = new ReaderBuffer(input);
+            _stringDfaMatcher = new StringDFAMatcher(ignoreCase);
+            _nfaMatcher = new NFAMatcher(ignoreCase);
+            _regExpMatcher = new RegExpMatcher(ignoreCase);
+            _buffer = new ReaderBuffer(input);
         }
 
         public bool UseTokenList
@@ -52,7 +52,7 @@ namespace Flee.Parsing
 
         public void SetUseTokenList(bool useTokenList)
         {
-            this._useTokenList = useTokenList;
+            _useTokenList = useTokenList;
         }
 
         public string GetPatternDescription(int id)
@@ -141,9 +141,9 @@ namespace Flee.Parsing
         public void Reset(TextReader input)
         {
             //this.buffer.Dispose();
-            this._buffer = new ReaderBuffer(input);
-            this._previousToken = null;
-            this._lastMatch.Clear();
+            _buffer = new ReaderBuffer(input);
+            _previousToken = null;
+            _lastMatch.Clear();
         }
 
         public Token Next()

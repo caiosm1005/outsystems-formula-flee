@@ -18,15 +18,15 @@ namespace Flee.PublicTypes
             _myOwner = owner;
             _myProperties = new PropertyDictionary();
 
-            this.InitializeProperties();
+            InitializeProperties();
         }
 
         #region "Methods - Private"
 
         private void InitializeProperties()
         {
-            this.StringComparison = System.StringComparison.Ordinal;
-            this.OwnerMemberAccess = BindingFlags.Public;
+            StringComparison = System.StringComparison.Ordinal;
+            OwnerMemberAccess = BindingFlags.Public;
 
             _myProperties.SetToDefault<bool>("CaseSensitive");
             _myProperties.SetToDefault<bool>("Checked");
@@ -35,7 +35,7 @@ namespace Flee.PublicTypes
             _myProperties.SetToDefault<bool>("IsGeneric");
             _myProperties.SetToDefault<bool>("IntegersAsDoubles");
             _myProperties.SetValue("ParseCulture", CultureInfo.CurrentCulture);
-            this.SetParseCulture(this.ParseCulture);
+            SetParseCulture(ParseCulture);
             _myProperties.SetValue("RealLiteralDataType", RealLiteralDataType.Double);
         }
 
@@ -53,14 +53,14 @@ namespace Flee.PublicTypes
 
         internal ExpressionOptions Clone()
         {
-            ExpressionOptions clonedOptions = (ExpressionOptions)this.MemberwiseClone();
+            ExpressionOptions clonedOptions = (ExpressionOptions)MemberwiseClone();
             clonedOptions._myProperties = _myProperties.Clone();
             return clonedOptions;
         }
 
         internal bool IsOwnerType(Type t)
         {
-            return this._myOwnerType.IsAssignableFrom(t);
+            return _myOwnerType.IsAssignableFrom(t);
         }
 
         internal void SetOwnerType(Type ownerType)
@@ -110,7 +110,7 @@ namespace Flee.PublicTypes
             get { return _myProperties.GetValue<bool>("CaseSensitive"); }
             set
             {
-                if (this.CaseSensitive != value)
+                if (CaseSensitive != value)
                 {
                     _myProperties.SetValue("CaseSensitive", value);
                     if (CaseSensitiveChanged != null)
@@ -133,10 +133,10 @@ namespace Flee.PublicTypes
             set
             {
                 Utility.AssertNotNull(value, "ParseCulture");
-                if ((value.LCID != this.ParseCulture.LCID))
+                if ((value.LCID != ParseCulture.LCID))
                 {
                     _myProperties.SetValue("ParseCulture", value);
-                    this.SetParseCulture(value);
+                    SetParseCulture(value);
                     _myOwner.ParserOptions.RecreateParser();
                 }
             }
@@ -154,7 +154,7 @@ namespace Flee.PublicTypes
         {
             get
             {
-                if (this.CaseSensitive == true)
+                if (CaseSensitive == true)
                 {
                     return System.StringComparer.Ordinal;
                 }
@@ -169,7 +169,7 @@ namespace Flee.PublicTypes
         {
             get
             {
-                if (this.CaseSensitive == true)
+                if (CaseSensitive == true)
                 {
                     return Type.FilterName;
                 }
@@ -184,7 +184,7 @@ namespace Flee.PublicTypes
         {
             get
             {
-                if (this.CaseSensitive == true)
+                if (CaseSensitive == true)
                 {
                     return System.StringComparison.Ordinal;
                 }

@@ -13,7 +13,7 @@
         {
             if (str.Length == 0)
             {
-                this._value = value;
+                _value = value;
             }
             else
             {
@@ -93,10 +93,10 @@
             }
             if (_value == (char)0)
             {
-                this._value = c;
-                this._state = state;
-                this._left = new AutomatonTree();
-                this._right = new AutomatonTree();
+                _value = c;
+                _state = state;
+                _left = new AutomatonTree();
+                _right = new AutomatonTree();
             }
             else if (_value > c)
             {

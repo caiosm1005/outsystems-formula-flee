@@ -30,23 +30,23 @@ namespace Flee.Resources
 
         private string GetResourceString(string resourceFile, string key)
         {
-            ResourceManager rm = this.GetResourceManager(resourceFile);
+            ResourceManager rm = GetResourceManager(resourceFile);
             return rm.GetString(key);
         }
 
         public string GetCompileErrorString(string key)
         {
-            return this.GetResourceString("CompileErrors", key);
+            return GetResourceString("CompileErrors", key);
         }
 
         public string GetElementNameString(string key)
         {
-            return this.GetResourceString("ElementNames", key);
+            return GetResourceString("ElementNames", key);
         }
 
         public string GetGeneralErrorString(string key)
         {
-            return this.GetResourceString("GeneralErrors", key);
+            return GetResourceString("GeneralErrors", key);
         }
 
         public static FleeResourceManager Instance

@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Text;
 
-
 namespace Flee.Parsing
 {
     /**
@@ -26,10 +25,10 @@ namespace Flee.Parsing
 
         public RegExp(string pattern, bool ignoreCase)
         {
-            this._pattern = pattern;
-            this._ignoreCase = ignoreCase;
-            this._pos = 0;
-            this._element = ParseExpr();
+            _pattern = pattern;
+            _ignoreCase = ignoreCase;
+            _pos = 0;
+            _element = ParseExpr();
             if (_pos < pattern.Length)
             {
                 throw new RegExpException(

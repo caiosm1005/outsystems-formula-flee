@@ -21,16 +21,16 @@ namespace Flee.Parsing
 
         public Token(TokenPattern pattern, string image, int line, int col)
         {
-            this._pattern = pattern;
-            this._image = image;
-            this._startLine = line;
-            this._startColumn = col;
-            this._endLine = line;
-            this._endColumn = col + image.Length - 1;
+            _pattern = pattern;
+            _image = image;
+            _startLine = line;
+            _startColumn = col;
+            _endLine = line;
+            _endColumn = col + image.Length - 1;
             for (int pos = 0; image.IndexOf('\n', pos) >= 0;)
             {
                 pos = image.IndexOf('\n', pos) + 1;
-                this._endLine++;
+                _endLine++;
                 _endColumn = image.Length - pos;
             }
         }

@@ -49,11 +49,11 @@ namespace Flee.ExpressionElements.Base
 
         protected void ValidateInternal(object op)
         {
-            _myResultType = this.GetResultType(MyLeftChild.ResultType, MyRightChild.ResultType);
+            _myResultType = GetResultType(MyLeftChild.ResultType, MyRightChild.ResultType);
 
             if (_myResultType == null)
             {
-                this.ThrowOperandTypeMismatch(op, MyLeftChild.ResultType, MyRightChild.ResultType);
+                ThrowOperandTypeMismatch(op, MyLeftChild.ResultType, MyRightChild.ResultType);
             }
         }
 
@@ -152,9 +152,9 @@ namespace Flee.ExpressionElements.Base
         {
             MyLeftChild = leftChild;
             MyRightChild = rightChild;
-            this.GetOperation(op);
+            GetOperation(op);
 
-            this.ValidateInternal(op);
+            ValidateInternal(op);
         }
 
         public sealed override System.Type ResultType => _myResultType;

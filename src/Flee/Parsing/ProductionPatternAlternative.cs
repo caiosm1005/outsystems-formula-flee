@@ -96,7 +96,7 @@ namespace Flee.Parsing
 
         internal void SetPattern(ProductionPattern pattern)
         {
-            this._pattern = pattern;
+            _pattern = pattern;
         }
 
         public int GetMinElementCount()

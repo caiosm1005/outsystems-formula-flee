@@ -40,74 +40,74 @@ namespace Flee.Parsing
 
         public override Node ExitExpression(Production node)
         {
-            this.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
         public override Node ExitExpressionGroup(Production node)
         {
-            node.AddValues(this.GetChildValues(node));
+            node.AddValues(GetChildValues(node));
             return node;
         }
 
         public override Node ExitXorExpression(Production node)
         {
-            this.AddBinaryOp(node, typeof(XorElement));
+            AddBinaryOp(node, typeof(XorElement));
             return node;
         }
 
         public override Node ExitOrExpression(Production node)
         {
-            this.AddBinaryOp(node, typeof(AndOrElement));
+            AddBinaryOp(node, typeof(AndOrElement));
             return node;
         }
 
         public override Node ExitAndExpression(Production node)
         {
-            this.AddBinaryOp(node, typeof(AndOrElement));
+            AddBinaryOp(node, typeof(AndOrElement));
             return node;
         }
 
         public override Node ExitNotExpression(Production node)
         {
-            this.AddUnaryOp(node, typeof(NotElement));
+            AddUnaryOp(node, typeof(NotElement));
             return node;
         }
 
         public override Node ExitCompareExpression(Production node)
         {
-            this.AddBinaryOp(node, typeof(CompareElement));
+            AddBinaryOp(node, typeof(CompareElement));
             return node;
         }
 
         public override Node ExitShiftExpression(Production node)
         {
-            this.AddBinaryOp(node, typeof(ShiftElement));
+            AddBinaryOp(node, typeof(ShiftElement));
             return node;
         }
 
         public override Node ExitAdditiveExpression(Production node)
         {
-            this.AddBinaryOp(node, typeof(ArithmeticElement));
+            AddBinaryOp(node, typeof(ArithmeticElement));
             return node;
         }
 
         public override Node ExitMultiplicativeExpression(Production node)
         {
-            this.AddBinaryOp(node, typeof(ArithmeticElement));
+            AddBinaryOp(node, typeof(ArithmeticElement));
             return node;
         }
 
         public override Node ExitPowerExpression(Production node)
         {
-            this.AddBinaryOp(node, typeof(ArithmeticElement));
+            AddBinaryOp(node, typeof(ArithmeticElement));
             return node;
         }
 
         // Try to fold a negated constant int32.  We have to do this so that parsing int32.MinValue will work
         public override Node ExitNegateExpression(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
 
             // Get last child
             ExpressionElement childElement = (ExpressionElement)childValues[childValues.Count - 1];
@@ -128,7 +128,7 @@ namespace Flee.Parsing
             else
             {
                 // No so just add a regular negate
-                this.AddUnaryOp(node, typeof(NegateElement));
+                AddUnaryOp(node, typeof(NegateElement));
             }
 
             return node;
@@ -136,7 +136,7 @@ namespace Flee.Parsing
 
         public override Node ExitMemberExpression(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
             object first = childValues[0];
 
             if (childValues.Count == 1 && !(first is MemberElement))
@@ -154,7 +154,7 @@ namespace Flee.Parsing
 
         public override Node ExitIndexExpression(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
             ArgumentList args = new ArgumentList(childValues);
             IndexerElement e = new IndexerElement(args);
             node.AddValue(e);
@@ -169,13 +169,13 @@ namespace Flee.Parsing
 
         public override Node ExitSpecialFunctionExpression(Production node)
         {
-            this.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
         public override Node ExitIfExpression(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
             ConditionalElement op = new ConditionalElement((ExpressionElement)childValues[0], (ExpressionElement)childValues[1], (ExpressionElement)childValues[2]);
             node.AddValue(op);
             return node;
@@ -183,11 +183,11 @@ namespace Flee.Parsing
 
         public override Node ExitInExpression(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
 
             if (childValues.Count == 1)
             {
-                this.AddFirstChildValue(node);
+                AddFirstChildValue(node);
                 return node;
             }
 
@@ -213,20 +213,20 @@ namespace Flee.Parsing
 
         public override Node ExitInTargetExpression(Production node)
         {
-            this.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
         public override Node ExitInListTargetExpression(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
             node.AddValue(childValues);
             return node;
         }
 
         public override Node ExitCastExpression(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
             string[] destTypeParts = (string[])childValues[1];
             bool isArray = (bool)childValues[2];
             CastElement op = new CastElement((ExpressionElement)childValues[0], destTypeParts, isArray, _myServices);
@@ -236,7 +236,7 @@ namespace Flee.Parsing
 
         public override Node ExitCastTypeExpression(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
             List<string> parts = new List<string>();
 
             foreach (string part in childValues)
@@ -259,7 +259,7 @@ namespace Flee.Parsing
 
         public override Node ExitMemberFunctionExpression(Production node)
         {
-            this.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
@@ -274,7 +274,7 @@ namespace Flee.Parsing
 
         public override Node ExitFunctionCallExpression(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
             string name = (string)childValues[0];
             childValues.RemoveAt(0);
             ArgumentList args = new ArgumentList(childValues);
@@ -285,31 +285,31 @@ namespace Flee.Parsing
 
         public override Node ExitArgumentList(Production node)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
             node.AddValues((ArrayList)childValues);
             return node;
         }
 
         public override Node ExitBasicExpression(Production node)
         {
-            this.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
         public override Node ExitLiteralExpression(Production node)
         {
-            this.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
         private void AddFirstChildValue(Production node)
         {
-            node.AddValue(this.GetChildAt(node, 0).Values[0]);
+            node.AddValue(GetChildAt(node, 0).Values[0]);
         }
 
         private void AddUnaryOp(Production node, Type elementType)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
 
             if (childValues.Count == 2)
             {
@@ -325,7 +325,7 @@ namespace Flee.Parsing
 
         private void AddBinaryOp(Production node, Type elementType)
         {
-            IList childValues = this.GetChildValues(node);
+            IList childValues = GetChildValues(node);
 
             if (childValues.Count > 1)
             {
@@ -367,7 +367,7 @@ namespace Flee.Parsing
 
         public override Node ExitBooleanLiteralExpression(Production node)
         {
-            this.AddFirstChildValue(node);
+            AddFirstChildValue(node);
             return node;
         }
 
@@ -385,7 +385,7 @@ namespace Flee.Parsing
 
         public override Node ExitStringLiteral(Token node)
         {
-            string s = this.DoEscapes(node.Image);
+            string s = DoEscapes(node.Image);
             StringLiteralElement element = new StringLiteralElement(s);
             node.AddValue(element);
             return node;
@@ -393,7 +393,7 @@ namespace Flee.Parsing
 
         public override Node ExitCharLiteral(Token node)
         {
-            string s = this.DoEscapes(node.Image);
+            string s = DoEscapes(node.Image);
             node.AddValue(new CharLiteralElement(s[0]));
             return node;
         }

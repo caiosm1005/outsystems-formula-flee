@@ -21,7 +21,7 @@ namespace Flee.ExpressionElements.MemberElements
         private Type _myOnDemandFunctionReturnType;
         public FunctionCallElement(string name, ArgumentList arguments)
         {
-            this.MyName = name;
+            MyName = name;
             _myArguments = arguments;
         }
 
@@ -42,7 +42,7 @@ namespace Flee.ExpressionElements.MemberElements
             if (methods == null)
             {
                 // Convert member info to method info
-                MemberInfo[] arr = this.GetMembers(MemberTypes.Method);
+                MemberInfo[] arr = GetMembers(MemberTypes.Method);
                 MethodInfo[] arr2 = new MethodInfo[arr.Length];
                 Array.Copy(arr, arr2, arr.Length);
                 methods = arr2;
@@ -51,7 +51,7 @@ namespace Flee.ExpressionElements.MemberElements
             if (methods.Count > 0)
             {
                 // More than one method exists with this name			
-                this.BindToMethod(methods, MyPrevious, argTypes);
+                BindToMethod(methods, MyPrevious, argTypes);
                 return;
             }
 
@@ -61,7 +61,7 @@ namespace Flee.ExpressionElements.MemberElements
             if (_myOnDemandFunctionReturnType == null)
             {
                 // Failed to bind to a function
-                this.ThrowFunctionNotFoundException(MyPrevious);
+                ThrowFunctionNotFoundException(MyPrevious);
             }
         }
 
@@ -126,12 +126,12 @@ namespace Flee.ExpressionElements.MemberElements
             if (customInfos.Count == 0)
             {
                 // We have no methods that can qualify as overloads; throw exception
-                this.ThrowFunctionNotFoundException(previous);
+                ThrowFunctionNotFoundException(previous);
             }
             else
             {
                 // At least one method matches our criteria; do our custom overload resolution
-                this.ResolveOverloads(customInfos.ToArray(), previous, argTypes);
+                ResolveOverloads(customInfos.ToArray(), previous, argTypes);
             }
         }
 
@@ -153,16 +153,16 @@ namespace Flee.ExpressionElements.MemberElements
             Array.Sort<CustomMethodInfo>(infos);
 
             // Discard any matches that aren't accessible
-            infos = this.GetAccessibleInfos(infos);
+            infos = GetAccessibleInfos(infos);
 
             // No accessible methods left
             if (infos.Length == 0)
             {
-                this.ThrowNoAccessibleMethodsException(previous);
+                ThrowNoAccessibleMethodsException(previous);
             }
 
             // Handle case where we have more than one match with the same score
-            this.DetectAmbiguousMatches(infos);
+            DetectAmbiguousMatches(infos);
 
             // If we get here, then there is only one best match
             _myTargetMethodInfo = infos[0];
@@ -204,7 +204,7 @@ namespace Flee.ExpressionElements.MemberElements
             // More than one accessible match with the same score exists
             if (sameScores.Count > 1)
             {
-                this.ThrowAmbiguousMethodCallException();
+                ThrowAmbiguousMethodCallException();
             }
         }
 
@@ -218,7 +218,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
 
             // Any function reference in an expression must return a value
-            if (object.ReferenceEquals(this.Method.ReturnType, typeof(void)))
+            if (object.ReferenceEquals(Method.ReturnType, typeof(void)))
             {
                 base.ThrowCompileException(CompileErrorResourceKeys.FunctionHasNoReturnValue, CompileExceptionReason.FunctionHasNoReturnValue, MyName);
             }
@@ -233,19 +233,19 @@ namespace Flee.ExpressionElements.MemberElements
             // If we are an on-demand function, then emit that and exit
             if ((_myOnDemandFunctionReturnType != null))
             {
-                this.EmitOnDemandFunction(elements, ilg, services);
+                EmitOnDemandFunction(elements, ilg, services);
                 return;
             }
 
-            bool isOwnerMember = MyOptions.IsOwnerType(this.Method.ReflectedType);
+            bool isOwnerMember = MyOptions.IsOwnerType(Method.ReflectedType);
 
             // Load the owner if required
-            if (MyPrevious == null && isOwnerMember == true && this.IsStatic == false)
+            if (MyPrevious == null && isOwnerMember == true && IsStatic == false)
             {
-                this.EmitLoadOwner(ilg);
+                EmitLoadOwner(ilg);
             }
 
-            this.EmitFunctionCall(this.NextRequiresAddress, ilg, services);
+            EmitFunctionCall(NextRequiresAddress, ilg, services);
         }
 
         private void EmitOnDemandFunction(ExpressionElement[] elements, FleeILGenerator ilg, IServiceProvider services)
@@ -260,7 +260,7 @@ namespace Flee.ExpressionElements.MemberElements
             // Call the function to get the result
             MethodInfo mi = VariableCollection.GetFunctionInvokeMethod(_myOnDemandFunctionReturnType);
 
-            this.EmitMethodCall(mi, ilg);
+            EmitMethodCall(mi, ilg);
         }
 
         // Emit the arguments to a paramArray method call
@@ -275,7 +275,7 @@ namespace Flee.ExpressionElements.MemberElements
             Array.Copy(elements, fixedElements, fixedElements.Length);
 
             // Emit the fixed arguments
-            this.EmitRegularFunctionInternal(fixedParameters, fixedElements, ilg, services);
+            EmitRegularFunctionInternal(fixedParameters, fixedElements, ilg, services);
 
             // Get the paramArray arguments
             ExpressionElement[] paramArrayElements = new ExpressionElement[elements.Length - fixedElements.Length];
@@ -325,29 +325,29 @@ namespace Flee.ExpressionElements.MemberElements
 
         public void EmitFunctionCall(bool nextRequiresAddress, FleeILGenerator ilg, IServiceProvider services)
         {
-            ParameterInfo[] parameters = this.Method.GetParameters();
+            ParameterInfo[] parameters = Method.GetParameters();
             ExpressionElement[] elements = _myArguments.ToArray();
 
             // Emit either a regular or paramArray call
             if (_myTargetMethodInfo.IsParamArray == false)
             {
                 if (_myTargetMethodInfo.IsExtensionMethod == false)
-                    this.EmitRegularFunctionInternal(parameters, elements, ilg, services);
+                    EmitRegularFunctionInternal(parameters, elements, ilg, services);
                 else
-                    this.EmitExtensionFunctionInternal(parameters, elements, ilg, services);
+                    EmitExtensionFunctionInternal(parameters, elements, ilg, services);
             }
             else
             {
-                this.EmitParamArrayArguments(parameters, elements, ilg, services);
+                EmitParamArrayArguments(parameters, elements, ilg, services);
             }
 
-            MemberElement.EmitMethodCall(this.ResultType, nextRequiresAddress, this.Method, ilg);
+            MemberElement.EmitMethodCall(ResultType, nextRequiresAddress, Method, ilg);
         }
 
         private void EmitExtensionFunctionInternal(ParameterInfo[] parameters, ExpressionElement[] elements, FleeILGenerator ilg, IServiceProvider services)
         {
             Debug.Assert(parameters.Length == elements.Length + 1, "argument count mismatch");
-            if (MyPrevious == null) this.EmitLoadOwner(ilg);
+            if (MyPrevious == null) EmitLoadOwner(ilg);
             //Emit each element and any required conversions to the actual parameter type
             for (int i = 1; i <= parameters.Length - 1; i++)
             {
@@ -396,16 +396,16 @@ namespace Flee.ExpressionElements.MemberElements
                 }
                 else
                 {
-                    return this.Method.ReturnType;
+                    return Method.ReturnType;
                 }
             }
         }
 
-        protected override bool RequiresAddress => !IsGetTypeMethod(this.Method);
+        protected override bool RequiresAddress => !IsGetTypeMethod(Method);
 
-        protected override bool IsPublic => this.Method.IsPublic;
+        protected override bool IsPublic => Method.IsPublic;
 
-        public override bool IsStatic => this.Method.IsStatic;
-        public override bool IsExtensionMethod => this._myTargetMethodInfo.IsExtensionMethod;
+        public override bool IsStatic => Method.IsStatic;
+        public override bool IsExtensionMethod => _myTargetMethodInfo.IsExtensionMethod;
     }
 }

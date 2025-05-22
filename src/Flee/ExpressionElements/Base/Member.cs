@@ -37,8 +37,8 @@ namespace Flee.ExpressionElements.Base
             MyServices = services;
             MyOptions = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
             MyContext = (ExpressionContext)services.GetService(typeof(ExpressionContext));
-            this.ResolveInternal();
-            this.Validate();
+            ResolveInternal();
+            Validate();
         }
 
         public void SetImport(ImportBase import)
@@ -58,11 +58,11 @@ namespace Flee.ExpressionElements.Base
                 return;
             }
 
-            if (this.IsStatic == true && this.SupportsStatic == false && IsExtensionMethod == false)
+            if (IsStatic == true && SupportsStatic == false && IsExtensionMethod == false)
             {
                 base.ThrowCompileException(CompileErrorResourceKeys.StaticMemberCannotBeAccessedWithInstanceReference, CompileExceptionReason.TypeMismatch, MyName);
             }
-            else if (this.IsStatic == false && this.SupportsInstance == false)
+            else if (IsStatic == false && SupportsInstance == false)
             {
                 base.ThrowCompileException(CompileErrorResourceKeys.ReferenceToNonSharedMemberRequiresObjectReference, CompileExceptionReason.TypeMismatch, MyName);
             }
@@ -88,7 +88,7 @@ namespace Flee.ExpressionElements.Base
         /// <param name="ilg"></param>
         protected void EmitMethodCall(MethodInfo mi, FleeILGenerator ilg)
         {
-            EmitMethodCall(this.ResultType, this.NextRequiresAddress, mi, ilg);
+            EmitMethodCall(ResultType, NextRequiresAddress, mi, ilg);
         }
 
         protected static void EmitMethodCall(Type resultType, bool nextRequiresAddress, MethodInfo mi, FleeILGenerator ilg)
@@ -183,7 +183,7 @@ namespace Flee.ExpressionElements.Base
             ilg.Emit(OpCodes.Ldobj, ownerType);
 
             // Emit usual stuff for value types but use the owner type as the target
-            if (this.RequiresAddress == true)
+            if (RequiresAddress == true)
             {
                 EmitValueTypeLoadAddress(ilg, ownerType);
             }
@@ -229,7 +229,7 @@ namespace Flee.ExpressionElements.Base
             // Keep all members that are accessible
             foreach (MemberInfo mi in members)
             {
-                if (this.IsMemberAccessible(mi) == true)
+                if (IsMemberAccessible(mi) == true)
                 {
                     accessible.Add(mi);
                 }
@@ -287,7 +287,7 @@ namespace Flee.ExpressionElements.Base
                 if (MyImport == null)
                 {
                     // Get all members in the default namespace
-                    return this.GetDefaultNamespaceMembers(MyName, targets);
+                    return GetDefaultNamespaceMembers(MyName, targets);
                 }
                 else
                 {
@@ -322,7 +322,7 @@ namespace Flee.ExpressionElements.Base
             MemberInfo[] members = MyContext.Imports.FindOwnerMembers(name, memberType);
 
             // Keep only the accessible members
-            members = this.GetAccessibleMembers(members);
+            members = GetAccessibleMembers(members);
 
             //Also search imports
             var importedMembers = MyContext.Imports.RootImport.FindMembers(name, memberType);
@@ -353,6 +353,6 @@ namespace Flee.ExpressionElements.Base
 
         protected virtual bool SupportsStatic => false;
 
-        public System.Type TargetType => this.ResultType;
+        public System.Type TargetType => ResultType;
     }
 }

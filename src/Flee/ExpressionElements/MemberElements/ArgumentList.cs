@@ -43,7 +43,7 @@ namespace Flee.ExpressionElements.MemberElements
 
         public override string ToString()
         {
-            string[] typeNames = this.GetArgumentTypeNames();
+            string[] typeNames = GetArgumentTypeNames();
             return Utility.FormatList(typeNames);
         }
 

@@ -19,7 +19,7 @@ namespace Flee.Test.ExpressionTests
             var vars = context.Variables;
             vars.DefineVariable("a", typeof(int));
             vars.DefineVariable("b", typeof(int));
-            IDynamicExpression e = this.CreateDynamicExpression("a + b", context);
+            IDynamicExpression e = CreateDynamicExpression("a + b", context);
 
             var sw = new Stopwatch();
             sw.Start();
@@ -32,7 +32,7 @@ namespace Flee.Test.ExpressionTests
                 
             }
             sw.Stop();
-            this.PrintSpeedMessage("Fast variables", iterations, sw);
+            PrintSpeedMessage("Fast variables", iterations, sw);
             Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
         }
 
@@ -596,7 +596,7 @@ AND NOT
                 CreateDynamicExpression(BigExpression, context);
             }
             sw.Stop();
-            this.PrintSpeedMessage("Compile Big", iterations, sw);
+            PrintSpeedMessage("Compile Big", iterations, sw);
             Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
             
 
@@ -608,11 +608,11 @@ AND NOT
 
             for (int i = 0; i < iterations - 1; i++)
             {
-                IDynamicExpression e = this.CreateDynamicExpression(SmallExpression, context);
+                IDynamicExpression e = CreateDynamicExpression(SmallExpression, context);
 
             }
             sw.Stop();
-            this.PrintSpeedMessage("Compile Small", iterations, sw);
+            PrintSpeedMessage("Compile Small", iterations, sw);
             Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
 
             iterations = 100;
@@ -623,11 +623,11 @@ AND NOT
 
             for (int i = 0; i < iterations - 1; i++)
             {
-                IDynamicExpression e = this.CreateDynamicExpression(SmallExpression, context);
+                IDynamicExpression e = CreateDynamicExpression(SmallExpression, context);
 
             }
             sw.Stop();
-            this.PrintSpeedMessage("Compile Small Branching", iterations, sw);
+            PrintSpeedMessage("Compile Small Branching", iterations, sw);
             Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
         }
 
@@ -658,7 +658,7 @@ AND NOT
 
         private void PrintSpeedMessage(string title, int iterations, Stopwatch sw)
         {
-            this.WriteMessage("{0}: {1:n0} iterations in {2:n2}ms = {3:n2} iterations/sec", title, iterations, sw.ElapsedMilliseconds, iterations*1000 / (sw.ElapsedMilliseconds));
+            WriteMessage("{0}: {1:n0} iterations in {2:n2}ms = {3:n2} iterations/sec", title, iterations, sw.ElapsedMilliseconds, iterations*1000 / (sw.ElapsedMilliseconds));
         }
     }
 }

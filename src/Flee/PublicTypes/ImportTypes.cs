@@ -16,7 +16,7 @@ namespace Flee.PublicTypes
         internal virtual void SetContext(ExpressionContext context)
         {
             _myContext = context;
-            this.Validate();
+            Validate();
         }
 
         internal abstract void Validate();
@@ -26,7 +26,7 @@ namespace Flee.PublicTypes
 
         internal ImportBase Clone()
         {
-            return (ImportBase)this.MemberwiseClone();
+            return (ImportBase)MemberwiseClone();
         }
 
         protected static void AddImportMembers(ImportBase import, string memberName, MemberTypes memberType, ICollection<MemberInfo> dest)
@@ -63,7 +63,7 @@ namespace Flee.PublicTypes
         internal MemberInfo[] FindMembers(string memberName, MemberTypes memberType)
         {
             List<MemberInfo> found = new List<MemberInfo>();
-            this.AddMembers(memberName, memberType, found);
+            AddMembers(memberName, memberType, found);
             return found.ToArray();
         }
         #endregion
@@ -72,7 +72,7 @@ namespace Flee.PublicTypes
         public MemberInfo[] GetMembers(MemberTypes memberType)
         {
             List<MemberInfo> found = new List<MemberInfo>();
-            this.AddMembers(memberType, found);
+            AddMembers(memberType, found);
             return found.ToArray();
         }
         #endregion
@@ -86,7 +86,7 @@ namespace Flee.PublicTypes
 
         private System.Collections.IEnumerator GetEnumerator1()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
@@ -97,7 +97,7 @@ namespace Flee.PublicTypes
         #region "IEquatable Implementation"
         public bool Equals(ImportBase other)
         {
-            return this.EqualsInternal(other);
+            return EqualsInternal(other);
         }
 
         protected abstract bool EqualsInternal(ImportBase import);
@@ -140,12 +140,12 @@ namespace Flee.PublicTypes
 
         internal override void Validate()
         {
-            this.Context.AssertTypeIsAccessible(_myType);
+            Context.AssertTypeIsAccessible(_myType);
         }
 
         protected override void AddMembers(string memberName, MemberTypes memberType, ICollection<MemberInfo> dest)
         {
-            MemberInfo[] members = _myType.FindMembers(memberType, _myBindFlags, this.Context.Options.MemberFilter, memberName);
+            MemberInfo[] members = _myType.FindMembers(memberType, _myBindFlags, Context.Options.MemberFilter, memberName);
             ImportBase.AddMemberRange(members, dest);
         }
 
@@ -153,7 +153,7 @@ namespace Flee.PublicTypes
         {
             if (_myUseTypeNameAsNamespace == false)
             {
-                MemberInfo[] members = _myType.FindMembers(memberType, _myBindFlags, this.AlwaysMemberFilter, null);
+                MemberInfo[] members = _myType.FindMembers(memberType, _myBindFlags, AlwaysMemberFilter, null);
                 ImportBase.AddMemberRange(members, dest);
             }
         }
@@ -162,7 +162,7 @@ namespace Flee.PublicTypes
         {
             if (_myUseTypeNameAsNamespace == true)
             {
-                return string.Equals(_myType.Name, name, this.Context.Options.MemberStringComparison);
+                return string.Equals(_myType.Name, name, Context.Options.MemberStringComparison);
             }
             else
             {
@@ -172,7 +172,7 @@ namespace Flee.PublicTypes
 
         internal override Type FindType(string typeName)
         {
-            if (string.Equals(typeName, _myType.Name, this.Context.Options.MemberStringComparison) == true)
+            if (string.Equals(typeName, _myType.Name, Context.Options.MemberStringComparison) == true)
             {
                 return _myType;
             }
@@ -227,12 +227,12 @@ namespace Flee.PublicTypes
 
         internal override void Validate()
         {
-            this.Context.AssertTypeIsAccessible(_myMethod.ReflectedType);
+            Context.AssertTypeIsAccessible(_myMethod.ReflectedType);
         }
 
         protected override void AddMembers(string memberName, MemberTypes memberType, ICollection<MemberInfo> dest)
         {
-            if (string.Equals(memberName, _myMethod.Name, this.Context.Options.MemberStringComparison) == true && (memberType & MemberTypes.Method) != 0)
+            if (string.Equals(memberName, _myMethod.Name, Context.Options.MemberStringComparison) == true && (memberType & MemberTypes.Method) != 0)
             {
                 dest.Add(_myMethod);
             }
@@ -248,7 +248,7 @@ namespace Flee.PublicTypes
 
         internal override bool IsMatch(string name)
         {
-            return string.Equals(_myMethod.Name, name, this.Context.Options.MemberStringComparison);
+            return string.Equals(_myMethod.Name, name, Context.Options.MemberStringComparison);
         }
 
         internal override Type FindType(string typeName)
@@ -300,7 +300,7 @@ namespace Flee.PublicTypes
 
         protected override void AddMembers(string memberName, MemberTypes memberType, ICollection<MemberInfo> dest)
         {
-            foreach (ImportBase import in this.NonContainerImports)
+            foreach (ImportBase import in NonContainerImports)
             {
                 AddImportMembers(import, memberName, memberType, dest);
             }
@@ -312,7 +312,7 @@ namespace Flee.PublicTypes
 
         internal override Type FindType(string typeName)
         {
-            foreach (ImportBase import in this.NonContainerImports)
+            foreach (ImportBase import in NonContainerImports)
             {
                 Type t = import.FindType(typeName);
 
@@ -339,7 +339,7 @@ namespace Flee.PublicTypes
 
         internal override bool IsMatch(string name)
         {
-            return string.Equals(_myNamespace, name, this.Context.Options.MemberStringComparison);
+            return string.Equals(_myNamespace, name, Context.Options.MemberStringComparison);
         }
 
         private ICollection<ImportBase> NonContainerImports
@@ -363,7 +363,7 @@ namespace Flee.PublicTypes
         protected override bool EqualsInternal(ImportBase import)
         {
             NamespaceImport otherSameType = import as NamespaceImport;
-            return (otherSameType != null) && _myNamespace.Equals(otherSameType._myNamespace, this.Context.Options.MemberStringComparison);
+            return (otherSameType != null) && _myNamespace.Equals(otherSameType._myNamespace, Context.Options.MemberStringComparison);
         }
 
         public override bool IsContainer => true;
@@ -375,9 +375,9 @@ namespace Flee.PublicTypes
         {
             Utility.AssertNotNull(item, "item");
 
-            if ((this.Context != null))
+            if ((Context != null))
             {
-                item.SetContext(this.Context);
+                item.SetContext(Context);
             }
 
             _myImports.Add(item);

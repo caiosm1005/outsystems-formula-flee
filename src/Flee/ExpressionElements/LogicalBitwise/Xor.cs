@@ -15,7 +15,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             {
                 return bitwiseType;
             }
-            else if (this.AreBothChildrenOfType(typeof(bool)) == true)
+            else if (AreBothChildrenOfType(typeof(bool)) == true)
             {
                 return typeof(bool);
             }
@@ -27,7 +27,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type resultType = this.ResultType;
+            Type resultType = ResultType;
 
             MyLeftChild.Emit(ilg, services);
             ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, resultType, ilg);

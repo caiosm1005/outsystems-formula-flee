@@ -195,15 +195,15 @@ namespace Flee.InternalTypes
             }
             else if (IsParamArray == true)
             {
-                _myScore = this.ComputeScoreForParamArray(@params, argTypes);
+                _myScore = ComputeScoreForParamArray(@params, argTypes);
             }
             else if (IsExtensionMethod == true)
             {
-                _myScore = this.ComputeScoreExtensionMethodInternal(@params, argTypes);
+                _myScore = ComputeScoreExtensionMethodInternal(@params, argTypes);
             }
             else
             {
-                _myScore = this.ComputeScoreInternal(@params, argTypes);
+                _myScore = ComputeScoreInternal(@params, argTypes);
             }
         }
 
@@ -344,7 +344,7 @@ namespace Flee.InternalTypes
             {
                 return true;
             }
-            else if (this.IsParamArrayMatch(argTypes, parameters, lastParam) == true)
+            else if (IsParamArrayMatch(argTypes, parameters, lastParam) == true)
             {
                 IsParamArray = true;
                 return true;
@@ -466,15 +466,15 @@ namespace Flee.InternalTypes
 
         public ShortCircuitInfo()
         {
-            this.Operands = new Stack();
-            this.Operators = new Stack();
-            this.Labels = new Dictionary<object, Label>();
+            Operands = new Stack();
+            Operators = new Stack();
+            Labels = new Dictionary<object, Label>();
         }
 
         public void ClearTempState()
         {
-            this.Operands.Clear();
-            this.Operators.Clear();
+            Operands.Clear();
+            Operators.Clear();
         }
 
         public Label AddLabel(object key, Label lbl)
@@ -552,7 +552,7 @@ namespace Flee.InternalTypes
         public void SetToDefault<T>(string name)
         {
             T value = default(T);
-            this.SetValue(name, value);
+            SetValue(name, value);
         }
 
         public void SetValue(string name, object value)

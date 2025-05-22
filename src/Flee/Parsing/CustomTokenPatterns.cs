@@ -10,7 +10,7 @@ namespace Flee.Parsing
 
         public void Initialize(int id, string name, PatternType type, string pattern, ExpressionContext context)
         {
-            this.ComputeToken(id, name, type, pattern, context);
+            ComputeToken(id, name, type, pattern, context);
         }
 
         protected abstract void ComputeToken(int id, string name, PatternType type, string pattern, ExpressionContext context);
@@ -30,7 +30,7 @@ namespace Flee.Parsing
 
             pattern = string.Format(pattern, digitsBeforePattern, options.DecimalSeparator);
 
-            this.SetData(id, name, type, pattern);
+            SetData(id, name, type, pattern);
         }
     }
 
@@ -43,7 +43,7 @@ namespace Flee.Parsing
         protected override void ComputeToken(int id, string name, PatternType type, string pattern, ExpressionContext context)
         {
             ExpressionParserOptions options = context.ParserOptions;
-            this.SetData(id, name, type, options.FunctionArgumentSeparator.ToString());
+            SetData(id, name, type, options.FunctionArgumentSeparator.ToString());
         }
     }
 }

@@ -135,13 +135,13 @@ namespace Flee.PublicTypes
 
             MyContext.AssertTypeIsAccessible(t);
 
-            NamespaceImport import = this.GetImport(ns);
+            NamespaceImport import = GetImport(ns);
             import.Add(new TypeImport(t, BindingFlags.Public | BindingFlags.Static, false));
         }
 
         public void AddType(Type t)
         {
-            this.AddType(t, string.Empty);
+            AddType(t, string.Empty);
         }
 
         public void AddMethod(string methodName, Type t, string ns)
@@ -158,7 +158,7 @@ namespace Flee.PublicTypes
                 throw new ArgumentException(msg);
             }
 
-            this.AddMethod(mi, ns);
+            AddMethod(mi, ns);
         }
 
         public void AddMethod(MethodInfo mi, string ns)
@@ -174,7 +174,7 @@ namespace Flee.PublicTypes
                 throw new ArgumentException(msg);
             }
 
-            NamespaceImport import = this.GetImport(ns);
+            NamespaceImport import = GetImport(ns);
             import.Add(new MethodImport(mi));
         }
 
@@ -182,7 +182,7 @@ namespace Flee.PublicTypes
         {
             foreach (KeyValuePair<string, Type> pair in OurBuiltinTypeMap)
             {
-                this.AddType(pair.Value, pair.Key);
+                AddType(pair.Value, pair.Key);
             }
         }
         #endregion

@@ -12,7 +12,7 @@ namespace Flee.ExpressionElements.Base
         public void SetChild(ExpressionElement child)
         {
             MyChild = child;
-            _myResultType = this.GetResultType(child.ResultType);
+            _myResultType = GetResultType(child.ResultType);
 
             if (_myResultType == null)
             {

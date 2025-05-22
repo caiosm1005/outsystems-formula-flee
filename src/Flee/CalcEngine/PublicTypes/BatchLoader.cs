@@ -26,7 +26,7 @@ namespace Flee.CalcEngine.PublicTypes
             _myNameInfoMap.Add(atomName, info);
             _myDependencies.AddTail(atomName);
 
-            ICollection<string> references = this.GetReferences(expression, context);
+            ICollection<string> references = GetReferences(expression, context);
 
             foreach (string reference in references)
             {

@@ -33,7 +33,7 @@ namespace Flee.Parsing
         internal Parser(TextReader input, Analyzer analyzer)
         {
             _tokenizer = NewTokenizer(input);
-            this._analyzer = analyzer ?? NewAnalyzer();
+            _analyzer = analyzer ?? NewAnalyzer();
         }
 
         /**
@@ -47,8 +47,8 @@ namespace Flee.Parsing
 
         internal Parser(Tokenizer tokenizer, Analyzer analyzer)
         {
-            this._tokenizer = tokenizer;
-            this._analyzer = analyzer ?? NewAnalyzer();
+            _tokenizer = tokenizer;
+            _analyzer = analyzer ?? NewAnalyzer();
         }
 
         protected virtual Tokenizer NewTokenizer(TextReader input)
@@ -157,14 +157,14 @@ namespace Flee.Parsing
 
         public void Reset(TextReader input)
         {
-            this._tokenizer.Reset(input);
-            this._analyzer.Reset();
+            _tokenizer.Reset(input);
+            _analyzer.Reset();
         }
 
         public void Reset(TextReader input, Analyzer analyzer)
         {
-            this._tokenizer.Reset(input);
-            this._analyzer = analyzer;
+            _tokenizer.Reset(input);
+            _analyzer = analyzer;
         }
 
         public Node Parse()
@@ -176,9 +176,9 @@ namespace Flee.Parsing
             {
                 Prepare();
             }
-            this._tokens.Clear();
-            this._errorLog = new ParserLogException();
-            this._errorRecovery = -1;
+            _tokens.Clear();
+            _errorLog = new ParserLogException();
+            _errorRecovery = -1;
 
             // Parse input
             try

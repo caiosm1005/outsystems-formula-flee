@@ -24,7 +24,7 @@ namespace Flee.Parsing
 
         public CharacterSetElement(bool inverted)
         {
-            this._inverted = inverted;
+            _inverted = inverted;
         }
 
         public void AddCharacter(char c)
@@ -249,8 +249,8 @@ namespace Flee.Parsing
 
             public Range(char min, char max)
             {
-                this._min = min;
-                this._max = max;
+                _min = min;
+                _max = max;
             }
 
             public bool Inside(char c)

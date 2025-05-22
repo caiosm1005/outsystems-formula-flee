@@ -25,10 +25,10 @@ namespace Flee.Parsing
 
         public TokenRegExpParser(string pattern, bool ignoreCase)
         {
-            this._pattern = pattern;
-            this._ignoreCase = ignoreCase;
-            this._pos = 0;
-            this.End = ParseExpr(Start);
+            _pattern = pattern;
+            _ignoreCase = ignoreCase;
+            _pos = 0;
+            End = ParseExpr(Start);
             if (_pos < pattern.Length)
             {
                 throw new RegExpException(

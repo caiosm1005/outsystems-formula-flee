@@ -58,8 +58,8 @@ namespace Flee.ExpressionElements
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             MyLeftChild.Emit(ilg, services);
-            this.EmitShiftCount(ilg, services);
-            this.EmitShift(ilg);
+            EmitShiftCount(ilg, services);
+            EmitShift(ilg);
         }
 
         // If the shift count is greater than the number of bits in the number, the result is undefined.

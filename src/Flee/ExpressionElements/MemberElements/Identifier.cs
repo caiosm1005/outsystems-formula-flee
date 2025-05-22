@@ -27,15 +27,15 @@ namespace Flee.ExpressionElements.MemberElements
         private Type _myCalcEngineReferenceType;
         public IdentifierElement(string name)
         {
-            this.MyName = name;
+            MyName = name;
         }
 
         protected override void ResolveInternal()
         {
             // Try to bind to a field or property
-            if (this.ResolveFieldProperty(MyPrevious) == true)
+            if (ResolveFieldProperty(MyPrevious) == true)
             {
-                this.AddReferencedVariable(MyPrevious);
+                AddReferencedVariable(MyPrevious);
                 return;
             }
 
@@ -45,7 +45,7 @@ namespace Flee.ExpressionElements.MemberElements
             // Variables are only usable as the first element
             if (MyPrevious == null && (_myVariableType != null))
             {
-                this.AddReferencedVariable(MyPrevious);
+                AddReferencedVariable(MyPrevious);
                 return;
             }
 
@@ -70,15 +70,15 @@ namespace Flee.ExpressionElements.MemberElements
 
         private bool ResolveFieldProperty(MemberElement previous)
         {
-            MemberInfo[] members = this.GetMembers(MemberTypes.Field | MemberTypes.Property);
+            MemberInfo[] members = GetMembers(MemberTypes.Field | MemberTypes.Property);
 
             // Keep only the ones which are accessible
-            members = this.GetAccessibleMembers(members);
+            members = GetAccessibleMembers(members);
 
             if (members.Length == 0)
             {
                 // No accessible members; try to resolve a virtual property
-                return this.ResolveVirtualProperty(previous);
+                return ResolveVirtualProperty(previous);
             }
             else if (members.Length > 1)
             {
@@ -129,7 +129,7 @@ namespace Flee.ExpressionElements.MemberElements
                 return;
             }
 
-            if ((_myVariableType != null) || MyOptions.IsOwnerType(this.MemberOwnerType) == true)
+            if ((_myVariableType != null) || MyOptions.IsOwnerType(MemberOwnerType) == true)
             {
                 ExpressionInfo info = (ExpressionInfo)MyServices.GetService(typeof(ExpressionInfo));
                 info.AddReferencedVariable(MyName);
@@ -140,27 +140,27 @@ namespace Flee.ExpressionElements.MemberElements
         {
             base.Emit(ilg, services);
 
-            this.EmitFirst(ilg);
+            EmitFirst(ilg);
 
             if ((_myCalcEngineReferenceType != null))
             {
-                this.EmitReferenceLoad(ilg);
+                EmitReferenceLoad(ilg);
             }
             else if ((_myVariableType != null))
             {
-                this.EmitVariableLoad(ilg);
+                EmitVariableLoad(ilg);
             }
             else if ((_myField != null))
             {
-                this.EmitFieldLoad(_myField, ilg, services);
+                EmitFieldLoad(_myField, ilg, services);
             }
             else if ((_myPropertyDescriptor != null))
             {
-                this.EmitVirtualPropertyLoad(ilg);
+                EmitVirtualPropertyLoad(ilg);
             }
             else
             {
-                this.EmitPropertyLoad(_myProperty, ilg);
+                EmitPropertyLoad(_myProperty, ilg);
             }
         }
 
@@ -184,9 +184,9 @@ namespace Flee.ExpressionElements.MemberElements
                 // Load variables
                 EmitLoadVariables(ilg);
             }
-            else if (MyOptions.IsOwnerType(this.MemberOwnerType) == true & this.IsStatic == false)
+            else if (MyOptions.IsOwnerType(MemberOwnerType) == true & IsStatic == false)
             {
-                this.EmitLoadOwner(ilg);
+                EmitLoadOwner(ilg);
             }
         }
 
@@ -194,7 +194,7 @@ namespace Flee.ExpressionElements.MemberElements
         {
             MethodInfo mi = VariableCollection.GetVariableLoadMethod(_myVariableType);
             ilg.Emit(OpCodes.Ldstr, MyName);
-            this.EmitMethodCall(mi, ilg);
+            EmitMethodCall(mi, ilg);
         }
 
         private void EmitFieldLoad(System.Reflection.FieldInfo fi, FleeILGenerator ilg, IServiceProvider services)
@@ -203,7 +203,7 @@ namespace Flee.ExpressionElements.MemberElements
             {
                 EmitLiteral(fi, ilg, services);
             }
-            else if (this.ResultType.IsValueType == true & this.NextRequiresAddress == true)
+            else if (ResultType.IsValueType == true & NextRequiresAddress == true)
             {
                 EmitLdfld(fi, true, ilg);
             }
@@ -323,8 +323,8 @@ namespace Flee.ExpressionElements.MemberElements
             ImplicitConverter.EmitImplicitConvert(MyPrevious.ResultType, typeof(object), ilg);
 
             // Call the method to get the actual value
-            MethodInfo mi = VariableCollection.GetVirtualPropertyLoadMethod(this.ResultType);
-            this.EmitMethodCall(mi, ilg);
+            MethodInfo mi = VariableCollection.GetVirtualPropertyLoadMethod(ResultType);
+            EmitMethodCall(mi, ilg);
         }
 
         private Type MemberOwnerType
@@ -422,7 +422,7 @@ namespace Flee.ExpressionElements.MemberElements
                     // Neither do virtual properties
                     return false;
                 }
-                else if (MyOptions.IsOwnerType(this.MemberOwnerType) == true && MyPrevious == null)
+                else if (MyOptions.IsOwnerType(MemberOwnerType) == true && MyPrevious == null)
                 {
                     // Owner members support static if we are the first element
                     return true;
@@ -449,7 +449,7 @@ namespace Flee.ExpressionElements.MemberElements
                     // So do virtual properties
                     return true;
                 }
-                else if (MyOptions.IsOwnerType(this.MemberOwnerType) == true && MyPrevious == null)
+                else if (MyOptions.IsOwnerType(MemberOwnerType) == true && MyPrevious == null)
                 {
                     // Owner members support instance if we are the first element
                     return true;

@@ -28,9 +28,9 @@ namespace Flee.ExpressionElements
                 _myDestType = _myDestType.MakeArrayType();
             }
 
-            if (this.IsValidCast(_myCastExpression.ResultType, _myDestType) == false)
+            if (IsValidCast(_myCastExpression.ResultType, _myDestType) == false)
             {
-                this.ThrowInvalidCastException();
+                ThrowInvalidCastException();
             }
         }
 
@@ -104,9 +104,9 @@ namespace Flee.ExpressionElements
             }
             else if (sourceType.IsEnum == true | destType.IsEnum == true)
             {
-                return this.IsValidExplicitEnumCast(sourceType, destType);
+                return IsValidExplicitEnumCast(sourceType, destType);
             }
-            else if ((this.GetExplictOverloadedOperator(sourceType, destType) != null))
+            else if ((GetExplictOverloadedOperator(sourceType, destType) != null))
             {
                 // Overloaded explict cast exists
                 return true;
@@ -131,7 +131,7 @@ namespace Flee.ExpressionElements
                 else
                 {
                     // Reference type to reference type
-                    return this.IsValidExplicitReferenceCast(sourceType, destType);
+                    return IsValidExplicitReferenceCast(sourceType, destType);
                 }
             }
         }
@@ -167,7 +167,7 @@ namespace Flee.ExpressionElements
         {
             sourceType = GetUnderlyingEnumType(sourceType);
             destType = GetUnderlyingEnumType(destType);
-            return this.IsValidCast(sourceType, destType);
+            return IsValidCast(sourceType, destType);
         }
 
         private bool IsValidExplicitReferenceCast(Type sourceType, Type destType)
@@ -202,7 +202,7 @@ namespace Flee.ExpressionElements
                     else
                     {
                         // An explicit reference conversion exists from SE to TE
-                        return this.IsValidExplicitReferenceCast(SE, TE);
+                        return IsValidExplicitReferenceCast(SE, TE);
                     }
                 }
             }
@@ -283,12 +283,12 @@ namespace Flee.ExpressionElements
             Type sourceType = _myCastExpression.ResultType;
             Type destType = _myDestType;
 
-            this.EmitCast(ilg, sourceType, destType, services);
+            EmitCast(ilg, sourceType, destType, services);
         }
 
         private void EmitCast(FleeILGenerator ilg, Type sourceType, Type destType, IServiceProvider services)
         {
-            MethodInfo explicitOperator = this.GetExplictOverloadedOperator(sourceType, destType);
+            MethodInfo explicitOperator = GetExplictOverloadedOperator(sourceType, destType);
 
             if (object.ReferenceEquals(sourceType, destType))
             {
@@ -301,7 +301,7 @@ namespace Flee.ExpressionElements
             }
             else if (sourceType.IsEnum == true | destType.IsEnum == true)
             {
-                this.EmitEnumCast(ilg, sourceType, destType, services);
+                EmitEnumCast(ilg, sourceType, destType, services);
             }
             else if (ImplicitConverter.EmitImplicitConvert(sourceType, destType, ilg) == true)
             {
@@ -351,7 +351,7 @@ namespace Flee.ExpressionElements
             {
                 sourceType = GetUnderlyingEnumType(sourceType);
                 destType = GetUnderlyingEnumType(destType);
-                this.EmitCast(ilg, sourceType, destType, services);
+                EmitCast(ilg, sourceType, destType, services);
             }
         }
 
