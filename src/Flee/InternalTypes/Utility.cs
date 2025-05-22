@@ -290,7 +290,7 @@ namespace Flee.InternalTypes
 
             if (destType != null)
             {
-                bool returnTypeMatch = object.ReferenceEquals(destType, method.ReturnType);
+                bool returnTypeMatch = ReferenceEquals(destType, method.ReturnType);
 
                 if (returnTypeMatch == false)
                 {

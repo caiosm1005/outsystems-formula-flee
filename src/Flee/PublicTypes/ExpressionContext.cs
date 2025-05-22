@@ -61,7 +61,7 @@ namespace Flee.PublicTypes
                 isPublic = t.IsNestedPublic;
             }
 
-            bool isSameModuleAsOwner = object.ReferenceEquals(t.Module, ExpressionOwner.GetType().Module);
+            bool isSameModuleAsOwner = ReferenceEquals(t.Module, ExpressionOwner.GetType().Module);
 
             // Public types are always accessible.  Otherwise they have to be in the same module as the owner
             bool isAccessible = isPublic | isSameModuleAsOwner;
@@ -208,7 +208,7 @@ namespace Flee.PublicTypes
                 if (parser == null)
                 {
                     IdentifierAnalyzer analyzer = new IdentifierAnalyzer();
-                    parser = new ExpressionParser(System.IO.TextReader.Null, analyzer, this);
+                    parser = new ExpressionParser(TextReader.Null, analyzer, this);
                     //parser = new ExpressionParser(System.IO.StringReader.Null, analyzer, this);
                     _myProperties.SetValue("IdentifierParser", parser);
                 }

@@ -25,7 +25,7 @@ namespace Flee.PublicTypes
 
         private void InitializeProperties()
         {
-            StringComparison = System.StringComparison.Ordinal;
+            StringComparison = StringComparison.Ordinal;
             OwnerMemberAccess = BindingFlags.Public;
 
             _myProperties.SetToDefault<bool>("CaseSensitive");
@@ -186,11 +186,11 @@ namespace Flee.PublicTypes
             {
                 if (CaseSensitive == true)
                 {
-                    return System.StringComparison.Ordinal;
+                    return StringComparison.Ordinal;
                 }
                 else
                 {
-                    return System.StringComparison.OrdinalIgnoreCase;
+                    return StringComparison.OrdinalIgnoreCase;
                 }
             }
         }

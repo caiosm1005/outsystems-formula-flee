@@ -42,7 +42,7 @@ namespace Flee.ExpressionElements
             bool isEqualityOp = IsOpTypeEqualOrNotEqual(_myOperation);
 
             // Use our string equality instead of overloaded operator
-            if (object.ReferenceEquals(leftType, typeof(string)) & object.ReferenceEquals(rightType, typeof(string)) & isEqualityOp == true)
+            if (ReferenceEquals(leftType, typeof(string)) & ReferenceEquals(rightType, typeof(string)) & isEqualityOp == true)
             {
                 // String equality
                 return typeof(bool);
@@ -56,7 +56,7 @@ namespace Flee.ExpressionElements
                 // Comparison of numeric operands
                 return typeof(bool);
             }
-            else if (object.ReferenceEquals(leftType, typeof(bool)) & object.ReferenceEquals(rightType, typeof(bool)) & isEqualityOp == true)
+            else if (ReferenceEquals(leftType, typeof(bool)) & ReferenceEquals(rightType, typeof(bool)) & isEqualityOp == true)
             {
                 // Boolean equality
                 return typeof(bool);
@@ -80,7 +80,7 @@ namespace Flee.ExpressionElements
         private MethodInfo GetOverloadedCompareOperator()
         {
             string name = GetCompareOperatorName(_myOperation);
-            return base.GetOverloadedBinaryOperator(name, _myOperation);
+            return GetOverloadedBinaryOperator(name, _myOperation);
         }
 
         private static string GetCompareOperatorName(LogicalCompareOperation op)
@@ -119,7 +119,7 @@ namespace Flee.ExpressionElements
             }
             else if (overloadedOperator != null)
             {
-                base.EmitOverloadedOperatorCall(overloadedOperator, ilg, services);
+                EmitOverloadedOperatorCall(overloadedOperator, ilg, services);
             }
             else if (binaryResultType != null)
             {
@@ -186,7 +186,7 @@ namespace Flee.ExpressionElements
 
         private bool AreBothChildrenSameEnum()
         {
-            return MyLeftChild.ResultType.IsEnum == true && object.ReferenceEquals(MyLeftChild.ResultType, MyRightChild.ResultType);
+            return MyLeftChild.ResultType.IsEnum == true && ReferenceEquals(MyLeftChild.ResultType, MyRightChild.ResultType);
         }
 
         /// <summary>
@@ -240,9 +240,9 @@ namespace Flee.ExpressionElements
         {
             Type leftType = MyLeftChild.ResultType;
 
-            if (object.ReferenceEquals(leftType, MyRightChild.ResultType))
+            if (ReferenceEquals(leftType, MyRightChild.ResultType))
             {
-                if (object.ReferenceEquals(leftType, typeof(UInt32)) | object.ReferenceEquals(leftType, typeof(UInt64)))
+                if (ReferenceEquals(leftType, typeof(UInt32)) | ReferenceEquals(leftType, typeof(UInt64)))
                 {
                     if (greaterThan == true)
                     {

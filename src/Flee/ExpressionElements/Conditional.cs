@@ -18,9 +18,9 @@ namespace Flee.ExpressionElements
             _myWhenTrue = whenTrue;
             _myWhenFalse = whenFalse;
 
-            if (!object.ReferenceEquals(_myCondition.ResultType, typeof(bool)))
+            if (!ReferenceEquals(_myCondition.ResultType, typeof(bool)))
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.FirstArgNotBoolean, CompileExceptionReason.TypeMismatch);
+                ThrowCompileException(CompileErrorResourceKeys.FirstArgNotBoolean, CompileExceptionReason.TypeMismatch);
             }
 
             // The result type is the type that is common to the true/false operands
@@ -34,7 +34,7 @@ namespace Flee.ExpressionElements
             }
             else
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther, CompileExceptionReason.TypeMismatch, _myWhenTrue.ResultType.Name, _myWhenFalse.ResultType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther, CompileExceptionReason.TypeMismatch, _myWhenTrue.ResultType.Name, _myWhenFalse.ResultType.Name);
             }
         }
 

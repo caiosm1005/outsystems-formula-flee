@@ -60,11 +60,11 @@ namespace Flee.ExpressionElements.Base
 
             if (IsStatic == true && SupportsStatic == false && IsExtensionMethod == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.StaticMemberCannotBeAccessedWithInstanceReference, CompileExceptionReason.TypeMismatch, MyName);
+                ThrowCompileException(CompileErrorResourceKeys.StaticMemberCannotBeAccessedWithInstanceReference, CompileExceptionReason.TypeMismatch, MyName);
             }
             else if (IsStatic == false && SupportsInstance == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.ReferenceToNonSharedMemberRequiresObjectReference, CompileExceptionReason.TypeMismatch, MyName);
+                ThrowCompileException(CompileErrorResourceKeys.ReferenceToNonSharedMemberRequiresObjectReference, CompileExceptionReason.TypeMismatch, MyName);
             }
         }
 
@@ -125,7 +125,7 @@ namespace Flee.ExpressionElements.Base
             {
                 ilg.Emit(OpCodes.Call, mi);
             }
-            else if (!object.ReferenceEquals(mi.DeclaringType, mi.ReflectedType))
+            else if (!ReferenceEquals(mi.DeclaringType, mi.ReflectedType))
             {
                 // Method is not defined on the value type
 

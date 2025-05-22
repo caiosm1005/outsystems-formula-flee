@@ -43,7 +43,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         {
             Type resultType = ResultType;
 
-            if (object.ReferenceEquals(resultType, typeof(bool)))
+            if (ReferenceEquals(resultType, typeof(bool)))
             {
                 DoEmitLogical(ilg, services);
             }

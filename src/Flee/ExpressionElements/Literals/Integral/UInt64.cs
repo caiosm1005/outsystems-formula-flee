@@ -15,7 +15,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             catch (OverflowException)
             {
-                base.OnParseOverflow(image);
+                OnParseOverflow(image);
             }
         }
 

@@ -128,12 +128,12 @@ namespace Flee.InternalTypes
 
         private static int GetTypeIndex(Type t)
         {
-            return System.Array.IndexOf(OurBinaryTypes, t);
+            return Array.IndexOf(OurBinaryTypes, t);
         }
 
         public static bool EmitImplicitConvert(Type sourceType, Type destType, FleeILGenerator ilg)
         {
-            if (object.ReferenceEquals(sourceType, destType))
+            if (ReferenceEquals(sourceType, destType))
             {
                 return true;
             }
@@ -177,7 +177,7 @@ namespace Flee.InternalTypes
                 return false;
             }
 
-            if (object.ReferenceEquals(sourceType, typeof(Null)))
+            if (ReferenceEquals(sourceType, typeof(Null)))
             {
                 // Null is always convertible to a reference type
                 return true;
@@ -441,12 +441,12 @@ namespace Flee.InternalTypes
 
         public static int GetImplicitConvertScore(Type sourceType, Type destType)
         {
-            if (object.ReferenceEquals(sourceType, destType))
+            if (ReferenceEquals(sourceType, destType))
             {
                 return 0;
             }
 
-            if (object.ReferenceEquals(sourceType, typeof(Null)))
+            if (ReferenceEquals(sourceType, typeof(Null)))
             {
                 return GetInverseDistanceToObject(destType);
             }
@@ -547,7 +547,7 @@ namespace Flee.InternalTypes
             int count = 0;
             Type current = sourceType;
 
-            while (!object.ReferenceEquals(current, destType))
+            while (!ReferenceEquals(current, destType))
             {
                 count += 1;
                 current = current.BaseType;

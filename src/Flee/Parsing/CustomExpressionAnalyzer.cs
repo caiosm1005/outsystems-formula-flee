@@ -113,13 +113,13 @@ namespace Flee.Parsing
             ExpressionElement childElement = (ExpressionElement)childValues[childValues.Count - 1];
 
             // Is it an signed integer constant?
-            if (object.ReferenceEquals(childElement.GetType(), typeof(Int32LiteralElement)) & childValues.Count == 2)
+            if (ReferenceEquals(childElement.GetType(), typeof(Int32LiteralElement)) & childValues.Count == 2)
             {
                 ((Int32LiteralElement)childElement).Negate();
                 // Add it directly instead of the negate element since it will already be negated
                 node.AddValue(childElement);
             }
-            else if (object.ReferenceEquals(childElement.GetType(), typeof(Int64LiteralElement)) & childValues.Count == 2)
+            else if (ReferenceEquals(childElement.GetType(), typeof(Int64LiteralElement)) & childValues.Count == 2)
             {
                 ((Int64LiteralElement)childElement).Negate();
                 // Add it directly instead of the negate element since it will already be negated

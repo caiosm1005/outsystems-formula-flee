@@ -64,7 +64,7 @@ namespace Flee.ExpressionElements.Base
             BinaryOperatorBinder binder = new BinaryOperatorBinder(leftType, rightType);
 
             // If both arguments are of the same type, pick either as the owner type
-            if (object.ReferenceEquals(leftType, rightType))
+            if (ReferenceEquals(leftType, rightType))
             {
                 return Utility.GetOverloadedOperator(name, leftType, binder, leftType, rightType);
             }
@@ -89,7 +89,7 @@ namespace Flee.ExpressionElements.Base
             {
                 return leftMethod;
             }
-            else if (object.ReferenceEquals(leftMethod, rightMethod))
+            else if (ReferenceEquals(leftMethod, rightMethod))
             {
                 // same operator for both (most likely defined in a common base class)
                 return leftMethod;
@@ -97,7 +97,7 @@ namespace Flee.ExpressionElements.Base
             else
             {
                 // Ambiguous call
-                base.ThrowAmbiguousCallException(leftType, rightType, operation);
+                ThrowAmbiguousCallException(leftType, rightType, operation);
                 return null;
             }
         }
@@ -115,7 +115,7 @@ namespace Flee.ExpressionElements.Base
 
         protected void ThrowOperandTypeMismatch(object operation, Type leftType, Type rightType)
         {
-            base.ThrowCompileException(CompileErrorResourceKeys.OperationNotDefinedForTypes, CompileExceptionReason.TypeMismatch, operation, leftType.Name, rightType.Name);
+            ThrowCompileException(CompileErrorResourceKeys.OperationNotDefinedForTypes, CompileExceptionReason.TypeMismatch, operation, leftType.Name, rightType.Name);
         }
 
         protected abstract Type GetResultType(Type leftType, Type rightType);
@@ -139,7 +139,7 @@ namespace Flee.ExpressionElements.Base
 
         protected static bool IsChildOfType(ExpressionElement child, Type t)
         {
-            return object.ReferenceEquals(child.ResultType, t);
+            return ReferenceEquals(child.ResultType, t);
         }
 
         /// <summary>

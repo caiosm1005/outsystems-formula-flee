@@ -146,7 +146,7 @@ namespace Flee.PublicTypes
         protected override void AddMembers(string memberName, MemberTypes memberType, ICollection<MemberInfo> dest)
         {
             MemberInfo[] members = _myType.FindMembers(memberType, _myBindFlags, Context.Options.MemberFilter, memberName);
-            ImportBase.AddMemberRange(members, dest);
+            AddMemberRange(members, dest);
         }
 
         protected override void AddMembers(MemberTypes memberType, ICollection<MemberInfo> dest)
@@ -154,7 +154,7 @@ namespace Flee.PublicTypes
             if (_myUseTypeNameAsNamespace == false)
             {
                 MemberInfo[] members = _myType.FindMembers(memberType, _myBindFlags, AlwaysMemberFilter, null);
-                ImportBase.AddMemberRange(members, dest);
+                AddMemberRange(members, dest);
             }
         }
 
@@ -185,7 +185,7 @@ namespace Flee.PublicTypes
         protected override bool EqualsInternal(ImportBase import)
         {
             TypeImport otherSameType = import as TypeImport;
-            return (otherSameType != null) && object.ReferenceEquals(_myType, otherSameType._myType);
+            return (otherSameType != null) && ReferenceEquals(_myType, otherSameType._myType);
         }
         #endregion
 

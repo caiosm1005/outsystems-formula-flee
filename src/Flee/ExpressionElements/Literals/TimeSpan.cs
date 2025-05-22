@@ -14,7 +14,7 @@ namespace Flee.ExpressionElements.Literals
         {
             if (TimeSpan.TryParse(image, out _myValue) == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(TimeSpan).Name);
+                ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(TimeSpan).Name);
             }
         }
 
@@ -24,7 +24,7 @@ namespace Flee.ExpressionElements.Literals
 
             Utility.EmitLoadLocalAddress(ilg, index);
 
-            LiteralElement.EmitLoad(_myValue.Ticks, ilg);
+            EmitLoad(_myValue.Ticks, ilg);
 
             ConstructorInfo ci = typeof(TimeSpan).GetConstructor(new Type[] { typeof(long) });
 

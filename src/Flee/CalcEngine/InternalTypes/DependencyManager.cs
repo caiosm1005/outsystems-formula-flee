@@ -319,7 +319,7 @@ namespace Flee.CalcEngine.InternalTypes
                     list.Add(pair.ToString());
                 }
 
-                return string.Join(System.Environment.NewLine, list.ToArray());
+                return string.Join(Environment.NewLine, list.ToArray());
             }
         }
 #endif
@@ -339,7 +339,7 @@ namespace Flee.CalcEngine.InternalTypes
                     index += 1;
                 }
 
-                return string.Join(System.Environment.NewLine, lines);
+                return string.Join(Environment.NewLine, lines);
             }
         }
 

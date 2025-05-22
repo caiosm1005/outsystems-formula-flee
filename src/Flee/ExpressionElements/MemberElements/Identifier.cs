@@ -60,11 +60,11 @@ namespace Flee.ExpressionElements.MemberElements
 
             if (MyPrevious == null)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.NoIdentifierWithName, CompileExceptionReason.UndefinedName, MyName);
+                ThrowCompileException(CompileErrorResourceKeys.NoIdentifierWithName, CompileExceptionReason.UndefinedName, MyName);
             }
             else
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.NoIdentifierWithNameOnType, CompileExceptionReason.UndefinedName, MyName, MyPrevious.TargetType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.NoIdentifierWithNameOnType, CompileExceptionReason.UndefinedName, MyName, MyPrevious.TargetType.Name);
             }
         }
 
@@ -85,11 +85,11 @@ namespace Flee.ExpressionElements.MemberElements
                 // More than one accessible member
                 if (previous == null)
                 {
-                    base.ThrowCompileException(CompileErrorResourceKeys.IdentifierIsAmbiguous, CompileExceptionReason.AmbiguousMatch, MyName);
+                    ThrowCompileException(CompileErrorResourceKeys.IdentifierIsAmbiguous, CompileExceptionReason.AmbiguousMatch, MyName);
                 }
                 else
                 {
-                    base.ThrowCompileException(CompileErrorResourceKeys.IdentifierIsAmbiguousOnType, CompileExceptionReason.AmbiguousMatch, MyName, previous.TargetType.Name);
+                    ThrowCompileException(CompileErrorResourceKeys.IdentifierIsAmbiguousOnType, CompileExceptionReason.AmbiguousMatch, MyName, previous.TargetType.Name);
                 }
             }
             else
@@ -261,7 +261,7 @@ namespace Flee.ExpressionElements.MemberElements
                 case TypeCode.Int16:
                 case TypeCode.UInt16:
                 case TypeCode.Int32:
-                    elem = new Int32LiteralElement(System.Convert.ToInt32(value));
+                    elem = new Int32LiteralElement(Convert.ToInt32(value));
                     break;
                 case TypeCode.UInt32:
                     elem = new UInt32LiteralElement((UInt32)value);
@@ -296,7 +296,7 @@ namespace Flee.ExpressionElements.MemberElements
         private void EmitPropertyLoad(System.Reflection.PropertyInfo pi, FleeILGenerator ilg)
         {
             System.Reflection.MethodInfo getter = pi.GetGetMethod(true);
-            base.EmitMethodCall(getter, ilg);
+            EmitMethodCall(getter, ilg);
         }
 
         /// <summary>

@@ -97,7 +97,7 @@ namespace Flee.PublicTypes
             string[] namespaces = new string[typeNameParts.Length - 1];
             string typeName = typeNameParts[typeNameParts.Length - 1];
 
-            System.Array.Copy(typeNameParts, namespaces, namespaces.Length);
+            Array.Copy(typeNameParts, namespaces, namespaces.Length);
             ImportBase currentImport = MyRootImport;
 
             foreach (string ns in namespaces)

@@ -95,7 +95,7 @@ namespace Flee.InternalTypes
             {
                 ParameterInfo[] parameters = mi.GetParameters();
                 ParameterInfo firstParameter = parameters[0];
-                if (object.ReferenceEquals(firstParameter.ParameterType, _myArgType) & object.ReferenceEquals(mi.ReturnType, _myReturnType))
+                if (ReferenceEquals(firstParameter.ParameterType, _myArgType) & ReferenceEquals(mi.ReturnType, _myReturnType))
                 {
                     return mi;
                 }
@@ -260,7 +260,7 @@ namespace Flee.InternalTypes
 
             ParameterInfo[] fixedParameters = new ParameterInfo[fixedParameterCount];
 
-            System.Array.Copy(parameters, fixedParameters, fixedParameterCount);
+            Array.Copy(parameters, fixedParameters, fixedParameterCount);
 
             int fixedSum = ComputeSum(fixedParameters, MyFixedArgTypes);
 
@@ -363,8 +363,8 @@ namespace Flee.InternalTypes
             ParameterInfo[] fixedParameters = new ParameterInfo[fixedParameterCount];
 
             // Get the argument types and parameters before the paramArray
-            System.Array.Copy(argTypes, fixedArgTypes, fixedParameterCount);
-            System.Array.Copy(parameters, fixedParameters, fixedParameterCount);
+            Array.Copy(argTypes, fixedArgTypes, fixedParameterCount);
+            Array.Copy(parameters, fixedParameters, fixedParameterCount);
 
             // If the fixed arguments don't match, we are not a match
             if (AreValidArgumentsForParameters(fixedArgTypes, fixedParameters) == false)
@@ -377,7 +377,7 @@ namespace Flee.InternalTypes
 
             // Get the types of the arguments passed to the paramArray
             Type[] paramArrayArgTypes = new Type[argTypes.Length - fixedParameterCount];
-            System.Array.Copy(argTypes, fixedParameterCount, paramArrayArgTypes, 0, paramArrayArgTypes.Length);
+            Array.Copy(argTypes, fixedParameterCount, paramArrayArgTypes, 0, paramArrayArgTypes.Length);
 
             // Check each argument
             foreach (Type argType in paramArrayArgTypes)

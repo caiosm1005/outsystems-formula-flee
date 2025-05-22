@@ -139,7 +139,7 @@ namespace Flee.InternalTypes
                 arr[i] = MyBranchInfos[i].ToString();
             }
 
-            return string.Join(System.Environment.NewLine, arr);
+            return string.Join(Environment.NewLine, arr);
         }
     }
 

@@ -38,7 +38,7 @@
             else
             {
                 UpdateLineColumnNumbers(1);
-                return Convert.ToInt32(_buffer[System.Math.Max(System.Threading.Interlocked.Increment(ref _pos), _pos - 1)]);
+                return Convert.ToInt32(_buffer[Math.Max(Interlocked.Increment(ref _pos), _pos - 1)]);
             }
         }
 

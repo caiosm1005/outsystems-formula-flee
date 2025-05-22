@@ -18,7 +18,7 @@ namespace Flee.ExpressionElements.Literals
 
             if (DateTime.TryParseExact(image, options.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out _myValue) == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(DateTime).Name);
+                ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(DateTime).Name);
             }
         }
 
@@ -28,7 +28,7 @@ namespace Flee.ExpressionElements.Literals
 
             Utility.EmitLoadLocalAddress(ilg, index);
 
-            LiteralElement.EmitLoad(_myValue.Ticks, ilg);
+            EmitLoad(_myValue.Ticks, ilg);
 
             ConstructorInfo ci = typeof(DateTime).GetConstructor(new Type[] { typeof(long) });
 

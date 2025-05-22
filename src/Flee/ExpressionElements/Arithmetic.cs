@@ -79,7 +79,7 @@ namespace Flee.ExpressionElements
         {
             // Get the name of the operator
             string name = GetOverloadedOperatorFunctionName(_myOperation);
-            return base.GetOverloadedBinaryOperator(name, _myOperation);
+            return GetOverloadedBinaryOperator(name, _myOperation);
         }
 
         private static string GetOverloadedOperatorFunctionName(BinaryArithmeticOperation op)
@@ -127,7 +127,7 @@ namespace Flee.ExpressionElements
 
         private static bool IsUnsignedForArithmetic(Type t)
         {
-            return object.ReferenceEquals(t, typeof(UInt32)) | object.ReferenceEquals(t, typeof(UInt64));
+            return ReferenceEquals(t, typeof(UInt32)) | ReferenceEquals(t, typeof(UInt64));
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace Flee.ExpressionElements
             if (right.Value == 0)
             {
                 ilg.Emit(OpCodes.Pop);
-                IntegralLiteralElement.EmitLoad(1, ilg);
+                LiteralElement.EmitLoad(1, ilg);
                 ImplicitConverter.EmitImplicitNumericConvert(typeof(Int32), MyLeftChild.ResultType, ilg);
                 return;
             }

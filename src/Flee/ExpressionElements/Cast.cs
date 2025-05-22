@@ -20,7 +20,7 @@ namespace Flee.ExpressionElements
 
             if (_myDestType == null)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.CouldNotResolveType, CompileExceptionReason.UndefinedName, GetDestTypeString(destTypeParts, isArray));
+                ThrowCompileException(CompileErrorResourceKeys.CouldNotResolveType, CompileExceptionReason.UndefinedName, GetDestTypeString(destTypeParts, isArray));
             }
 
             if (isArray == true)
@@ -82,7 +82,7 @@ namespace Flee.ExpressionElements
 
         private bool IsValidCast(Type sourceType, Type destType)
         {
-            if (object.ReferenceEquals(sourceType, destType))
+            if (ReferenceEquals(sourceType, destType))
             {
                 // Identity cast always succeeds
                 return true;
@@ -126,7 +126,7 @@ namespace Flee.ExpressionElements
                     // Can only succeed if the reference type is a base of the value type or
                     // it is one of the interfaces the value type implements
                     Type[] interfaces = destType.GetInterfaces();
-                    return IsBaseType(destType, sourceType) == true | System.Array.IndexOf(interfaces, sourceType) != -1;
+                    return IsBaseType(destType, sourceType) == true | Array.IndexOf(interfaces, sourceType) != -1;
                 }
                 else
                 {
@@ -158,7 +158,7 @@ namespace Flee.ExpressionElements
             }
             else
             {
-                base.ThrowAmbiguousCallException(sourceType, destType, "Explicit");
+                ThrowAmbiguousCallException(sourceType, destType, "Explicit");
                 return null;
             }
         }
@@ -174,7 +174,7 @@ namespace Flee.ExpressionElements
         {
             Debug.Assert(sourceType.IsValueType == false & destType.IsValueType == false, "expecting reference types");
 
-            if (object.ReferenceEquals(sourceType, typeof(object)))
+            if (ReferenceEquals(sourceType, typeof(object)))
             {
                 // From object to any other reference-type
                 return true;
@@ -239,7 +239,7 @@ namespace Flee.ExpressionElements
             Type current = target;
             while (current != null)
             {
-                if (object.ReferenceEquals(current, potentialBase))
+                if (ReferenceEquals(current, potentialBase))
                 {
                     return true;
                 }
@@ -251,24 +251,24 @@ namespace Flee.ExpressionElements
         private static bool ImplementsInterface(Type target, Type interfaceType)
         {
             Type[] interfaces = target.GetInterfaces();
-            return System.Array.IndexOf(interfaces, interfaceType) != -1;
+            return Array.IndexOf(interfaces, interfaceType) != -1;
         }
 
         private void ThrowInvalidCastException()
         {
-            base.ThrowCompileException(CompileErrorResourceKeys.CannotConvertType, CompileExceptionReason.InvalidExplicitCast, _myCastExpression.ResultType.Name, _myDestType.Name);
+            ThrowCompileException(CompileErrorResourceKeys.CannotConvertType, CompileExceptionReason.InvalidExplicitCast, _myCastExpression.ResultType.Name, _myDestType.Name);
         }
 
         private static bool IsCastableNumericType(Type t)
         {
-            return t.IsPrimitive == true & (!object.ReferenceEquals(t, typeof(bool)));
+            return t.IsPrimitive == true & (!ReferenceEquals(t, typeof(bool)));
         }
 
         private static Type GetUnderlyingEnumType(Type t)
         {
             if (t.IsEnum == true)
             {
-                return System.Enum.GetUnderlyingType(t);
+                return Enum.GetUnderlyingType(t);
             }
             else
             {
@@ -290,7 +290,7 @@ namespace Flee.ExpressionElements
         {
             MethodInfo explicitOperator = GetExplictOverloadedOperator(sourceType, destType);
 
-            if (object.ReferenceEquals(sourceType, destType))
+            if (ReferenceEquals(sourceType, destType))
             {
                 // Identity cast; do nothing
                 return;

@@ -85,7 +85,7 @@ namespace Flee.ExpressionElements.MemberElements
 
             if (elements.Count == 0)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.NamespaceCannotBeUsedAsType, CompileExceptionReason.TypeMismatch, currentImport.Name);
+                ThrowCompileException(CompileErrorResourceKeys.NamespaceCannotBeUsedAsType, CompileExceptionReason.TypeMismatch, currentImport.Name);
             }
         }
 

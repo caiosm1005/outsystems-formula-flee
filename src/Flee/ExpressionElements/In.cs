@@ -60,7 +60,7 @@ namespace Flee.ExpressionElements
 
             if (MyTargetCollectionType == null)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType, CompileExceptionReason.TypeMismatch, MyTargetCollectionElement.ResultType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType, CompileExceptionReason.TypeMismatch, MyTargetCollectionElement.ResultType.Name);
             }
 
             // Validate that the operand type is compatible with the collection
@@ -69,7 +69,7 @@ namespace Flee.ExpressionElements
 
             if (ImplicitConverter.EmitImplicitConvert(MyOperand.ResultType, p1.ParameterType, null) == false)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.OperandNotConvertibleToCollectionType, CompileExceptionReason.TypeMismatch, MyOperand.ResultType.Name, p1.ParameterType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.OperandNotConvertibleToCollectionType, CompileExceptionReason.TypeMismatch, MyOperand.ResultType.Name, p1.ParameterType.Name);
             }
         }
 
@@ -89,7 +89,7 @@ namespace Flee.ExpressionElements
 
                 Type genericTypeDef = interfaceType.GetGenericTypeDefinition();
 
-                if (object.ReferenceEquals(genericTypeDef, typeof(ICollection<>)) | object.ReferenceEquals(genericTypeDef, typeof(IDictionary<,>)))
+                if (ReferenceEquals(genericTypeDef, typeof(ICollection<>)) | ReferenceEquals(genericTypeDef, typeof(IDictionary<,>)))
                 {
                     return interfaceType;
                 }
@@ -142,7 +142,7 @@ namespace Flee.ExpressionElements
         {
             string methodName = "Contains";
 
-            if (MyTargetCollectionType.IsGenericType == true && object.ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
+            if (MyTargetCollectionType.IsGenericType == true && ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
             {
                 methodName = "ContainsKey";
             }

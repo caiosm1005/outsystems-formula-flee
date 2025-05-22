@@ -69,11 +69,11 @@ namespace Flee.ExpressionElements.MemberElements
         {
             if (previous == null)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.UndefinedFunction, CompileExceptionReason.UndefinedName, MyName, _myArguments);
+                ThrowCompileException(CompileErrorResourceKeys.UndefinedFunction, CompileExceptionReason.UndefinedName, MyName, _myArguments);
             }
             else
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.UndefinedFunctionOnType, CompileExceptionReason.UndefinedName, MyName, _myArguments, previous.TargetType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.UndefinedFunctionOnType, CompileExceptionReason.UndefinedName, MyName, _myArguments, previous.TargetType.Name);
             }
         }
 
@@ -81,17 +81,17 @@ namespace Flee.ExpressionElements.MemberElements
         {
             if (previous == null)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.NoAccessibleMatches, CompileExceptionReason.AccessDenied, MyName, _myArguments);
+                ThrowCompileException(CompileErrorResourceKeys.NoAccessibleMatches, CompileExceptionReason.AccessDenied, MyName, _myArguments);
             }
             else
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.NoAccessibleMatchesOnType, CompileExceptionReason.AccessDenied, MyName, _myArguments, previous.TargetType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.NoAccessibleMatchesOnType, CompileExceptionReason.AccessDenied, MyName, _myArguments, previous.TargetType.Name);
             }
         }
 
         private void ThrowAmbiguousMethodCallException()
         {
-            base.ThrowCompileException(CompileErrorResourceKeys.AmbiguousCallOfFunction, CompileExceptionReason.AmbiguousMatch, MyName, _myArguments);
+            ThrowCompileException(CompileErrorResourceKeys.AmbiguousCallOfFunction, CompileExceptionReason.AmbiguousMatch, MyName, _myArguments);
         }
 
         /// <summary>
@@ -218,9 +218,9 @@ namespace Flee.ExpressionElements.MemberElements
             }
 
             // Any function reference in an expression must return a value
-            if (object.ReferenceEquals(Method.ReturnType, typeof(void)))
+            if (ReferenceEquals(Method.ReturnType, typeof(void)))
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.FunctionHasNoReturnValue, CompileExceptionReason.FunctionHasNoReturnValue, MyName);
+                ThrowCompileException(CompileErrorResourceKeys.FunctionHasNoReturnValue, CompileExceptionReason.FunctionHasNoReturnValue, MyName);
             }
         }
 
@@ -341,7 +341,7 @@ namespace Flee.ExpressionElements.MemberElements
                 EmitParamArrayArguments(parameters, elements, ilg, services);
             }
 
-            MemberElement.EmitMethodCall(ResultType, nextRequiresAddress, Method, ilg);
+            EmitMethodCall(ResultType, nextRequiresAddress, Method, ilg);
         }
 
         private void EmitExtensionFunctionInternal(ParameterInfo[] parameters, ExpressionElement[] elements, FleeILGenerator ilg, IServiceProvider services)
