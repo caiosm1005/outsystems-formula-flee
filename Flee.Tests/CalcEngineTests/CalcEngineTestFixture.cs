@@ -9,7 +9,7 @@ namespace Flee.Tests.CalcEngineTests
     public class CalcEngineTestFixture
     {
         [Test]
-        public void Test_Basic()
+        public void TestBasic()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -33,7 +33,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_MutipleIdentical_References()
+        public void TestMutipleIdenticalReferences()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -48,7 +48,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_Complex()
+        public void TestComplex()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -69,7 +69,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_Arithmetic()
+        public void TestArithmetic()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -84,7 +84,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_Comparison_Operators()
+        public void TestComparisonOperators()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -98,7 +98,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_And_Or_Xor_Not_Operators()
+        public void TestAndOrXorNotOperators()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -118,7 +118,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_Shift_Operators()
+        public void TestShiftOperators()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -131,7 +131,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_Recalculate_NonSource()
+        public void TestRecalculateNonSource()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -148,7 +148,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_Partial_Recalculate()
+        public void TestPartialRecalculate()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -167,7 +167,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_Circular_Reference1()
+        public void TestCircularReference1()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -181,7 +181,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [Test]
-        public void Test_Boolean_Expression()
+        public void TestBooleanExpression()
         {
             string expression = "a AND NOT b AND NOT c AND d";
             Dictionary<string, object> expressionVariables = new Dictionary<string, object>();
