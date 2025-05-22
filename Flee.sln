@@ -1,8 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F066EAAB-8E70-4DE7-BA46-155394D693DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flee", "src\Flee\Flee.csproj", "{9D5D3F0D-037A-4816-AF3E-C394A496D625}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flee", "Flee\Flee.csproj", "{9D5D3F0D-037A-4816-AF3E-C394A496D625}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flee.Tests", "Flee.Tests\Flee.Tests.csproj", "{7C2B9FF7-8310-48A3-B6FE-125B8A0CD04C}"
 EndProject
@@ -10,9 +9,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{9D5D3F0D-037A-4816-AF3E-C394A496D625} = {F066EAAB-8E70-4DE7-BA46-155394D693DC}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9D5D3F0D-037A-4816-AF3E-C394A496D625}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
