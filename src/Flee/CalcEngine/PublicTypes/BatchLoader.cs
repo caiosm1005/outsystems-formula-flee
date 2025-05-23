@@ -18,9 +18,20 @@ namespace Flee.CalcEngine.PublicTypes
 
         public void Add(string atomName, string expression, ExpressionContext context)
         {
-            Utility.AssertNotNull(atomName, nameof(atomName));
-            Utility.AssertNotNull(expression, nameof(expression));
-            Utility.AssertNotNull(context, nameof(context));
+            if (string.IsNullOrEmpty(atomName))
+            {
+                throw new ArgumentNullException(nameof(atomName));
+            }
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
 
             BatchLoadInfo info = new(atomName, expression, context);
             _myNameInfoMap.Add(atomName, info);

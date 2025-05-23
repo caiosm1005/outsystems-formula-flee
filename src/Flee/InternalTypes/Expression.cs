@@ -23,7 +23,11 @@ namespace Flee.InternalTypes
         private const string DynamicMethodName = "Flee Expression";
         public Expression(string expression, ExpressionContext context, bool isGeneric)
         {
-            Utility.AssertNotNull(expression, nameof(expression));
+            if (string.IsNullOrEmpty(expression))
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+            
             _myExpression = expression;
             _myOwner = context.ExpressionOwner;
 
@@ -154,7 +158,11 @@ namespace Flee.InternalTypes
 
         private void ValidateOwner(object owner)
         {
-            Utility.AssertNotNull(owner, nameof(owner));
+            if (owner == null)
+            {
+                throw new ArgumentNullException(nameof(owner));
+            }
+
             if (_myOptions.OwnerType.IsAssignableFrom(owner.GetType()) == false)
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.NewOwnerTypeNotAssignableToCurrentOwner);

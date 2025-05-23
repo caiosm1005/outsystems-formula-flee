@@ -27,7 +27,11 @@ namespace Flee.PublicTypes
 
         public ExpressionContext(object expressionOwner)
         {
-            Utility.AssertNotNull(expressionOwner, nameof(expressionOwner));
+            if (expressionOwner == null)
+            {
+                throw new ArgumentNullException(nameof(expressionOwner));
+            }
+            
             _myProperties = new PropertyDictionary();
 
             _myProperties.SetValue("CalculationEngine", null);

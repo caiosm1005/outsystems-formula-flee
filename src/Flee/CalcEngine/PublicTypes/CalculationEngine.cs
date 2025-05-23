@@ -60,7 +60,11 @@ namespace Flee.CalcEngine.PublicTypes
 
         private ExpressionResultPair GetTail(string tailName)
         {
-            Utility.AssertNotNull(tailName, "name");
+            if (string.IsNullOrEmpty(tailName))
+            {
+                throw new ArgumentNullException(nameof(tailName));
+            }
+
             ExpressionResultPair pair;
             _myNameNodeMap.TryGetValue(tailName, out pair);
             return pair;
@@ -68,7 +72,11 @@ namespace Flee.CalcEngine.PublicTypes
 
         private ExpressionResultPair GetTailWithValidate(string tailName)
         {
-            Utility.AssertNotNull(tailName, "name");
+            if (string.IsNullOrEmpty(tailName))
+            {
+                throw new ArgumentNullException(nameof(tailName));
+            }
+
             ExpressionResultPair pair = GetTail(tailName);
 
             if (pair == null)
@@ -191,9 +199,20 @@ namespace Flee.CalcEngine.PublicTypes
         #region "Methods - Public"
         public void Add(string atomName, string expression, ExpressionContext context)
         {
-            Utility.AssertNotNull(atomName, nameof(atomName));
-            Utility.AssertNotNull(expression, nameof(expression));
-            Utility.AssertNotNull(context, nameof(context));
+            if (string.IsNullOrEmpty(atomName))
+            {
+                throw new ArgumentNullException(nameof(atomName));
+            }
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
 
             AddTemporaryHead(atomName);
 
@@ -230,7 +249,11 @@ namespace Flee.CalcEngine.PublicTypes
 
         public void BatchLoad(BatchLoader loader)
         {
-            Utility.AssertNotNull(loader, nameof(loader));
+            if (loader == null)
+            {
+                throw new ArgumentNullException(nameof(loader));
+            }
+
             Clear();
 
             BatchLoadInfo[] infos = loader.GetBachInfos();
@@ -307,7 +330,11 @@ namespace Flee.CalcEngine.PublicTypes
 
         public bool Contains(string name)
         {
-            Utility.AssertNotNull(name, nameof(name));
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
             return _myNameNodeMap.ContainsKey(name);
         }
 

@@ -15,14 +15,6 @@ namespace Flee.InternalTypes
         {
         }
 
-        public static void AssertNotNull(object o, string paramName)
-        {
-            if (o == null)
-            {
-                throw new ArgumentNullException(paramName);
-            }
-        }
-
         public static void EmitStoreLocal(FleeILGenerator ilg, int index)
         {
             if (index >= 0 & index <= 3)

@@ -132,7 +132,11 @@ namespace Flee.PublicTypes
         #region "Methods - Non Public"
         internal TypeImport(Type t, BindingFlags flags, bool useTypeNameAsNamespace)
         {
-            Utility.AssertNotNull(t, nameof(t));
+            if (t == null)
+            {
+                throw new ArgumentNullException(nameof(t));
+            }
+            
             _myType = t;
             _myBindFlags = flags;
             _myUseTypeNameAsNamespace = useTypeNameAsNamespace;
@@ -221,7 +225,11 @@ namespace Flee.PublicTypes
         private readonly MethodInfo _myMethod;
         public MethodImport(MethodInfo importMethod)
         {
-            Utility.AssertNotNull(importMethod, nameof(importMethod));
+            if (importMethod == null)
+            {
+                throw new ArgumentNullException(nameof(importMethod));
+            }
+
             _myMethod = importMethod;
         }
 
@@ -273,8 +281,7 @@ namespace Flee.PublicTypes
         private readonly List<ImportBase> _myImports;
         public NamespaceImport(string importNamespace)
         {
-            Utility.AssertNotNull(importNamespace, nameof(importNamespace));
-            if (importNamespace.Length == 0)
+            if (string.IsNullOrEmpty(importNamespace))
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.InvalidNamespaceName);
                 throw new ArgumentException(msg);
@@ -373,7 +380,10 @@ namespace Flee.PublicTypes
         #region "ICollection implementation"
         public void Add(ImportBase item)
         {
-            Utility.AssertNotNull(item, nameof(item));
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
 
             if (Context != null)
             {

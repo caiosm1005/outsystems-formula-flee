@@ -76,7 +76,10 @@ namespace Flee.PublicTypes
             get { return _myProperties.GetValue<Type>("ResultType"); }
             set
             {
-                Utility.AssertNotNull(value, nameof(value));
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
                 _myProperties.SetValue("ResultType", value);
             }
         }
@@ -132,7 +135,10 @@ namespace Flee.PublicTypes
             get { return _myProperties.GetValue<CultureInfo>("ParseCulture"); }
             set
             {
-                Utility.AssertNotNull(value, "ParseCulture");
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
                 if (value.LCID != ParseCulture.LCID)
                 {
                     _myProperties.SetValue("ParseCulture", value);

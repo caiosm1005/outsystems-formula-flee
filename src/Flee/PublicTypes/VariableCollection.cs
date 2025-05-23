@@ -60,7 +60,10 @@ namespace Flee.PublicTypes
 
         internal void DefineVariableInternal(string name, Type variableType, object variableValue)
         {
-            Utility.AssertNotNull(variableType, nameof(variableType));
+            if (variableType == null)
+            {
+                throw new ArgumentNullException(nameof(variableType));
+            }
 
             if (_myVariables.ContainsKey(name) == true)
             {
@@ -318,7 +321,11 @@ namespace Flee.PublicTypes
 
         public void Add(string name, object value)
         {
-            Utility.AssertNotNull(value, nameof(value));
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             DefineVariableInternal(name, value.GetType(), value);
             this[name] = value;
         }

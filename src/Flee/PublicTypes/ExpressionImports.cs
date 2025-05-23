@@ -63,15 +63,20 @@ namespace Flee.PublicTypes
             MyOwnerImport.SetContext(MyContext);
         }
 
-        internal bool HasNamespace(string ns)
+        internal bool HasNamespace(string? ns)
         {
+            if (string.IsNullOrEmpty(ns))
+            {
+                return false;
+            }
+            
             NamespaceImport import = MyRootImport.FindImport(ns) as NamespaceImport;
             return import != null;
         }
 
-        internal NamespaceImport GetImport(string ns)
+        internal NamespaceImport GetImport(string? ns)
         {
-            if (ns.Length == 0)
+            if (string.IsNullOrEmpty(ns))
             {
                 return MyRootImport;
             }
@@ -129,8 +134,15 @@ namespace Flee.PublicTypes
         #region "Methods - Public"
         public void AddType(Type t, string ns)
         {
-            Utility.AssertNotNull(t, nameof(t));
-            Utility.AssertNotNull(ns, "namespace");
+            if (t == null)
+            {
+                throw new ArgumentNullException(nameof(t));
+            }
+
+            if (ns == null)
+            {
+                throw new ArgumentNullException(nameof(ns));
+            }
 
             MyContext.AssertTypeIsAccessible(t);
 
@@ -145,9 +157,20 @@ namespace Flee.PublicTypes
 
         public void AddMethod(string methodName, Type t, string ns)
         {
-            Utility.AssertNotNull(methodName, nameof(methodName));
-            Utility.AssertNotNull(t, nameof(t));
-            Utility.AssertNotNull(ns, "namespace");
+            if (string.IsNullOrEmpty(methodName))
+            {
+                throw new ArgumentNullException(nameof(methodName));
+            }
+
+            if (t == null)
+            {
+                throw new ArgumentNullException(nameof(t));
+            }
+
+            if (ns == null)
+            {
+                throw new ArgumentNullException(nameof(ns));
+            }
 
             MethodInfo mi = t.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
 
@@ -162,8 +185,15 @@ namespace Flee.PublicTypes
 
         public void AddMethod(MethodInfo mi, string ns)
         {
-            Utility.AssertNotNull(mi, nameof(mi));
-            Utility.AssertNotNull(ns, "namespace");
+            if (mi == null)
+            {
+                throw new ArgumentNullException(nameof(mi));
+            }
+
+            if (ns == null)
+            {
+                throw new ArgumentNullException(nameof(ns));
+            }
 
             MyContext.AssertTypeIsAccessible(mi.ReflectedType);
 
