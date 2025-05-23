@@ -1,6 +1,7 @@
 ﻿using Flee.InternalTypes;
 using Flee.Resources;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Flee.PublicTypes
@@ -332,10 +333,10 @@ namespace Flee.PublicTypes
             return _myVariables.Remove(name);
         }
 
-        public bool TryGetValue(string key, out object value)
+        public bool TryGetValue(string key, [NotNullWhen(true)] out object value)
         {
             IVariable v = GetVariable(key, false);
-            value = v?.ValueAsObject;
+            value = v.ValueAsObject;
             return v != null;
         }
 

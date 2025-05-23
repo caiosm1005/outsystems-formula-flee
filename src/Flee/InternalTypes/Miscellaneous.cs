@@ -12,6 +12,15 @@ namespace System.Diagnostics.CodeAnalysis
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class DoesNotReturnAttribute : Attribute { }
+
+    [AttributeUsage(
+        AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.ReturnValue,
+        AllowMultiple = false)]
+    public sealed class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get; }
+    }
 }
 #endif
 
