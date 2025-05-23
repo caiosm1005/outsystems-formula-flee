@@ -6,6 +6,15 @@ using System.Reflection.Emit;
 using Flee.ExpressionElements.Base;
 using Flee.PublicTypes;
 
+#if NETSTANDARD2_0
+// Retrofit attributes related to nullable objects for older .NET targets
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Method)]
+    public class DoesNotReturnAttribute : Attribute { }
+}
+#endif
+
 namespace Flee.InternalTypes
 {
     internal enum BinaryArithmeticOperation

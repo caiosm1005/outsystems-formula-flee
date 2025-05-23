@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Flee.Parsing
 {
@@ -550,7 +551,7 @@ namespace Flee.Parsing
             return result;
         }
 
-
+        [DoesNotReturn]
         private void ThrowParseException(LookAheadSet set)
         {
             ArrayList list = new();
@@ -577,6 +578,7 @@ namespace Flee.Parsing
                                      token.StartColumn);
         }
 
+        [DoesNotReturn]
         private void ThrowAmbiguityException(string pattern,
                                              string location,
                                              LookAheadSet set)
