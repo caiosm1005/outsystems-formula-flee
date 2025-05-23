@@ -61,37 +61,17 @@ namespace Flee.ExpressionElements.MemberElements
             if (_myOnDemandFunctionReturnType == null)
             {
                 // Failed to bind to a function
-                ThrowFunctionNotFoundException(MyPrevious);
+                if (MyPrevious == null)
+                {
+                    throw new ExpressionCompileException(Name, CompileErrorResourceKeys.UndefinedFunction,
+                        CompileExceptionReason.UndefinedName, MyName, _myArguments);
+                }
+                else
+                {
+                    throw new ExpressionCompileException(Name, CompileErrorResourceKeys.UndefinedFunctionOnType,
+                        CompileExceptionReason.UndefinedName, MyName, _myArguments, MyPrevious.TargetType.Name);
+                }
             }
-        }
-
-        private void ThrowFunctionNotFoundException(MemberElement previous)
-        {
-            if (previous == null)
-            {
-                ThrowCompileException(CompileErrorResourceKeys.UndefinedFunction, CompileExceptionReason.UndefinedName, MyName, _myArguments);
-            }
-            else
-            {
-                ThrowCompileException(CompileErrorResourceKeys.UndefinedFunctionOnType, CompileExceptionReason.UndefinedName, MyName, _myArguments, previous.TargetType.Name);
-            }
-        }
-
-        private void ThrowNoAccessibleMethodsException(MemberElement previous)
-        {
-            if (previous == null)
-            {
-                ThrowCompileException(CompileErrorResourceKeys.NoAccessibleMatches, CompileExceptionReason.AccessDenied, MyName, _myArguments);
-            }
-            else
-            {
-                ThrowCompileException(CompileErrorResourceKeys.NoAccessibleMatchesOnType, CompileExceptionReason.AccessDenied, MyName, _myArguments, previous.TargetType.Name);
-            }
-        }
-
-        private void ThrowAmbiguousMethodCallException()
-        {
-            ThrowCompileException(CompileErrorResourceKeys.AmbiguousCallOfFunction, CompileExceptionReason.AmbiguousMatch, MyName, _myArguments);
         }
 
         /// <summary>
@@ -126,7 +106,16 @@ namespace Flee.ExpressionElements.MemberElements
             if (customInfos.Count == 0)
             {
                 // We have no methods that can qualify as overloads; throw exception
-                ThrowFunctionNotFoundException(previous);
+                if (previous == null)
+                {
+                    throw new ExpressionCompileException(Name, CompileErrorResourceKeys.UndefinedFunction,
+                        CompileExceptionReason.UndefinedName, MyName, _myArguments);
+                }
+                else
+                {
+                    throw new ExpressionCompileException(Name, CompileErrorResourceKeys.UndefinedFunctionOnType,
+                        CompileExceptionReason.UndefinedName, MyName, _myArguments, previous.TargetType.Name);
+                }
             }
             else
             {
@@ -158,7 +147,16 @@ namespace Flee.ExpressionElements.MemberElements
             // No accessible methods left
             if (infos.Length == 0)
             {
-                ThrowNoAccessibleMethodsException(previous);
+                if (previous == null)
+                {
+                    throw new ExpressionCompileException(Name, CompileErrorResourceKeys.NoAccessibleMatches,
+                        CompileExceptionReason.AccessDenied, MyName, _myArguments);
+                }
+                else
+                {
+                    throw new ExpressionCompileException(Name, CompileErrorResourceKeys.NoAccessibleMatchesOnType,
+                        CompileExceptionReason.AccessDenied, MyName, _myArguments, previous.TargetType.Name);
+                }
             }
 
             // Handle case where we have more than one match with the same score
@@ -204,7 +202,8 @@ namespace Flee.ExpressionElements.MemberElements
             // More than one accessible match with the same score exists
             if (sameScores.Count > 1)
             {
-                ThrowAmbiguousMethodCallException();
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.AmbiguousCallOfFunction,
+                    CompileExceptionReason.AmbiguousMatch, MyName, _myArguments);
             }
         }
 
@@ -220,7 +219,8 @@ namespace Flee.ExpressionElements.MemberElements
             // Any function reference in an expression must return a value
             if (ReferenceEquals(Method.ReturnType, typeof(void)))
             {
-                ThrowCompileException(CompileErrorResourceKeys.FunctionHasNoReturnValue, CompileExceptionReason.FunctionHasNoReturnValue, MyName);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.FunctionHasNoReturnValue,
+                    CompileExceptionReason.FunctionHasNoReturnValue, MyName);
             }
         }
 

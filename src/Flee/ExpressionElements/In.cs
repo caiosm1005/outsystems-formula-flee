@@ -60,7 +60,8 @@ namespace Flee.ExpressionElements
 
             if (MyTargetCollectionType == null)
             {
-                ThrowCompileException(CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType, CompileExceptionReason.TypeMismatch, MyTargetCollectionElement.ResultType.Name);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType,
+                    CompileExceptionReason.TypeMismatch, MyTargetCollectionElement.ResultType.Name);
             }
 
             // Validate that the operand type is compatible with the collection
@@ -69,7 +70,9 @@ namespace Flee.ExpressionElements
 
             if (ImplicitConverter.EmitImplicitConvert(MyOperand.ResultType, p1.ParameterType, null) == false)
             {
-                ThrowCompileException(CompileErrorResourceKeys.OperandNotConvertibleToCollectionType, CompileExceptionReason.TypeMismatch, MyOperand.ResultType.Name, p1.ParameterType.Name);
+                throw new ExpressionCompileException(Name,
+                    CompileErrorResourceKeys.OperandNotConvertibleToCollectionType, CompileExceptionReason.TypeMismatch,
+                    MyOperand.ResultType.Name, p1.ParameterType.Name);
             }
         }
 

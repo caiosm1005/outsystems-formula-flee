@@ -18,7 +18,8 @@ namespace Flee.ExpressionElements.Literals
 
             if (DateTime.TryParseExact(image, options.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out _myValue) == false)
             {
-                ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(DateTime).Name);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.CannotParseType,
+                    CompileExceptionReason.InvalidFormat, typeof(DateTime).Name);
             }
         }
 

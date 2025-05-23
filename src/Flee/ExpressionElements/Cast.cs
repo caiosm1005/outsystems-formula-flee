@@ -20,7 +20,8 @@ namespace Flee.ExpressionElements
 
             if (_myDestType == null)
             {
-                ThrowCompileException(CompileErrorResourceKeys.CouldNotResolveType, CompileExceptionReason.UndefinedName, GetDestTypeString(destTypeParts, isArray));
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.CouldNotResolveType,
+                    CompileExceptionReason.UndefinedName, GetDestTypeString(destTypeParts, isArray));
             }
 
             if (isArray == true)
@@ -30,7 +31,8 @@ namespace Flee.ExpressionElements
 
             if (IsValidCast(_myCastExpression.ResultType, _myDestType) == false)
             {
-                ThrowInvalidCastException();
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.CannotConvertType,
+                    CompileExceptionReason.InvalidExplicitCast, _myCastExpression.ResultType.Name, _myDestType.Name);
             }
         }
 
@@ -158,8 +160,8 @@ namespace Flee.ExpressionElements
             }
             else
             {
-                ThrowAmbiguousCallException(sourceType, destType, "Explicit");
-                return null;
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.AmbiguousOverloadedOperator,
+                    CompileExceptionReason.AmbiguousMatch, sourceType.Name, destType.Name, "Explicit");
             }
         }
 
@@ -252,11 +254,6 @@ namespace Flee.ExpressionElements
         {
             Type[] interfaces = target.GetInterfaces();
             return Array.IndexOf(interfaces, interfaceType) != -1;
-        }
-
-        private void ThrowInvalidCastException()
-        {
-            ThrowCompileException(CompileErrorResourceKeys.CannotConvertType, CompileExceptionReason.InvalidExplicitCast, _myCastExpression.ResultType.Name, _myDestType.Name);
         }
 
         private static bool IsCastableNumericType(Type t)

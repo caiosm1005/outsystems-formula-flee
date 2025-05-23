@@ -53,7 +53,8 @@ namespace Flee.ExpressionElements.Base
 
             if (_myResultType == null)
             {
-                ThrowOperandTypeMismatch(op, MyLeftChild.ResultType, MyRightChild.ResultType);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.OperationNotDefinedForTypes,
+                    CompileExceptionReason.TypeMismatch, op, MyLeftChild.ResultType.Name, MyRightChild.ResultType.Name);
             }
         }
 
@@ -94,8 +95,8 @@ namespace Flee.ExpressionElements.Base
             else
             {
                 // Ambiguous call
-                ThrowAmbiguousCallException(leftType, rightType, operation);
-                return null;
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.AmbiguousOverloadedOperator,
+                    CompileExceptionReason.AmbiguousMatch, leftType.Name, rightType.Name, operation);
             }
         }
 
@@ -108,11 +109,6 @@ namespace Flee.ExpressionElements.Base
             EmitChildWithConvert(MyLeftChild, pLeft.ParameterType, ilg, services);
             EmitChildWithConvert(MyRightChild, pRight.ParameterType, ilg, services);
             ilg.Emit(OpCodes.Call, method);
-        }
-
-        protected void ThrowOperandTypeMismatch(object operation, Type leftType, Type rightType)
-        {
-            ThrowCompileException(CompileErrorResourceKeys.OperationNotDefinedForTypes, CompileExceptionReason.TypeMismatch, operation, leftType.Name, rightType.Name);
         }
 
         protected abstract Type GetResultType(Type leftType, Type rightType);

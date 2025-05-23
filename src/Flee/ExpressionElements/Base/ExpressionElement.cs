@@ -27,20 +27,6 @@ namespace Flee.ExpressionElements.Base
             return Name;
         }
 
-        protected void ThrowCompileException(string messageKey, CompileExceptionReason reason, params object[] arguments)
-        {
-            string messageTemplate = FleeResourceManager.Instance.GetCompileErrorString(messageKey);
-            string message = string.Format(messageTemplate, arguments);
-            message = string.Concat(Name, ": ", message);
-            throw new ExpressionCompileException(message, reason);
-        }
-
-        protected void ThrowAmbiguousCallException(Type leftType, Type rightType, object operation)
-        {
-            ThrowCompileException(CompileErrorResourceKeys.AmbiguousOverloadedOperator, CompileExceptionReason.AmbiguousMatch, leftType.Name, rightType.Name, operation);
-        }
-
-
         protected string Name
         {
             get

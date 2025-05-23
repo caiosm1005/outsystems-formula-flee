@@ -60,11 +60,13 @@ namespace Flee.ExpressionElements.MemberElements
 
             if (MyPrevious == null)
             {
-                ThrowCompileException(CompileErrorResourceKeys.NoIdentifierWithName, CompileExceptionReason.UndefinedName, MyName);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.NoIdentifierWithName,
+                    CompileExceptionReason.UndefinedName, MyName);
             }
             else
             {
-                ThrowCompileException(CompileErrorResourceKeys.NoIdentifierWithNameOnType, CompileExceptionReason.UndefinedName, MyName, MyPrevious.TargetType.Name);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.NoIdentifierWithNameOnType,
+                    CompileExceptionReason.UndefinedName, MyName, MyPrevious.TargetType.Name);
             }
         }
 
@@ -85,11 +87,13 @@ namespace Flee.ExpressionElements.MemberElements
                 // More than one accessible member
                 if (previous == null)
                 {
-                    ThrowCompileException(CompileErrorResourceKeys.IdentifierIsAmbiguous, CompileExceptionReason.AmbiguousMatch, MyName);
+                    throw new ExpressionCompileException(Name, CompileErrorResourceKeys.IdentifierIsAmbiguous,
+                        CompileExceptionReason.AmbiguousMatch, MyName);
                 }
                 else
                 {
-                    ThrowCompileException(CompileErrorResourceKeys.IdentifierIsAmbiguousOnType, CompileExceptionReason.AmbiguousMatch, MyName, previous.TargetType.Name);
+                    throw new ExpressionCompileException(Name, CompileErrorResourceKeys.IdentifierIsAmbiguousOnType,
+                        CompileExceptionReason.AmbiguousMatch, MyName, previous.TargetType.Name);
                 }
             }
             else

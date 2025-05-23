@@ -36,7 +36,8 @@ namespace Flee.ExpressionElements.MemberElements
             // Not an array, so try to find an indexer on the type
             if (FindIndexer(target) == false)
             {
-                ThrowCompileException(CompileErrorResourceKeys.TypeNotArrayAndHasNoIndexerOfType, CompileExceptionReason.TypeMismatch, target.Name, _myIndexerElements);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.TypeNotArrayAndHasNoIndexerOfType,
+                    CompileExceptionReason.TypeMismatch, target.Name, _myIndexerElements);
             }
         }
 
@@ -46,11 +47,13 @@ namespace Flee.ExpressionElements.MemberElements
 
             if (_myIndexerElements.Count > 1)
             {
-                ThrowCompileException(CompileErrorResourceKeys.MultiArrayIndexNotSupported, CompileExceptionReason.TypeMismatch);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.MultiArrayIndexNotSupported,
+                    CompileExceptionReason.TypeMismatch);
             }
             else if (ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(Int32), null) == false)
             {
-                ThrowCompileException(CompileErrorResourceKeys.ArrayIndexersMustBeOfType, CompileExceptionReason.TypeMismatch, typeof(Int32).Name);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.ArrayIndexersMustBeOfType,
+                    CompileExceptionReason.TypeMismatch, typeof(Int32).Name);
             }
         }
 

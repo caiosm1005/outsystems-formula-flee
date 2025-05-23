@@ -14,7 +14,8 @@ namespace Flee.ExpressionElements.Literals
         {
             if (TimeSpan.TryParse(image, out _myValue) == false)
             {
-                ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(TimeSpan).Name);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.CannotParseType,
+                    CompileExceptionReason.InvalidFormat, typeof(TimeSpan).Name);
             }
         }
 

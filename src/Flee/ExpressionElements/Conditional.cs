@@ -20,7 +20,8 @@ namespace Flee.ExpressionElements
 
             if (!ReferenceEquals(_myCondition.ResultType, typeof(bool)))
             {
-                ThrowCompileException(CompileErrorResourceKeys.FirstArgNotBoolean, CompileExceptionReason.TypeMismatch);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.FirstArgNotBoolean,
+                    CompileExceptionReason.TypeMismatch);
             }
 
             // The result type is the type that is common to the true/false operands
@@ -34,7 +35,8 @@ namespace Flee.ExpressionElements
             }
             else
             {
-                ThrowCompileException(CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther, CompileExceptionReason.TypeMismatch, _myWhenTrue.ResultType.Name, _myWhenFalse.ResultType.Name);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther,
+                    CompileExceptionReason.TypeMismatch, _myWhenTrue.ResultType.Name, _myWhenFalse.ResultType.Name);
             }
         }
 

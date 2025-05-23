@@ -60,11 +60,15 @@ namespace Flee.ExpressionElements.Base
 
             if (IsStatic == true && SupportsStatic == false && IsExtensionMethod == false)
             {
-                ThrowCompileException(CompileErrorResourceKeys.StaticMemberCannotBeAccessedWithInstanceReference, CompileExceptionReason.TypeMismatch, MyName);
+                throw new ExpressionCompileException(Name,
+                    CompileErrorResourceKeys.StaticMemberCannotBeAccessedWithInstanceReference,
+                    CompileExceptionReason.TypeMismatch, MyName);
             }
             else if (IsStatic == false && SupportsInstance == false)
             {
-                ThrowCompileException(CompileErrorResourceKeys.ReferenceToNonSharedMemberRequiresObjectReference, CompileExceptionReason.TypeMismatch, MyName);
+                throw new ExpressionCompileException(Name,
+                    CompileErrorResourceKeys.ReferenceToNonSharedMemberRequiresObjectReference,
+                    CompileExceptionReason.TypeMismatch, MyName);
             }
         }
 

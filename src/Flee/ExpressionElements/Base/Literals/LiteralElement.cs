@@ -11,7 +11,8 @@ namespace Flee.ExpressionElements.Base.Literals
     {
         protected void OnParseOverflow(string image)
         {
-            ThrowCompileException(CompileErrorResourceKeys.ValueNotRepresentableInType, CompileExceptionReason.ConstantOverflow, image, ResultType.Name);
+            throw new ExpressionCompileException(Name, CompileErrorResourceKeys.ValueNotRepresentableInType,
+                CompileExceptionReason.ConstantOverflow, image, ResultType.Name);
         }
 
         public static void EmitLoad(Int32 value, FleeILGenerator ilg)

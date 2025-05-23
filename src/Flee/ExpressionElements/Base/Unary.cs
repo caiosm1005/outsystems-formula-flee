@@ -16,7 +16,8 @@ namespace Flee.ExpressionElements.Base
 
             if (_myResultType == null)
             {
-                ThrowCompileException(CompileErrorResourceKeys.OperationNotDefinedForType, CompileExceptionReason.TypeMismatch, MyChild.ResultType.Name);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.OperationNotDefinedForType,
+                    CompileExceptionReason.TypeMismatch, MyChild.ResultType.Name);
             }
         }
 

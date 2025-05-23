@@ -36,7 +36,8 @@ namespace Flee.ExpressionElements
         {
             if (ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, null) == false)
             {
-                ThrowCompileException(CompileErrorResourceKeys.CannotConvertTypeToExpressionResult, CompileExceptionReason.TypeMismatch, _myChild.ResultType.Name, _myResultType.Name);
+                throw new ExpressionCompileException(Name, CompileErrorResourceKeys.CannotConvertTypeToExpressionResult,
+                    CompileExceptionReason.TypeMismatch, _myChild.ResultType.Name, _myResultType.Name);
             }
         }
 
