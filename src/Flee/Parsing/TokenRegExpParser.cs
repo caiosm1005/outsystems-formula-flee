@@ -340,19 +340,16 @@ namespace Flee.Parsing
 
         private NFAState ParseChar(NFAState start)
         {
-            switch (PeekChar(0))
+            return PeekChar(0) switch
             {
-                case '\\':
-                    return ParseEscapeChar(start);
-                case '^':
-                case '$':
-                    throw new RegExpException(
-                        RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
-                        _pos,
-                        _pattern);
-                default:
-                    return start.AddOut(ReadChar(), _ignoreCase, new NFAState());
-            }
+                '\\' => ParseEscapeChar(start),
+                '^' or
+                '$' => throw new RegExpException(
+                                        RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
+                                        _pos,
+                                        _pattern),
+                _ => start.AddOut(ReadChar(), _ignoreCase, new NFAState()),
+            };
         }
 
         private NFAState ParseEscapeChar(NFAState start)

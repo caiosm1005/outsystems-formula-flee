@@ -222,31 +222,25 @@ namespace Flee.InternalTypes
         {
             switch (operand)
             {
-                case OperandType.InlineNone:
-                    return 0;
-                case OperandType.ShortInlineBrTarget:
-                case OperandType.ShortInlineI:
-                case OperandType.ShortInlineVar:
-                    return 1;
-                case OperandType.InlineVar:
-                    return 2;
-                case OperandType.InlineBrTarget:
-                case OperandType.InlineField:
-                case OperandType.InlineI:
-                case OperandType.InlineMethod:
-                case OperandType.InlineSig:
-                case OperandType.InlineString:
-                case OperandType.InlineTok:
-                case OperandType.InlineType:
-                case OperandType.ShortInlineR:
-                    return 4;
-                case OperandType.InlineI8:
-                case OperandType.InlineR:
-                    return 8;
-                default:
-                    throw new NotImplementedException($"Operand type '{Enum.GetName(operand.GetType(), operand)}' not" +
-                        " implemented.");
-            }
+                OperandType.InlineNone => 0,
+                OperandType.ShortInlineBrTarget or
+                OperandType.ShortInlineI or
+                OperandType.ShortInlineVar => 1,
+                OperandType.InlineVar => 2,
+                OperandType.InlineBrTarget or
+                OperandType.InlineField or
+                OperandType.InlineI or
+                OperandType.InlineMethod or
+                OperandType.InlineSig or
+                OperandType.InlineString or
+                OperandType.InlineTok or
+                OperandType.InlineType or
+                OperandType.ShortInlineR => 4,
+                OperandType.InlineI8 or
+                OperandType.InlineR => 8,
+                _ => throw new NotImplementedException($"Operand type '{Enum.GetName(operand.GetType(), operand)}' not" +
+                                        " implemented."),
+            };
             return 0;
         }
 

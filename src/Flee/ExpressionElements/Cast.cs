@@ -495,16 +495,14 @@ namespace Flee.ExpressionElements
         private static bool IsUnsignedType(Type t)
         {
             TypeCode tc = Type.GetTypeCode(t);
-            switch (tc)
+            return tc switch
             {
-                case TypeCode.Byte:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    return true;
-                default:
-                    return false;
-            }
+                TypeCode.Byte or
+                TypeCode.UInt16 or
+                TypeCode.UInt32 or
+                TypeCode.UInt64 => true,
+                _ => false,
+            };
         }
 
         public override Type ResultType => _myDestType;

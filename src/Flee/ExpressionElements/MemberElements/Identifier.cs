@@ -254,42 +254,23 @@ namespace Flee.ExpressionElements.MemberElements
             object value = fi.GetValue(null);
             Type t = value.GetType();
             TypeCode code = Type.GetTypeCode(t);
-            LiteralElement elem;
-            switch (code)
+            LiteralElement elem = code switch
             {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                    elem = new Int32LiteralElement(Convert.ToInt32(value));
-                    break;
-                case TypeCode.UInt32:
-                    elem = new UInt32LiteralElement((UInt32)value);
-                    break;
-                case TypeCode.Int64:
-                    elem = new Int64LiteralElement((Int64)value);
-                    break;
-                case TypeCode.UInt64:
-                    elem = new UInt64LiteralElement((UInt64)value);
-                    break;
-                case TypeCode.Double:
-                    elem = new DoubleLiteralElement((double)value);
-                    break;
-                case TypeCode.Single:
-                    elem = new SingleLiteralElement((float)value);
-                    break;
-                case TypeCode.Boolean:
-                    elem = new BooleanLiteralElement((bool)value);
-                    break;
-                case TypeCode.String:
-                    elem = new StringLiteralElement((string)value);
-                    break;
-                default:
-                    throw new NotImplementedException($"Unsupported constant type '{t.FullName}'.");
-            }
-
+                TypeCode.Char or
+                TypeCode.Byte or
+                TypeCode.SByte or
+                TypeCode.Int16 or
+                TypeCode.UInt16 or
+                TypeCode.Int32 => new Int32LiteralElement(Convert.ToInt32(value)),
+                TypeCode.UInt32 => new UInt32LiteralElement((UInt32)value),
+                TypeCode.Int64 => new Int64LiteralElement((Int64)value),
+                TypeCode.UInt64 => new UInt64LiteralElement((UInt64)value),
+                TypeCode.Double => new DoubleLiteralElement((double)value),
+                TypeCode.Single => new SingleLiteralElement((float)value),
+                TypeCode.Boolean => new BooleanLiteralElement((bool)value),
+                TypeCode.String => new StringLiteralElement((string)value),
+                _ => throw new NotImplementedException($"Unsupported constant type '{t.FullName}'."),
+            };
             elem.Emit(ilg, services);
         }
 

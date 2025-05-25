@@ -21,18 +21,15 @@ namespace Flee.ExpressionElements
                 return mi.ReturnType;
             }
 
-            switch (tc)
+            return tc switch
             {
-                case TypeCode.Single:
-                case TypeCode.Double:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                    return childType;
-                case TypeCode.UInt32:
-                    return typeof(Int64);
-                default:
-                    return null;
-            }
+                TypeCode.Single or
+                TypeCode.Double or
+                TypeCode.Int32 or
+                TypeCode.Int64 => childType,
+                TypeCode.UInt32 => typeof(Int64),
+                _ => null,
+            };
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)

@@ -7,3 +7,4 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0057:Use range operator", Justification = "Not compatible with netstandard2.0 target.")]
 [assembly: SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Not compatible with netstandard2.0 target.")]
+[assembly: SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "Grammatica generated file.", Scope = "member", Target = "~M:Flee.Parsing.ExpressionAnalyzer.Exit(Flee.Parsing.Node)~Flee.Parsing.Node")]

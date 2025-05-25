@@ -83,24 +83,17 @@ namespace Flee.ExpressionElements
 
         private static string GetOverloadedOperatorFunctionName(BinaryArithmeticOperation op)
         {
-            switch (op)
+            return op switch
             {
-                case BinaryArithmeticOperation.Add:
-                    return "Addition";
-                case BinaryArithmeticOperation.Subtract:
-                    return "Subtraction";
-                case BinaryArithmeticOperation.Multiply:
-                    return "Multiply";
-                case BinaryArithmeticOperation.Divide:
-                    return "Division";
-                case BinaryArithmeticOperation.Mod:
-                    return "Modulus";
-                case BinaryArithmeticOperation.Power:
-                    return "Exponent";
-                default:
-                    throw new NotImplementedException($"Binary arithmetic operation {Enum.GetName(op.GetType(), op)}" +
-                        " not implemented.");
-            }
+                BinaryArithmeticOperation.Add => "Addition",
+                BinaryArithmeticOperation.Subtract => "Subtraction",
+                BinaryArithmeticOperation.Multiply => "Multiply",
+                BinaryArithmeticOperation.Divide => "Division",
+                BinaryArithmeticOperation.Mod => "Modulus",
+                BinaryArithmeticOperation.Power => "Exponent",
+                _ => throw new NotImplementedException($"Binary arithmetic operation {Enum.GetName(op.GetType(), op)}" +
+                                        " not implemented."),
+            };
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)

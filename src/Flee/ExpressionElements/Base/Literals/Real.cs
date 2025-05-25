@@ -67,18 +67,14 @@ namespace Flee.ExpressionElements.Base.Literals
             ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
             RealLiteralDataType realType = options.RealLiteralDataType;
 
-            switch (realType)
+            return realType switch
             {
-                case RealLiteralDataType.Double:
-                    return DoubleLiteralElement.Parse(image, services);
-                case RealLiteralDataType.Single:
-                    return SingleLiteralElement.Parse(image, services);
-                case RealLiteralDataType.Decimal:
-                    return DecimalLiteralElement.Parse(image, services);
-                default:
-                    throw new NotImplementedException($"Data type '{Enum.GetName(realType.GetType(), realType)}' not" +
-                        " implemented.");
-            }
+                RealLiteralDataType.Double => DoubleLiteralElement.Parse(image, services),
+                RealLiteralDataType.Single => SingleLiteralElement.Parse(image, services),
+                RealLiteralDataType.Decimal => DecimalLiteralElement.Parse(image, services),
+                _ => throw new NotImplementedException($"Data type '{Enum.GetName(realType.GetType(), realType)}' not" +
+                                        " implemented."),
+            };
         }
 
         private static DoubleLiteralElement CreateDouble(string image, IServiceProvider services)

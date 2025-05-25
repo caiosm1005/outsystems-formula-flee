@@ -64,42 +64,20 @@ namespace Flee.ExpressionElements.Base.Literals
         {
             OpCode ldcOpcode = default;
 
-            switch (value)
+            ldcOpcode = value switch
             {
-                case 0:
-                    ldcOpcode = OpCodes.Ldc_I4_0;
-                    break;
-                case 1:
-                    ldcOpcode = OpCodes.Ldc_I4_1;
-                    break;
-                case 2:
-                    ldcOpcode = OpCodes.Ldc_I4_2;
-                    break;
-                case 3:
-                    ldcOpcode = OpCodes.Ldc_I4_3;
-                    break;
-                case 4:
-                    ldcOpcode = OpCodes.Ldc_I4_4;
-                    break;
-                case 5:
-                    ldcOpcode = OpCodes.Ldc_I4_5;
-                    break;
-                case 6:
-                    ldcOpcode = OpCodes.Ldc_I4_6;
-                    break;
-                case 7:
-                    ldcOpcode = OpCodes.Ldc_I4_7;
-                    break;
-                case 8:
-                    ldcOpcode = OpCodes.Ldc_I4_8;
-                    break;
-                case -1:
-                    ldcOpcode = OpCodes.Ldc_I4_M1;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be between -1 and 8 inclusive.");
-            }
-
+                0 => OpCodes.Ldc_I4_0,
+                1 => OpCodes.Ldc_I4_1,
+                2 => OpCodes.Ldc_I4_2,
+                3 => OpCodes.Ldc_I4_3,
+                4 => OpCodes.Ldc_I4_4,
+                5 => OpCodes.Ldc_I4_5,
+                6 => OpCodes.Ldc_I4_6,
+                7 => OpCodes.Ldc_I4_7,
+                8 => OpCodes.Ldc_I4_8,
+                -1 => OpCodes.Ldc_I4_M1,
+                _ => throw new ArgumentOutOfRangeException(nameof(value), "Value must be between -1 and 8 inclusive."),
+            };
             ilg.Emit(ldcOpcode);
         }
     }

@@ -107,16 +107,14 @@ namespace Flee.Parsing
         private Element ParseFact()
         {
             var elem = ParseAtom();
-            switch (PeekChar(0))
+            return PeekChar(0) switch
             {
-                case '?':
-                case '*':
-                case '+':
-                case '{':
-                    return ParseAtomModifier(elem);
-                default:
-                    return elem;
-            }
+                '?' or
+                '*' or
+                '+' or
+                '{' => ParseAtomModifier(elem),
+                _ => elem,
+            };
         }
 
         private Element ParseAtom()
@@ -281,19 +279,16 @@ namespace Flee.Parsing
 
         private Element ParseChar()
         {
-            switch (PeekChar(0))
+            return PeekChar(0) switch
             {
-                case '\\':
-                    return ParseEscapeChar();
-                case '^':
-                case '$':
-                    throw new RegExpException(
-                        RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
-                        _pos,
-                        _pattern);
-                default:
-                    return new StringElement(FixChar(ReadChar()));
-            }
+                '\\' => ParseEscapeChar(),
+                '^' or
+                '$' => throw new RegExpException(
+                                        RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
+                                        _pos,
+                                        _pattern),
+                _ => new StringElement(FixChar(ReadChar())),
+            };
         }
 
         private Element ParseEscapeChar()

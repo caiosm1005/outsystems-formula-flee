@@ -111,17 +111,15 @@ namespace Flee.Parsing
 
         private bool InDotSet(char c)
         {
-            switch (c)
+            return c switch
             {
-                case '\n':
-                case '\r':
-                case '\u0085':
-                case '\u2028':
-                case '\u2029':
-                    return false;
-                default:
-                    return true;
-            }
+                '\n' or
+                '\r' or
+                '\u0085' or
+                '\u2028' or
+                '\u2029' => false,
+                _ => true,
+            };
         }
 
         private bool InDigitSet(char c)
@@ -131,18 +129,16 @@ namespace Flee.Parsing
 
         private bool InWhitespaceSet(char c)
         {
-            switch (c)
+            return c switch
             {
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\f':
-                case '\r':
-                case (char)11:
-                    return true;
-                default:
-                    return false;
-            }
+                ' ' or
+                '\t' or
+                '\n' or
+                '\f' or
+                '\r' or
+                (char)11 => true,
+                _ => false,
+            };
         }
 
         private bool InWordSet(char c)

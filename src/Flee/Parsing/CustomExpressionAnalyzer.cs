@@ -426,24 +426,19 @@ namespace Flee.Parsing
             // Remove leading \
             s = s.Remove(0, 1);
 
-            switch (s)
+            return s switch
             {
-                case "\\":
-                case "\"":
-                case "'":
-                    return s;
-                case "t":
-                case "T":
-                    return Convert.ToChar(9).ToString();
-                case "n":
-                case "N":
-                    return Convert.ToChar(10).ToString();
-                case "r":
-                case "R":
-                    return Convert.ToChar(13).ToString();
-                default:
-                    throw new InvalidOperationException($"Unrecognized escape sequence '{s}'.");
-            }
+                "\\" or
+                "\"" or
+                "'" => s,
+                "t" or
+                "T" => Convert.ToChar(9).ToString(),
+                "n" or
+                "N" => Convert.ToChar(10).ToString(),
+                "r" or
+                "R" => Convert.ToChar(13).ToString(),
+                _ => throw new InvalidOperationException($"Unrecognized escape sequence '{s}'."),
+            };
         }
 
         private string UnicodeEscapeMatcher(Match m)

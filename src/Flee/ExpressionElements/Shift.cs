@@ -29,23 +29,18 @@ namespace Flee.ExpressionElements
 
             TypeCode tc = Type.GetTypeCode(leftType);
 
-            switch (tc)
+            return tc switch
             {
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                    return typeof(Int32);
-                case TypeCode.UInt32:
-                    return typeof(UInt32);
-                case TypeCode.Int64:
-                    return typeof(Int64);
-                case TypeCode.UInt64:
-                    return typeof(UInt64);
-                default:
-                    throw new NotImplementedException($"Left shift operand for type {leftType.Name} not implemented.");
-            }
+                TypeCode.Byte or
+                TypeCode.SByte or
+                TypeCode.Int16 or
+                TypeCode.UInt16 or
+                TypeCode.Int32 => typeof(Int32),
+                TypeCode.UInt32 => typeof(UInt32),
+                TypeCode.Int64 => typeof(Int64),
+                TypeCode.UInt64 => typeof(UInt64),
+                _ => throw new NotImplementedException($"Left shift operand for type {leftType.Name} not implemented."),
+            };
         }
 
         protected override void GetOperation(object operation)

@@ -84,24 +84,17 @@ namespace Flee.ExpressionElements
 
         private static string GetCompareOperatorName(LogicalCompareOperation op)
         {
-            switch (op)
+            return op switch
             {
-                case LogicalCompareOperation.Equal:
-                    return "Equality";
-                case LogicalCompareOperation.NotEqual:
-                    return "Inequality";
-                case LogicalCompareOperation.GreaterThan:
-                    return "GreaterThan";
-                case LogicalCompareOperation.LessThan:
-                    return "LessThan";
-                case LogicalCompareOperation.GreaterThanOrEqual:
-                    return "GreaterThanOrEqual";
-                case LogicalCompareOperation.LessThanOrEqual:
-                    return "LessThanOrEqual";
-                default:
-                    throw new NotImplementedException($"Compare type {Enum.GetName(op.GetType(), op)}" +
-                        " not implemented.");
-            }
+                LogicalCompareOperation.Equal => "Equality",
+                LogicalCompareOperation.NotEqual => "Inequality",
+                LogicalCompareOperation.GreaterThan => "GreaterThan",
+                LogicalCompareOperation.LessThan => "LessThan",
+                LogicalCompareOperation.GreaterThanOrEqual => "GreaterThanOrEqual",
+                LogicalCompareOperation.LessThanOrEqual => "LessThanOrEqual",
+                _ => throw new NotImplementedException($"Compare type {Enum.GetName(op.GetType(), op)} not" +
+                                        " implemented."),
+            };
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)

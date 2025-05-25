@@ -536,17 +536,15 @@
 
         public override bool Match(char ch)
         {
-            switch (ch)
+            return ch switch
             {
-                case '\n':
-                case '\r':
-                case '\u0085':
-                case '\u2028':
-                case '\u2029':
-                    return false;
-                default:
-                    return true;
-            }
+                '\n' or
+                '\r' or
+                '\u0085' or
+                '\u2028' or
+                '\u2029' => false,
+                _ => true,
+            };
         }
 
         public override NFATransition Copy(NFAState state)
@@ -626,18 +624,16 @@
 
         public override bool Match(char ch)
         {
-            switch (ch)
+            return ch switch
             {
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\f':
-                case '\r':
-                case (char)11:
-                    return true;
-                default:
-                    return false;
-            }
+                ' ' or
+                '\t' or
+                '\n' or
+                '\f' or
+                '\r' or
+                (char)11 => true,
+                _ => false,
+            };
         }
 
         public override NFATransition Copy(NFAState state)
@@ -665,18 +661,16 @@
 
         public override bool Match(char ch)
         {
-            switch (ch)
+            return ch switch
             {
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\f':
-                case '\r':
-                case (char)11:
-                    return false;
-                default:
-                    return true;
-            }
+                ' ' or
+                '\t' or
+                '\n' or
+                '\f' or
+                '\r' or
+                (char)11 => false,
+                _ => true,
+            };
         }
 
         public override NFATransition Copy(NFAState state)
