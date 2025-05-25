@@ -334,8 +334,10 @@ namespace Flee.Parsing
             {
                 node.AddValue(childValues[0]);
             }
-            
-            throw new InvalidOperationException($"Wrong number of children ({childValues.Count}).");
+            else
+            {
+                throw new InvalidOperationException($"Wrong number of children ({childValues.Count}).");
+            }
         }
 
         public override Node ExitReal(Token node)

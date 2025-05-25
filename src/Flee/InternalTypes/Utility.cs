@@ -38,12 +38,15 @@ namespace Flee.InternalTypes
             {
                 ilg.Emit(OpCodes.Stloc_S, Convert.ToByte(index));
             }
-            else if (index >= 65535)
+            else
             {
-                throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} too large (cannot exceed 65535).");
-            }
+                if (index >= 65535)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} too large (cannot exceed 65535).");
+                }
 
-            ilg.Emit(OpCodes.Stloc, unchecked((short)Convert.ToUInt16(index)));
+                ilg.Emit(OpCodes.Stloc, unchecked((short)Convert.ToUInt16(index)));
+            }
         }
 
         public static void EmitLoadLocal(FleeILGenerator ilg, int index)
@@ -76,12 +79,15 @@ namespace Flee.InternalTypes
             {
                 ilg.Emit(OpCodes.Ldloc_S, Convert.ToByte(index));
             }
-            else if (index >= 65535)
+            else
             {
-                throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} too large (cannot exceed 65535).");
+                if (index >= 65535)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} too large (cannot exceed 65535).");
+                }
+                
+                ilg.Emit(OpCodes.Ldloc, unchecked((short)Convert.ToUInt16(index)));
             }
-            
-            ilg.Emit(OpCodes.Ldloc, unchecked((short)Convert.ToUInt16(index)));
         }
 
         public static void EmitLoadLocalAddress(FleeILGenerator ilg, int index)

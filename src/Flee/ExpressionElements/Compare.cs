@@ -134,8 +134,10 @@ namespace Flee.ExpressionElements
             {
                 EmitRegular(ilg, services);
             }
-        
-            throw new InvalidOperationException("Unknown operand types for comparison.");
+            else
+            {
+                throw new InvalidOperationException("Unknown operand types for comparison.");
+            }
         }
 
         private void EmitRegular(FleeILGenerator ilg, IServiceProvider services)
