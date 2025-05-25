@@ -288,9 +288,7 @@ namespace Flee.ExpressionElements.MemberElements
                     elem = new StringLiteralElement((string)value);
                     break;
                 default:
-                    elem = null;
-                    Debug.Fail("Unsupported constant type");
-                    break;
+                    throw new NotImplementedException($"Unsupported constant type '{t.FullName}'.");
             }
 
             elem.Emit(ilg, services);

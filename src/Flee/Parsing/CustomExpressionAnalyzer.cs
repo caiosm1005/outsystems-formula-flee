@@ -335,10 +335,8 @@ namespace Flee.Parsing
             {
                 node.AddValue(childValues[0]);
             }
-            else
-            {
-                Debug.Assert(false, "wrong number of chilren");
-            }
+            
+            throw new InvalidOperationException($"Wrong number of children ({childValues.Count}).");
         }
 
         public override Node ExitReal(Token node)
@@ -445,8 +443,7 @@ namespace Flee.Parsing
                 case "R":
                     return Convert.ToChar(13).ToString();
                 default:
-                    Debug.Assert(false, "Unrecognized escape sequence");
-                    return null;
+                    throw new InvalidOperationException($"Unrecognized escape sequence '{s}'.");
             }
         }
 

@@ -68,8 +68,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
                     ilg.Emit(OpCodes.Or);
                     break;
                 default:
-                    Debug.Fail("Unknown op type");
-                    break;
+                    throw new NotImplementedException($"Operation '{Enum.GetName(op.GetType(), op)}' not implemented.");
             }
         }
 

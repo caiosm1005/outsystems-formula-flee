@@ -174,7 +174,10 @@ namespace Flee.ExpressionElements
 
         private bool IsValidExplicitReferenceCast(Type sourceType, Type destType)
         {
-            Debug.Assert(sourceType.IsValueType == false & destType.IsValueType == false, "expecting reference types");
+            if (sourceType.IsValueType || destType.IsValueType)
+            {
+                throw new InvalidOperationException("Expecting reference types.");
+            }
 
             if (ReferenceEquals(sourceType, typeof(object)))
             {
@@ -228,12 +231,9 @@ namespace Flee.ExpressionElements
                 // From any interface-type S to any interface-type T, provided S is not derived from T
                 return ImplementsInterface(sourceType, destType) == false;
             }
-            else
-            {
-                Debug.Assert(false, "unknown explicit cast");
-            }
-
-            return false;
+            
+            throw new InvalidOperationException($"Unknown explicit reference cast between types: {sourceType.FullName}"+
+                $" and {destType.FullName}.");
         }
 
         private static bool IsBaseType(Type target, Type potentialBase)
@@ -312,7 +312,11 @@ namespace Flee.ExpressionElements
             }
             else if (sourceType.IsValueType == true)
             {
-                Debug.Assert(destType.IsValueType == false, "expecting reference type");
+                if (destType.IsValueType)
+                {
+                    throw new InvalidOperationException("Expecting reference type as destination when boxing a value" +
+                        " type.");
+                }
                 ilg.Emit(OpCodes.Box, sourceType);
             }
             else
@@ -480,8 +484,7 @@ namespace Flee.ExpressionElements
                     op = OpCodes.Conv_R4;
                     break;
                 default:
-                    Debug.Assert(false, "Unknown cast dest type");
-                    break;
+                    throw new InvalidOperationException($"Unknown cast destination type {destType.FullName}.");
             }
 
             if (op.Equals(OpCodes.Nop) == false)

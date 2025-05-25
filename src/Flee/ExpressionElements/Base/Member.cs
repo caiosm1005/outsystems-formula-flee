@@ -222,8 +222,7 @@ namespace Flee.ExpressionElements.Base
                 return mi.IsPublic;
             }
 
-            Debug.Assert(false, "unknown member type");
-            return false;
+            throw new InvalidOperationException($"Unknown member type {member.GetType().FullName}.");
         }
 
         protected MemberInfo[] GetAccessibleMembers(MemberInfo[] members)

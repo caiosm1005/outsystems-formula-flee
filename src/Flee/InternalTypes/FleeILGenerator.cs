@@ -245,16 +245,21 @@ namespace Flee.InternalTypes
                 case OperandType.InlineR:
                     return 8;
                 default:
-                    Debug.Fail("Unknown operand type");
-                    break;
+                    throw new NotImplementedException($"Operand type '{Enum.GetName(operand.GetType(), operand)}' not" +
+                        " implemented.");
             }
             return 0;
         }
 
-        [Conditional("DEBUG")]
         public void ValidateLength()
         {
-            Debug.Assert(Length == ILGeneratorLength, "ILGenerator length mismatch");
+#if DEBUG
+            if (Length != ILGeneratorLength)
+            {
+                throw new InvalidOperationException($"ILGenerator length mismatch. Expected: {Length}, got:" +
+                    $" {ILGeneratorLength}.");
+            }
+#endif
         }
 
         public int Length => _myLength;

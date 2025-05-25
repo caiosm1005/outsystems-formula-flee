@@ -33,7 +33,12 @@ namespace Flee.ExpressionElements.Base
             {
                 string key = GetType().Name;
                 string value = FleeResourceManager.Instance.GetElementNameString(key);
-                Debug.Assert(value != null, $"Element name for '{key}' not in resource file");
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new InvalidOperationException($"Element name for '{key}' not found in resource file.");
+                }
+                
                 return value;
             }
         }

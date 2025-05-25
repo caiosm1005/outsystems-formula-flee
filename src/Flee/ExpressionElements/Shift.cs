@@ -45,8 +45,7 @@ namespace Flee.ExpressionElements
                 case TypeCode.UInt64:
                     return typeof(UInt64);
                 default:
-                    Debug.Assert(false, "unknown left shift operand");
-                    return null;
+                    throw new NotImplementedException($"Left shift operand for type {leftType.Name} not implemented.");
             }
         }
 
@@ -83,8 +82,8 @@ namespace Flee.ExpressionElements
                     ilg.Emit(OpCodes.Ldc_I4_S, Convert.ToSByte(0x3f));
                     break;
                 default:
-                    Debug.Assert(false, "unknown left shift operand");
-                    break;
+                    throw new NotImplementedException($"Left shift operand for type {MyLeftChild.ResultType.Name} not" +
+                        " implemented.");
             }
 
             ilg.Emit(OpCodes.And);
@@ -126,8 +125,8 @@ namespace Flee.ExpressionElements
                     }
                     break;
                 default:
-                    Debug.Assert(false, "unknown left shift operand");
-                    break;
+                    throw new NotImplementedException($"Left shift operand for type {MyLeftChild.ResultType.Name} not" +
+                        " implemented.");
             }
 
             ilg.Emit(op);

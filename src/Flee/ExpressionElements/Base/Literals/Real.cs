@@ -77,8 +77,8 @@ namespace Flee.ExpressionElements.Base.Literals
                 case RealLiteralDataType.Decimal:
                     return DecimalLiteralElement.Parse(image, services);
                 default:
-                    Debug.Fail("Unknown value");
-                    return null;
+                    throw new NotImplementedException($"Data type '{Enum.GetName(realType.GetType(), realType)}' not" +
+                        " implemented.");
             }
         }
 

@@ -99,8 +99,8 @@ namespace Flee.ExpressionElements
                 case BinaryArithmeticOperation.Power:
                     return "Exponent";
                 default:
-                    Debug.Assert(false, "unknown operator type");
-                    return null;
+                    throw new NotImplementedException($"Binary arithmetic operation {Enum.GetName(op.GetType(), op)}" +
+                        " not implemented.");
             }
         }
 
@@ -213,8 +213,8 @@ namespace Flee.ExpressionElements
                     EmitPower(ilg, emitOverflow, unsigned);
                     break;
                 default:
-                    Debug.Fail("Unknown op type");
-                    break;
+                    throw new NotImplementedException($"Arithmetic operation '{Enum.GetName(op.GetType(), op)}' is not"+
+                        " implemented.");
             }
         }
 
@@ -295,7 +295,10 @@ namespace Flee.ExpressionElements
             }
             else
             {
-                Debug.Assert(IsEitherChildOfType(typeof(string)), "one child must be a string");
+                if (!IsEitherChildOfType(typeof(string)))
+                {
+                    throw new InvalidOperationException("One child must be a string.");
+                }
                 concatMethodInfo = _ourObjectConcatMethodInfo;
                 argType = typeof(object);
             }

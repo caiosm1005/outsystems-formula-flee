@@ -39,16 +39,21 @@ namespace Flee.InternalTypes
             {
                 ilg.Emit(OpCodes.Stloc_S, Convert.ToByte(index));
             }
-            else
+            else if (index >= 65535)
             {
-                Debug.Assert(index < 65535, "local index too large");
-                ilg.Emit(OpCodes.Stloc, unchecked((short)Convert.ToUInt16(index)));
+                throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} too large (cannot exceed 65535).");
             }
+
+            ilg.Emit(OpCodes.Stloc, unchecked((short)Convert.ToUInt16(index)));
         }
 
         public static void EmitLoadLocal(FleeILGenerator ilg, int index)
         {
-            Debug.Assert(index >= 0, "Invalid index");
+            if (index < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"Invalid index {index} (must be equal to or" +
+                    " greater than 0.");
+            }
 
             if (index >= 0 & index <= 3)
             {
@@ -72,16 +77,21 @@ namespace Flee.InternalTypes
             {
                 ilg.Emit(OpCodes.Ldloc_S, Convert.ToByte(index));
             }
-            else
+            else if (index >= 65535)
             {
-                Debug.Assert(index < 65535, "local index too large");
-                ilg.Emit(OpCodes.Ldloc, unchecked((short)Convert.ToUInt16(index)));
+                throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} too large (cannot exceed 65535).");
             }
+            
+            ilg.Emit(OpCodes.Ldloc, unchecked((short)Convert.ToUInt16(index)));
         }
 
         public static void EmitLoadLocalAddress(FleeILGenerator ilg, int index)
         {
-            Debug.Assert(index >= 0, "Invalid index");
+            if (index < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"Invalid index {index} (must be equal to or" +
+                    " greater than 0.");
+            }
 
             if (index <= byte.MaxValue)
             {
@@ -245,17 +255,17 @@ namespace Flee.InternalTypes
                 } while (members.Length == 0 && (destType = destType.BaseType) != null);
             }
 
-            Debug.Assert(members.Length < 2, "Multiple overloaded operators found");
-
             if (members.Length == 0)
             {
                 // No match
                 return null;
             }
-            else
+            else if (members.Length > 1)
             {
-                return (MethodInfo)members[0];
+                throw new InvalidOperationException("Multiple overloaded operators found.");
             }
+            
+            return (MethodInfo)members[0];
         }
 
         /// <summary>

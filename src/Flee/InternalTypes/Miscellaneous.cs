@@ -217,7 +217,12 @@ namespace Flee.InternalTypes
         /// <returns></returns>
         private float ComputeScoreExtensionMethodInternal(ParameterInfo[] parameters, Type[] argTypes)
         {
-            Debug.Assert(parameters.Length == argTypes.Length + 1);
+            if (parameters.Length != argTypes.Length + 1)
+            {
+                throw new InvalidOperationException("Argument count mismatch in extension method call. Parameters" +
+                    $" count: {parameters.Length}, argument types count: {argTypes.Length}.");
+            }
+
             int sum = 0;
 
             for (int i = 0; i <= argTypes.Length - 1; i++)
@@ -244,7 +249,12 @@ namespace Flee.InternalTypes
 
         private static int ComputeSum(ParameterInfo[] parameters, Type[] argTypes)
         {
-            Debug.Assert(parameters.Length == argTypes.Length);
+            if (parameters.Length != argTypes.Length)
+            {
+                throw new InvalidOperationException("Argument count mismatch in extension method call. Parameters" +
+                    $" count: {parameters.Length}, argument types count: {argTypes.Length}.");
+            }
+
             int sum = 0;
 
             for (int i = 0; i <= parameters.Length - 1; i++)
@@ -398,7 +408,11 @@ namespace Flee.InternalTypes
 
         private static bool AreValidExtensionMethodArgumentsForParameters(Type[] argTypes, ParameterInfo[] parameters, MemberElement previous, ExpressionContext context)
         {
-            Debug.Assert(argTypes.Length + 1 == parameters.Length);
+            if (parameters.Length != argTypes.Length + 1)
+            {
+                throw new InvalidOperationException("Argument count mismatch in extension method call. Parameters" +
+                    $" count: {parameters.Length}, argument types count: {argTypes.Length}.");
+            }
 
             if (previous != null)
             {
@@ -428,7 +442,12 @@ namespace Flee.InternalTypes
 
         private static bool AreValidArgumentsForParameters(Type[] argTypes, ParameterInfo[] parameters)
         {
-            Debug.Assert(argTypes.Length == parameters.Length);
+            if (parameters.Length != argTypes.Length)
+            {
+                throw new InvalidOperationException("Argument count mismatch in extension method call. Parameters" +
+                    $" count: {parameters.Length}, argument types count: {argTypes.Length}.");
+            }
+
             // Match if every given argument is implicitly convertible to the method's corresponding parameter
             for (int i = 0; i <= argTypes.Length - 1; i++)
             {
@@ -542,9 +561,9 @@ namespace Flee.InternalTypes
 
         public T GetValue<T>(string name)
         {
-            if (_myProperties.TryGetValue(name, out object value) == false)
+            if (!_myProperties.TryGetValue(name, out object value))
             {
-                Debug.Fail($"Unknown property '{name}'");
+                throw new KeyNotFoundException($"Unknown property '{name}'.");
             }
             return (T)value;
         }

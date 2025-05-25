@@ -346,8 +346,17 @@ namespace Flee.ExpressionElements.MemberElements
 
         private void EmitExtensionFunctionInternal(ParameterInfo[] parameters, ExpressionElement[] elements, FleeILGenerator ilg, IServiceProvider services)
         {
-            Debug.Assert(parameters.Length == elements.Length + 1, "argument count mismatch");
-            if (MyPrevious == null) EmitLoadOwner(ilg);
+            if (parameters.Length != elements.Length + 1)
+            {
+                throw new InvalidOperationException("Argument count mismatch in extension method call. Parameters" +
+                    $" count: {parameters.Length}, elements count: {elements.Length}.");
+            }
+
+            if (MyPrevious == null)
+            {
+                EmitLoadOwner(ilg);
+            }
+            
             //Emit each element and any required conversions to the actual parameter type
             for (int i = 1; i <= parameters.Length - 1; i++)
             {
@@ -355,7 +364,11 @@ namespace Flee.ExpressionElements.MemberElements
                 ParameterInfo pi = parameters[i];
                 element.Emit(ilg, services);
                 bool success = ImplicitConverter.EmitImplicitConvert(element.ResultType, pi.ParameterType, ilg);
-                Debug.Assert(success, "conversion failed");
+
+                if (!success)
+                {
+                    throw new InvalidOperationException("Conversion failed in extension function emission call.");
+                }
             }
         }
 
@@ -368,7 +381,11 @@ namespace Flee.ExpressionElements.MemberElements
         /// <param name="services"></param>
         private void EmitRegularFunctionInternal(ParameterInfo[] parameters, ExpressionElement[] elements, FleeILGenerator ilg, IServiceProvider services)
         {
-            Debug.Assert(parameters.Length == elements.Length, "argument count mismatch");
+            if (parameters.Length != elements.Length)
+            {
+                throw new InvalidOperationException("Argument count mismatch in extension method call. Parameters" +
+                    $" count: {parameters.Length}, elements count: {elements.Length}.");
+            }
 
             // Emit each element and any required conversions to the actual parameter type
             for (int i = 0; i <= parameters.Length - 1; i++)
@@ -377,7 +394,11 @@ namespace Flee.ExpressionElements.MemberElements
                 ParameterInfo pi = parameters[i];
                 element.Emit(ilg, services);
                 bool success = ImplicitConverter.EmitImplicitConvert(element.ResultType, pi.ParameterType, ilg);
-                Debug.Assert(success, "conversion failed");
+                
+                if (!success)
+                {
+                    throw new InvalidOperationException("Conversion failed in regular function emission call.");
+                }
             }
         }
 

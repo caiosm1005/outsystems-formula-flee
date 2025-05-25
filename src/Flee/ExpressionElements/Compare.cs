@@ -100,8 +100,8 @@ namespace Flee.ExpressionElements
                 case LogicalCompareOperation.LessThanOrEqual:
                     return "LessThanOrEqual";
                 default:
-                    Debug.Assert(false, "unknown compare type");
-                    return null;
+                    throw new NotImplementedException($"Compare type {Enum.GetName(op.GetType(), op)}" +
+                        " not implemented.");
             }
         }
 
@@ -142,10 +142,8 @@ namespace Flee.ExpressionElements
             {
                 EmitRegular(ilg, services);
             }
-            else
-            {
-                Debug.Fail("unknown operand types");
-            }
+        
+            throw new InvalidOperationException("Unknown operand types for comparison.");
         }
 
         private void EmitRegular(FleeILGenerator ilg, IServiceProvider services)
@@ -226,8 +224,7 @@ namespace Flee.ExpressionElements
                     ilg.Emit(OpCodes.Ceq);
                     break;
                 default:
-                    Debug.Fail("Unknown op type");
-                    break;
+                    throw new NotImplementedException($"Operation '{Enum.GetName(op.GetType(), op)}' not implemented.");
             }
         }
 

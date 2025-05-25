@@ -479,7 +479,7 @@ namespace Flee.InternalTypes
                 {
                     // Reference type -> value type
                     // Reference types can never be implicitly converted to value types
-                    Debug.Fail("No implicit conversion from reference type to value type");
+                    throw new InvalidOperationException("No implicit conversion from reference type to value type.");
                 }
                 else
                 {
@@ -525,8 +525,7 @@ namespace Flee.InternalTypes
                 case TypeCode.DateTime:
                     return 13;
                 default:
-                    Debug.Assert(false, "unknown value type");
-                    return -1;
+                    throw new NotImplementedException($"Type {t.Name} not implemented.");
             }
         }
 

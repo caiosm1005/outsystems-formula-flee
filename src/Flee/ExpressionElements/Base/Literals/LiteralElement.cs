@@ -98,8 +98,7 @@ namespace Flee.ExpressionElements.Base.Literals
                     ldcOpcode = OpCodes.Ldc_I4_M1;
                     break;
                 default:
-                    Debug.Assert(false, "value out of range");
-                    break;
+                    throw new ArgumentOutOfRangeException(nameof(value), "Value must be between -1 and 8 inclusive.");
             }
 
             ilg.Emit(ldcOpcode);
