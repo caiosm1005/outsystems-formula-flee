@@ -21,11 +21,14 @@ namespace Flee.ExpressionElements.Literals.Integral
             _myIsMinValue = true;
         }
 
-        public static Int32LiteralElement TryCreate(string image, bool isHex, bool negated)
+        public static bool TryCreate(string image, bool isHex, bool negated, out Int32LiteralElement result)
         {
+            result = null;
+
             if (negated == true & image == MinValue)
             {
-                return new Int32LiteralElement();
+                result = new Int32LiteralElement();
+                return true;
             }
             else if (isHex == true)
             {
@@ -33,26 +36,28 @@ namespace Flee.ExpressionElements.Literals.Integral
                 // Since Int32.TryParse will succeed for a string like 0xFFFFFFFF we have to do some special handling
                 if (Int32.TryParse(image, NumberStyles.AllowHexSpecifier, null, out int value) == false)
                 {
-                    return null;
+                    return false;
                 }
                 else if (value >= 0 & value <= Int32.MaxValue)
                 {
-                    return new Int32LiteralElement(value);
+                    result = new Int32LiteralElement(value);
+                    return true;
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
             }
             else
             {
                 if (Int32.TryParse(image, out int value) == true)
                 {
-                    return new Int32LiteralElement(value);
+                    result = new Int32LiteralElement(value);
+                    return true;
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
             }
         }

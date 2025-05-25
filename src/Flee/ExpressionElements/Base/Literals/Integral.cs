@@ -45,30 +45,20 @@ namespace Flee.ExpressionElements.Base.Literals
                 image = image.Remove(0, 2);
             }
 
-
-            LiteralElement constant;
             if (hasSuffix == false)
             {
                 // If the literal has no suffix, it has the first of these types in which its value can be represented: int, uint, long, ulong.
-                constant = Int32LiteralElement.TryCreate(image, isHex, negated);
-
-                if (constant != null)
+                if (Int32LiteralElement.TryCreate(image, isHex, negated, out Int32LiteralElement constantInt32))
                 {
-                    return constant;
+                    return constantInt32;
                 }
-
-                constant = UInt32LiteralElement.TryCreate(image, numStyles);
-
-                if (constant != null)
+                else if (UInt32LiteralElement.TryCreate(image, numStyles, out UInt32LiteralElement constantUInt32))
                 {
-                    return constant;
+                    return constantUInt32;
                 }
-
-                constant = Int64LiteralElement.TryCreate(image, isHex, negated);
-
-                if (constant != null)
+                else if (Int64LiteralElement.TryCreate(image, isHex, negated, out Int64LiteralElement constantInt64))
                 {
-                    return constant;
+                    return constantInt64;
                 }
 
                 return new UInt64LiteralElement(image, numStyles);
@@ -78,32 +68,24 @@ namespace Flee.ExpressionElements.Base.Literals
                 image = image.Remove(image.Length - 1);
                 // If the literal is suffixed by U or u, it has the first of these types in which its value can be represented: uint, ulong.
 
-                constant = UInt32LiteralElement.TryCreate(image, numStyles);
-
-                if (constant != null)
+                if (UInt32LiteralElement.TryCreate(image, numStyles, out UInt32LiteralElement constant))
                 {
                     return constant;
                 }
-                else
-                {
+                
                     return new UInt64LiteralElement(image, numStyles);
-                }
             }
             else if (hasLSuffix == true)
             {
                 // If the literal is suffixed by L or l, it has the first of these types in which its value can be represented: long, ulong.
                 image = image.Remove(image.Length - 1);
 
-                constant = Int64LiteralElement.TryCreate(image, isHex, negated);
-
-                if (constant != null)
+                if (Int64LiteralElement.TryCreate(image, isHex, negated, out Int64LiteralElement constant))
                 {
                     return constant;
                 }
-                else
-                {
+
                     return new UInt64LiteralElement(image, numStyles);
-                }
             }
             else
             {

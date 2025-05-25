@@ -22,36 +22,41 @@ namespace Flee.ExpressionElements.Literals.Integral
             _myIsMinValue = true;
         }
 
-        public static Int64LiteralElement TryCreate(string image, bool isHex, bool negated)
+        public static bool TryCreate(string image, bool isHex, bool negated, out Int64LiteralElement result)
         {
+            result = null;
+
             if (negated == true & image == MinValue)
             {
-                return new Int64LiteralElement();
+                result = new Int64LiteralElement();
+                return true;
             }
             else if (isHex == true)
             {
                 if (Int64.TryParse(image, NumberStyles.AllowHexSpecifier, null, out long value) == false)
                 {
-                    return null;
+                    return false;
                 }
                 else if (value >= 0 & value <= Int64.MaxValue)
                 {
-                    return new Int64LiteralElement(value);
+                    result = new Int64LiteralElement(value);
+                    return true;
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
             }
             else
             {
                 if (Int64.TryParse(image, out long value) == true)
                 {
-                    return new Int64LiteralElement(value);
+                    result = new Int64LiteralElement(value);
+                    return true;
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
             }
         }

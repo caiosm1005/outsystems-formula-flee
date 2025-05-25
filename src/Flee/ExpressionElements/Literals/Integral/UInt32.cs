@@ -11,15 +11,18 @@ namespace Flee.ExpressionElements.Literals.Integral
             _myValue = value;
         }
 
-        public static UInt32LiteralElement TryCreate(string image, System.Globalization.NumberStyles ns)
+        public static bool TryCreate(string image, System.Globalization.NumberStyles ns, out UInt32LiteralElement result)
         {
-            if (UInt32.TryParse(image, ns, null, out uint value) == true)
+            result = null;
+
+            if (UInt32.TryParse(image, ns, null, out uint value))
             {
-                return new UInt32LiteralElement(value);
+                result = new UInt32LiteralElement(value);
+                return true;
             }
             else
             {
-                return null;
+                return false;
             }
         }
 
