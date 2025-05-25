@@ -119,8 +119,7 @@ namespace Flee.PublicTypes
 
         static internal Type GetBuiltinType(string name)
         {
-            Type t;
-            if (OurBuiltinTypeMap.TryGetValue(name, out t) == true)
+            if (OurBuiltinTypeMap.TryGetValue(name, out Type t) == true)
             {
                 return t;
             }

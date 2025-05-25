@@ -77,8 +77,7 @@ namespace Flee.PublicTypes
 
         internal Type GetVariableTypeInternal(string name)
         {
-            IVariable value;
-            bool success = _myVariables.TryGetValue(name, out value);
+            bool success = _myVariables.TryGetValue(name, out IVariable value);
 
             if (success == true)
             {
@@ -93,8 +92,7 @@ namespace Flee.PublicTypes
 
         private IVariable GetVariable(string name, bool throwOnNotFound)
         {
-            IVariable value;
-            bool success = _myVariables.TryGetValue(name, out value);
+            bool success = _myVariables.TryGetValue(name, out IVariable value);
 
             if (success == false & throwOnNotFound == true)
             {
@@ -376,8 +374,7 @@ namespace Flee.PublicTypes
             }
             set
             {
-                IVariable v;
-                if (_myVariables.TryGetValue(name, out v) == true)
+                if (_myVariables.TryGetValue(name, out IVariable v) == true)
                 {
                     v.ValueAsObject = value;
                 }

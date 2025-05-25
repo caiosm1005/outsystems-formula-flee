@@ -542,8 +542,7 @@ namespace Flee.InternalTypes
 
         public T GetValue<T>(string name)
         {
-            object value;
-            if (_myProperties.TryGetValue(name, out value) == false)
+            if (_myProperties.TryGetValue(name, out object value) == false)
             {
                 Debug.Fail($"Unknown property '{name}'");
             }

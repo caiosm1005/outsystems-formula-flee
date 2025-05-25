@@ -65,8 +65,7 @@ namespace Flee.CalcEngine.PublicTypes
                 throw new ArgumentNullException(nameof(tailName));
             }
 
-            ExpressionResultPair pair;
-            _myNameNodeMap.TryGetValue(tailName, out pair);
+            _myNameNodeMap.TryGetValue(tailName, out ExpressionResultPair pair);
             return pair;
         }
 

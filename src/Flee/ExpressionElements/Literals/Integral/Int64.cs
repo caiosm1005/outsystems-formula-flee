@@ -30,8 +30,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             else if (isHex == true)
             {
-                long value;
-                if (Int64.TryParse(image, NumberStyles.AllowHexSpecifier, null, out value) == false)
+                if (Int64.TryParse(image, NumberStyles.AllowHexSpecifier, null, out long value) == false)
                 {
                     return null;
                 }
@@ -46,8 +45,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             else
             {
-                long value;
-                if (Int64.TryParse(image, out value) == true)
+                if (Int64.TryParse(image, out long value) == true)
                 {
                     return new Int64LiteralElement(value);
                 }
