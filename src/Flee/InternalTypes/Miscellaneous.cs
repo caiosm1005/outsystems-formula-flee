@@ -25,38 +25,6 @@ namespace System.Diagnostics.CodeAnalysis
 
 namespace Flee.InternalTypes
 {
-    internal enum BinaryArithmeticOperation
-    {
-        Add,
-        Subtract,
-        Multiply,
-        Divide,
-        Mod,
-        Power
-    }
-
-    internal enum LogicalCompareOperation
-    {
-        LessThan,
-        GreaterThan,
-        Equal,
-        NotEqual,
-        LessThanOrEqual,
-        GreaterThanOrEqual
-    }
-
-    internal enum AndOrOperation
-    {
-        And,
-        Or
-    }
-
-    internal enum ShiftOperation
-    {
-        LeftShift,
-        RightShift
-    }
-
     internal delegate T ExpressionEvaluator<T>(object owner, ExpressionContext context, VariableCollection variables);
 
     internal abstract class CustomBinder : Binder

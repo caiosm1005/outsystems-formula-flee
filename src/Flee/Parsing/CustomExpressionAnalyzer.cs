@@ -557,7 +557,7 @@ namespace Flee.Parsing
 
         public override Node ExitXor(Token node)
         {
-            node.AddValue("Xor");
+            node.AddValue(XorOperation.Xor);
             return node;
         }
 

@@ -8,82 +8,68 @@ using Flee.PublicTypes;
 
 namespace Flee.ExpressionElements
 {
-    internal class ArithmeticElement : BinaryExpressionElement
+    /// <summary>
+    /// Represents a binary arithmetic operation element within the Flee expression engine.
+    /// </summary>
+    internal enum BinaryArithmeticOperation
     {
-        private static MethodInfo _ourPowerMethodInfo;
-        private static MethodInfo _ourStringConcatMethodInfo;
-        private static MethodInfo _ourObjectConcatMethodInfo;
-        private BinaryArithmeticOperation _myOperation;
+        Add,
+        Subtract,
+        Multiply,
+        Divide,
+        Mod,
+        Power
+    }
 
-        public ArithmeticElement()
+    /// <summary>
+    /// Represents a binary arithmetic operation (such as addition, subtraction, multiplication, division, modulus, or
+    /// power) within the Flee expression engine. Handles emitting IL for arithmetic operations, including overflow
+    /// checking, unsigned arithmetic, string concatenation, and operator overloading.
+    /// </summary>
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="ArithmeticElement"/> class with the specified operands and
+    /// operation.
+    /// </remarks>
+    /// <param name="leftChild">The left operand.</param>
+    /// <param name="rightChild">The right operand.</param>
+    /// <param name="operation">The arithmetic operation to perform.</param>
+    internal class ArithmeticElement(ExpressionElement leftChild, ExpressionElement rightChild,
+        BinaryArithmeticOperation operation) : BinaryExpressionElement(leftChild, rightChild, operation)
+    {
+        /// <summary>
+        /// MethodInfo for Math.Pow, used for exponentiation.
+        /// </summary>
+        private static readonly MethodInfo _ourPowerMethodInfo = typeof(Math).GetMethod(nameof(Math.Pow),
+            BindingFlags.Public | BindingFlags.Static);
+
+        /// <summary>
+        /// MethodInfo for string.Concat(string, string), used for string concatenation.
+        /// </summary>
+        private static readonly MethodInfo _ourStringConcatMethodInfo = typeof(string).GetMethod(nameof(string.Concat),
+            [typeof(string), typeof(string)], null);
+
+        /// <summary>
+        /// MethodInfo for string.Concat(object, object), used for object concatenation.
+        /// </summary>
+        private static readonly MethodInfo _ourObjectConcatMethodInfo = typeof(string).GetMethod(nameof(string.Concat),
+            [typeof(object), typeof(object)], null);
+
+        /// <summary>
+        /// Determines if the specified type is an unsigned integer type (uint or ulong).
+        /// </summary>
+        private static bool IsUnsignedForArithmetic(Type t)
         {
-            _ourPowerMethodInfo = typeof(Math).GetMethod(nameof(Math.Pow), BindingFlags.Public | BindingFlags.Static);
-            _ourStringConcatMethodInfo = typeof(string).GetMethod(nameof(string.Concat), [typeof(string), typeof(string)], null);
-            _ourObjectConcatMethodInfo = typeof(string).GetMethod(nameof(string.Concat), [typeof(object), typeof(object)], null);
+            return ReferenceEquals(t, typeof(uint)) || ReferenceEquals(t, typeof(ulong));
         }
 
-        protected override void GetOperation(object operation)
+        /// <summary>
+        /// Gets the name of the overloaded operator function for a given arithmetic operation.
+        /// </summary>
+        /// <param name="operation">The binary arithmetic operation.</param>
+        /// <returns>The operator function name as a string.</returns>
+        private static string GetOverloadedOperatorFunctionName(BinaryArithmeticOperation operation)
         {
-            _myOperation = (BinaryArithmeticOperation)operation;
-        }
-
-        protected override Type GetResultType(Type leftType, Type rightType)
-        {
-            Type binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
-            MethodInfo overloadedMethod = GetOverloadedArithmeticOperator();
-
-            // Is an overloaded operator defined for our left and right children?
-            if (overloadedMethod != null)
-            {
-                // Yes, so use its return type
-                return overloadedMethod.ReturnType;
-            }
-            else if (binaryResultType != null)
-            {
-                // Operands are primitive types.  Return computed result type unless we are doing a power operation
-                if (_myOperation == BinaryArithmeticOperation.Power)
-                {
-                    return GetPowerResultType(leftType, rightType, binaryResultType);
-                }
-                else
-                {
-                    return binaryResultType;
-                }
-            }
-            else if (IsEitherChildOfType(typeof(string)) == true & (_myOperation == BinaryArithmeticOperation.Add))
-            {
-                // String concatenation
-                return typeof(string);
-            }
-            else
-            {
-                // Invalid types
-                return null;
-            }
-        }
-
-        private Type GetPowerResultType(Type leftType, Type rightType, Type binaryResultType)
-        {
-            if (IsOptimizablePower == true)
-            {
-                return leftType;
-            }
-            else
-            {
-                return typeof(double);
-            }
-        }
-
-        private MethodInfo GetOverloadedArithmeticOperator()
-        {
-            // Get the name of the operator
-            string name = GetOverloadedOperatorFunctionName(_myOperation);
-            return GetOverloadedBinaryOperator(name, _myOperation);
-        }
-
-        private static string GetOverloadedOperatorFunctionName(BinaryArithmeticOperation op)
-        {
-            return op switch
+            return operation switch
             {
                 BinaryArithmeticOperation.Add => "Addition",
                 BinaryArithmeticOperation.Subtract => "Subtraction",
@@ -91,63 +77,78 @@ namespace Flee.ExpressionElements
                 BinaryArithmeticOperation.Divide => "Division",
                 BinaryArithmeticOperation.Mod => "Modulus",
                 BinaryArithmeticOperation.Power => "Exponent",
-                _ => throw new NotImplementedException($"Binary arithmetic operation {Enum.GetName(op.GetType(), op)}" +
-                                        " not implemented."),
+                _ => throw new NotImplementedException($"Binary arithmetic operation" +
+                    $" {Enum.GetName(operation.GetType(), operation)} not implemented."),
             };
         }
 
-        public override void Emit(FleeILGenerator ilg, IServiceProvider services)
+        /// <summary>
+        /// Determines if the power operation can be optimized (i.e., right operand is a non-negative integer literal).
+        /// </summary>
+        private bool IsOptimizablePower
         {
-            MethodInfo overloadedMethod = GetOverloadedArithmeticOperator();
+            get
+            {
+                if ((BinaryArithmeticOperation)_operation != BinaryArithmeticOperation.Power ||
+                    _rightChild is not Int32LiteralElement)
+                {
+                    return false;
+                }
 
-            if (overloadedMethod != null)
-            {
-                // Emit a call to an overloaded operator
-                EmitOverloadedOperatorCall(overloadedMethod, ilg, services);
-            }
-            else if (IsEitherChildOfType(typeof(string)) == true)
-            {
-                // One of our operands is a string so emit a concatenation
-                EmitStringConcat(ilg, services);
-            }
-            else
-            {
-                // Emit a regular arithmetic operation			
-                EmitArithmeticOperation(_myOperation, ilg, services);
-            }
-        }
+                var rightChild = (Int32LiteralElement)_rightChild;
 
-        private static bool IsUnsignedForArithmetic(Type t)
-        {
-            return ReferenceEquals(t, typeof(UInt32)) | ReferenceEquals(t, typeof(UInt64));
+                return rightChild.Value >= 0;
+            }
         }
 
         /// <summary>
-        /// Emit an arithmetic operation with handling for unsigned and checked contexts
+        /// Gets the result type for the power operation, which is either the left type (if optimizable) or double.
         /// </summary>
-        /// <param name="op"></param>
-        /// <param name="ilg"></param>
-        /// <param name="services"></param>
-        private void EmitArithmeticOperation(BinaryArithmeticOperation op, FleeILGenerator ilg, IServiceProvider services)
+        /// <param name="leftType">The type of the left operand.</param>
+        /// <returns>The result type for the power operation.</returns>
+        private Type GetPowerResultType(Type leftType) => IsOptimizablePower ? leftType : typeof(double);
+
+        /// <summary>
+        /// Attempts to resolve an overloaded operator method for the current arithmetic operation.
+        /// </summary>
+        /// <returns>The resolved MethodInfo, or null if not found.</returns>
+        private MethodInfo? GetOverloadedArithmeticOperator()
+        {
+            // Get the name of the operator
+            string name = GetOverloadedOperatorFunctionName((BinaryArithmeticOperation)_operation);
+            return GetOverloadedBinaryOperator(name, _operation);
+        }
+
+        /// <summary>
+        /// Emits IL for an arithmetic operation, handling unsigned and checked contexts.
+        /// </summary>
+        /// <param name="operation">The arithmetic operation to emit.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">A service provider for dependency resolution.</param>
+        private void EmitArithmeticOperation(BinaryArithmeticOperation operation, FleeILGenerator ilg,
+            IServiceProvider services)
         {
             ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
-            bool unsigned = IsUnsignedForArithmetic(MyLeftChild.ResultType) & IsUnsignedForArithmetic(MyRightChild.ResultType);
-            bool integral = Utility.IsIntegralType(MyLeftChild.ResultType) & Utility.IsIntegralType(MyRightChild.ResultType);
-            bool emitOverflow = integral & options.Checked;
 
-            EmitChildWithConvert(MyLeftChild, ResultType, ilg, services);
+            bool unsigned = IsUnsignedForArithmetic(_leftChild.ResultType) &&
+                IsUnsignedForArithmetic(_rightChild.ResultType);
+            bool integral = Utility.IsIntegralType(_leftChild.ResultType) &&
+                Utility.IsIntegralType(_rightChild.ResultType);
+            bool emitOverflow = integral && options.Checked;
 
-            if (IsOptimizablePower == false)
+            EmitChildWithConvert(_leftChild, ResultType, ilg, services);
+
+            if (!IsOptimizablePower)
             {
-                EmitChildWithConvert(MyRightChild, ResultType, ilg, services);
+                EmitChildWithConvert(_rightChild, ResultType, ilg, services);
             }
 
-            switch (op)
+            switch (operation)
             {
                 case BinaryArithmeticOperation.Add:
-                    if (emitOverflow == true)
+                    if (emitOverflow)
                     {
-                        if (unsigned == true)
+                        if (unsigned)
                         {
                             ilg.Emit(OpCodes.Add_Ovf_Un);
                         }
@@ -161,10 +162,11 @@ namespace Flee.ExpressionElements
                         ilg.Emit(OpCodes.Add);
                     }
                     break;
+
                 case BinaryArithmeticOperation.Subtract:
-                    if (emitOverflow == true)
+                    if (emitOverflow)
                     {
-                        if (unsigned == true)
+                        if (unsigned)
                         {
                             ilg.Emit(OpCodes.Sub_Ovf_Un);
                         }
@@ -178,11 +180,13 @@ namespace Flee.ExpressionElements
                         ilg.Emit(OpCodes.Sub);
                     }
                     break;
+
                 case BinaryArithmeticOperation.Multiply:
                     EmitMultiply(ilg, emitOverflow, unsigned);
                     break;
+
                 case BinaryArithmeticOperation.Divide:
-                    if (unsigned == true)
+                    if (unsigned)
                     {
                         ilg.Emit(OpCodes.Div_Un);
                     }
@@ -191,8 +195,9 @@ namespace Flee.ExpressionElements
                         ilg.Emit(OpCodes.Div);
                     }
                     break;
+
                 case BinaryArithmeticOperation.Mod:
-                    if (unsigned == true)
+                    if (unsigned)
                     {
                         ilg.Emit(OpCodes.Rem_Un);
                     }
@@ -201,18 +206,26 @@ namespace Flee.ExpressionElements
                         ilg.Emit(OpCodes.Rem);
                     }
                     break;
+
                 case BinaryArithmeticOperation.Power:
                     EmitPower(ilg, emitOverflow, unsigned);
                     break;
+
                 default:
-                    throw new NotImplementedException($"Arithmetic operation '{Enum.GetName(op.GetType(), op)}' is not"+
-                        " implemented.");
+                    throw new NotImplementedException("Arithmetic operation" +
+                        $" '{Enum.GetName(operation.GetType(), operation)}' is not implemented.");
             }
         }
 
+        /// <summary>
+        /// Emits IL for the power operation, using an optimized approach if possible.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="emitOverflow">Whether to check for overflow.</param>
+        /// <param name="unsigned">Whether the operation is unsigned.</param>
         private void EmitPower(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
         {
-            if (IsOptimizablePower == true)
+            if (IsOptimizablePower)
             {
                 EmitOptimizedPower(ilg, emitOverflow, unsigned);
             }
@@ -222,15 +235,21 @@ namespace Flee.ExpressionElements
             }
         }
 
+        /// <summary>
+        /// Emits IL for an optimized integer power operation (when the exponent is a non-negative integer literal).
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="emitOverflow">Whether to check for overflow.</param>
+        /// <param name="unsigned">Whether the operation is unsigned.</param>
         private void EmitOptimizedPower(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
         {
-            Int32LiteralElement right = (Int32LiteralElement)MyRightChild;
+            Int32LiteralElement right = (Int32LiteralElement)_rightChild;
 
             if (right.Value == 0)
             {
                 ilg.Emit(OpCodes.Pop);
                 LiteralElement.EmitLoad(1, ilg);
-                ImplicitConverter.EmitImplicitNumericConvert(typeof(Int32), MyLeftChild.ResultType, ilg);
+                ImplicitConverter.EmitImplicitNumericConvert(typeof(int), _leftChild.ResultType, ilg);
                 return;
             }
 
@@ -251,11 +270,17 @@ namespace Flee.ExpressionElements
             }
         }
 
+        /// <summary>
+        /// Emits IL for a multiplication operation, handling overflow and unsigned contexts.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="emitOverflow">Whether to check for overflow.</param>
+        /// <param name="unsigned">Whether the operation is unsigned.</param>
         private void EmitMultiply(FleeILGenerator ilg, bool emitOverflow, bool unsigned)
         {
-            if (emitOverflow == true)
+            if (emitOverflow)
             {
-                if (unsigned == true)
+                if (unsigned)
                 {
                     ilg.Emit(OpCodes.Mul_Ovf_Un);
                 }
@@ -271,16 +296,17 @@ namespace Flee.ExpressionElements
         }
 
         /// <summary>
-        /// Emit a string concatenation
+        /// Emits IL for string concatenation using the appropriate overload of string.Concat.
         /// </summary>
-        /// <param name="ilg"></param>
-        /// <param name="services"></param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">A service provider for dependency resolution.</param>
         private void EmitStringConcat(FleeILGenerator ilg, IServiceProvider services)
         {
             Type argType;
             MethodInfo concatMethodInfo;
+
             // Pick the most specific concat method
-            if (AreBothChildrenOfType(typeof(string)) == true)
+            if (AreBothChildrenOfType(typeof(string)))
             {
                 concatMethodInfo = _ourStringConcatMethodInfo;
                 argType = typeof(string);
@@ -296,25 +322,80 @@ namespace Flee.ExpressionElements
             }
 
             // Emit the operands and call the function
-            MyLeftChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, argType, ilg);
-            MyRightChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(MyRightChild.ResultType, argType, ilg);
+            _leftChild.Emit(ilg, services);
+            ImplicitConverter.EmitImplicitConvert(_leftChild.ResultType, argType, ilg);
+            _rightChild.Emit(ilg, services);
+            ImplicitConverter.EmitImplicitConvert(_rightChild.ResultType, argType, ilg);
             ilg.Emit(OpCodes.Call, concatMethodInfo);
         }
 
-        private bool IsOptimizablePower
+        /// <summary>
+        /// Resolves the result type for the arithmetic operation, considering overloaded operators, primitive types,
+        /// and string concatenation.
+        /// </summary>
+        /// <param name="leftType">The type of the left operand.</param>
+        /// <param name="rightType">The type of the right operand.</param>
+        /// <returns>The result type, or null if the operation is not defined for the given types.</returns>
+        protected override Type? ResolveResultType(Type leftType, Type rightType)
         {
-            get
+            Type? binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
+            MethodInfo? overloadedMethod = GetOverloadedArithmeticOperator();
+
+            // Is an overloaded operator defined for our left and right children?
+            if (overloadedMethod != null)
             {
-                if (_myOperation != BinaryArithmeticOperation.Power || MyRightChild is not Int32LiteralElement)
+                // Yes, so use its return type
+                return overloadedMethod.ReturnType;
+            }
+            else if (binaryResultType != null)
+            {
+                // Operands are primitive types.  Return computed result type unless we are doing a power operation
+                if ((BinaryArithmeticOperation)_operation == BinaryArithmeticOperation.Power)
                 {
-                    return false;
+                    return GetPowerResultType(leftType);
                 }
+                else
+                {
+                    return binaryResultType;
+                }
+            }
+            else if (IsEitherChildOfType(typeof(string)) &&
+                (BinaryArithmeticOperation)_operation == BinaryArithmeticOperation.Add)
+            {
+                // String concatenation
+                return typeof(string);
+            }
+            else
+            {
+                // Invalid types
+                return null;
+            }
+        }
 
-                Int32LiteralElement right = (Int32LiteralElement)MyRightChild;
+        /// <summary>
+        /// Emits the IL code for this arithmetic expression element, handling overloaded operators, string
+        /// concatenation, and standard arithmetic operations.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">A service provider for dependency resolution.</param>
+        public override void Emit(FleeILGenerator ilg, IServiceProvider services)
+        {
+            MethodInfo? overloadedMethod = GetOverloadedArithmeticOperator();
 
-                return right?.Value >= 0;
+            if (overloadedMethod != null)
+            {
+                // Emit a call to an overloaded operator
+                EmitOverloadedOperatorCall(overloadedMethod, ilg, services);
+            }
+            else if (IsEitherChildOfType(typeof(string)))
+            {
+                // One of our operands is a string so emit a concatenation
+                EmitStringConcat(ilg, services);
+            }
+            else
+            {
+                // Emit a regular arithmetic operation			
+                EmitArithmeticOperation((BinaryArithmeticOperation)_operation, ilg, services);
             }
         }
     }
