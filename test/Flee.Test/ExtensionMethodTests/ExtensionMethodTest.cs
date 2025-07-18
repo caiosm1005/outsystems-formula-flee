@@ -2,6 +2,7 @@
 
 namespace Flee.ExtensionMethodTests
 {
+    using System.Globalization;
     using Flee.ExtensionMethodTests.ExtensionMethodTestData;
     using global::Flee.PublicTypes;
     using global::Flee.Test.Infrastructure;
@@ -87,6 +88,7 @@ namespace Flee.ExtensionMethodTests
         {
             var expressionOwner = new TestData { Id = "World" };
             var context = new ExpressionContext(expressionOwner);
+            context.Options.ParseCulture = CultureInfo.InvariantCulture;
             context.Imports.AddType(typeof(TestDataExtensions));
             return context;
         }
