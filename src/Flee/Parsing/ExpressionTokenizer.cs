@@ -236,7 +236,7 @@ namespace Flee.Parsing {
             pattern = new TokenPattern((int) ExpressionConstants.IDENTIFIER,
                                        "IDENTIFIER",
                                        TokenPattern.PatternType.REGEXP,
-                                       "[@a-z_]\\w*");
+                                       "@@?\\w+|[a-z_]\\w*");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) ExpressionConstants.DATE,
