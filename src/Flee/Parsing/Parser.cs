@@ -4,7 +4,9 @@ using System.Text;
 namespace Flee.Parsing
 {
 
-    [Obsolete(" A base parser class. This class provides the standard parser interface, as well as token handling.")]
+    /// <summary>
+    /// A base parser class. This class provides the standard parser interface, as well as token handling.
+    /// </summary>
     internal abstract class Parser
     {
         private bool _initialized;

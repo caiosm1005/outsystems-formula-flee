@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using Flee.PublicTypes;
 using NUnit.Framework;
 
@@ -583,6 +584,7 @@ AND NOT
             int iterations = 10;
 
             var context = new ExpressionContext();
+            context.Options.ParseCulture = CultureInfo.InvariantCulture;
             context.Variables.ResolveVariableType += Variables_ResolveVariableType;
             context.Variables.ResolveVariableValue += Variables_ResolveVariableValue;
             Stopwatch sw;

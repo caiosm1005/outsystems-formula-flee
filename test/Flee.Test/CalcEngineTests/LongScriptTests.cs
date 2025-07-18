@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Flee.CalcEngine.PublicTypes;
 using Flee.PublicTypes;
 using NUnit.Framework;
@@ -28,6 +29,7 @@ namespace Flee.Test.CalcEngineTests
         {
             var engine = new SimpleCalcEngine();
             var context = new ExpressionContext();
+			context.Options.ParseCulture = CultureInfo.InvariantCulture;
 			context.Imports.AddType(typeof(TestFunction));
 			context.Imports.AddType(typeof(Math));
 			//            context.Imports.AddType(typeof(Math), "math");
