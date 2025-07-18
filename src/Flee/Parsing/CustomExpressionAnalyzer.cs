@@ -50,12 +50,6 @@ namespace Flee.Parsing
             return node;
         }
 
-        public override Node ExitXorExpression(Production node)
-        {
-            this.AddBinaryOp(node, typeof(XorElement));
-            return node;
-        }
-
         public override Node ExitOrExpression(Production node)
         {
             this.AddBinaryOp(node, typeof(AndOrElement));
@@ -79,13 +73,6 @@ namespace Flee.Parsing
             this.AddBinaryOp(node, typeof(CompareElement));
             return node;
         }
-
-        public override Node ExitShiftExpression(Production node)
-        {
-            this.AddBinaryOp(node, typeof(ShiftElement));
-            return node;
-        }
-
         public override Node ExitAdditiveExpression(Production node)
         {
             this.AddBinaryOp(node, typeof(ArithmeticElement));
@@ -93,12 +80,6 @@ namespace Flee.Parsing
         }
 
         public override Node ExitMultiplicativeExpression(Production node)
-        {
-            this.AddBinaryOp(node, typeof(ArithmeticElement));
-            return node;
-        }
-
-        public override Node ExitPowerExpression(Production node)
         {
             this.AddBinaryOp(node, typeof(ArithmeticElement));
             return node;
@@ -358,13 +339,6 @@ namespace Flee.Parsing
             return node;
         }
 
-        public override Node ExitHexliteral(Token node)
-        {
-            LiteralElement element = IntegralLiteralElement.Create(node.Image, true, _myInUnaryNegate, _myServices);
-            node.AddValue(element);
-            return node;
-        }
-
         public override Node ExitBooleanLiteralExpression(Production node)
         {
             this.AddFirstChildValue(node);
@@ -391,26 +365,26 @@ namespace Flee.Parsing
             return node;
         }
 
-        public override Node ExitCharLiteral(Token node)
+        public override Node ExitDate(Token node)
         {
-            string s = this.DoEscapes(node.Image);
-            node.AddValue(new CharLiteralElement(s[0]));
+            string image = node.Image.Substring(1, node.Image.Length - 2);
+            DateLiteralElement element = new(image);
+            node.AddValue(element);
             return node;
         }
 
         public override Node ExitDatetime(Token node)
         {
-            ExpressionContext context = (ExpressionContext)_myServices.GetService(typeof(ExpressionContext));
             string image = node.Image.Substring(1, node.Image.Length - 2);
-            DateTimeLiteralElement element = new DateTimeLiteralElement(image, context);
+            DateTimeLiteralElement element = new(image);
             node.AddValue(element);
             return node;
         }
 
-        public override Node ExitTimespan(Token node)
+        public override Node ExitTime(Token node)
         {
-            string image = node.Image.Substring(2, node.Image.Length - 3);
-            TimeSpanLiteralElement element = new TimeSpanLiteralElement(image);
+            string image = node.Image.Substring(1, node.Image.Length - 2);
+            TimeLiteralElement element = new(image);
             node.AddValue(element);
             return node;
         }
@@ -467,12 +441,6 @@ namespace Flee.Parsing
             return node;
         }
 
-        public override Node ExitNullLiteral(Token node)
-        {
-            node.AddValue(new NullLiteralElement());
-            return node;
-        }
-
         public override Node ExitArrayBraces(Token node)
         {
             node.AddValue("[]");
@@ -500,18 +468,6 @@ namespace Flee.Parsing
         public override Node ExitDiv(Token node)
         {
             node.AddValue(BinaryArithmeticOperation.Divide);
-            return node;
-        }
-
-        public override Node ExitMod(Token node)
-        {
-            node.AddValue(BinaryArithmeticOperation.Mod);
-            return node;
-        }
-
-        public override Node ExitPower(Token node)
-        {
-            node.AddValue(BinaryArithmeticOperation.Power);
             return node;
         }
 
@@ -563,27 +519,9 @@ namespace Flee.Parsing
             return node;
         }
 
-        public override Node ExitXor(Token node)
-        {
-            node.AddValue("Xor");
-            return node;
-        }
-
         public override Node ExitNot(Token node)
         {
             node.AddValue(string.Empty);
-            return node;
-        }
-
-        public override Node ExitLeftShift(Token node)
-        {
-            node.AddValue(ShiftOperation.LeftShift);
-            return node;
-        }
-
-        public override Node ExitRightShift(Token node)
-        {
-            node.AddValue(ShiftOperation.RightShift);
             return node;
         }
 

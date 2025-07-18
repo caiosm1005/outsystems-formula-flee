@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using System.Reflection.Emit;
 using Flee.InternalTypes;
 using Flee.PublicTypes;
@@ -58,6 +59,11 @@ namespace Flee.ExpressionElements.Base.Literals
             {
                 ilg.Emit(OpCodes.Ldc_I4_0);
             }
+        }
+
+        protected static void EmitNewObj(ConstructorInfo ci, FleeILGenerator ilg)
+        {
+            ilg.Emit(OpCodes.Newobj, ci);
         }
 
         private static void EmitSuperShort(Int32 value, FleeILGenerator ilg)

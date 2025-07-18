@@ -138,7 +138,7 @@ namespace Flee.PublicTypes
             lock (_mySyncRoot)
             {
                 FleeExpressionAnalyzer analyzer = new FleeExpressionAnalyzer();
-                ExpressionParser parser = new ExpressionParser(TextReader.Null, analyzer, this);
+                ExpressionParser parser = new ExpressionParser(TextReader.Null, analyzer);
                 _myProperties.SetValue("ExpressionParser", parser);
             }
         }
@@ -207,9 +207,8 @@ namespace Flee.PublicTypes
 
                 if (parser == null)
                 {
-                    IdentifierAnalyzer analyzer = new IdentifierAnalyzer();
-                    parser = new ExpressionParser(System.IO.TextReader.Null, analyzer, this);
-                    //parser = new ExpressionParser(System.IO.StringReader.Null, analyzer, this);
+                    FleeExpressionAnalyzer analyzer = new();
+                    parser = new ExpressionParser(TextReader.Null, analyzer);
                     _myProperties.SetValue("IdentifierParser", parser);
                 }
 

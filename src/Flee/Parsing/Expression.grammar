@@ -1,9 +1,9 @@
-﻿%header%
+%header%
 
-DESCRIPTION = "A general expression grammar"
-AUTHOR      = "Eugene Ciloci"
+DESCRIPTION = "Original expression grammar by Eugene Ciloci, modified for the Formula OutSystems component"
+AUTHOR      = "Caio Santana Magalhães"
 VERSION     = "1.0"
-DATE        = "May 2007"
+DATE        = "Jul 2025"
 
 GRAMMARTYPE = "LL"
 CASESENSITIVE = "False"
@@ -24,59 +24,52 @@ LICENSE = "This library is free software; you can redistribute it and/or
            MA 02111-1307, USA.
 "
 
-COPYRIGHT = "Copyright (c) 2007 Eugene Ciloci"
+COPYRIGHT = "Copyright (c) 2025 Caio Santana Magalhães"
 
 %tokens%
-ADD				= "+"
-SUB             = "-"
-MUL                          = "*"
-DIV                          = "/"
-POWER                        = "^"
-MOD			     = "%"
-LEFT_PAREN                   = "("
-RIGHT_PAREN                  = ")"
-LEFT_BRACE                   = "["
-RIGHT_BRACE                  = "]"
-EQ			     = "="
-LT			     = "<"
-GT			     = ">"
-LTE                          = "<="
-GTE                          = ">="
-NE                           = "<>"
-AND			     = "AND"
-OR                           = "OR"
-XOR                          = "XOR"
-NOT			     = "NOT"
-IN			     = "in"
-DOT			     = "."
-ARGUMENT_SEPARATOR	     = ","
-ARRAY_BRACES		     = "[]"
-LEFT_SHIFT		     = "<<"
-RIGHT_SHIFT		     = ">>"
-WHITESPACE                   = <<\s+>> %ignore%
+ADD                 = "+"
+SUB                 = "-"
+MUL                 = "*"
+DIV                 = "/"
+LEFT_PAREN          = "("
+RIGHT_PAREN         = ")"
+LEFT_BRACE          = "["
+RIGHT_BRACE         = "]"
+EQ                  = "="
+LT                  = "<"
+GT                  = ">"
+LTE                 = "<="
+GTE                 = ">="
+NE                  = "<>"
+AND                 = "AND"
+OR                  = "OR"
+NOT                 = "NOT"
+IN                  = "IN"
+DOT                 = "."
+ARGUMENT_SEPARATOR  = ","
+ARRAY_BRACES        = "[]"
+SINGLE_LINE_COMMENT = <<//.*>> %ignore%
+MULTI_LINE_COMMENT  = <</\*([^*]|\*+[^*/])*\*+/>> %ignore%
+WHITESPACE          = <<\s+>> %ignore%
 
 // Primitives
-INTEGER			     = <<\d+(u|l|ul|lu)?>>
-REAL                         = <<\d*\.\d+([e][+-]\d{1,3})?f?>>
-STRING_LITERAL		     = <<"([^"\r\n\\]|\\u[0-9a-f]{4}|\\[\\"'trn])*">>
-CHAR_LITERAL		     = <<'([^'\r\n\\]|\\u[0-9a-f]{4}|\\[\\"'trn])'>>
-TRUE			     = "True"
-FALSE			     = "False"
-IDENTIFIER		     = <<[a-z_]\w*>>
-HEX_LITERAL		     = <<0x[0-9a-f]+(u|l|ul|lu)?>>
-NULL_LITERAL        = "null"
-TIMESPAN			= <<##(\d+\.)?\d{2}:\d{2}(:\d{2}(\.\d{1,7})?)?#>>
-DATETIME			= <<#[^#]+#>>
+INTEGER             = <<\d+(u|l|ul|lu)?>>
+REAL                = <<\d*\.\d+([e][+-]\d{1,3})?f?>>
+STRING_LITERAL      = <<"([^"\r\n\\]|\\u[0-9a-f]{4}|\\[\\"'trn])*">>
+TRUE                = "True"
+FALSE               = "False"
+IDENTIFIER          = <<[@a-z_]\w*>>
+DATE                = <<#\d{4}-\d?\d-\d?\d#>>
+DATETIME            = <<#\d{4}-\d?\d-\d?\d \d?\d:\d?\d:\d?\d#>>
+TIME                = <<#\d?\d:\d?\d:\d?\d#>>
 
 // Special Functions
-IF			     = "if"
-CAST			     = "cast"
+IF                  = "if"
+CAST                = "cast"
 
 %productions%
 
-Expression = XorExpression;
-
-XorExpression = OrExpression {XOR OrExpression};
+Expression = OrExpression;
 
 OrExpression = AndExpression {OR AndExpression};
 
@@ -88,23 +81,19 @@ InExpression = CompareExpression [IN InTargetExpression];
 
 InTargetExpression = FieldPropertyExpression | InListTargetExpression;
 
-InListTargetExpression = "(" ArgumentList ")";
+InListTargetExpression = LEFT_PAREN ArgumentList RIGHT_PAREN;
 
-CompareExpression = ShiftExpression {("=" | ">" | "<" | ">=" | "<=" | "<>") ShiftExpression};
+CompareExpression = AdditiveExpression {(EQ | GT | LT | GTE | LTE | NE) AdditiveExpression};
 
-ShiftExpression = AdditiveExpression {("<<" | ">>") AdditiveExpression};
+AdditiveExpression = MultiplicativeExpression {(ADD | SUB) MultiplicativeExpression};
 
-AdditiveExpression = MultiplicativeExpression {("+" | "-") MultiplicativeExpression};
+MultiplicativeExpression = NegateExpression {(MUL | DIV) NegateExpression};
 
-MultiplicativeExpression = PowerExpression {("*" | "/" | "%") PowerExpression};
-
-PowerExpression = NegateExpression {"^" NegateExpression};
-
-NegateExpression = "-"? MemberExpression;
+NegateExpression = SUB? MemberExpression;
 
 MemberExpression = BasicExpression {MemberAccessExpression | IndexExpression};
 
-MemberAccessExpression = "." MemberFunctionExpression;
+MemberAccessExpression = DOT MemberFunctionExpression;
 
 BasicExpression = LiteralExpression | ExpressionGroup | MemberFunctionExpression | SpecialFunctionExpression;
 
@@ -114,20 +103,20 @@ FieldPropertyExpression = IDENTIFIER;
 
 SpecialFunctionExpression = IfExpression | CastExpression;
 
-IfExpression = IF "(" Expression "," Expression "," Expression ")";
+IfExpression = IF LEFT_PAREN Expression ARGUMENT_SEPARATOR Expression ARGUMENT_SEPARATOR Expression RIGHT_PAREN;
 
-CastExpression = CAST "(" Expression "," CastTypeExpression ")";
+CastExpression = CAST LEFT_PAREN Expression ARGUMENT_SEPARATOR CastTypeExpression RIGHT_PAREN;
 
-CastTypeExpression = IDENTIFIER {"." IDENTIFIER} ARRAY_BRACES?;
+CastTypeExpression = IDENTIFIER {DOT IDENTIFIER} ARRAY_BRACES?;
 
-IndexExpression = "[" ArgumentList "]";
+IndexExpression = LEFT_BRACE ArgumentList RIGHT_BRACE;
 
-FunctionCallExpression = IDENTIFIER "(" ArgumentList? ")";
+FunctionCallExpression = IDENTIFIER LEFT_PAREN ArgumentList? RIGHT_PAREN;
 
-ArgumentList = Expression {"," Expression};
+ArgumentList = Expression {ARGUMENT_SEPARATOR Expression};
 
-LiteralExpression = INTEGER | REAL | STRING_LITERAL | BooleanLiteralExpression | HEX_LITERAL | CHAR_LITERAL | NULL_LITERAL | DATETIME | TIMESPAN;
+LiteralExpression = INTEGER | REAL | STRING_LITERAL | BooleanLiteralExpression | DATE | DATETIME | TIME;
 
 BooleanLiteralExpression = TRUE | FALSE;
 
-ExpressionGroup = "(" Expression ")";
+ExpressionGroup = LEFT_PAREN Expression RIGHT_PAREN;

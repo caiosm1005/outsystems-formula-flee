@@ -123,7 +123,7 @@ IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 2.1))))";
 1 = 2 AND (16 * 24 + 8 * -1 < 0 OR 1+1+1+1+1+1+1+1+1+1+1+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3*3-900 < 0)
 AND (5*6+13-6*9-3+1+2+3+4+5+6+7+8 = 5+6+7+8+9+1+2+3+4+5+6+1+2+3+4+9-48 OR 6+5+2+3+8+1*9-6*7 > 8+6*4*(15-6)*(5+1+1+1+1+1+1+1+2))
 ,
-1.4d,2.6d
+1.4,2.6
 )";
 			var expr = _myEngine.Context.CompileDynamic(script);
 			var result = expr.Evaluate();
@@ -159,20 +159,6 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 				gotex = true;
             }
 			Assert.IsTrue(gotex);
-		}
-
-
-		[Test]
-		public void SeparatorExpressionParse()
-		{
-			var context = new ExpressionContext();
-			context.Options.ParseCulture = new System.Globalization.CultureInfo("de-DE");
-			context.ParserOptions.RecreateParser();
-			var script = @"If(2,57 < 2,7; 3,57; 1000)";
-			var expr = context.CompileDynamic(script);
-			var result = expr.Evaluate();
-
-			Assert.AreEqual(3.57d, result);
 		}
 
 
