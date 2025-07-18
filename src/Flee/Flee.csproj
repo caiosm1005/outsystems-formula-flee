@@ -1,25 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>Flee</AssemblyName>
-        <AssemblyTitle>Flee</AssemblyTitle>
-        <Description>Flee is Fast Lightweight Expression Evaluator.</Description>
-        <Copyright>Copyright © 2022 Flee Contributors</Copyright>
-        <Authors>Flee Contributors</Authors>
-        <Company>Flee</Company>
-        <Product>Flee</Product>
-        <TargetFrameworks>net8.0;net7.0;net6.0;net5.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+        <AssemblyName>OSFormulaFleeV5</AssemblyName>
+        <AssemblyTitle>OSFormulaFleeV5</AssemblyTitle>
+        <Description>Custom implementation of Flee (Fast Lightweight Expression Evaluator) for the Formula OutSystems Forge component.</Description>
+        <Copyright>Copyright © 2025 Formula/Flee Contributors</Copyright>
+        <Authors>Formula/Flee Contributors</Authors>
+        <Company>Formula/Flee</Company>
+        <Product>Formula/Flee</Product>
+        <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageVersion>2.0.0</PackageVersion>
-        <Title>Flee</Title>
-        <PackageProjectUrl>https://github.com/mparlak/Flee</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/mparlak/Flee</PackageLicenseUrl>
-        <PackageIconUrl>https://github.com/mparlak/Flee</PackageIconUrl>
-        <RepositoryUrl>https://github.com/mparlak/Flee</RepositoryUrl>
-        <PackageTags>flee,expression evaluator,Expression Evaluator for c#</PackageTags>
+        <LangVersion>10.0</LangVersion>
+        <Title>Formula/Flee</Title>
     </PropertyGroup>
 
     <ItemGroup>
