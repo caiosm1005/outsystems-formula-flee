@@ -9,6 +9,8 @@ using IDynamicExpression = Flee.PublicTypes.IDynamicExpression;
 
 namespace Flee.InternalTypes
 {
+    internal delegate T ExpressionEvaluator<T>(object owner, ExpressionContext context, VariableCollection variables);
+
     internal class Expression<T> : IExpression, IDynamicExpression, IGenericExpression<T>
     {
         private readonly string _myExpression;
