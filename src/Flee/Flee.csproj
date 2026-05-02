@@ -16,7 +16,7 @@
         <PackageVersion>2.0.0</PackageVersion>
         <Title>Flee</Title>
         <PackageProjectUrl>https://github.com/mparlak/Flee</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/mparlak/Flee</PackageLicenseUrl>
+        <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
         <PackageIconUrl>https://github.com/mparlak/Flee</PackageIconUrl>
         <RepositoryUrl>https://github.com/mparlak/Flee</RepositoryUrl>
         <PackageTags>flee,expression evaluator,Expression Evaluator for c#</PackageTags>
