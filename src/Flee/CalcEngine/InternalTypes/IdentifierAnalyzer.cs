@@ -79,7 +79,7 @@ namespace Flee.CalcEngine.InternalTypes
 
         public ICollection<string> GetIdentifiers(ExpressionContext context)
         {
-            Dictionary<string, object> dict = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, object?> dict = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
             ExpressionImports ei = context.Imports;
 
             foreach (string identifier in _myIdentifiers.Values)

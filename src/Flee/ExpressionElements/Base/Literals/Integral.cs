@@ -26,7 +26,7 @@ namespace Flee.ExpressionElements.Base.Literals
             if (isHex == false)
             {
                 // Create a real element if required
-                LiteralElement realElement = RealLiteralElement.CreateFromInteger(image, services);
+                LiteralElement? realElement = RealLiteralElement.CreateFromInteger(image, services);
 
                 if ((realElement != null))
                 {
@@ -39,7 +39,7 @@ namespace Flee.ExpressionElements.Base.Literals
             bool hasUlSuffix = image.EndsWith("ul", comparison) | image.EndsWith("lu", comparison);
             bool hasSuffix = hasUSuffix | hasLSuffix | hasUlSuffix;
 
-            LiteralElement constant = default(LiteralElement);
+            LiteralElement? constant;
             System.Globalization.NumberStyles numStyles = NumberStyles.Integer;
 
             if (isHex == true)

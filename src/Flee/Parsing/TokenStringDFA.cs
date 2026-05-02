@@ -55,10 +55,10 @@ namespace Flee.Parsing
             state.Value = value;
         }
 
-        public TokenPattern Match(ReaderBuffer buffer, bool caseInsensitive)
+        public TokenPattern? Match(ReaderBuffer buffer, bool caseInsensitive)
         {
-            TokenPattern result = null;
-            DFAState state;
+            TokenPattern? result = null;
+            DFAState? state;
             int pos = 0;
 
             var c = buffer.Peek(0);
@@ -129,7 +129,7 @@ namespace Flee.Parsing
     internal class DFAState
     {
 
-        internal TokenPattern Value;
+        internal TokenPattern? Value;
 
         internal TransitionTree Tree = new TransitionTree();
     }
@@ -138,15 +138,15 @@ namespace Flee.Parsing
     internal class TransitionTree
     {
         private char _value = '\0';
-        private DFAState _state;
-        private TransitionTree _left;
-        private TransitionTree _right;
+        private DFAState? _state;
+        private TransitionTree? _left;
+        private TransitionTree? _right;
 
         public TransitionTree()
         {
         }
 
-        public DFAState Find(char c, bool lowerCase)
+        public DFAState? Find(char c, bool lowerCase)
         {
             if (lowerCase)
             {
@@ -158,11 +158,11 @@ namespace Flee.Parsing
             }
             else if (_value > c)
             {
-                return _left.Find(c, false);
+                return _left!.Find(c, false);
             }
             else
             {
-                return _right.Find(c, false);
+                return _right!.Find(c, false);
             }
         }
 
@@ -181,11 +181,11 @@ namespace Flee.Parsing
             }
             else if (_value > c)
             {
-                _left.Add(c, false, state);
+                _left!.Add(c, false, state);
             }
             else
             {
-                _right.Add(c, false, state);
+                _right!.Add(c, false, state);
             }
         }
 
@@ -199,7 +199,7 @@ namespace Flee.Parsing
                     buffer.Append(indent);
                 }
                 buffer.Append(this._value);
-                if (this._state.Value != null)
+                if (this._state!.Value != null)
                 {
                     buffer.Append(": ");
                     buffer.Append(this._state.Value);

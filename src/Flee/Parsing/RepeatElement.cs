@@ -21,7 +21,7 @@ namespace Flee.Parsing
         private readonly int _max;
         private readonly RepeatType _type;
         private int _matchStart;
-        private BitArray _matches;
+        private BitArray? _matches;
 
         public RepeatElement(Element elem,
                              int min,
@@ -98,7 +98,7 @@ namespace Flee.Parsing
             }
 
             // Find first non-skipped match
-            for (int i = _matches.Count - 1; i >= 0; i--)
+            for (int i = _matches!.Count - 1; i >= 0; i--)
             {
                 if (_matches[i])
                 {
@@ -125,7 +125,7 @@ namespace Flee.Parsing
             }
 
             // Find first non-skipped match
-            for (int i = 0; i < _matches.Count; i++)
+            for (int i = 0; i < _matches!.Count; i++)
             {
                 if (_matches[i])
                 {
@@ -185,7 +185,7 @@ namespace Flee.Parsing
             }
             if (_min <= count && attempt == 0)
             {
-                if (_matches.Length <= length)
+                if (_matches!.Length <= length)
                 {
                     _matches.Length = length + 10;
                 }
@@ -202,7 +202,7 @@ namespace Flee.Parsing
             {
                 if (_min == count + 1)
                 {
-                    if (_matches.Length <= length)
+                    if (_matches!.Length <= length)
                     {
                         _matches.Length = length + 10;
                     }

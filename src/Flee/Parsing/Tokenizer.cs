@@ -16,9 +16,9 @@ namespace Flee.Parsing
         private readonly StringDFAMatcher _stringDfaMatcher;
         private readonly NFAMatcher _nfaMatcher;
         private readonly RegExpMatcher _regExpMatcher;
-        private ReaderBuffer _buffer = null;
+        private ReaderBuffer _buffer;
         private readonly TokenMatch _lastMatch = new TokenMatch();
-        private Token _previousToken = null;
+        private Token? _previousToken = null;
 
         public Tokenizer(TextReader input)
             : this(input, false)
@@ -66,7 +66,7 @@ namespace Flee.Parsing
             {
                 pattern = _regExpMatcher.GetPattern(id);
             }
-            return pattern?.ToShortString();
+            return pattern?.ToShortString() ?? string.Empty;
         }
 
         public int GetCurrentLine()
@@ -146,9 +146,9 @@ namespace Flee.Parsing
             this._lastMatch.Clear();
         }
 
-        public Token Next()
+        public Token? Next()
         {
-            Token token = null;
+            Token? token;
 
             do
             {
@@ -179,7 +179,7 @@ namespace Flee.Parsing
             return token;
         }
 
-        private Token NextToken()
+        private Token? NextToken()
         {
             try
             {
@@ -193,7 +193,7 @@ namespace Flee.Parsing
                 {
                     line = _buffer.LineNumber;
                     column = _buffer.ColumnNumber;
-                    var str = _buffer.Read(_lastMatch.Length);
+                    var str = _buffer.Read(_lastMatch.Length)!;
                     return NewToken(_lastMatch.Pattern, str, line, column);
                 }
                 else if (_buffer.Peek(0) < 0)
@@ -252,7 +252,7 @@ namespace Flee.Parsing
 
         public abstract void Match(ReaderBuffer buffer, TokenMatch match);
 
-        public TokenPattern GetPattern(int id)
+        public TokenPattern? GetPattern(int id)
         {
             for (int i = 0; i < Patterns.Length; i++)
             {
@@ -299,7 +299,7 @@ namespace Flee.Parsing
 
         public override void Match(ReaderBuffer buffer, TokenMatch match)
         {
-            TokenPattern res = _automaton.Match(buffer, IgnoreCase);
+            TokenPattern? res = _automaton.Match(buffer, IgnoreCase);
 
             if (res != null)
             {
@@ -384,7 +384,7 @@ namespace Flee.Parsing
     internal class GrammaticaRE : REHandler
     {
         private readonly RegExp _regExp;
-        private Matcher _matcher = null;
+        private Matcher? _matcher = null;
 
         public GrammaticaRE(string regex, bool ignoreCase)
         {

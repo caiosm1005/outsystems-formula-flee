@@ -29,7 +29,7 @@ namespace Flee.ExpressionElements.Base
 
         protected void ThrowCompileException(string messageKey, CompileExceptionReason reason, params object[] arguments)
         {
-            string messageTemplate = FleeResourceManager.Instance.GetCompileErrorString(messageKey);
+            string messageTemplate = FleeResourceManager.Instance.GetCompileErrorString(messageKey) ?? messageKey;
             string message = string.Format(messageTemplate, arguments);
             message = string.Concat(this.Name, ": ", message);
             throw new ExpressionCompileException(message, reason);
@@ -46,9 +46,9 @@ namespace Flee.ExpressionElements.Base
             get
             {
                 string key = this.GetType().Name;
-                string value = FleeResourceManager.Instance.GetElementNameString(key);
+                string? value = FleeResourceManager.Instance.GetElementNameString(key);
                 Debug.Assert(value != null, $"Element name for '{key}' not in resource file");
-                return value;
+                return value!;
             }
         }
     }

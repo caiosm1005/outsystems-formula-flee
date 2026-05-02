@@ -16,7 +16,7 @@ namespace Flee.Parsing
         {
         }
 
-        public RecursiveDescentParser(TextReader input, Analyzer analyzer)
+        public RecursiveDescentParser(TextReader input, Analyzer? analyzer)
             : base(input, analyzer)
         {
         }
@@ -27,7 +27,7 @@ namespace Flee.Parsing
         }
 
         public RecursiveDescentParser(Tokenizer tokenizer,
-                                      Analyzer analyzer)
+                                      Analyzer? analyzer)
             : base(tokenizer, analyzer)
         {
         }
@@ -67,7 +67,7 @@ namespace Flee.Parsing
             var e = GetPatterns().GetEnumerator();
             while (e.MoveNext())
             {
-                CalculateLookAhead((ProductionPattern)e.Current);
+                CalculateLookAhead((ProductionPattern)e.Current!);
             }
 
             // Set initialized flag
@@ -77,7 +77,7 @@ namespace Flee.Parsing
         protected override Node ParseStart()
         {
             _stackdepth = 0;
-            var node = ParsePattern(GetStartPattern());
+            var node = ParsePattern(GetStartPattern()!);
             var token = PeekToken(0);
             if (token != null)
             {
@@ -117,7 +117,7 @@ namespace Flee.Parsing
                 {
                     ThrowParseException(FindUnion(pattern));
                 }
-                return ParseAlternative(defaultAlt);
+                return ParseAlternative(defaultAlt!);
             }
             finally
             {
@@ -161,7 +161,7 @@ namespace Flee.Parsing
                     }
                     else
                     {
-                        child = ParsePattern(GetPattern(elem.Id));
+                        child = ParsePattern(GetPattern(elem.Id)!);
                         AddNode(node, child);
                     }
                 }
@@ -172,8 +172,9 @@ namespace Flee.Parsing
             }
         }
 
-        private bool IsNext(ProductionPattern pattern)
+        private bool IsNext(ProductionPattern? pattern)
         {
+            if (pattern == null) return false;
             LookAheadSet set = pattern.LookAhead;
 
             if (set == null)
@@ -218,8 +219,9 @@ namespace Flee.Parsing
             }
         }
 
-        private void CalculateLookAhead(ProductionPattern pattern)
+        private void CalculateLookAhead(ProductionPattern? pattern)
         {
+            if (pattern == null) return;
             ProductionPatternAlternative alt;
             LookAheadSet previous = new LookAheadSet(0);
             int length = 1;
@@ -353,7 +355,7 @@ namespace Flee.Parsing
         private LookAheadSet FindLookAhead(ProductionPattern pattern,
                                            int length,
                                            CallStack stack,
-                                           LookAheadSet filter)
+                                           LookAheadSet? filter)
         {
             // Check for infinite loop
             if (stack.Contains(pattern.Name, length))
@@ -361,7 +363,7 @@ namespace Flee.Parsing
                 throw new ParserCreationException(
                     ParserCreationException.ErrorType.INFINITE_LOOP,
                     pattern.Name,
-                    (String)null);
+                    (String?)null);
             }
 
             // Find pattern look-ahead
@@ -385,7 +387,7 @@ namespace Flee.Parsing
                                            int length,
                                            int pos,
                                            CallStack stack,
-                                           LookAheadSet filter)
+                                           LookAheadSet? filter)
         {
             LookAheadSet follow;
             // Check trivial cases
@@ -427,7 +429,7 @@ namespace Flee.Parsing
         private LookAheadSet FindLookAhead(ProductionPatternElement elem,
                                            int length,
                                            CallStack stack,
-                                           LookAheadSet filter)
+                                           LookAheadSet? filter)
         {
             // Find initial element look-ahead
             var first = FindLookAhead(elem, length, 0, stack, filter);
@@ -459,7 +461,7 @@ namespace Flee.Parsing
                     length,
                     0,
                     stack,
-                    filter.CreateFilter(first));
+                    filter!.CreateFilter(first));
                 first = first.CreateCombination(follow);
                 result.AddAll(first);
             }
@@ -471,7 +473,7 @@ namespace Flee.Parsing
                                            int length,
                                            int dummy,
                                            CallStack stack,
-                                           LookAheadSet filter)
+                                           LookAheadSet? filter)
         {
             LookAheadSet result;
 
@@ -482,7 +484,7 @@ namespace Flee.Parsing
             }
             else
             {
-                var pattern = GetPattern(elem.Id);
+                var pattern = GetPattern(elem.Id)!;
                 result = FindLookAhead(pattern, length, stack, filter);
                 if (stack.Contains(pattern.Name))
                 {
@@ -578,7 +580,7 @@ namespace Flee.Parsing
         }
 
         private void ThrowAmbiguityException(string pattern,
-                                             string location,
+                                             string? location,
                                              LookAheadSet set)
         {
 
@@ -613,8 +615,8 @@ namespace Flee.Parsing
             {
                 for (int i = 0; i < _nameStack.Count; i++)
                 {
-                    if (_nameStack[i].Equals(name)
-                     && _valueStack[i].Equals(value))
+                    if (_nameStack[i]!.Equals(name)
+                     && _valueStack[i]!.Equals(value))
                     {
 
                         return true;

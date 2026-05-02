@@ -75,10 +75,11 @@ namespace Flee.PublicTypes
 
         private void AssertNestedTypeIsAccessible(Type t)
         {
-            while ((t != null))
+            Type? current = t;
+            while ((current != null))
             {
-                AssertTypeIsAccessibleInternal(t);
-                t = t.DeclaringType;
+                AssertTypeIsAccessibleInternal(current);
+                current = current.DeclaringType;
             }
         }
         #endregion
@@ -128,7 +129,7 @@ namespace Flee.PublicTypes
 
                 Node rootNode = DoParse();
                 analyzer.Reset();
-                ExpressionElement topElement = (ExpressionElement)rootNode.Values[0];
+                ExpressionElement topElement = (ExpressionElement)rootNode.Values[0]!;
                 return topElement;
             }
         }
@@ -229,7 +230,7 @@ namespace Flee.PublicTypes
 
         internal object ExpressionOwner => _myProperties.GetValue<object>("ExpressionOwner");
 
-        internal string CalcEngineExpressionName => _myProperties.GetValue<string>("CalcEngineExpressionName");
+        internal string CalcEngineExpressionName => _myProperties.GetValue<string>("CalcEngineExpressionName") ?? string.Empty;
 
         internal ExpressionParser Parser => _myProperties.GetValue<ExpressionParser>("ExpressionParser");
 
@@ -242,7 +243,7 @@ namespace Flee.PublicTypes
 
         public VariableCollection Variables => _myVariables;
 
-        public CalculationEngine CalculationEngine => _myProperties.GetValue<CalculationEngine>("CalculationEngine");
+        public CalculationEngine? CalculationEngine => _myProperties.GetValue<CalculationEngine>("CalculationEngine");
 
         public ExpressionParserOptions ParserOptions => _myProperties.GetValue<ExpressionParserOptions>("ParserOptions");
 

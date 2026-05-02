@@ -13,7 +13,7 @@ namespace Flee.ExpressionElements.MemberElements
     /// </summary>
     internal class IndexerElement : MemberElement
     {
-        private ExpressionElement _myIndexerElement;
+        private ExpressionElement _myIndexerElement = null!;
 
         private readonly ArgumentList _myIndexerElements;
         public IndexerElement(ArgumentList indexer)
@@ -24,7 +24,7 @@ namespace Flee.ExpressionElements.MemberElements
         protected override void ResolveInternal()
         {
             // Are we are indexing on an array?
-            Type target = MyPrevious.TargetType;
+            Type target = MyPrevious!.TargetType;
 
             // Yes, so setup for an array index
             if (target.IsArray == true)
@@ -64,10 +64,14 @@ namespace Flee.ExpressionElements.MemberElements
             // Use the first one that's valid for our indexer type
             foreach (MemberInfo mi in members)
             {
-                PropertyInfo pi = mi as PropertyInfo;
+                PropertyInfo? pi = mi as PropertyInfo;
                 if ((pi != null))
                 {
-                    methods.Add(pi.GetGetMethod(true));
+                    MethodInfo? getter = pi.GetGetMethod(true);
+                    if (getter != null)
+                    {
+                        methods.Add(getter);
+                    }
                 }
             }
 
@@ -128,13 +132,13 @@ namespace Flee.ExpressionElements.MemberElements
             func.EmitFunctionCall(this.NextRequiresAddress, ilg, services);
         }
 
-        private Type ArrayType
+        private Type? ArrayType
         {
             get
             {
                 if (this.IsArray == true)
                 {
-                    return MyPrevious.TargetType;
+                    return MyPrevious!.TargetType;
                 }
                 else
                 {
@@ -143,7 +147,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
-        private bool IsArray => MyPrevious.TargetType.IsArray;
+        private bool IsArray => MyPrevious!.TargetType.IsArray;
 
         protected override bool RequiresAddress => this.IsArray == false;
 
@@ -153,7 +157,7 @@ namespace Flee.ExpressionElements.MemberElements
             {
                 if (this.IsArray == true)
                 {
-                    return this.ArrayType.GetElementType();
+                    return this.ArrayType!.GetElementType()!;
                 }
                 else
                 {

@@ -18,9 +18,9 @@ namespace Flee.ExpressionElements.Literals.Real
             _myValue = value;
         }
 
-        public static SingleLiteralElement Parse(string image, IServiceProvider services)
+        public static SingleLiteralElement? Parse(string image, IServiceProvider services)
         {
-            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
+            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions))!;
             SingleLiteralElement element = new SingleLiteralElement();
 
             try

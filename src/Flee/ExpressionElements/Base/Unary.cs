@@ -6,9 +6,9 @@ namespace Flee.ExpressionElements.Base
     internal abstract class UnaryElement : ExpressionElement
     {
 
-        protected ExpressionElement MyChild;
+        protected ExpressionElement MyChild = null!;
 
-        private Type _myResultType;
+        private Type? _myResultType;
         public void SetChild(ExpressionElement child)
         {
             MyChild = child;
@@ -20,9 +20,9 @@ namespace Flee.ExpressionElements.Base
             }
         }
 
-        protected abstract Type GetResultType(Type childType);
+        protected abstract Type? GetResultType(Type childType);
 
-        public override System.Type ResultType => _myResultType;
+        public override System.Type ResultType => _myResultType!;
     }
 
 }

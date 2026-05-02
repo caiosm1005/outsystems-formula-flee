@@ -15,7 +15,7 @@ namespace Flee.ExpressionElements.MemberElements
             this.HandleFirstElement(elements, services);
             LinkElements(elements);
             Resolve(elements, services);
-            _myTail = (MemberElement)elements[elements.Count - 1];
+            _myTail = (MemberElement)elements[elements.Count - 1]!;
         }
 
         /// <summary>
@@ -26,11 +26,11 @@ namespace Flee.ExpressionElements.MemberElements
         {
             for (int i = 0; i <= elements.Count - 1; i++)
             {
-                MemberElement current = (MemberElement)elements[i];
-                MemberElement nextElement = null;
+                MemberElement current = (MemberElement)elements[i]!;
+                MemberElement? nextElement = null;
                 if (i + 1 < elements.Count)
                 {
-                    nextElement = (MemberElement)elements[i + 1];
+                    nextElement = (MemberElement)elements[i + 1]!;
                 }
                 current.Link(nextElement);
             }
@@ -38,7 +38,7 @@ namespace Flee.ExpressionElements.MemberElements
 
         private void HandleFirstElement(IList elements, IServiceProvider services)
         {
-            ExpressionElement first = (ExpressionElement)elements[0];
+            ExpressionElement first = (ExpressionElement)elements[0]!;
 
             // If the first element is not a member element, then we assume it is an expression and replace it with the correct member element
             if (!(first is MemberElement))
@@ -54,19 +54,19 @@ namespace Flee.ExpressionElements.MemberElements
 
         private void ResolveNamespaces(IList elements, IServiceProvider services)
         {
-            ExpressionContext context = (ExpressionContext)services.GetService(typeof(ExpressionContext));
+            ExpressionContext context = (ExpressionContext)services.GetService(typeof(ExpressionContext))!;
             ImportBase currentImport = context.Imports.RootImport;
 
             while (true)
             {
-                string name = GetName(elements);
+                string? name = GetName(elements);
 
                 if (name == null)
                 {
                     break; // TODO: might not be correct. Was : Exit While
                 }
 
-                ImportBase import = currentImport.FindImport(name);
+                ImportBase? import = currentImport.FindImport(name);
 
                 if (import == null)
                 {
@@ -78,7 +78,7 @@ namespace Flee.ExpressionElements.MemberElements
 
                 if (elements.Count > 0)
                 {
-                    MemberElement newFirst = (MemberElement)elements[0];
+                    MemberElement newFirst = (MemberElement)elements[0]!;
                     newFirst.SetImport(currentImport);
                 }
             }
@@ -89,7 +89,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
-        private static string GetName(IList elements)
+        private static string? GetName(IList elements)
         {
             if (elements.Count == 0)
             {

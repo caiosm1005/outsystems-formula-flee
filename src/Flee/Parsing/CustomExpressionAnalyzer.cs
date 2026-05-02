@@ -17,7 +17,7 @@ namespace Flee.Parsing
     internal class FleeExpressionAnalyzer : ExpressionAnalyzer
     {
 
-        private IServiceProvider _myServices;
+        private IServiceProvider? _myServices;
         private readonly Regex _myUnicodeEscapeRegex;
         private readonly Regex _myRegularEscapeRegex;
 
@@ -110,7 +110,7 @@ namespace Flee.Parsing
             IList childValues = this.GetChildValues(node);
 
             // Get last child
-            ExpressionElement childElement = (ExpressionElement)childValues[childValues.Count - 1];
+            ExpressionElement childElement = (ExpressionElement)childValues[childValues.Count - 1]!;
 
             // Is it an signed integer constant?
             if (object.ReferenceEquals(childElement.GetType(), typeof(Int32LiteralElement)) & childValues.Count == 2)
@@ -137,7 +137,7 @@ namespace Flee.Parsing
         public override Node ExitMemberExpression(Production node)
         {
             IList childValues = this.GetChildValues(node);
-            object first = childValues[0];
+            object first = childValues[0]!;
 
             if (childValues.Count == 1 && !(first is MemberElement))
             {
@@ -145,7 +145,7 @@ namespace Flee.Parsing
             }
             else
             {
-                InvocationListElement list = new InvocationListElement(childValues, _myServices);
+                InvocationListElement list = new InvocationListElement(childValues, _myServices!);
                 node.AddValue(list);
             }
 
@@ -163,7 +163,7 @@ namespace Flee.Parsing
 
         public override Node ExitMemberAccessExpression(Production node)
         {
-            node.AddValue(node.GetChildAt(1).GetValue(0));
+            node.AddValue(node.GetChildAt(1)!.GetValue(0));
             return node;
         }
 
@@ -176,7 +176,7 @@ namespace Flee.Parsing
         public override Node ExitIfExpression(Production node)
         {
             IList childValues = this.GetChildValues(node);
-            ConditionalElement op = new ConditionalElement((ExpressionElement)childValues[0], (ExpressionElement)childValues[1], (ExpressionElement)childValues[2]);
+            ConditionalElement op = new ConditionalElement((ExpressionElement)childValues[0]!, (ExpressionElement)childValues[1]!, (ExpressionElement)childValues[2]!);
             node.AddValue(op);
             return node;
         }
@@ -191,11 +191,11 @@ namespace Flee.Parsing
                 return node;
             }
 
-            ExpressionElement operand = (ExpressionElement)childValues[0];
+            ExpressionElement operand = (ExpressionElement)childValues[0]!;
             childValues.RemoveAt(0);
 
-            object second = childValues[0];
-            InElement op = default(InElement);
+            object second = childValues[0]!;
+            InElement op;
 
             if ((second) is IList)
             {
@@ -203,7 +203,7 @@ namespace Flee.Parsing
             }
             else
             {
-                InvocationListElement il = new InvocationListElement(childValues, _myServices);
+                InvocationListElement il = new InvocationListElement(childValues, _myServices!);
                 op = new InElement(operand, il);
             }
 
@@ -227,9 +227,9 @@ namespace Flee.Parsing
         public override Node ExitCastExpression(Production node)
         {
             IList childValues = this.GetChildValues(node);
-            string[] destTypeParts = (string[])childValues[1];
-            bool isArray = (bool)childValues[2];
-            CastElement op = new CastElement((ExpressionElement)childValues[0], destTypeParts, isArray, _myServices);
+            string[] destTypeParts = (string[])childValues[1]!;
+            bool isArray = (bool)childValues[2]!;
+            CastElement op = new CastElement((ExpressionElement)childValues[0]!, destTypeParts, isArray, _myServices!);
             node.AddValue(op);
             return node;
         }
@@ -239,9 +239,12 @@ namespace Flee.Parsing
             IList childValues = this.GetChildValues(node);
             List<string> parts = new List<string>();
 
-            foreach (string part in childValues)
+            foreach (string? part in childValues)
             {
-                parts.Add(part);
+                if (part != null)
+                {
+                    parts.Add(part);
+                }
             }
 
             bool isArray = false;
@@ -266,7 +269,7 @@ namespace Flee.Parsing
         public override Node ExitFieldPropertyExpression(Production node)
         {
             //string name = ((Token)node.GetChildAt(0))?.Image;
-            string name = node.GetChildAt(0).GetValue(0).ToString();
+            string name = node.GetChildAt(0)!.GetValue(0).ToString()!;
             IdentifierElement elem = new IdentifierElement(name);
             node.AddValue(elem);
             return node;
@@ -275,7 +278,7 @@ namespace Flee.Parsing
         public override Node ExitFunctionCallExpression(Production node)
         {
             IList childValues = this.GetChildValues(node);
-            string name = (string)childValues[0];
+            string name = (string)childValues[0]!;
             childValues.RemoveAt(0);
             ArgumentList args = new ArgumentList(childValues);
             FunctionCallElement funcCall = new FunctionCallElement(name, args);
@@ -304,7 +307,7 @@ namespace Flee.Parsing
 
         private void AddFirstChildValue(Production node)
         {
-            node.AddValue(this.GetChildAt(node, 0).Values[0]);
+            node.AddValue(this.GetChildAt(node, 0).Values[0]!);
         }
 
         private void AddUnaryOp(Production node, Type elementType)
@@ -313,13 +316,13 @@ namespace Flee.Parsing
 
             if (childValues.Count == 2)
             {
-                UnaryElement element = (UnaryElement)Activator.CreateInstance(elementType);
-                element.SetChild((ExpressionElement)childValues[1]);
+                UnaryElement element = (UnaryElement)Activator.CreateInstance(elementType)!;
+                element.SetChild((ExpressionElement)childValues[1]!);
                 node.AddValue(element);
             }
             else
             {
-                node.AddValue(childValues[0]);
+                node.AddValue(childValues[0]!);
             }
         }
 
@@ -334,7 +337,7 @@ namespace Flee.Parsing
             }
             else if (childValues.Count == 1)
             {
-                node.AddValue(childValues[0]);
+                node.AddValue(childValues[0]!);
             }
             else
             {
@@ -345,7 +348,7 @@ namespace Flee.Parsing
         public override Node ExitReal(Token node)
         {
             string image = node.Image;
-            LiteralElement element = RealLiteralElement.Create(image, _myServices);
+            LiteralElement element = RealLiteralElement.Create(image, _myServices!);
 
             node.AddValue(element);
             return node;
@@ -353,14 +356,14 @@ namespace Flee.Parsing
 
         public override Node ExitInteger(Token node)
         {
-            LiteralElement element = IntegralLiteralElement.Create(node.Image, false, _myInUnaryNegate, _myServices);
+            LiteralElement element = IntegralLiteralElement.Create(node.Image, false, _myInUnaryNegate, _myServices!);
             node.AddValue(element);
             return node;
         }
 
         public override Node ExitHexliteral(Token node)
         {
-            LiteralElement element = IntegralLiteralElement.Create(node.Image, true, _myInUnaryNegate, _myServices);
+            LiteralElement element = IntegralLiteralElement.Create(node.Image, true, _myInUnaryNegate, _myServices!);
             node.AddValue(element);
             return node;
         }
@@ -400,7 +403,7 @@ namespace Flee.Parsing
 
         public override Node ExitDatetime(Token node)
         {
-            ExpressionContext context = (ExpressionContext)_myServices.GetService(typeof(ExpressionContext));
+            ExpressionContext context = (ExpressionContext)_myServices!.GetService(typeof(ExpressionContext))!;
             string image = node.Image.Substring(1, node.Image.Length - 2);
             DateTimeLiteralElement element = new DateTimeLiteralElement(image, context);
             node.AddValue(element);
@@ -447,7 +450,7 @@ namespace Flee.Parsing
                     return Convert.ToChar(13).ToString();
                 default:
                     Debug.Assert(false, "Unrecognized escape sequence");
-                    return null;
+                    return string.Empty;
             }
         }
 

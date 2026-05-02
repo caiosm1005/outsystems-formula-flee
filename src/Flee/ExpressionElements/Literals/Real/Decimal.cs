@@ -9,7 +9,7 @@ namespace Flee.ExpressionElements.Literals.Real
 {
     internal class DecimalLiteralElement : RealLiteralElement
     {
-        private static readonly ConstructorInfo OurConstructorInfo = GetConstructor();
+        private static readonly ConstructorInfo OurConstructorInfo = GetConstructor()!;
         private readonly decimal _myValue;
 
         private DecimalLiteralElement()
@@ -21,7 +21,7 @@ namespace Flee.ExpressionElements.Literals.Real
             _myValue = value;
         }
 
-        private static ConstructorInfo GetConstructor()
+        private static ConstructorInfo? GetConstructor()
         {
             Type[] types = {
             typeof(Int32),
@@ -33,9 +33,9 @@ namespace Flee.ExpressionElements.Literals.Real
             return typeof(decimal).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.Any, types, null);
         }
 
-        public static DecimalLiteralElement Parse(string image, IServiceProvider services)
+        public static DecimalLiteralElement? Parse(string image, IServiceProvider services)
         {
-            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
+            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions))!;
             DecimalLiteralElement element = new DecimalLiteralElement();
 
             try

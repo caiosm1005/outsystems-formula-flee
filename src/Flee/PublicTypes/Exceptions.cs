@@ -36,8 +36,8 @@ namespace Flee.PublicTypes
             {
                 if (_myReason == CompileExceptionReason.SyntaxError)
                 {
-                    Exception innerEx = this.InnerException;
-                    string msg = $"{Utility.GetCompileErrorMessage(CompileErrorResourceKeys.SyntaxError)}: {innerEx.Message}";
+                    Exception? innerEx = this.InnerException;
+                    string msg = $"{Utility.GetCompileErrorMessage(CompileErrorResourceKeys.SyntaxError)}: {innerEx?.Message}";
                     return msg;
                 }
                 else

@@ -30,7 +30,7 @@ namespace Flee.ExpressionElements.Literals
 
             LiteralElement.EmitLoad(_myValue.Ticks, ilg);
 
-            ConstructorInfo ci = typeof(DateTime).GetConstructor(new Type[] { typeof(long) });
+            ConstructorInfo ci = typeof(DateTime).GetConstructor(new Type[] { typeof(long) })!;
 
             ilg.Emit(OpCodes.Call, ci);
 

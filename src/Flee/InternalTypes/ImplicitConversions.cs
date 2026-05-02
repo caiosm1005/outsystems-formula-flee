@@ -131,7 +131,7 @@ namespace Flee.InternalTypes
             return System.Array.IndexOf(OurBinaryTypes, t);
         }
 
-        public static bool EmitImplicitConvert(Type sourceType, Type destType, FleeILGenerator ilg)
+        public static bool EmitImplicitConvert(Type sourceType, Type destType, FleeILGenerator? ilg)
         {
             if (object.ReferenceEquals(sourceType, destType))
             {
@@ -151,10 +151,10 @@ namespace Flee.InternalTypes
             }
         }
 
-        private static bool EmitOverloadedImplicitConvert(Type sourceType, Type destType, FleeILGenerator ilg)
+        private static bool EmitOverloadedImplicitConvert(Type sourceType, Type destType, FleeILGenerator? ilg)
         {
             // Look for an implicit operator on the destination type
-            MethodInfo mi = Utility.GetSimpleOverloadedOperator("Implicit", sourceType, destType);
+            MethodInfo? mi = Utility.GetSimpleOverloadedOperator("Implicit", sourceType, destType);
 
             if (mi == null)
             {
@@ -170,7 +170,7 @@ namespace Flee.InternalTypes
             return true;
         }
 
-        private static bool ImplicitConvertToReferenceType(Type sourceType, Type destType, FleeILGenerator ilg)
+        private static bool ImplicitConvertToReferenceType(Type sourceType, Type destType, FleeILGenerator? ilg)
         {
             if (destType.IsValueType == true)
             {
@@ -199,7 +199,7 @@ namespace Flee.InternalTypes
             return true;
         }
 
-        private static bool ImplicitConvertToValueType(Type sourceType, Type destType, FleeILGenerator ilg)
+        private static bool ImplicitConvertToValueType(Type sourceType, Type destType, FleeILGenerator? ilg)
         {
             // We only handle value types
             if (sourceType.IsValueType == false & destType.IsValueType == false)
@@ -225,7 +225,7 @@ namespace Flee.InternalTypes
         /// <param name="destType"></param>
         /// <param name="ilg"></param>
         /// <returns></returns>
-        public static bool EmitImplicitNumericConvert(Type sourceType, Type destType, FleeILGenerator ilg)
+        public static bool EmitImplicitNumericConvert(Type sourceType, Type destType, FleeILGenerator? ilg)
         {
             TypeCode sourceTypeCode = Type.GetTypeCode(sourceType);
             TypeCode destTypeCode = Type.GetTypeCode(destType);
@@ -254,7 +254,7 @@ namespace Flee.InternalTypes
         }
 
 
-        private static bool ImplicitConvertToInt16(TypeCode sourceTypeCode, FleeILGenerator ilg)
+        private static bool ImplicitConvertToInt16(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
             switch (sourceTypeCode)
             {
@@ -267,7 +267,7 @@ namespace Flee.InternalTypes
             }
         }
 
-        private static bool ImplicitConvertToUInt16(TypeCode sourceTypeCode, FleeILGenerator ilg)
+        private static bool ImplicitConvertToUInt16(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
             switch (sourceTypeCode)
             {
@@ -280,7 +280,7 @@ namespace Flee.InternalTypes
             }
         }
 
-        private static bool ImplicitConvertToInt32(TypeCode sourceTypeCode, FleeILGenerator ilg)
+        private static bool ImplicitConvertToInt32(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
             switch (sourceTypeCode)
             {
@@ -296,7 +296,7 @@ namespace Flee.InternalTypes
             }
         }
 
-        private static bool ImplicitConvertToUInt32(TypeCode sourceTypeCode, FleeILGenerator ilg)
+        private static bool ImplicitConvertToUInt32(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
             switch (sourceTypeCode)
             {
@@ -312,7 +312,7 @@ namespace Flee.InternalTypes
             }
         }
 
-        private static bool ImplicitConvertToDouble(TypeCode sourceTypeCode, FleeILGenerator ilg)
+        private static bool ImplicitConvertToDouble(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
             switch (sourceTypeCode)
             {
@@ -340,7 +340,7 @@ namespace Flee.InternalTypes
             return true;
         }
 
-        private static bool ImplicitConvertToSingle(TypeCode sourceTypeCode, FleeILGenerator ilg)
+        private static bool ImplicitConvertToSingle(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
             switch (sourceTypeCode)
             {
@@ -367,7 +367,7 @@ namespace Flee.InternalTypes
             return true;
         }
 
-        private static bool ImplicitConvertToInt64(TypeCode sourceTypeCode, FleeILGenerator ilg)
+        private static bool ImplicitConvertToInt64(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
             switch (sourceTypeCode)
             {
@@ -391,7 +391,7 @@ namespace Flee.InternalTypes
             return true;
         }
 
-        private static bool ImplicitConvertToUInt64(TypeCode sourceTypeCode, FleeILGenerator ilg)
+        private static bool ImplicitConvertToUInt64(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
             switch (sourceTypeCode)
             {
@@ -410,7 +410,7 @@ namespace Flee.InternalTypes
             return true;
         }
 
-        private static void EmitConvert(FleeILGenerator ilg, OpCode convertOpcode)
+        private static void EmitConvert(FleeILGenerator? ilg, OpCode convertOpcode)
         {
             if ((ilg != null))
             {
@@ -424,7 +424,7 @@ namespace Flee.InternalTypes
         /// <param name="t1"></param>
         /// <param name="t2"></param>
         /// <returns></returns>
-        public static Type GetBinaryResultType(Type t1, Type t2)
+        public static Type? GetBinaryResultType(Type t1, Type t2)
         {
             int index1 = GetTypeIndex(t1);
             int index2 = GetTypeIndex(t2);
@@ -545,12 +545,12 @@ namespace Flee.InternalTypes
         private static int GetInheritanceDistance(Type sourceType, Type destType)
         {
             int count = 0;
-            Type current = sourceType;
+            Type? current = sourceType;
 
             while ((!object.ReferenceEquals(current, destType)))
             {
                 count += 1;
-                current = current.BaseType;
+                current = current?.BaseType;
             }
 
             return count * 1000;
@@ -559,7 +559,7 @@ namespace Flee.InternalTypes
         private static int GetInverseDistanceToObject(Type t)
         {
             int score = 1000;
-            Type current = t.BaseType;
+            Type? current = t.BaseType;
 
             while ((current != null))
             {

@@ -16,7 +16,7 @@ namespace Flee.InternalTypes
 
     internal class DynamicExpressionVariable<T> : IVariable, IGenericVariable<T>
     {
-        private IDynamicExpression _myExpression;
+        private IDynamicExpression _myExpression = null!;
         public IVariable Clone()
         {
             DynamicExpressionVariable<T> copy = new DynamicExpressionVariable<T>();
@@ -26,13 +26,13 @@ namespace Flee.InternalTypes
 
         public object GetValue()
         {
-            return (T)_myExpression.Evaluate();
+            return (T)_myExpression.Evaluate()!;
         }
 
         public object ValueAsObject
         {
             get { return _myExpression; }
-            set { _myExpression = value as IDynamicExpression; }
+            set { _myExpression = (value as IDynamicExpression)!; }
         }
 
         public System.Type VariableType => _myExpression.Context.Options.ResultType;
@@ -40,7 +40,7 @@ namespace Flee.InternalTypes
 
     internal class GenericExpressionVariable<T> : IVariable, IGenericVariable<T>
     {
-        private IGenericExpression<T> _myExpression;
+        private IGenericExpression<T> _myExpression = null!;
         public IVariable Clone()
         {
             GenericExpressionVariable<T> copy = new GenericExpressionVariable<T>();
@@ -50,7 +50,7 @@ namespace Flee.InternalTypes
 
         public object GetValue()
         {
-            return _myExpression.Evaluate();
+            return _myExpression.Evaluate()!;
         }
 
         public object ValueAsObject
@@ -66,7 +66,7 @@ namespace Flee.InternalTypes
     {
 
 
-        public object MyValue;
+        public object MyValue = null!;
         public IVariable Clone()
         {
             GenericVariable<T> copy = new GenericVariable<T> { MyValue = MyValue };
@@ -87,7 +87,7 @@ namespace Flee.InternalTypes
             {
                 if (value == null)
                 {
-                    MyValue = default(T);
+                    MyValue = default(T)!;
                 }
                 else
                 {

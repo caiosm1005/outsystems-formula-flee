@@ -14,9 +14,9 @@ namespace Flee.ExpressionElements.Base
     internal abstract class BinaryExpressionElement : ExpressionElement
     {
 
-        protected ExpressionElement MyLeftChild;
-        protected ExpressionElement MyRightChild;
-        private Type _myResultType;
+        protected ExpressionElement MyLeftChild = null!;
+        protected ExpressionElement MyRightChild = null!;
+        private Type? _myResultType;
 
         protected BinaryExpressionElement()
         {
@@ -30,15 +30,15 @@ namespace Flee.ExpressionElements.Base
         /// <returns></returns>
         public static BinaryExpressionElement CreateElement(IList childValues, Type elementType)
         {
-            BinaryExpressionElement firstElement = (BinaryExpressionElement)Activator.CreateInstance(elementType);
-            firstElement.Configure((ExpressionElement)childValues[0], (ExpressionElement)childValues[2], childValues[1]);
+            BinaryExpressionElement firstElement = (BinaryExpressionElement)Activator.CreateInstance(elementType)!;
+            firstElement.Configure((ExpressionElement)childValues[0]!, (ExpressionElement)childValues[2]!, childValues[1]!);
 
             BinaryExpressionElement lastElement = firstElement;
 
             for (int i = 3; i <= childValues.Count - 1; i += 2)
             {
-                BinaryExpressionElement element = (BinaryExpressionElement)Activator.CreateInstance(elementType);
-                element.Configure(lastElement, (ExpressionElement)childValues[i + 1], childValues[i]);
+                BinaryExpressionElement element = (BinaryExpressionElement)Activator.CreateInstance(elementType)!;
+                element.Configure(lastElement, (ExpressionElement)childValues[i + 1]!, childValues[i]!);
                 lastElement = element;
             }
 
@@ -57,7 +57,7 @@ namespace Flee.ExpressionElements.Base
             }
         }
 
-        protected MethodInfo GetOverloadedBinaryOperator(string name, object operation)
+        protected MethodInfo? GetOverloadedBinaryOperator(string name, object operation)
         {
             Type leftType = MyLeftChild.ResultType;
             Type rightType = MyRightChild.ResultType;
@@ -70,8 +70,8 @@ namespace Flee.ExpressionElements.Base
             }
 
             // Get the operator for both types
-            MethodInfo leftMethod = default(MethodInfo);
-            MethodInfo rightMethod = default(MethodInfo);
+            MethodInfo? leftMethod = default(MethodInfo);
+            MethodInfo? rightMethod = default(MethodInfo);
             leftMethod = Utility.GetOverloadedOperator(name, leftType, binder, leftType, rightType);
             rightMethod = Utility.GetOverloadedOperator(name, rightType, binder, leftType, rightType);
 
@@ -118,7 +118,7 @@ namespace Flee.ExpressionElements.Base
             base.ThrowCompileException(CompileErrorResourceKeys.OperationNotDefinedForTypes, CompileExceptionReason.TypeMismatch, operation, leftType.Name, rightType.Name);
         }
 
-        protected abstract Type GetResultType(Type leftType, Type rightType);
+        protected abstract Type? GetResultType(Type leftType, Type rightType);
 
         protected static void EmitChildWithConvert(ExpressionElement child, Type resultType, FleeILGenerator ilg, IServiceProvider services)
         {
@@ -157,6 +157,6 @@ namespace Flee.ExpressionElements.Base
             this.ValidateInternal(op);
         }
 
-        public sealed override System.Type ResultType => _myResultType;
+        public sealed override System.Type ResultType => _myResultType!;
     }
 }

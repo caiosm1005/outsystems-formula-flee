@@ -33,10 +33,10 @@ namespace Flee.Parsing
         private PatternType _type;
         private string _pattern;
         private bool _error;
-        private string _errorMessage;
+        private string _errorMessage = string.Empty;
         private bool _ignore;
-        private string _ignoreMessage;
-        private string _debugInfo;
+        private string _ignoreMessage = string.Empty;
+        private string _debugInfo = string.Empty;
 
         public TokenPattern(int id,
                             string name,

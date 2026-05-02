@@ -13,9 +13,9 @@ namespace Flee.InternalTypes
     {
         private readonly string _myExpression;
         private ExpressionContext _myContext;
-        private ExpressionOptions _myOptions;
+        private ExpressionOptions _myOptions = null!;
         private readonly ExpressionInfo _myInfo;
-        private ExpressionEvaluator<T> _myEvaluator;
+        private ExpressionEvaluator<T> _myEvaluator = null!;
 
         private object _myOwner;
         private const string EmitAssemblyName = "FleeExpression";
@@ -40,7 +40,7 @@ namespace Flee.InternalTypes
 
             _myContext.Imports.ImportOwner(_myOptions.OwnerType);
 
-            this.ValidateOwner(_myOwner);
+            this.ValidateOwner(_myOwner!);
 
             this.Compile(expression, _myOptions);
 
@@ -111,7 +111,7 @@ namespace Flee.InternalTypes
             typeof(ExpressionContext),
             typeof(VariableCollection)
         };
-            DynamicMethod dm = default(DynamicMethod);
+            DynamicMethod dm;
 
             dm = new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
 
@@ -167,7 +167,7 @@ namespace Flee.InternalTypes
 
         public object Evaluate()
         {
-            return _myEvaluator(_myOwner, _myContext, _myContext.Variables);
+            return _myEvaluator(_myOwner, _myContext, _myContext.Variables)!;
         }
 
         public T EvaluateGeneric()
@@ -200,13 +200,13 @@ namespace Flee.InternalTypes
 
         ExpressionInfo IExpression.Info => Info1;
 
-        public object Owner
+        public object? Owner
         {
             get { return _myOwner; }
             set
             {
-                this.ValidateOwner(value);
-                _myOwner = value;
+                this.ValidateOwner(value!);
+                _myOwner = value!;
             }
         }
 

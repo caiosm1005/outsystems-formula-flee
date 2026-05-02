@@ -27,7 +27,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             ilg.Emit(OpCodes.Ceq);
         }
 
-        protected override System.Type GetResultType(System.Type childType)
+        protected override System.Type? GetResultType(System.Type childType)
         {
             if (object.ReferenceEquals(childType, typeof(bool)))
             {

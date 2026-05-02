@@ -35,7 +35,7 @@ namespace Flee.Parsing
             return Count;
         }
 
-        public ParseException this[int index] => (ParseException)_errors[index];
+        public ParseException this[int index] => (ParseException)_errors[index]!;
 
         public ParseException GetError(int index)
         {

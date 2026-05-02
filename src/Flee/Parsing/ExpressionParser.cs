@@ -27,7 +27,7 @@ namespace Flee.Parsing
             SUBPRODUCTION_16 = 3016
         }
 
-        public ExpressionParser(TextReader input, Analyzer analyzer, ExpressionContext context) : base(new ExpressionTokenizer(input, context), analyzer)
+        public ExpressionParser(TextReader input, Analyzer? analyzer, ExpressionContext context) : base(new ExpressionTokenizer(input, context), analyzer)
         {
             CreatePatterns();
         }
@@ -37,15 +37,15 @@ namespace Flee.Parsing
             CreatePatterns();
         }
 
-        public ExpressionParser(TextReader input, Analyzer analyzer) : base(new ExpressionTokenizer(input), analyzer)
+        public ExpressionParser(TextReader input, Analyzer? analyzer) : base(new ExpressionTokenizer(input), analyzer)
         {
             CreatePatterns();
         }
 
         private void CreatePatterns()
         {
-            ProductionPattern pattern = default(ProductionPattern);
-            ProductionPatternAlternative alt = default(ProductionPatternAlternative);
+            ProductionPattern pattern;
+            ProductionPatternAlternative alt;
 
             pattern = new ProductionPattern(Convert.ToInt32(ExpressionConstants.EXPRESSION), "Expression");
             alt = new ProductionPatternAlternative();

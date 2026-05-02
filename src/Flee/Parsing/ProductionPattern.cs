@@ -21,7 +21,7 @@ namespace Flee.Parsing
         private bool _synthetic;
         private readonly ArrayList _alternatives;
         private int _defaultAlt;
-        private LookAheadSet _lookAhead;
+        private LookAheadSet? _lookAhead;
 
         public ProductionPattern(int id, string name)
         {
@@ -72,7 +72,7 @@ namespace Flee.Parsing
         {
             get
             {
-                return _lookAhead;
+                return _lookAhead!;
             }
             set
             {
@@ -80,13 +80,13 @@ namespace Flee.Parsing
             }
         }
 
-        internal ProductionPatternAlternative DefaultAlternative
+        internal ProductionPatternAlternative? DefaultAlternative
         {
             get
             {
                 if (_defaultAlt >= 0)
                 {
-                    object obj = _alternatives[_defaultAlt];
+                    object obj = _alternatives[_defaultAlt]!;
                     return (ProductionPatternAlternative)obj;
                 }
                 else
@@ -114,7 +114,7 @@ namespace Flee.Parsing
             return Count;
         }
 
-        public ProductionPatternAlternative this[int index] => (ProductionPatternAlternative)_alternatives[index];
+        public ProductionPatternAlternative this[int index] => (ProductionPatternAlternative)_alternatives[index]!;
 
         public ProductionPatternAlternative GetAlternative(int pos)
         {
@@ -127,7 +127,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _alternatives.Count; i++)
             {
-                alt = (ProductionPatternAlternative)_alternatives[i];
+                alt = (ProductionPatternAlternative)_alternatives[i]!;
                 if (alt.IsLeftRecursive())
                 {
                     return true;
@@ -142,7 +142,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _alternatives.Count; i++)
             {
-                alt = (ProductionPatternAlternative)_alternatives[i];
+                alt = (ProductionPatternAlternative)_alternatives[i]!;
                 if (alt.IsRightRecursive())
                 {
                     return true;
@@ -157,7 +157,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _alternatives.Count; i++)
             {
-                alt = (ProductionPatternAlternative)_alternatives[i];
+                alt = (ProductionPatternAlternative)_alternatives[i]!;
                 if (alt.IsMatchingEmpty())
                 {
                     return true;

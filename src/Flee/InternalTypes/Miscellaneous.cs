@@ -45,27 +45,27 @@ namespace Flee.InternalTypes
     internal abstract class CustomBinder : Binder
     {
 
-        public override System.Reflection.FieldInfo BindToField(System.Reflection.BindingFlags bindingAttr, System.Reflection.FieldInfo[] match, object value, System.Globalization.CultureInfo culture)
+        public override System.Reflection.FieldInfo BindToField(System.Reflection.BindingFlags bindingAttr, System.Reflection.FieldInfo[] match, object? value, System.Globalization.CultureInfo? culture)
+        {
+            return null!;
+        }
+
+        public System.Reflection.MethodBase? BindToMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, ref object[] args, System.Reflection.ParameterModifier[]? modifiers, System.Globalization.CultureInfo? culture, string[]? names, ref object state)
         {
             return null;
         }
 
-        public System.Reflection.MethodBase BindToMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, ref object[] args, System.Reflection.ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] names, ref object state)
+        public override object ChangeType(object value, System.Type type, System.Globalization.CultureInfo? culture)
         {
-            return null;
-        }
-
-        public override object ChangeType(object value, System.Type type, System.Globalization.CultureInfo culture)
-        {
-            return null;
+            return null!;
         }
 
 
-        public override void ReorderArgumentArray(ref object[] args, object state)
+        public override void ReorderArgumentArray(ref object?[] args, object state)
         {
         }
 
-        public override System.Reflection.PropertyInfo SelectProperty(System.Reflection.BindingFlags bindingAttr, System.Reflection.PropertyInfo[] match, System.Type returnType, System.Type[] indexes, System.Reflection.ParameterModifier[] modifiers)
+        public override System.Reflection.PropertyInfo? SelectProperty(System.Reflection.BindingFlags bindingAttr, System.Reflection.PropertyInfo[] match, System.Type? returnType, System.Type[]? indexes, System.Reflection.ParameterModifier[]? modifiers)
         {
             return null;
         }
@@ -82,14 +82,14 @@ namespace Flee.InternalTypes
             _myArgType = argType;
         }
 
-        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers,
-            CultureInfo culture, string[] names, out object state)
+        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object?[] args, ParameterModifier[]? modifiers,
+            CultureInfo? culture, string[]? names, out object? state)
         {
             state = null;
-            return null;
+            return null!;
         }
 
-        public override System.Reflection.MethodBase SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[] modifiers)
+        public override System.Reflection.MethodBase? SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[]? modifiers)
         {
             foreach (MethodInfo mi in match)
             {
@@ -116,14 +116,14 @@ namespace Flee.InternalTypes
             _myRightType = rightType;
         }
 
-        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers,
-            CultureInfo culture, string[] names, out object state)
+        public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object?[] args, ParameterModifier[]? modifiers,
+            CultureInfo? culture, string[]? names, out object? state)
         {
             state = null;
-            return null;
+            return null!;
         }
 
-        public override System.Reflection.MethodBase SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[] modifiers)
+        public override System.Reflection.MethodBase? SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[]? modifiers)
         {
             foreach (MethodInfo mi in match)
             {
@@ -172,10 +172,10 @@ namespace Flee.InternalTypes
         /// </summary>
         private float _myScore;
         public bool IsParamArray;
-        public Type[] MyFixedArgTypes;
-        public Type[] MyParamArrayArgTypes;
+        public Type[] MyFixedArgTypes = Array.Empty<Type>();
+        public Type[] MyParamArrayArgTypes = Array.Empty<Type>();
         public bool IsExtensionMethod;
-        public Type ParamArrayElementType;
+        public Type? ParamArrayElementType;
         public CustomMethodInfo(MethodInfo target)
         {
             _myTarget = target;
@@ -264,7 +264,7 @@ namespace Flee.InternalTypes
 
             int fixedSum = ComputeSum(fixedParameters, MyFixedArgTypes);
 
-            Type paramArrayElementType = paramArrayParameter.ParameterType.GetElementType();
+            Type paramArrayElementType = paramArrayParameter.ParameterType.GetElementType()!;
 
             int paramArraySum = 0;
 
@@ -298,7 +298,7 @@ namespace Flee.InternalTypes
         /// </summary>
         /// <param name="argTypes"></param>
         /// <returns></returns>
-        public bool IsMatch(Type[] argTypes, MemberElement previous, ExpressionContext context)
+        public bool IsMatch(Type[] argTypes, MemberElement? previous, ExpressionContext context)
         {
             ParameterInfo[] parameters = _myTarget.GetParameters();
 
@@ -373,7 +373,7 @@ namespace Flee.InternalTypes
             }
 
             // Get the type of the paramArray
-            ParamArrayElementType = paramArrayParameter.ParameterType.GetElementType();
+            ParamArrayElementType = paramArrayParameter.ParameterType.GetElementType()!;
 
             // Get the types of the arguments passed to the paramArray
             Type[] paramArrayArgTypes = new Type[argTypes.Length - fixedParameterCount];
@@ -395,7 +395,7 @@ namespace Flee.InternalTypes
             return true;
         }
 
-        private static bool AreValidExtensionMethodArgumentsForParameters(Type[] argTypes, ParameterInfo[] parameters, MemberElement previous, ExpressionContext context)
+        private static bool AreValidExtensionMethodArgumentsForParameters(Type[] argTypes, ParameterInfo[] parameters, MemberElement? previous, ExpressionContext context)
         {
             Debug.Assert(argTypes.Length + 1 == parameters.Length);
 
@@ -440,16 +440,16 @@ namespace Flee.InternalTypes
             return true;
         }
 
-        public int CompareTo(CustomMethodInfo other)
+        public int CompareTo(CustomMethodInfo? other)
         {
-            return _myScore.CompareTo(other._myScore);
+            return other == null ? 1 : _myScore.CompareTo(other._myScore);
         }
 
-        private bool Equals1(CustomMethodInfo other)
+        private bool Equals1(CustomMethodInfo? other)
         {
-            return _myScore == other._myScore;
+            return other != null && _myScore == other._myScore;
         }
-        bool System.IEquatable<CustomMethodInfo>.Equals(CustomMethodInfo other)
+        bool System.IEquatable<CustomMethodInfo>.Equals(CustomMethodInfo? other)
         {
             return Equals1(other);
         }
@@ -521,17 +521,17 @@ namespace Flee.InternalTypes
     /// </summary>
     internal class PropertyDictionary
     {
-        private readonly Dictionary<string, object> _myProperties;
+        private readonly Dictionary<string, object?> _myProperties;
         public PropertyDictionary()
         {
-            _myProperties = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            _myProperties = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         }
 
         public PropertyDictionary Clone()
         {
             PropertyDictionary copy = new PropertyDictionary();
 
-            foreach (KeyValuePair<string, object> pair in _myProperties)
+            foreach (KeyValuePair<string, object?> pair in _myProperties)
             {
                 copy.SetValue(pair.Key, pair.Value);
             }
@@ -541,21 +541,21 @@ namespace Flee.InternalTypes
 
         public T GetValue<T>(string name)
         {
-            object value = default(T);
+            object? value = default(T);
             if (_myProperties.TryGetValue(name, out value) == false)
             {
                 Debug.Fail($"Unknown property '{name}'");
             }
-            return (T)value;
+            return (T)value!;
         }
 
         public void SetToDefault<T>(string name)
         {
-            T value = default(T);
+            T? value = default(T);
             this.SetValue(name, value);
         }
 
-        public void SetValue(string name, object value)
+        public void SetValue(string name, object? value)
         {
             _myProperties[name] = value;
         }

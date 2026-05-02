@@ -129,7 +129,7 @@
                     peekChar = buffer.Peek(pos);
                     this._queue.MarkEnd();
                 }
-                state = this._queue.RemoveFirst();
+                state = this._queue.RemoveFirst()!;
                 if (state.Value != null)
                 {
                     match.Update(pos, state.Value);
@@ -150,7 +150,7 @@
      */
     internal class NFAState
     {
-        internal TokenPattern Value = null;
+        internal TokenPattern? Value = null;
         internal NFATransition[] Incoming = new NFATransition[0];
         internal NFATransition[] Outgoing = new NFATransition[0];
         internal bool EpsilonOut = false;
@@ -177,7 +177,7 @@
             Incoming[Incoming.Length - 1] = trans;
         }
 
-        public NFAState AddOut(char ch, bool ignoreCase, NFAState state)
+        public NFAState AddOut(char ch, bool ignoreCase, NFAState? state)
         {
             if (ignoreCase)
             {
@@ -222,17 +222,17 @@
                 state.AddIn(Incoming[i]);
                 Incoming[i].State = state;
             }
-            Incoming = null;
+            Incoming = null!;
             for (int i = 0; i < Outgoing.Length; i++)
             {
                 state.AddOut(Outgoing[i]);
             }
-            Outgoing = null;
+            Outgoing = null!;
         }
 
-        private NFAState FindUniqueCharTransition(char ch)
+        private NFAState? FindUniqueCharTransition(char ch)
         {
-            NFATransition res = null;
+            NFATransition? res = null;
             NFATransition trans;
 
             for (int i = 0; i < Outgoing.Length; i++)
@@ -790,7 +790,7 @@
             _mark = _last;
         }
 
-        public NFAState RemoveFirst()
+        public NFAState? RemoveFirst()
         {
             if (_first < _last)
             {

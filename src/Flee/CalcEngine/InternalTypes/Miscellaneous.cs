@@ -4,9 +4,9 @@ namespace Flee.CalcEngine.InternalTypes
 {
     internal class PairEqualityComparer : EqualityComparer<ExpressionResultPair>
     {
-        public override bool Equals(ExpressionResultPair x, ExpressionResultPair y)
+        public override bool Equals(ExpressionResultPair? x, ExpressionResultPair? y)
         {
-            return string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(x?.Name, y?.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         public override int GetHashCode(ExpressionResultPair obj)
@@ -18,9 +18,9 @@ namespace Flee.CalcEngine.InternalTypes
     internal abstract class ExpressionResultPair
     {
 
-        private string _myName;
+        private string _myName = string.Empty;
 
-        protected IDynamicExpression MyExpression;
+        protected IDynamicExpression MyExpression = null!;
 
         protected ExpressionResultPair()
         {
@@ -53,7 +53,7 @@ namespace Flee.CalcEngine.InternalTypes
 
     internal class GenericExpressionResultPair<T> : ExpressionResultPair
     {
-        public T MyResult;
+        public T MyResult = default!;
         public GenericExpressionResultPair()
         {
         }
@@ -69,7 +69,7 @@ namespace Flee.CalcEngine.InternalTypes
 
         public override object ResultAsObject
         {
-            get { return MyResult; }
+            get { return MyResult!; }
             set { MyResult = (T)value; }
         }
     }
@@ -91,9 +91,9 @@ namespace Flee.CalcEngine.InternalTypes
     public sealed class NodeEventArgs : EventArgs
     {
 
-        private string _myName;
+        private string _myName = string.Empty;
 
-        private object _myResult;
+        private object _myResult = null!;
 
         internal NodeEventArgs()
         {

@@ -15,12 +15,12 @@ namespace Flee.ExpressionElements
         // Element we will search for
         private ExpressionElement MyOperand;
         // Elements we will compare against
-        private List<ExpressionElement> MyArguments;
+        private List<ExpressionElement> MyArguments = null!;
         // Collection to look in
-        private ExpressionElement MyTargetCollectionElement;
+        private ExpressionElement? MyTargetCollectionElement;
         // Type of the collection
 
-        private Type MyTargetCollectionType;
+        private Type? MyTargetCollectionType;
         // Initialize for searching a list of values
         public InElement(ExpressionElement operand, IList listElements)
         {
@@ -60,7 +60,7 @@ namespace Flee.ExpressionElements
 
             if (MyTargetCollectionType == null)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType, CompileExceptionReason.TypeMismatch, MyTargetCollectionElement.ResultType.Name);
+                base.ThrowCompileException(CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType, CompileExceptionReason.TypeMismatch, MyTargetCollectionElement!.ResultType.Name);
             }
 
             // Validate that the operand type is compatible with the collection
@@ -73,9 +73,9 @@ namespace Flee.ExpressionElements
             }
         }
 
-        private Type GetTargetCollectionType()
+        private Type? GetTargetCollectionType()
         {
-            Type collType = MyTargetCollectionElement.ResultType;
+            Type collType = MyTargetCollectionElement!.ResultType;
 
             // Try to see if the collection is a generic ICollection or IDictionary
             Type[] interfaces = collType.GetInterfaces();
@@ -129,7 +129,7 @@ namespace Flee.ExpressionElements
             ParameterInfo p1 = mi.GetParameters()[0];
 
             // Load the collection
-            MyTargetCollectionElement.Emit(ilg, services);
+            MyTargetCollectionElement!.Emit(ilg, services);
             // Load the argument
             MyOperand.Emit(ilg, services);
             // Do an implicit convert if necessary
@@ -142,12 +142,12 @@ namespace Flee.ExpressionElements
         {
             string methodName = "Contains";
 
-            if (MyTargetCollectionType.IsGenericType == true && object.ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
+            if (MyTargetCollectionType!.IsGenericType == true && object.ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
             {
                 methodName = "ContainsKey";
             }
 
-            return MyTargetCollectionType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            return MyTargetCollectionType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)!;
         }
 
         private void EmitListIn(FleeILGenerator ilg, IServiceProvider services)

@@ -11,16 +11,16 @@ namespace Flee.ExpressionElements
 {
     internal class ArithmeticElement : BinaryExpressionElement
     {
-        private static MethodInfo _ourPowerMethodInfo;
-        private static MethodInfo _ourStringConcatMethodInfo;
-        private static MethodInfo _ourObjectConcatMethodInfo;
+        private static MethodInfo _ourPowerMethodInfo = null!;
+        private static MethodInfo _ourStringConcatMethodInfo = null!;
+        private static MethodInfo _ourObjectConcatMethodInfo = null!;
         private BinaryArithmeticOperation _myOperation;
 
         public ArithmeticElement()
         {
-            _ourPowerMethodInfo = typeof(Math).GetMethod("Pow", BindingFlags.Public | BindingFlags.Static);
-            _ourStringConcatMethodInfo = typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }, null);
-            _ourObjectConcatMethodInfo = typeof(string).GetMethod("Concat", new Type[] { typeof(object), typeof(object) }, null);
+            _ourPowerMethodInfo = typeof(Math).GetMethod("Pow", BindingFlags.Public | BindingFlags.Static)!;
+            _ourStringConcatMethodInfo = typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }, null)!;
+            _ourObjectConcatMethodInfo = typeof(string).GetMethod("Concat", new Type[] { typeof(object), typeof(object) }, null)!;
         }
 
         protected override void GetOperation(object operation)
@@ -28,10 +28,10 @@ namespace Flee.ExpressionElements
             _myOperation = (BinaryArithmeticOperation)operation;
         }
 
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override System.Type? GetResultType(System.Type leftType, System.Type rightType)
         {
-            Type binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
-            MethodInfo overloadedMethod = this.GetOverloadedArithmeticOperator();
+            Type? binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
+            MethodInfo? overloadedMethod = this.GetOverloadedArithmeticOperator();
 
             // Is an overloaded operator defined for our left and right children?
             if ((overloadedMethod != null))
@@ -75,7 +75,7 @@ namespace Flee.ExpressionElements
             }
         }
 
-        private MethodInfo GetOverloadedArithmeticOperator()
+        private MethodInfo? GetOverloadedArithmeticOperator()
         {
             // Get the name of the operator
             string name = GetOverloadedOperatorFunctionName(_myOperation);
@@ -100,13 +100,13 @@ namespace Flee.ExpressionElements
                     return "Exponent";
                 default:
                     Debug.Assert(false, "unknown operator type");
-                    return null;
+                    return string.Empty;
             }
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            MethodInfo overloadedMethod = this.GetOverloadedArithmeticOperator();
+            MethodInfo? overloadedMethod = this.GetOverloadedArithmeticOperator();
 
             if ((overloadedMethod != null))
             {
@@ -138,7 +138,7 @@ namespace Flee.ExpressionElements
         /// <param name="services"></param>
         private void EmitArithmeticOperation(BinaryArithmeticOperation op, FleeILGenerator ilg, IServiceProvider services)
         {
-            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions))!;
             bool unsigned = IsUnsignedForArithmetic(MyLeftChild.ResultType) & IsUnsignedForArithmetic(MyRightChild.ResultType);
             bool integral = Utility.IsIntegralType(MyLeftChild.ResultType) & Utility.IsIntegralType(MyRightChild.ResultType);
             bool emitOverflow = integral & options.Checked;
@@ -285,8 +285,8 @@ namespace Flee.ExpressionElements
         /// <param name="services"></param>
         private void EmitStringConcat(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type argType = default(Type);
-            System.Reflection.MethodInfo concatMethodInfo = default(System.Reflection.MethodInfo);
+            Type argType;
+            System.Reflection.MethodInfo concatMethodInfo;
 
             // Pick the most specific concat method
             if (this.AreBothChildrenOfType(typeof(string)) == true)

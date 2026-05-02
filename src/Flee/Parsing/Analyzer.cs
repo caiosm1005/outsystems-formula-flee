@@ -25,15 +25,15 @@ namespace Flee.Parsing
         {
             ParserLogException log = new ParserLogException();
 
-            node = Analyze(node, log);
+            Node? result = Analyze(node, log);
             if (log.Count > 0)
             {
                 throw log;
             }
-            return node;
+            return result!;
         }
 
-        private Node Analyze(Node node, ParserLogException log)
+        private Node? Analyze(Node node, ParserLogException log)
         {
             var errorCount = log.Count;
             if (node is Production)
@@ -52,7 +52,7 @@ namespace Flee.Parsing
                 {
                     try
                     {
-                        Child(prod, Analyze(node[i], log));
+                        Child(prod, Analyze(node[i], log)!);
                     }
                     catch (ParseException e)
                     {

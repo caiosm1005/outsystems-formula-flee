@@ -10,8 +10,8 @@ namespace Flee.Parsing
      */
     internal abstract class Node
     {
-        private Node _parent;
-        private ArrayList _values;
+        private Node? _parent;
+        private ArrayList? _values;
 
         internal virtual bool IsHidden()
         {
@@ -124,9 +124,9 @@ namespace Flee.Parsing
             return EndColumn;
         }
 
-        public Node Parent => _parent;
+        public Node? Parent => _parent;
 
-        public Node GetParent()
+        public Node? GetParent()
         {
             return Parent;
         }
@@ -154,9 +154,9 @@ namespace Flee.Parsing
             return count;
         }
 
-        public virtual Node this[int index] => null;
+        public virtual Node this[int index] => null!;
 
-        public virtual Node GetChildAt(int index)
+        public virtual Node? GetChildAt(int index)
         {
             return this[index];
         }
@@ -191,10 +191,10 @@ namespace Flee.Parsing
 
         public object GetValue(int pos)
         {
-            return Values[pos];
+            return Values[pos]!;
         }
 
-        public ArrayList GetAllValues()
+        public ArrayList? GetAllValues()
         {
             return _values;
         }

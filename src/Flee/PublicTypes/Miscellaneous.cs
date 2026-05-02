@@ -6,7 +6,7 @@
         string Text { get; }
         ExpressionInfo Info { get; }
         ExpressionContext Context { get; }
-        object Owner { get; set; }
+        object? Owner { get; set; }
     }
 
     public interface IDynamicExpression : IExpression
@@ -64,7 +64,7 @@
     public class ResolveVariableTypeEventArgs : EventArgs
     {
         private readonly string _myName;
-        private Type _myType;
+        private Type? _myType;
         internal ResolveVariableTypeEventArgs(string name)
         {
             this._myName = name;
@@ -72,7 +72,7 @@
 
         public string VariableName => _myName;
 
-        public Type VariableType
+        public Type? VariableType
         {
             get { return _myType; }
             set { _myType = value; }
@@ -84,7 +84,7 @@
         private readonly string _myName;
         private readonly Type _myType;
 
-        private object MyValue;
+        private object? MyValue;
         internal ResolveVariableValueEventArgs(string name, Type t)
         {
             _myName = name;
@@ -101,7 +101,7 @@
             get { return _myType; }
         }
 
-        public object VariableValue
+        public object? VariableValue
         {
             get { return MyValue; }
             set { MyValue = value; }
@@ -114,7 +114,7 @@
         private readonly string MyName;
         private readonly Type[] MyArgumentTypes;
 
-        private Type _myReturnType;
+        private Type? _myReturnType;
         internal ResolveFunctionEventArgs(string name, Type[] argumentTypes)
         {
             MyName = name;
@@ -131,7 +131,7 @@
             get { return MyArgumentTypes; }
         }
 
-        public Type ReturnType
+        public Type? ReturnType
         {
             get { return _myReturnType; }
             set { _myReturnType = value; }
@@ -144,7 +144,7 @@
         private readonly string _myName;
         private readonly object[] _myArguments;
 
-        private object _myFunctionResult;
+        private object? _myFunctionResult;
         internal InvokeFunctionEventArgs(string name, object[] arguments)
         {
             _myName = name;
@@ -161,7 +161,7 @@
             get { return _myArguments; }
         }
 
-        public object Result
+        public object? Result
         {
             get { return _myFunctionResult; }
             set { _myFunctionResult = value; }

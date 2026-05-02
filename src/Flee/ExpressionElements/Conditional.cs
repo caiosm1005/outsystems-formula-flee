@@ -11,7 +11,7 @@ namespace Flee.ExpressionElements
         private readonly ExpressionElement _myCondition;
         private readonly ExpressionElement _myWhenTrue;
         private readonly ExpressionElement _myWhenFalse;
-        private readonly Type _myResultType;
+        private readonly Type _myResultType = null!;
         public ConditionalElement(ExpressionElement condition, ExpressionElement whenTrue, ExpressionElement whenFalse)
         {
             _myCondition = condition;

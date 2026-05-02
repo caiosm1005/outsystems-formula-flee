@@ -15,10 +15,10 @@ namespace Flee.ExpressionElements.MemberElements
     internal class FunctionCallElement : MemberElement
     {
         private readonly ArgumentList _myArguments;
-        private readonly ICollection<MethodInfo> _myMethods;
-        private CustomMethodInfo _myTargetMethodInfo;
+        private readonly ICollection<MethodInfo>? _myMethods;
+        private CustomMethodInfo _myTargetMethodInfo = null!;
 
-        private Type _myOnDemandFunctionReturnType;
+        private Type? _myOnDemandFunctionReturnType;
         public FunctionCallElement(string name, ArgumentList arguments)
         {
             this.MyName = name;
@@ -37,7 +37,7 @@ namespace Flee.ExpressionElements.MemberElements
             // Get the types of our arguments
             Type[] argTypes = _myArguments.GetArgumentTypes();
             // Find all methods with our name on the type
-            ICollection<MethodInfo> methods = _myMethods;
+            ICollection<MethodInfo>? methods = _myMethods;
 
             if (methods == null)
             {
@@ -65,7 +65,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
-        private void ThrowFunctionNotFoundException(MemberElement previous)
+        private void ThrowFunctionNotFoundException(MemberElement? previous)
         {
             if (previous == null)
             {
@@ -77,7 +77,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
-        private void ThrowNoAccessibleMethodsException(MemberElement previous)
+        private void ThrowNoAccessibleMethodsException(MemberElement? previous)
         {
             if (previous == null)
             {
@@ -100,7 +100,7 @@ namespace Flee.ExpressionElements.MemberElements
         /// <param name="methods"></param>
         /// <param name="previous"></param>
         /// <param name="argTypes"></param>
-        private void BindToMethod(ICollection<MethodInfo> methods, MemberElement previous, Type[] argTypes)
+        private void BindToMethod(ICollection<MethodInfo> methods, MemberElement? previous, Type[] argTypes)
         {
             List<CustomMethodInfo> customInfos = new List<CustomMethodInfo>();
 
@@ -141,7 +141,7 @@ namespace Flee.ExpressionElements.MemberElements
         /// <param name="infos"></param>
         /// <param name="previous"></param>
         /// <param name="argTypes"></param>
-        private void ResolveOverloads(CustomMethodInfo[] infos, MemberElement previous, Type[] argTypes)
+        private void ResolveOverloads(CustomMethodInfo[] infos, MemberElement? previous, Type[] argTypes)
         {
             // Compute a score for each candidate
             foreach (CustomMethodInfo cmi in infos)
@@ -237,7 +237,7 @@ namespace Flee.ExpressionElements.MemberElements
                 return;
             }
 
-            bool isOwnerMember = MyOptions.IsOwnerType(this.Method.ReflectedType);
+            bool isOwnerMember = this.Method.ReflectedType != null && MyOptions.IsOwnerType(this.Method.ReflectedType);
 
             // Load the owner if required
             if (MyPrevious == null && isOwnerMember == true && this.IsStatic == false)
@@ -258,7 +258,7 @@ namespace Flee.ExpressionElements.MemberElements
             EmitElementArrayLoad(elements, typeof(object), ilg, services);
 
             // Call the function to get the result
-            MethodInfo mi = VariableCollection.GetFunctionInvokeMethod(_myOnDemandFunctionReturnType);
+            MethodInfo mi = VariableCollection.GetFunctionInvokeMethod(_myOnDemandFunctionReturnType!);
 
             this.EmitMethodCall(mi, ilg);
         }
@@ -282,7 +282,7 @@ namespace Flee.ExpressionElements.MemberElements
             Array.Copy(elements, fixedElements.Length, paramArrayElements, 0, paramArrayElements.Length);
 
             // Emit them into an array
-            EmitElementArrayLoad(paramArrayElements, _myTargetMethodInfo.ParamArrayElementType, ilg, services);
+            EmitElementArrayLoad(paramArrayElements, _myTargetMethodInfo.ParamArrayElementType!, ilg, services);
         }
 
         /// <summary>

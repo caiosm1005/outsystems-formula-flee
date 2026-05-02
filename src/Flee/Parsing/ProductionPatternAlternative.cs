@@ -14,9 +14,9 @@ namespace Flee.Parsing
      */
     internal class ProductionPatternAlternative
     {
-        private ProductionPattern _pattern;
+        private ProductionPattern _pattern = null!;
         private readonly ArrayList _elements = new ArrayList();
-        private LookAheadSet _lookAhead = null;
+        private LookAheadSet? _lookAhead = null;
 
         public ProductionPatternAlternative()
         {
@@ -33,7 +33,7 @@ namespace Flee.Parsing
         {
             get
             {
-                return _lookAhead;
+                return _lookAhead!;
             }
             set
             {
@@ -48,7 +48,7 @@ namespace Flee.Parsing
             return Count;
         }
 
-        public ProductionPatternElement this[int index] => (ProductionPatternElement)_elements[index];
+        public ProductionPatternElement this[int index] => (ProductionPatternElement)_elements[index]!;
 
         public ProductionPatternElement GetElement(int pos)
         {
@@ -59,7 +59,7 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < _elements.Count; i++)
             {
-                var elem = (ProductionPatternElement)_elements[i];
+                var elem = (ProductionPatternElement)_elements[i]!;
                 if (elem.Id == _pattern.Id)
                 {
                     return true;
@@ -76,7 +76,7 @@ namespace Flee.Parsing
         {
             for (int i = _elements.Count - 1; i >= 0; i--)
             {
-                var elem = (ProductionPatternElement)_elements[i];
+                var elem = (ProductionPatternElement)_elements[i]!;
                 if (elem.Id == _pattern.Id)
                 {
                     return true;
@@ -105,7 +105,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _elements.Count; i++)
             {
-                var elem = (ProductionPatternElement)_elements[i];
+                var elem = (ProductionPatternElement)_elements[i]!;
                 min += elem.MinCount;
             }
             return min;
@@ -117,7 +117,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _elements.Count; i++)
             {
-                var elem = (ProductionPatternElement)_elements[i];
+                var elem = (ProductionPatternElement)_elements[i]!;
                 if (elem.MaxCount >= Int32.MaxValue)
                 {
                     return Int32.MaxValue;
@@ -160,11 +160,11 @@ namespace Flee.Parsing
             }
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (obj is ProductionPatternAlternative)
+            if (obj is ProductionPatternAlternative alternative)
             {
-                return Equals((ProductionPatternAlternative)obj);
+                return Equals(alternative);
             }
             else
             {
@@ -180,7 +180,7 @@ namespace Flee.Parsing
             }
             for (int i = 0; i < _elements.Count; i++)
             {
-                if (!_elements[i].Equals(alt._elements[i]))
+                if (!_elements[i]!.Equals(alt._elements[i]))
                 {
                     return false;
                 }

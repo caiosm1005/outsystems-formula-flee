@@ -22,7 +22,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             _myIsMinValue = true;
         }
 
-        public static Int64LiteralElement TryCreate(string image, bool isHex, bool negated)
+        public static Int64LiteralElement? TryCreate(string image, bool isHex, bool negated)
         {
             if (negated == true & image == MinValue)
             {

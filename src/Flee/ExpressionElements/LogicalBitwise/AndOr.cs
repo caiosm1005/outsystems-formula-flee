@@ -22,9 +22,9 @@ namespace Flee.ExpressionElements.LogicalBitwise
             _myOperation = (AndOrOperation)operation;
         }
 
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override System.Type? GetResultType(System.Type leftType, System.Type rightType)
         {
-            Type bitwiseOpType = Utility.GetBitwiseOpType(leftType, rightType);
+            Type? bitwiseOpType = Utility.GetBitwiseOpType(leftType, rightType);
             if ((bitwiseOpType != null))
             {
                 return bitwiseOpType;
@@ -105,7 +105,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             EmitLogicalShortCircuit(ilg, info, services);
 
             // Get the last operand
-            ExpressionElement terminalOperand = (ExpressionElement)info.Operands.Pop();
+            ExpressionElement terminalOperand = (ExpressionElement)info.Operands.Pop()!;
             // Emit it
             EmitOperand(terminalOperand, info, ilg, services);
 
@@ -130,9 +130,9 @@ namespace Flee.ExpressionElements.LogicalBitwise
             while (info.Operators.Count != 0)
             {
                 // Get the operator
-                AndOrElement op = (AndOrElement)info.Operators.Pop();
+                AndOrElement op = (AndOrElement)info.Operators.Pop()!;
                 // Get the left operand
-                ExpressionElement leftOperand = (ExpressionElement)info.Operands.Pop();
+                ExpressionElement leftOperand = (ExpressionElement)info.Operands.Pop()!;
 
                 // Emit the left
                 EmitOperand(leftOperand, info, ilg, services);
@@ -175,13 +175,13 @@ namespace Flee.ExpressionElements.LogicalBitwise
             while (cloneOperators.Count > 0)
             {
                 // Get the top operator
-                AndOrElement top = (AndOrElement)cloneOperators.Pop();
+                AndOrElement top = (AndOrElement)cloneOperators.Pop()!;
 
                 // Is is a different operation?
                 if (top._myOperation != current._myOperation)
                 {
                     // Yes, so return a label to its right operand
-                    object nextOperand = cloneOperands.Pop();
+                    object nextOperand = cloneOperands.Pop()!;
                     return GetLabel(nextOperand, ilg, info);
                 }
                 else
@@ -204,7 +204,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
 
         private void PopRightChild(Stack operands, Stack operators)
         {
-            AndOrElement andOrChild = MyRightChild as AndOrElement;
+            AndOrElement? andOrChild = MyRightChild as AndOrElement;
 
             // What kind of child do we have?
             if ((andOrChild != null))
@@ -228,7 +228,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         {
             operators.Pop();
 
-            AndOrElement andOrChild = MyLeftChild as AndOrElement;
+            AndOrElement? andOrChild = MyLeftChild as AndOrElement;
             if (andOrChild == null)
             {
                 operands.Pop();
@@ -317,7 +317,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         private void PopulateData(ShortCircuitInfo info)
         {
             // Is our right child a leaf or another And/Or expression?
-            AndOrElement andOrChild = MyRightChild as AndOrElement;
+            AndOrElement? andOrChild = MyRightChild as AndOrElement;
             if (andOrChild == null)
             {
                 // Leaf so push it on the stack

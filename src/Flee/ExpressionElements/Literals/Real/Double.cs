@@ -19,9 +19,9 @@ namespace Flee.ExpressionElements.Literals.Real
             _myValue = value;
         }
 
-        public static DoubleLiteralElement Parse(string image, IServiceProvider services)
+        public static DoubleLiteralElement? Parse(string image, IServiceProvider services)
         {
-            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions));
+            ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions))!;
             DoubleLiteralElement element = new DoubleLiteralElement();
 
             try

@@ -63,15 +63,13 @@ namespace Flee.CalcEngine.PublicTypes
 
         private void LinkIdentifier(string identifier, string expressionName, ExpressionContext context)
         {
-            IExpression child = null;
-
-            if (_myExpressions.TryGetValue(identifier, out child) == false)
+            if (_myExpressions.TryGetValue(identifier, out IExpression? child) == false)
             {
                 string msg = $"Expression '{expressionName}' references unknown name '{identifier}'";
                 throw new InvalidOperationException(msg);
             }
 
-            context.Variables.Add(identifier, child);
+            context.Variables.Add(identifier, child!);
         }
 
         #endregion
@@ -100,12 +98,11 @@ namespace Flee.CalcEngine.PublicTypes
         #endregion
 
         #region "Properties - Public"
-        public IExpression this[string name]
+        public IExpression? this[string name]
         {
             get
             {
-                IExpression e = null;
-                _myExpressions.TryGetValue(name, out e);
+                _myExpressions.TryGetValue(name, out IExpression? e);
                 return e;
             }
         }

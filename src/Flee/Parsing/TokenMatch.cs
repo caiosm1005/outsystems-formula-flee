@@ -7,8 +7,8 @@
     internal class TokenMatch
     {
         private int _length = 0;
-        private TokenPattern _pattern = null;
-       
+        private TokenPattern? _pattern = null;
+
         public void Clear()
         {
             _length = 0;
@@ -17,7 +17,7 @@
 
         public int Length => _length;
 
-        public TokenPattern Pattern => _pattern;
+        public TokenPattern Pattern => _pattern!;
 
         public void Update(int length, TokenPattern pattern)
         {

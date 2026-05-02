@@ -9,9 +9,9 @@ namespace Flee.PublicTypes
     {
 
         private PropertyDictionary _myProperties;
-        private Type _myOwnerType;
+        private Type _myOwnerType = null!;
         private readonly ExpressionContext _myOwner;
-        internal event EventHandler CaseSensitiveChanged;
+        internal event EventHandler? CaseSensitiveChanged;
 
         internal ExpressionOptions(ExpressionContext owner)
         {

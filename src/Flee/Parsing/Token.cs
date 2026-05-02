@@ -16,8 +16,8 @@ namespace Flee.Parsing
         private readonly int _startColumn;
         private readonly int _endLine;
         private readonly int _endColumn;
-        private Token _previous = null;
-        private Token _next = null;
+        private Token? _previous = null;
+        private Token? _next = null;
 
         public Token(TokenPattern pattern, string image, int line, int col)
         {
@@ -55,7 +55,7 @@ namespace Flee.Parsing
         }
 
         internal TokenPattern Pattern => _pattern;
-        public Token Previous
+        public Token? Previous
         {
             get
             {
@@ -75,12 +75,12 @@ namespace Flee.Parsing
             }
         }
 
-        public Token GetPreviousToken()
+        public Token? GetPreviousToken()
         {
             return Previous;
         }
 
-        public Token Next
+        public Token? Next
         {
             get
             {
@@ -100,7 +100,7 @@ namespace Flee.Parsing
             }
         }
 
-        public Token GetNextToken()
+        public Token? GetNextToken()
         {
             return Next;
         }

@@ -35,10 +35,10 @@ namespace Flee.ExpressionElements
             _myOperation = (LogicalCompareOperation)operation;
         }
 
-        protected override System.Type GetResultType(System.Type leftType, System.Type rightType)
+        protected override System.Type? GetResultType(System.Type leftType, System.Type rightType)
         {
-            Type binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
-            MethodInfo overloadedOperator = this.GetOverloadedCompareOperator();
+            Type? binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
+            MethodInfo? overloadedOperator = this.GetOverloadedCompareOperator();
             bool isEqualityOp = IsOpTypeEqualOrNotEqual(_myOperation);
 
             // Use our string equality instead of overloaded operator
@@ -77,7 +77,7 @@ namespace Flee.ExpressionElements
             }
         }
 
-        private MethodInfo GetOverloadedCompareOperator()
+        private MethodInfo? GetOverloadedCompareOperator()
         {
             string name = GetCompareOperatorName(_myOperation);
             return base.GetOverloadedBinaryOperator(name, _myOperation);
@@ -101,14 +101,14 @@ namespace Flee.ExpressionElements
                     return "LessThanOrEqual";
                 default:
                     Debug.Assert(false, "unknown compare type");
-                    return null;
+                    return string.Empty;
             }
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type binaryResultType = ImplicitConverter.GetBinaryResultType(MyLeftChild.ResultType, MyRightChild.ResultType);
-            MethodInfo overloadedOperator = this.GetOverloadedCompareOperator();
+            Type? binaryResultType = ImplicitConverter.GetBinaryResultType(MyLeftChild.ResultType, MyRightChild.ResultType);
+            MethodInfo? overloadedOperator = this.GetOverloadedCompareOperator();
 
             if (this.AreBothChildrenOfType(typeof(string)))
             {
@@ -158,13 +158,13 @@ namespace Flee.ExpressionElements
         private static void EmitStringEquality(FleeILGenerator ilg, LogicalCompareOperation op, IServiceProvider services)
         {
             // Get the StringComparison from the options
-            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions))!;
             Int32LiteralElement ic = new Int32LiteralElement((int)options.StringComparison);
 
             ic.Emit(ilg, services);
 
             // and emit the method call
-            System.Reflection.MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null);
+            System.Reflection.MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null)!;
             ilg.Emit(OpCodes.Call, mi);
 
             if (op == LogicalCompareOperation.NotEqual)

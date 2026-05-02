@@ -196,11 +196,11 @@ namespace Flee.InternalTypes
             return Utility.IsLongBranch(_myPosition + BrSLength, target._myPosition);
         }
 
-        public bool Equals1(ILLocation other)
+        public bool Equals1(ILLocation? other)
         {
-            return _myPosition == other._myPosition;
+            return other != null && _myPosition == other._myPosition;
         }
-        bool System.IEquatable<ILLocation>.Equals(ILLocation other)
+        bool System.IEquatable<ILLocation>.Equals(ILLocation? other)
         {
             return Equals1(other);
         }
@@ -210,9 +210,9 @@ namespace Flee.InternalTypes
             return _myPosition.ToString("x");
         }
 
-        public int CompareTo(ILLocation other)
+        public int CompareTo(ILLocation? other)
         {
-            return _myPosition.CompareTo(other._myPosition);
+            return other == null ? 1 : _myPosition.CompareTo(other._myPosition);
         }
     }
 

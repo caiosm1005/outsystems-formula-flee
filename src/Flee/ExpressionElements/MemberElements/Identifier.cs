@@ -20,11 +20,11 @@ namespace Flee.ExpressionElements.MemberElements
     /// </summary>
     internal class IdentifierElement : MemberElement
     {
-        private FieldInfo _myField;
-        private PropertyInfo _myProperty;
-        private PropertyDescriptor _myPropertyDescriptor;
-        private Type _myVariableType;
-        private Type _myCalcEngineReferenceType;
+        private FieldInfo? _myField;
+        private PropertyInfo? _myProperty;
+        private PropertyDescriptor? _myPropertyDescriptor;
+        private Type? _myVariableType;
+        private Type? _myCalcEngineReferenceType;
         public IdentifierElement(string name)
         {
             this.MyName = name;
@@ -49,7 +49,7 @@ namespace Flee.ExpressionElements.MemberElements
                 return;
             }
 
-            CalculationEngine ce = MyContext.CalculationEngine;
+            CalculationEngine? ce = MyContext.CalculationEngine;
 
             if ((ce != null))
             {
@@ -68,7 +68,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
-        private bool ResolveFieldProperty(MemberElement previous)
+        private bool ResolveFieldProperty(MemberElement? previous)
         {
             MemberInfo[] members = this.GetMembers(MemberTypes.Field | MemberTypes.Property);
 
@@ -109,7 +109,7 @@ namespace Flee.ExpressionElements.MemberElements
             return false;
         }
 
-        private bool ResolveVirtualProperty(MemberElement previous)
+        private bool ResolveVirtualProperty(MemberElement? previous)
         {
             if (previous == null)
             {
@@ -122,16 +122,17 @@ namespace Flee.ExpressionElements.MemberElements
             return (_myPropertyDescriptor != null);
         }
 
-        private void AddReferencedVariable(MemberElement previous)
+        private void AddReferencedVariable(MemberElement? previous)
         {
             if ((previous != null))
             {
                 return;
             }
 
-            if ((_myVariableType != null) || MyOptions.IsOwnerType(this.MemberOwnerType) == true)
+            Type? ownerType = this.MemberOwnerType;
+            if ((_myVariableType != null) || (ownerType != null && MyOptions.IsOwnerType(ownerType) == true))
             {
-                ExpressionInfo info = (ExpressionInfo)MyServices.GetService(typeof(ExpressionInfo));
+                ExpressionInfo info = (ExpressionInfo)MyServices.GetService(typeof(ExpressionInfo))!;
                 info.AddReferencedVariable(MyName);
             }
         }
@@ -160,14 +161,14 @@ namespace Flee.ExpressionElements.MemberElements
             }
             else
             {
-                this.EmitPropertyLoad(_myProperty, ilg);
+                this.EmitPropertyLoad(_myProperty!, ilg);
             }
         }
 
         private void EmitReferenceLoad(FleeILGenerator ilg)
         {
             ilg.Emit(OpCodes.Ldarg_1);
-            MyContext.CalculationEngine.EmitLoad(MyName, ilg);
+            MyContext.CalculationEngine!.EmitLoad(MyName, ilg);
         }
 
         private void EmitFirst(FleeILGenerator ilg)
@@ -184,7 +185,7 @@ namespace Flee.ExpressionElements.MemberElements
                 // Load variables
                 EmitLoadVariables(ilg);
             }
-            else if (MyOptions.IsOwnerType(this.MemberOwnerType) == true & this.IsStatic == false)
+            else if (this.MemberOwnerType != null && MyOptions.IsOwnerType(this.MemberOwnerType) == true & this.IsStatic == false)
             {
                 this.EmitLoadOwner(ilg);
             }
@@ -192,7 +193,7 @@ namespace Flee.ExpressionElements.MemberElements
 
         private void EmitVariableLoad(FleeILGenerator ilg)
         {
-            MethodInfo mi = VariableCollection.GetVariableLoadMethod(_myVariableType);
+            MethodInfo mi = VariableCollection.GetVariableLoadMethod(_myVariableType!);
             ilg.Emit(OpCodes.Ldstr, MyName);
             this.EmitMethodCall(mi, ilg);
         }
@@ -248,10 +249,10 @@ namespace Flee.ExpressionElements.MemberElements
         /// <param name="services"></param>
         private static void EmitLiteral(System.Reflection.FieldInfo fi, FleeILGenerator ilg, IServiceProvider services)
         {
-            object value = fi.GetValue(null);
+            object value = fi.GetValue(null)!;
             Type t = value.GetType();
             TypeCode code = Type.GetTypeCode(t);
-            LiteralElement elem = default(LiteralElement);
+            LiteralElement? elem = default(LiteralElement);
 
             switch (code)
             {
@@ -290,12 +291,12 @@ namespace Flee.ExpressionElements.MemberElements
                     break;
             }
 
-            elem.Emit(ilg, services);
+            elem!.Emit(ilg, services);
         }
 
         private void EmitPropertyLoad(System.Reflection.PropertyInfo pi, FleeILGenerator ilg)
         {
-            System.Reflection.MethodInfo getter = pi.GetGetMethod(true);
+            System.Reflection.MethodInfo getter = pi.GetGetMethod(true)!;
             base.EmitMethodCall(getter, ilg);
         }
 
@@ -308,7 +309,7 @@ namespace Flee.ExpressionElements.MemberElements
             // The previous value is already on the top of the stack but we need it at the bottom
 
             // Get a temporary local index
-            int index = ilg.GetTempLocalIndex(MyPrevious.ResultType);
+            int index = ilg.GetTempLocalIndex(MyPrevious!.ResultType);
 
             // Store the previous value there
             Utility.EmitStoreLocal(ilg, index);
@@ -327,7 +328,7 @@ namespace Flee.ExpressionElements.MemberElements
             this.EmitMethodCall(mi, ilg);
         }
 
-        private Type MemberOwnerType
+        private Type? MemberOwnerType
         {
             get
             {
@@ -372,7 +373,7 @@ namespace Flee.ExpressionElements.MemberElements
                 }
                 else
                 {
-                    MethodInfo mi = _myProperty.GetGetMethod(true);
+                    MethodInfo mi = _myProperty!.GetGetMethod(true)!;
                     return mi.ReturnType;
                 }
             }
@@ -402,7 +403,7 @@ namespace Flee.ExpressionElements.MemberElements
                 }
                 else
                 {
-                    MethodInfo mi = _myProperty.GetGetMethod(true);
+                    MethodInfo mi = _myProperty!.GetGetMethod(true)!;
                     return mi.IsPublic;
                 }
             }
@@ -422,7 +423,7 @@ namespace Flee.ExpressionElements.MemberElements
                     // Neither do virtual properties
                     return false;
                 }
-                else if (MyOptions.IsOwnerType(this.MemberOwnerType) == true && MyPrevious == null)
+                else if (this.MemberOwnerType != null && MyOptions.IsOwnerType(this.MemberOwnerType) == true && MyPrevious == null)
                 {
                     // Owner members support static if we are the first element
                     return true;
@@ -449,7 +450,7 @@ namespace Flee.ExpressionElements.MemberElements
                     // So do virtual properties
                     return true;
                 }
-                else if (MyOptions.IsOwnerType(this.MemberOwnerType) == true && MyPrevious == null)
+                else if (this.MemberOwnerType != null && MyOptions.IsOwnerType(this.MemberOwnerType) == true && MyPrevious == null)
                 {
                     // Owner members support instance if we are the first element
                     return true;
@@ -484,7 +485,7 @@ namespace Flee.ExpressionElements.MemberElements
                 }
                 else
                 {
-                    MethodInfo mi = _myProperty.GetGetMethod(true);
+                    MethodInfo mi = _myProperty!.GetGetMethod(true)!;
                     return mi.IsStatic;
                 }
             }

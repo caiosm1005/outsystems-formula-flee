@@ -32,11 +32,11 @@ namespace Flee.Parsing
             {
                 if (index < 0 || index >= _children.Count)
                 {
-                    return null;
+                    return null!;
                 }
                 else
                 {
-                    return (Node)_children[index];
+                    return (Node)_children[index]!;
                 }
             }
         }

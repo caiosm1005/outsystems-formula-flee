@@ -16,12 +16,14 @@ namespace Flee.ExpressionElements
         {
             _myCastExpression = castExpression;
 
-            _myDestType = GetDestType(destTypeParts, services);
+            Type? destType = GetDestType(destTypeParts, services);
 
-            if (_myDestType == null)
+            if (destType == null)
             {
                 base.ThrowCompileException(CompileErrorResourceKeys.CouldNotResolveType, CompileExceptionReason.UndefinedName, GetDestTypeString(destTypeParts, isArray));
             }
+
+            _myDestType = destType!;
 
             if (isArray == true)
             {
@@ -52,11 +54,11 @@ namespace Flee.ExpressionElements
         /// <param name="destTypeParts"></param>
         /// <param name="services"></param>
         /// <returns></returns>
-        private static Type GetDestType(string[] destTypeParts, IServiceProvider services)
+        private static Type? GetDestType(string[] destTypeParts, IServiceProvider services)
         {
-            ExpressionContext context = (ExpressionContext)services.GetService(typeof(ExpressionContext));
+            ExpressionContext context = (ExpressionContext)services.GetService(typeof(ExpressionContext))!;
 
-            Type t = null;
+            Type? t = null;
 
             // Try to find a builtin type with the name
             if (destTypeParts.Length == 1)
@@ -136,13 +138,13 @@ namespace Flee.ExpressionElements
             }
         }
 
-        private MethodInfo GetExplictOverloadedOperator(Type sourceType, Type destType)
+        private MethodInfo? GetExplictOverloadedOperator(Type sourceType, Type destType)
         {
             ExplicitOperatorMethodBinder binder = new ExplicitOperatorMethodBinder(destType, sourceType);
 
             // Look for an operator on the source type and dest types
-            MethodInfo miSource = Utility.GetOverloadedOperator("Explicit", sourceType, binder, sourceType);
-            MethodInfo miDest = Utility.GetOverloadedOperator("Explicit", destType, binder, sourceType);
+            MethodInfo? miSource = Utility.GetOverloadedOperator("Explicit", sourceType, binder, sourceType);
+            MethodInfo? miDest = Utility.GetOverloadedOperator("Explicit", destType, binder, sourceType);
 
             if (miSource == null & miDest == null)
             {
@@ -191,8 +193,8 @@ namespace Flee.ExpressionElements
                 }
                 else
                 {
-                    Type SE = sourceType.GetElementType();
-                    Type TE = destType.GetElementType();
+                    Type SE = sourceType.GetElementType()!;
+                    Type TE = destType.GetElementType()!;
 
                     // Both SE and TE are reference-types
                     if (SE.IsValueType == true | TE.IsValueType == true)
@@ -236,7 +238,7 @@ namespace Flee.ExpressionElements
 
         private static bool IsBaseType(Type target, Type potentialBase)
         {
-            Type current = target;
+            Type? current = target;
             while ((current != null))
             {
                 if (object.ReferenceEquals(current, potentialBase))
@@ -288,7 +290,7 @@ namespace Flee.ExpressionElements
 
         private void EmitCast(FleeILGenerator ilg, Type sourceType, Type destType, IServiceProvider services)
         {
-            MethodInfo explicitOperator = this.GetExplictOverloadedOperator(sourceType, destType);
+            MethodInfo? explicitOperator = this.GetExplictOverloadedOperator(sourceType, destType);
 
             if (object.ReferenceEquals(sourceType, destType))
             {
@@ -360,7 +362,7 @@ namespace Flee.ExpressionElements
             TypeCode desttc = Type.GetTypeCode(destType);
             TypeCode sourcetc = Type.GetTypeCode(sourceType);
             bool unsigned = IsUnsignedType(sourceType);
-            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions))!;
             bool @checked = options.Checked;
             OpCode op = OpCodes.Nop;
 

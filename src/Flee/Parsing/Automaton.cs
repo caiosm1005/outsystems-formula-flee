@@ -2,7 +2,7 @@
 {
     internal class Automaton
     {
-        private object _value;
+        private object? _value;
         private readonly AutomatonTree _tree = new AutomatonTree();
 
         public Automaton()
@@ -31,11 +31,11 @@
             }
         }
 
-        public object MatchFrom(LookAheadReader input, int pos, bool caseInsensitive)
+        public object? MatchFrom(LookAheadReader input, int pos, bool caseInsensitive)
         {
 
-            object result = null;
-            Automaton state = null;
+            object? result = null;
+            Automaton? state = null;
             int c = 0;
 
             c = input.Peek(pos);
@@ -57,15 +57,15 @@
     internal class AutomatonTree
     {
         private char _value;
-        private Automaton _state;
-        private AutomatonTree _left;
-        private AutomatonTree _right;
+        private Automaton? _state;
+        private AutomatonTree? _left;
+        private AutomatonTree? _right;
 
         public AutomatonTree()
         {
         }
 
-        public Automaton Find(char c, bool lowerCase)
+        public Automaton? Find(char c, bool lowerCase)
         {
             if (lowerCase)
             {
@@ -77,11 +77,11 @@
             }
             else if (_value > c)
             {
-                return _left.Find(c, false);
+                return _left!.Find(c, false);
             }
             else
             {
-                return _right.Find(c, false);
+                return _right!.Find(c, false);
             }
         }
 
@@ -100,11 +100,11 @@
             }
             else if (_value > c)
             {
-                _left.Add(c, false, state);
+                _left!.Add(c, false, state);
             }
             else
             {
-                _right.Add(c, false, state);
+                _right!.Add(c, false, state);
             }
         }
     }

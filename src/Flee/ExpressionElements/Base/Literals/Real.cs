@@ -10,11 +10,9 @@ namespace Flee.ExpressionElements.Base.Literals
         {
         }
 
-        public static LiteralElement CreateFromInteger(string image, IServiceProvider services)
+        public static LiteralElement? CreateFromInteger(string image, IServiceProvider services)
         {
-            LiteralElement element = default(LiteralElement);
-
-            element = CreateSingle(image, services);
+            LiteralElement? element = CreateSingle(image, services);
 
             if ((element != null))
             {
@@ -28,7 +26,7 @@ namespace Flee.ExpressionElements.Base.Literals
                 return element;
             }
 
-            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions))!;
 
             // Convert to a double if option is set
             if (options.IntegersAsDoubles == true)
@@ -41,9 +39,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
         public static LiteralElement Create(string image, IServiceProvider services)
         {
-            LiteralElement element = default(LiteralElement);
-
-            element = CreateSingle(image, services);
+            LiteralElement? element = CreateSingle(image, services);
 
             if ((element != null))
             {
@@ -66,12 +62,12 @@ namespace Flee.ExpressionElements.Base.Literals
 
             element = CreateImplicitReal(image, services);
 
-            return element;
+            return element!;
         }
 
-        private static LiteralElement CreateImplicitReal(string image, IServiceProvider services)
+        private static LiteralElement? CreateImplicitReal(string image, IServiceProvider services)
         {
-            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions));
+            ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions))!;
             RealLiteralDataType realType = options.RealLiteralDataType;
 
             switch (realType)
@@ -88,7 +84,7 @@ namespace Flee.ExpressionElements.Base.Literals
             }
         }
 
-        private static DoubleLiteralElement CreateDouble(string image, IServiceProvider services)
+        private static DoubleLiteralElement? CreateDouble(string image, IServiceProvider services)
         {
             if (image.EndsWith("d", StringComparison.OrdinalIgnoreCase) == true)
             {
@@ -101,7 +97,7 @@ namespace Flee.ExpressionElements.Base.Literals
             }
         }
 
-        private static SingleLiteralElement CreateSingle(string image, IServiceProvider services)
+        private static SingleLiteralElement? CreateSingle(string image, IServiceProvider services)
         {
             if (image.EndsWith("f", StringComparison.OrdinalIgnoreCase) == true)
             {
@@ -114,7 +110,7 @@ namespace Flee.ExpressionElements.Base.Literals
             }
         }
 
-        private static DecimalLiteralElement CreateDecimal(string image, IServiceProvider services)
+        private static DecimalLiteralElement? CreateDecimal(string image, IServiceProvider services)
         {
             if (image.EndsWith("m", StringComparison.OrdinalIgnoreCase) == true)
             {

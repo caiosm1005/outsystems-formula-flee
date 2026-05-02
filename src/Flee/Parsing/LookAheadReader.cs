@@ -15,7 +15,7 @@
         private char[] _buffer = new char[StreamBlockSize];
         private int _pos;
         private int _length;
-        private TextReader _input = null;
+        private TextReader? _input = null;
         private int _line = 1;
         private int _column = 1;
 
@@ -63,7 +63,7 @@
             }
         }
 
-        public string ReadString(int len)
+        public string? ReadString(int len)
         {
             ReadAhead(len);
             if (_pos >= _length)
@@ -102,7 +102,7 @@
             }
         }
 
-        public string PeekString(int off, int len)
+        public string? PeekString(int off, int len)
         {
             ReadAhead(off + len + 1);
             if (_pos + off >= _length)
@@ -122,7 +122,7 @@
 
         public override void Close()
         {
-            _buffer = null;
+            _buffer = null!;
             _pos = 0;
             _length = 0;
             if (_input != null)
@@ -191,7 +191,7 @@
 
         private void EnsureBufferCapacity(int size)
         {
-            char[] newbuf = null;
+            char[] newbuf;
 
             if (_buffer.Length >= size)
             {

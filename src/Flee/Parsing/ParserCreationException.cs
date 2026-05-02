@@ -66,27 +66,27 @@ namespace Flee.Parsing
         }
 
         private readonly ErrorType _type;
-        private readonly string _name;
-        private readonly string _info;
-        private readonly ArrayList _details;
+        private readonly string? _name;
+        private readonly string? _info;
+        private readonly ArrayList? _details;
 
         public ParserCreationException(ErrorType type,
-                                       String info)
+                                       String? info)
             : this(type, null, info)
         {
         }
 
         public ParserCreationException(ErrorType type,
-                                       String name,
-                                       String info)
+                                       String? name,
+                                       String? info)
             : this(type, name, info, null)
         {
         }
 
         public ParserCreationException(ErrorType type,
-                                       String name,
-                                       String info,
-                                       ArrayList details)
+                                       String? name,
+                                       String? info,
+                                       ArrayList? details)
         {
 
             this._type = type;
@@ -102,21 +102,21 @@ namespace Flee.Parsing
             return Type;
         }
 
-        public string Name => _name;
+        public string? Name => _name;
 
-        public string GetName()
+        public string? GetName()
         {
             return Name;
         }
 
-        public string Info => _info;
+        public string? Info => _info;
 
-        public string GetInfo()
+        public string? GetInfo()
         {
             return Info;
         }
 
-        public string Details
+        public string? Details
         {
             get
             {
@@ -143,7 +143,7 @@ namespace Flee.Parsing
             }
         }
 
-        public string GetDetails()
+        public string? GetDetails()
         {
             return Details;
         }

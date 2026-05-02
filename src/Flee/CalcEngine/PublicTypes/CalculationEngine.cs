@@ -17,7 +17,7 @@ namespace Flee.CalcEngine.PublicTypes
         #endregion
 
         #region "Events"
-        public event EventHandler<NodeEventArgs> NodeRecalculated;
+        public event EventHandler<NodeEventArgs>? NodeRecalculated;
         #endregion
 
         #region "Constructor"
@@ -58,18 +58,17 @@ namespace Flee.CalcEngine.PublicTypes
             }
         }
 
-        private ExpressionResultPair GetTail(string tailName)
+        private ExpressionResultPair? GetTail(string tailName)
         {
             Utility.AssertNotNull(tailName, "name");
-            ExpressionResultPair pair = null;
-            _myNameNodeMap.TryGetValue(tailName, out pair);
+            _myNameNodeMap.TryGetValue(tailName, out ExpressionResultPair? pair);
             return pair;
         }
 
         private ExpressionResultPair GetTailWithValidate(string tailName)
         {
             Utility.AssertNotNull(tailName, "name");
-            ExpressionResultPair pair = this.GetTail(tailName);
+            ExpressionResultPair? pair = this.GetTail(tailName);
 
             if (pair == null)
             {
@@ -121,7 +120,7 @@ namespace Flee.CalcEngine.PublicTypes
             Type pairType = typeof(GenericExpressionResultPair<>);
             pairType = pairType.MakeGenericType(resultType);
 
-            ExpressionResultPair pair = (ExpressionResultPair)Activator.CreateInstance(pairType);
+            ExpressionResultPair pair = (ExpressionResultPair)Activator.CreateInstance(pairType)!;
             string headName = context.CalcEngineExpressionName;
             pair.SetName(headName);
             pair.SetExpression(expression);
@@ -141,9 +140,9 @@ namespace Flee.CalcEngine.PublicTypes
         /// <param name="context"></param>
         internal void AddDependency(string tailName, ExpressionContext context)
         {
-            ExpressionResultPair actualTail = this.GetTail(tailName);
+            ExpressionResultPair actualTail = this.GetTail(tailName)!;
             string headName = context.CalcEngineExpressionName;
-            ExpressionResultPair actualHead = this.GetTail(headName);
+            ExpressionResultPair actualHead = this.GetTail(headName)!;
 
             // An expression could depend on the same reference more than once (ie: "a + a * a")
             _myDependencies.AddDepedency(actualTail, actualHead);
@@ -151,7 +150,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         internal Type ResolveTailType(string tailName)
         {
-            ExpressionResultPair actualTail = this.GetTail(tailName);
+            ExpressionResultPair actualTail = this.GetTail(tailName)!;
             return actualTail.ResultType;
         }
 
@@ -162,12 +161,12 @@ namespace Flee.CalcEngine.PublicTypes
 
         internal void EmitLoad(string tailName, FleeILGenerator ilg)
         {
-            PropertyInfo pi = typeof(ExpressionContext).GetProperty("CalculationEngine");
-            ilg.Emit(OpCodes.Callvirt, pi.GetGetMethod());
+            PropertyInfo pi = typeof(ExpressionContext).GetProperty("CalculationEngine")!;
+            ilg.Emit(OpCodes.Callvirt, pi.GetGetMethod()!);
 
             // Load the tail
             MemberInfo[] methods = typeof(CalculationEngine).FindMembers(MemberTypes.Method, BindingFlags.Instance | BindingFlags.Public, Type.FilterNameIgnoreCase, "GetResult");
-            MethodInfo mi = null;
+            MethodInfo? mi = null;
 
             foreach (MethodInfo method in methods)
             {
@@ -180,7 +179,7 @@ namespace Flee.CalcEngine.PublicTypes
 
             Type resultType = this.ResolveTailType(tailName);
 
-            mi = mi.MakeGenericMethod(resultType);
+            mi = mi!.MakeGenericMethod(resultType);
 
             ilg.Emit(OpCodes.Ldstr, tailName);
             ilg.Emit(OpCodes.Call, mi);
@@ -204,7 +203,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         public bool Remove(string name)
         {
-            ExpressionResultPair tail = this.GetTail(name);
+            ExpressionResultPair? tail = this.GetTail(name);
 
             if (tail == null)
             {
@@ -269,7 +268,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         public string[] GetDependents(string name)
         {
-            ExpressionResultPair pair = this.GetTail(name);
+            ExpressionResultPair? pair = this.GetTail(name);
             List<ExpressionResultPair> dependents = new List<ExpressionResultPair>();
 
             if ((pair != null))
@@ -282,7 +281,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         public string[] GetPrecedents(string name)
         {
-            ExpressionResultPair pair = this.GetTail(name);
+            ExpressionResultPair? pair = this.GetTail(name);
             List<ExpressionResultPair> dependents = new List<ExpressionResultPair>();
 
             if ((pair != null))
@@ -295,13 +294,13 @@ namespace Flee.CalcEngine.PublicTypes
 
         public bool HasDependents(string name)
         {
-            ExpressionResultPair pair = this.GetTail(name);
+            ExpressionResultPair? pair = this.GetTail(name);
             return (pair != null) && _myDependencies.HasDependents(pair);
         }
 
         public bool HasPrecedents(string name)
         {
-            ExpressionResultPair pair = this.GetTail(name);
+            ExpressionResultPair? pair = this.GetTail(name);
             return (pair != null) && _myDependencies.HasPrecedents(pair);
         }
 
