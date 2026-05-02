@@ -632,7 +632,7 @@ AND NOT
         }
 
 
-        private static void Variables_ResolveVariableType(object sender, ResolveVariableTypeEventArgs e)
+        private static void Variables_ResolveVariableType(object? sender, ResolveVariableTypeEventArgs e)
         {
             if (e.VariableName.StartsWith("VARBOOL"))
             {
@@ -644,7 +644,7 @@ AND NOT
             }
         }
 
-        private static void Variables_ResolveVariableValue(object sender, ResolveVariableValueEventArgs e)
+        private static void Variables_ResolveVariableValue(object? sender, ResolveVariableValueEventArgs e)
         {
             if (e.VariableType == typeof(bool))
             {
