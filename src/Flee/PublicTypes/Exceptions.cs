@@ -17,10 +17,6 @@ namespace Flee.PublicTypes
         InvalidFormat
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    [Serializable()]
     public sealed class ExpressionCompileException : Exception
     {
         private readonly CompileExceptionReason _myReason;
@@ -32,17 +28,6 @@ namespace Flee.PublicTypes
         internal ExpressionCompileException(ParserLogException parseException) : base(string.Empty, parseException)
         {
             _myReason = CompileExceptionReason.SyntaxError;
-        }
-
-        private ExpressionCompileException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context)
-        {
-            _myReason = (CompileExceptionReason)info.GetInt32("Reason");
-        }
-
-        public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue("Reason", Convert.ToInt32(_myReason));
         }
 
         public override string Message
