@@ -75,7 +75,6 @@ namespace Flee.InternalTypes
     {
         private readonly Type _myReturnType;
         private readonly Type _myArgType;
-        private CustomBinder _customBinderImplementation;
 
         public ExplicitOperatorMethodBinder(Type returnType, Type argType)
         {
@@ -86,7 +85,8 @@ namespace Flee.InternalTypes
         public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers,
             CultureInfo culture, string[] names, out object state)
         {
-            return _customBinderImplementation.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
+            state = null;
+            return null;
         }
 
         public override System.Reflection.MethodBase SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[] modifiers)
@@ -109,7 +109,6 @@ namespace Flee.InternalTypes
 
         private readonly Type _myLeftType;
         private readonly Type _myRightType;
-        private CustomBinder _customBinderImplementation;
 
         public BinaryOperatorBinder(Type leftType, Type rightType)
         {
@@ -120,7 +119,8 @@ namespace Flee.InternalTypes
         public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers,
             CultureInfo culture, string[] names, out object state)
         {
-            return _customBinderImplementation.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
+            state = null;
+            return null;
         }
 
         public override System.Reflection.MethodBase SelectMethod(System.Reflection.BindingFlags bindingAttr, System.Reflection.MethodBase[] match, System.Type[] types, System.Reflection.ParameterModifier[] modifiers)

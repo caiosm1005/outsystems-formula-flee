@@ -165,7 +165,7 @@
             {
                 readSize = _input.Read(_buffer, _length, size);
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 _input = null;
                 throw;
