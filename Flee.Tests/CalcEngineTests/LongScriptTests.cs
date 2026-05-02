@@ -3,7 +3,7 @@ using Flee.CalcEngine.PublicTypes;
 using Flee.PublicTypes;
 using NUnit.Framework;
 
-namespace Flee.Test.CalcEngineTests
+namespace Flee.Tests.CalcEngineTests
 {
     [TestFixture]
     public class LongScriptTests
@@ -43,7 +43,7 @@ namespace Flee.Test.CalcEngineTests
         [Test]
         public void LongScriptWithManyFunctions()
         {
-			//var script = System.IO.File.ReadAllText(@"test\Flee.Test\TestScripts\LongScriptWithManyFunctions.js");
+			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\LongScriptWithManyFunctions.js");
 			var script = @"If((""LongTextToPushScriptLengthOver256CharactersJustToMakeSureItDoesntMatter"")=""C"", 
 	(
 	If((""D"") = ""E"",
@@ -69,7 +69,7 @@ namespace Flee.Test.CalcEngineTests
 		[Test]
 		public void FailingLongScriptWithManyFunctions()
 		{
-			//var script = System.IO.File.ReadAllText(@"test\Flee.Test\TestScripts\FailingLongScriptWithManyFunctions.js");
+			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\FailingLongScriptWithManyFunctions.js");
 			var script = @"
 If(""A"" = ""A"",
 			(
@@ -99,7 +99,7 @@ If(""A"" = ""A"",
 		[Test]
 		public void NestedConditionalsForLongBranches()
 		{
-			//var script = System.IO.File.ReadAllText(@"test\Flee.Test\TestScripts\NestedConditionals.js");
+			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\NestedConditionals.js");
 			var script = @"IF(2.1 <> 2.1, 
 IF(2.1 > 2.1, 2.1, 
 IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 
@@ -116,7 +116,7 @@ IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 2.1))))";
 		[Test]
 		public void ShortCircuitLongBranches()
 		{
-			//var script = System.IO.File.ReadAllText(@"test\Flee.Test\TestScripts\NestedConditionals.js");
+			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\NestedConditionals.js");
 			var script = @"IF(
 1 = 2 AND (16 * 24 + 8 * -1 < 0 OR 1+1+1+1+1+1+1+1+1+1+1+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3*3-900 < 0)
 AND (5*6+13-6*9-3+1+2+3+4+5+6+7+8 = 5+6+7+8+9+1+2+3+4+5+6+1+2+3+4+9-48 OR 6+5+2+3+8+1*9-6*7 > 8+6*4*(15-6)*(5+1+1+1+1+1+1+1+2))

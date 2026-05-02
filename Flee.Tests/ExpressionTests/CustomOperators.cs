@@ -1,7 +1,7 @@
 ﻿using Flee.PublicTypes;
 using NUnit.Framework;
 
-namespace Flee.Test.ExpressionTests
+namespace Flee.Tests.ExpressionTests
 {
     public class Base
     {
