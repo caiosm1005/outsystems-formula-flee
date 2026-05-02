@@ -157,10 +157,10 @@
                     }
                 }
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 _input = null;
-                throw e;
+                throw;
             }
         }
 
