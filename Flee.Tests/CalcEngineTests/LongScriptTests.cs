@@ -1,11 +1,11 @@
 ﻿using System;
 using Flee.CalcEngine.PublicTypes;
 using Flee.PublicTypes;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Flee.Tests.CalcEngineTests
 {
-    [TestFixture]
+    [TestClass]
     public class LongScriptTests
     {
         private SimpleCalcEngine _myEngine;
@@ -40,7 +40,7 @@ namespace Flee.Tests.CalcEngineTests
             _myEngine = engine;
         }
 
-        [Test]
+        [TestMethod]
         public void LongScriptWithManyFunctions()
         {
 			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\LongScriptWithManyFunctions.js");
@@ -66,7 +66,7 @@ namespace Flee.Tests.CalcEngineTests
 		}
 
 
-		[Test]
+		[TestMethod]
 		public void FailingLongScriptWithManyFunctions()
 		{
 			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\FailingLongScriptWithManyFunctions.js");
@@ -96,7 +96,7 @@ If(""A"" = ""A"",
 			Assert.AreEqual(84.0d, result);
 		}
 
-		[Test]
+		[TestMethod]
 		public void NestedConditionalsForLongBranches()
 		{
 			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\NestedConditionals.js");
@@ -110,10 +110,10 @@ IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 2.1))))";
 			var expr = _myEngine.Context.CompileDynamic(script);
 			var result = expr.Evaluate();
 
-			Assert.AreEqual(2.1d, Convert.ToDecimal(result));
+			Assert.AreEqual(2.1m, Convert.ToDecimal(result));
 		}
 
-		[Test]
+		[TestMethod]
 		public void ShortCircuitLongBranches()
 		{
 			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\NestedConditionals.js");
@@ -143,7 +143,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 
 
 
-		[Test]
+		[TestMethod]
 		public void CrashTest()
 		{
 			_myEngine.Context.Options.RealLiteralDataType = RealLiteralDataType.Decimal;
@@ -160,7 +160,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 		}
 
 
-		[Test]
+		[TestMethod]
 		public void SeparatorExpressionParse()
 		{
 			var context = new ExpressionContext();
@@ -174,7 +174,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 		}
 
 
-		[Test]
+		[TestMethod]
 		public void StringTest()
         {
 			var e = _myEngine.Context.CompileDynamic("\"TEST\".Substring(0,2)");
@@ -184,7 +184,7 @@ if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(
 		}
 
 
-		[Test]
+		[TestMethod]
 		public void DivideByZero()
         {
 			var context = new ExpressionContext();

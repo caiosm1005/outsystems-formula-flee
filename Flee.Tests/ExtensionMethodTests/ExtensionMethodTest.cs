@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Flee.ExtensionMethodTests
 {
@@ -7,59 +7,59 @@ namespace Flee.ExtensionMethodTests
     using global::Flee.Tests.Infrastructure;
 
     /// <summary>The extension method test.</summary>
-    [TestFixture]
+    [TestClass]
     public class ExtensionMethodTest : ExpressionTests
     {
-        [Test]
+        [TestMethod]
         public void TestExtensionMethodCallOnOwner()
         {
             var result = GetExpressionContext().CompileDynamic("SayHello()").Evaluate();
             Assert.AreEqual("Hello World", result);
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtensionMethodCallOnProperty()
         {
             var result = GetExpressionContext().CompileDynamic("Sub.SayHello()").Evaluate();
             Assert.AreEqual("Hello SubWorld", result);
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtensionMethodCallOnOwnerWithArguments()
         {
             var result = GetExpressionContext().CompileDynamic("SayHello(\"!!!\")").Evaluate();
             Assert.AreEqual("Hello World!!!", result);
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtensionMethodCallOnOwnerWithArgumentsOnOverload()
         {
             var result = GetExpressionContext().CompileDynamic("SayHello(true)").Evaluate();
             Assert.AreEqual("Hello dear World", result);
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtensionMethodCallOnOwnerWithArgumentsOnClassOverload()
         {
             var result = GetExpressionContext().CompileDynamic("SayHello(2)").Evaluate();
             Assert.AreEqual("hello hello World", result);
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtensionMethodCallOnPropertyWithArguments()
         {
             var result = GetExpressionContext().CompileDynamic("Sub.SayHello(\"!!!\")").Evaluate();
             Assert.AreEqual("Hello SubWorld!!!", result);
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtensionMethodCallOnPropertyWithArgumentsOnClassOverload()
         {
             var result = GetExpressionContext().CompileDynamic("Sub.SayHello(2)").Evaluate();
             Assert.AreEqual("hello hello SubWorld", result);
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtensionMethodCallOnPropertyWithArgumentsOnOverload()
         {
             var result = GetExpressionContext().CompileDynamic("Sub.SayHello(\"!!!\")").Evaluate();
@@ -69,7 +69,7 @@ namespace Flee.ExtensionMethodTests
         /// <summary>
         /// check that methods are not ambiguous.
         /// </summary>
-        [Test]
+        [TestMethod]
         public void TestExtensionMethodMatchArguments()
         {
             var result = GetExpressionContext().CompileDynamic("MatchParams(1, 2.3f, 2.3)").Evaluate();

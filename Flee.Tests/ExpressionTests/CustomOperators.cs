@@ -1,5 +1,5 @@
 ﻿using Flee.PublicTypes;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Flee.Tests.ExpressionTests
 {
@@ -24,10 +24,10 @@ namespace Flee.Tests.ExpressionTests
     {
     }
 
-    [TestFixture]
+    [TestClass]
     public class CustomOperators
     {
-        [Test]
+        [TestMethod]
         public void LeftBaseRightBase()
         {
             var m1 = new Base { Value = 2 };
@@ -42,7 +42,7 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(7, added.Value);
         }
 
-        [Test]
+        [TestMethod]
         public void LeftBaseRightDerived()
         {
             var m1 = new Base { Value = 2 };
@@ -57,7 +57,7 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(7, added.Value);
         }
 
-        [Test]
+        [TestMethod]
         public void LeftDerivedRightBase()
         {
             var m1 = new Derived { Value = 2 };
@@ -72,7 +72,7 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(7, added.Value);
         }
 
-        [Test]
+        [TestMethod]
         public void LeftDerivedRightDerived()
         {
             var m1 = new Derived { Value = 2 };
@@ -87,7 +87,7 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(7, added.Value);
         }
 
-        [Test]
+        [TestMethod]
         public void LeftDerivedRightOtherDerived()
         {
             var m1 = new Derived { Value = 2 };
@@ -102,7 +102,7 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(7, added.Value);
         }
 
-        [Test]
+        [TestMethod]
         public void MissingOperator()
         {
             var m1 = new Derived { Value = 2 };
@@ -113,10 +113,10 @@ namespace Flee.Tests.ExpressionTests
             context.Variables.Add("m2", m2);
 
             var message = "ArithmeticElement: Operation 'Subtract' is not defined for types 'Derived' and 'OtherDerived'";
-            Assert.Throws<ExpressionCompileException>(() => context.CompileDynamic("m1 - m2"), message);
+            Assert.ThrowsException<ExpressionCompileException>(() => context.CompileDynamic("m1 - m2"), message);
         }
 
-        [Test]
+        [TestMethod]
         public void BaseUnaryOperator()
         {
             var m1 = new Base { Value = 2 };
@@ -129,7 +129,7 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(-2, negated.Value);
         }
 
-        [Test]
+        [TestMethod]
         public void DerivedUnaryOperator()
         {
             var m1 = new Derived { Value = 2 };
@@ -142,7 +142,7 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(-2, negated.Value);
         }
 
-        [Test]
+        [TestMethod]
         public void DerivedUnaryOperatorPlusOperator()
         {
             var m1 = new Derived { Value = 2 };

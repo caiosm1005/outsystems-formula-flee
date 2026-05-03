@@ -1,13 +1,13 @@
 ﻿using System;
 using Flee.PublicTypes;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ExpressionBuildingTest
 {
-    [TestFixture]
+    [TestClass]
     public class ExpressionBuildingTest
     {
-        [Test]
+        [TestMethod]
         public void ExpressionsAsVariables()
         {
             ExpressionContext context = new ExpressionContext();
@@ -31,7 +31,7 @@ namespace ExpressionBuildingTest
         }
 
 
-        [Test]
+        [TestMethod]
         public void Test_IfExpression_enUS()
         {
             ExpressionContext context = new ExpressionContext();
@@ -44,7 +44,7 @@ namespace ExpressionBuildingTest
             Assert.IsTrue((int)e.Evaluate() == resultWhenTrue);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_IfExpression_fiFI()
         {
             ExpressionContext context = new ExpressionContext();
@@ -58,7 +58,7 @@ namespace ExpressionBuildingTest
             Assert.IsTrue((int)e.Evaluate() == resultWhenFalse);
         }
 
-        [Test]
+        [TestMethod]
         public void NullCheck()
         {
             ExpressionContext context = new ExpressionContext();
@@ -68,7 +68,7 @@ namespace ExpressionBuildingTest
             Assert.IsFalse((bool)e1.Evaluate());
         }
 
-        [Test]
+        [TestMethod]
         public void NullIsNullCheck()
         {
             ExpressionContext context = new ExpressionContext();
@@ -78,7 +78,7 @@ namespace ExpressionBuildingTest
             Assert.IsTrue((bool)e1.Evaluate());
         }
 
-        [Test]
+        [TestMethod]
         public void CompareLongs()
         {
             // bug #83 test.
@@ -91,7 +91,7 @@ namespace ExpressionBuildingTest
             Assert.AreEqual(1216348165L, e1.Evaluate());
         }
 
-        [Test]
+        [TestMethod]
         public void ArgumentInt_to_DoubleConversion()
         {
             ExpressionContext context = new ExpressionContext();
@@ -102,7 +102,7 @@ namespace ExpressionBuildingTest
         }
 
 
-        [Test]
+        [TestMethod]
         public void IN_OperatorTest()
         {
             ExpressionContext context = new ExpressionContext();

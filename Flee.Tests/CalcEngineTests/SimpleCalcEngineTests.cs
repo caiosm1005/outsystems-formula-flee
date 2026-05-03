@@ -1,11 +1,11 @@
 ﻿using System;
 using Flee.CalcEngine.PublicTypes;
 using Flee.PublicTypes;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Flee.Tests.CalcEngineTests
 {
-    [TestFixture]
+    [TestClass]
     public class SimpleCalcEngineTests
     {
         private SimpleCalcEngine _myEngine;
@@ -19,7 +19,7 @@ namespace Flee.Tests.CalcEngineTests
             _myEngine = engine;
         }
 
-        [Test]
+        [TestMethod]
         public void TestScripts()
         {
             

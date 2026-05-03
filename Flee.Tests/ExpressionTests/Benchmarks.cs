@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using Flee.PublicTypes;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Flee.Tests.ExpressionTests
 {
-    [TestFixture]
+    [TestClass]
     public class Benchmarks : Core
     {
-        [Test(Description = "Test that setting variables is fast")]
+        [TestMethod]
+        [Description("Test that setting variables is fast")]
         public void TestFastVariables()
         {
             //Test should take 200ms or less
@@ -33,7 +34,7 @@ namespace Flee.Tests.ExpressionTests
             }
             sw.Stop();
             this.PrintSpeedMessage("Fast variables", iterations, sw);
-            Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
+            Assert.IsTrue(sw.ElapsedMilliseconds < expectedTime, "Test time above expected value");
         }
 
         private const String BigExpression = @"
@@ -576,7 +577,8 @@ AND NOT
         private const String SmallExpression = "(4 ^ 3.4 * 18 - VAR1) * (14 / 3) + VAR2";
         private const String SmallBranching = "If(If(23 > 15 AND 3*7 = 21 OR (25/5 > 10 AND 6+8 = 14), If(2.1=2.1,(4 ^ 3.4 * 18 - VAR1),If(2.1=2.1,0,1)), (14 / 3) + VAR2) <> 0 or true, If(2.1 <> 2.1 AND 3.1=3.1 OF 6.2=6.7, 2.1, 3.1), If(2.1=2.1 AND 3.2=3.2 OR 3.1<>3.1 OR 2.1<>2.3,3, 4))";
 
-        [Test(Description = "Compile complicated expressions")]
+        [TestMethod]
+        [Description("Compile complicated expressions")]
         public void ProfileCompilationTime()
         {
             int expectedTime = 2000;
@@ -597,7 +599,7 @@ AND NOT
             }
             sw.Stop();
             this.PrintSpeedMessage("Compile Big", iterations, sw);
-            Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
+            Assert.IsTrue(sw.ElapsedMilliseconds < expectedTime, "Test time above expected value");
             
 
             iterations = 100;
@@ -613,7 +615,7 @@ AND NOT
             }
             sw.Stop();
             this.PrintSpeedMessage("Compile Small", iterations, sw);
-            Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
+            Assert.IsTrue(sw.ElapsedMilliseconds < expectedTime, "Test time above expected value");
 
             iterations = 100;
             expectedTime = 100;
@@ -628,7 +630,7 @@ AND NOT
             }
             sw.Stop();
             this.PrintSpeedMessage("Compile Small Branching", iterations, sw);
-            Assert.Less(sw.ElapsedMilliseconds, expectedTime, "Test time above expected value");
+            Assert.IsTrue(sw.ElapsedMilliseconds < expectedTime, "Test time above expected value");
         }
 
 

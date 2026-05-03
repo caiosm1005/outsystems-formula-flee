@@ -1,14 +1,14 @@
 ﻿using Flee.CalcEngine.PublicTypes;
 using Flee.PublicTypes;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
 namespace Flee.Tests.CalcEngineTests
 {
-    [TestFixture]
+    [TestClass]
     public class CalcEngineTestFixture
     {
-        [Test]
+        [TestMethod]
         public void Test_Basic()
         {
             var ce = new CalculationEngine();
@@ -32,7 +32,7 @@ namespace Flee.Tests.CalcEngineTests
             Assert.AreEqual(((345 * 2) + 1) * 2, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_MutipleIdentical_References()
         {
             var ce = new CalculationEngine();
@@ -47,7 +47,7 @@ namespace Flee.Tests.CalcEngineTests
             Assert.AreEqual((100 * 2) * 3, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_Complex()
         {
             var ce = new CalculationEngine();
@@ -68,7 +68,7 @@ namespace Flee.Tests.CalcEngineTests
             Assert.AreEqual((100 * 2) + (24 * 2) + ((100 * 2) + (24 * 2)) + 80, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_Arithmetic()
         {
             var ce = new CalculationEngine();
@@ -83,7 +83,7 @@ namespace Flee.Tests.CalcEngineTests
             Assert.AreEqual(420, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_Comparison_Operators()
         {
             var ce = new CalculationEngine();
@@ -97,7 +97,7 @@ namespace Flee.Tests.CalcEngineTests
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_And_Or_Xor_Not_Operators()
         {
             var ce = new CalculationEngine();
@@ -117,7 +117,7 @@ namespace Flee.Tests.CalcEngineTests
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_Shift_Operators()
         {
             var ce = new CalculationEngine();
@@ -130,7 +130,7 @@ namespace Flee.Tests.CalcEngineTests
             Assert.AreEqual(25, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_Recalculate_NonSource()
         {
             var ce = new CalculationEngine();
@@ -147,7 +147,7 @@ namespace Flee.Tests.CalcEngineTests
             Assert.AreEqual(((100) * 2 + 1) * 2, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_Partial_Recalculate()
         {
             var ce = new CalculationEngine();
@@ -166,7 +166,7 @@ namespace Flee.Tests.CalcEngineTests
             Assert.AreEqual(((100 * 2) + 222) * 2, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Test_Circular_Reference1()
         {
             var ce = new CalculationEngine();
@@ -177,10 +177,10 @@ namespace Flee.Tests.CalcEngineTests
             ce.Add("a", "x * 2", context);
             variables.Add("y", 1);
             ce.Add("b", "a + y + b", context);
-            Assert.Throws<CircularReferenceException>(() => { ce.Recalculate("a"); });
+            Assert.ThrowsException<CircularReferenceException>(() => { ce.Recalculate("a"); });
         }
 
-        [Test]
+        [TestMethod]
         public void Test_Boolean_Expression()
         {
             string expression = "a AND NOT b AND NOT c AND d";
