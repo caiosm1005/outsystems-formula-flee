@@ -305,23 +305,6 @@ namespace Flee.CalcEngine.InternalTypes
             return output;
         }
 
-#if DEBUG
-        public string Precedents
-        {
-            get
-            {
-                List<string> list = new List<string>();
-
-                foreach (KeyValuePair<T, int> pair in _myPrecedentsMap)
-                {
-                    list.Add(pair.ToString());
-                }
-
-                return string.Join(System.Environment.NewLine, list.ToArray());
-            }
-        }
-#endif
-
         public string DependencyGraph
         {
             get

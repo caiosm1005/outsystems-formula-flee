@@ -154,11 +154,6 @@ namespace Flee.CalcEngine.PublicTypes
             return actualTail.ResultType;
         }
 
-        internal bool HasTail(string tailName)
-        {
-            return _myNameNodeMap.ContainsKey(tailName);
-        }
-
         internal void EmitLoad(string tailName, FleeILGenerator ilg)
         {
             PropertyInfo pi = typeof(ExpressionContext).GetProperty("CalculationEngine")!;

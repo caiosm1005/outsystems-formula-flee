@@ -8,7 +8,6 @@ namespace Flee.InternalTypes
     {
         private ILGenerator _myIlGenerator;
         private int _myLength;
-        private int _myLabelCount;
         private readonly Dictionary<Type, LocalBuilder> _localBuilderTemp;
         private int _myPass;
         private BranchManager _bm;
@@ -201,9 +200,7 @@ namespace Flee.InternalTypes
 
         public Label DefineLabel()
         {
-            _myLabelCount += 1;
-            var label = _myIlGenerator.DefineLabel();
-            return label;
+            return _myIlGenerator.DefineLabel();
         }
 
 
@@ -258,8 +255,6 @@ namespace Flee.InternalTypes
         }
 
         public int Length => _myLength;
-
-        public int LabelCount => _myLabelCount;
 
         private int ILGeneratorLength => _myIlGenerator.ILOffset;
     }
