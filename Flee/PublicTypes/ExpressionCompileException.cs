@@ -1,22 +1,9 @@
-﻿using Flee.InternalTypes;
+using Flee.InternalTypes;
 using Flee.Parsing;
 using Flee.Resources;
 
 namespace Flee.PublicTypes
 {
-    public enum CompileExceptionReason
-    {
-        SyntaxError,
-        ConstantOverflow,
-        TypeMismatch,
-        UndefinedName,
-        FunctionHasNoReturnValue,
-        InvalidExplicitCast,
-        AmbiguousMatch,
-        AccessDenied,
-        InvalidFormat
-    }
-
     public sealed class ExpressionCompileException : Exception
     {
         private readonly CompileExceptionReason _myReason;
