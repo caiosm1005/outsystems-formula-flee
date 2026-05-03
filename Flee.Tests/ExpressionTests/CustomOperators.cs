@@ -1,4 +1,4 @@
-﻿using Flee.PublicTypes;
+using Flee.PublicTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Flee.Tests.ExpressionTests

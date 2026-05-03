@@ -1,4 +1,4 @@
-﻿using System.Reflection.Emit;
+using System.Reflection.Emit;
 using Flee.ExpressionElements.Base;
 using Flee.InternalTypes;
 using Flee.PublicTypes;

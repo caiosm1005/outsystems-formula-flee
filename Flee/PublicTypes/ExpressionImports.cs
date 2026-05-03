@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Flee.InternalTypes;
 using Flee.Resources;
 

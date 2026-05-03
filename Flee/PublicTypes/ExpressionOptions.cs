@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Globalization;
 using Flee.InternalTypes;
 

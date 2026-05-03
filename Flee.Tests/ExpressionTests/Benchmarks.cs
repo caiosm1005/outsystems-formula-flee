@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using Flee.PublicTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

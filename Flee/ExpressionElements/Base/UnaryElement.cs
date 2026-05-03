@@ -1,4 +1,4 @@
-﻿using Flee.PublicTypes;
+using Flee.PublicTypes;
 using Flee.Resources;
 
 namespace Flee.ExpressionElements.Base

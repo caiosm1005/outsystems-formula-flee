@@ -1,4 +1,4 @@
-﻿namespace Flee.Parsing
+namespace Flee.Parsing
 {
     /**
      * The token match status. This class contains logic to ensure that

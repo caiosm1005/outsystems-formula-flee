@@ -1,4 +1,4 @@
-﻿using Flee.Parsing;
+using Flee.Parsing;
 using Flee.PublicTypes;
 
 namespace Flee.CalcEngine.InternalTypes

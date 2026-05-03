@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Flee.ExpressionElements.Base.Literals;
 
 using Flee.InternalTypes;

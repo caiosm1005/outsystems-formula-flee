@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Flee.ExpressionElements.Literals.Real;
 using Flee.PublicTypes;
 

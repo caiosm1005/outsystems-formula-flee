@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Flee.ExpressionElements.Base;
 using Flee.InternalTypes;
 using Flee.PublicTypes;

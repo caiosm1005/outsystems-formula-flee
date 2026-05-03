@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Flee.InternalTypes;
 
 namespace Flee.PublicTypes

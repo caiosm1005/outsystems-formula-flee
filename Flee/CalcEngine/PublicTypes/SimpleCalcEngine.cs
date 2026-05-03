@@ -1,4 +1,4 @@
-﻿using Flee.CalcEngine.InternalTypes;
+using Flee.CalcEngine.InternalTypes;
 using Flee.PublicTypes;
 
 namespace Flee.CalcEngine.PublicTypes

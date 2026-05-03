@@ -1,4 +1,4 @@
-﻿namespace Flee.Parsing
+namespace Flee.Parsing
 {
     /**
       * A regular expression alternative element. This element matches

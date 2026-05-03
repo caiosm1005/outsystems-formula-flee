@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Reflection.Emit;
 using System.Reflection;
 using Flee.ExpressionElements.Base;

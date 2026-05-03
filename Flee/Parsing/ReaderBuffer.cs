@@ -1,4 +1,4 @@
-﻿namespace Flee.Parsing
+namespace Flee.Parsing
 {
     /**
      * A character buffer that automatically reads from an input source

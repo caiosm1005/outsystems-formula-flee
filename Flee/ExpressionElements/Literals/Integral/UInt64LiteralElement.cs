@@ -1,4 +1,4 @@
-﻿using Flee.ExpressionElements.Base.Literals;
+using Flee.ExpressionElements.Base.Literals;
 using Flee.InternalTypes;
 
 

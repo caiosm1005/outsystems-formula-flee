@@ -1,4 +1,4 @@
-﻿namespace Flee.Parsing
+namespace Flee.Parsing
 {
     internal class CombineElement : Element
     {

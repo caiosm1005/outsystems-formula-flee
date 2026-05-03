@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.Design;
+using System.ComponentModel.Design;
 using System.Reflection.Emit;
 using System.Reflection;
 using Flee.ExpressionElements;

@@ -1,4 +1,4 @@
-﻿using System.Reflection.Emit;
+using System.Reflection.Emit;
 using System.Reflection;
 using Flee.ExpressionElements.Base.Literals;
 using Flee.InternalTypes;

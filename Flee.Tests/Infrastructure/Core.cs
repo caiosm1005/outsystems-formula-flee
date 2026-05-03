@@ -1,4 +1,4 @@
-﻿namespace Flee.Tests.Infrastructure
+namespace Flee.Tests.Infrastructure
 {
     public abstract class ExpressionTests
     {

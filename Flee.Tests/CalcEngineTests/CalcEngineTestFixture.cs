@@ -1,4 +1,4 @@
-﻿using Flee.CalcEngine.PublicTypes;
+using Flee.CalcEngine.PublicTypes;
 using Flee.PublicTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;

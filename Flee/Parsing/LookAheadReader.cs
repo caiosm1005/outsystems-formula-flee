@@ -1,4 +1,4 @@
-﻿namespace Flee.Parsing
+namespace Flee.Parsing
 {
     // * A look-ahead character stream reader. This class provides the 
     // * functionalities of a buffered line-number reader, but with the 

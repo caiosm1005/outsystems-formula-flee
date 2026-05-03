@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Reflection.Emit;
 using Flee.InternalTypes;
 using Flee.PublicTypes;

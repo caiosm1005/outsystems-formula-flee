@@ -1,4 +1,4 @@
-﻿using Flee.CalcEngine.InternalTypes;
+using Flee.CalcEngine.InternalTypes;
 using Flee.CalcEngine.PublicTypes;
 using Flee.ExpressionElements.Base;
 using Flee.InternalTypes;
