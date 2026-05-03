@@ -1,10 +1,34 @@
-﻿namespace Flee.Parsing
-{
-    ///<remarks>
-    /// An enumeration with token and production node
-    ///constants.</remarks>
-    internal enum ExpressionConstants
-    {
+/*
+ * ExpressionConstants.cs
+ *
+ * THIS FILE HAS BEEN GENERATED AUTOMATICALLY. DO NOT EDIT!
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1
+ * of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307, USA.
+ *
+ *
+ * Copyright (c) 2007 Eugene Ciloci
+ */
+
+namespace Flee.Parsing {
+
+    /**
+     * <remarks>An enumeration with token and production node
+     * constants.</remarks>
+     */
+    internal enum ExpressionConstants {
         ADD = 1001,
         SUB = 1002,
         MUL = 1003,
@@ -31,20 +55,22 @@
         ARRAY_BRACES = 1024,
         LEFT_SHIFT = 1025,
         RIGHT_SHIFT = 1026,
-        WHITESPACE = 1027,
-        INTEGER = 1028,
-        REAL = 1029,
-        STRING_LITERAL = 1030,
-        CHAR_LITERAL = 1031,
-        TRUE = 1032,
-        FALSE = 1033,
-        NULL_LITERAL = 1034,
-        HEX_LITERAL = 1035,
+        SINGLE_LINE_COMMENT = 1027,
+        MULTI_LINE_COMMENT = 1028,
+        WHITESPACE = 1029,
+        INTEGER = 1030,
+        REAL = 1031,
+        STRING_LITERAL = 1032,
+        CHAR_LITERAL = 1033,
+        TRUE = 1034,
+        FALSE = 1035,
         IDENTIFIER = 1036,
-        TIMESPAN = 1037,
-        DATETIME = 1038,
-        IF = 1039,
-        CAST = 1040,
+        HEX_LITERAL = 1037,
+        NULL_LITERAL = 1038,
+        TIMESPAN = 1039,
+        DATETIME = 1040,
+        IF = 1041,
+        CAST = 1042,
         EXPRESSION = 2001,
         XOR_EXPRESSION = 2002,
         OR_EXPRESSION = 2003,

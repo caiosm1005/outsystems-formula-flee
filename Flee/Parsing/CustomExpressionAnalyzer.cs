@@ -361,7 +361,7 @@ namespace Flee.Parsing
             return node;
         }
 
-        public override Node ExitHexliteral(Token node)
+        public override Node ExitHexLiteral(Token node)
         {
             LiteralElement element = IntegralLiteralElement.Create(node.Image, true, _myInUnaryNegate, _myServices!);
             node.AddValue(element);
