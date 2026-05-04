@@ -186,83 +186,6 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(double.PositiveInfinity, e.Evaluate());
         }
 
-        // --- Modulo ---
-
-        [TestMethod]
-        public void Modulo_TwoInts_ReturnsRemainder()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("17 % 5");
-
-            Assert.AreEqual(2, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Modulo_NegativeInt_PreservesSignOfDividend()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("-17 % 5");
-
-            Assert.AreEqual(-2, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Modulo_DoubleByDouble_ReturnsFractionalRemainder()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("5.5 % 2.0");
-
-            Assert.AreEqual(1.5, e.Evaluate());
-        }
-
-        // --- Power (^) ---
-
-        [TestMethod]
-        public void Power_IntToIntPowerOfTwo_ReturnsSquare()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("4 ^ 2");
-
-            Assert.AreEqual(16, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Power_IntToZero_ReturnsOne()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("99 ^ 0");
-
-            Assert.AreEqual(1, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Power_DoubleBase_ReturnsDouble()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("2.0 ^ 3");
-
-            Assert.AreEqual(8.0, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Power_NegativeExponent_ReturnsReciprocal()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("2 ^ -3");
-
-            Assert.AreEqual(0.125, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Power_NegateBindsTighterThanPower()
-        {
-            // Per the existing valid expressions list: -2 ^ 4 evaluates to 16, not -16.
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("-2 ^ 4");
-
-            Assert.AreEqual(16, e.Evaluate());
-        }
-
         // --- Unary negate ---
 
         [TestMethod]
@@ -310,15 +233,6 @@ namespace Flee.Tests.ExpressionTests
             var e = context.CompileDynamic("(1 + 2) * 3");
 
             Assert.AreEqual(9, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Precedence_PowerHigherThanMultiply()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("2 * 3 ^ 2");
-
-            Assert.AreEqual(18, e.Evaluate());
         }
 
         [TestMethod]

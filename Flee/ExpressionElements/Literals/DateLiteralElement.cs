@@ -9,22 +9,21 @@ using Flee.Resources;
 namespace Flee.ExpressionElements.Literals
 {
     /// <summary>
-    /// A <see cref="DateTime"/> literal of the form <c>#yyyy-M-d H:m:s#</c>. Parsed at
-    /// compile time using a fixed invariant-culture format and emitted at evaluation time
-    /// as a constructor call from ticks.
+    /// A date literal of the form <c>#yyyy-M-d#</c>. Stored as a <see cref="DateTime"/> with
+    /// midnight time-of-day so it composes with the existing date arithmetic.
     /// </summary>
-    internal class DateTimeLiteralElement : LiteralElement
+    internal class DateLiteralElement : LiteralElement
     {
-        private const string Format = "yyyy-M-d H:m:s";
+        private const string Format = "yyyy-M-d";
 
         private readonly DateTime _myValue;
 
         /// <summary>
         /// Initializes a new instance by parsing <paramref name="image"/> using the fixed
-        /// <c>yyyy-M-d H:m:s</c> format, throwing a compile exception on a format mismatch.
+        /// <c>yyyy-M-d</c> format, throwing a compile exception on a format mismatch.
         /// </summary>
         /// <param name="image">The literal source text without the surrounding <c>#</c> markers.</param>
-        public DateTimeLiteralElement(string image)
+        public DateLiteralElement(string image)
         {
             if (!DateTime.TryParseExact(
                 image,

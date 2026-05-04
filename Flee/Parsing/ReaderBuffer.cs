@@ -133,6 +133,36 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Restores <paramref name="count"/> previously read characters, rewinding
+        /// <see cref="Position"/> and <see cref="ColumnNumber"/>. The unread region must not
+        /// contain a newline — context-sensitive lexers that need to roll back a single-line
+        /// token (e.g. a regex literal that turned out to be division) are the intended caller.
+        /// </summary>
+        /// <param name="count">The number of characters to unread.</param>
+        /// <exception cref="InvalidOperationException">
+        /// If <paramref name="count"/> is negative, exceeds the current position, or the unread
+        /// region crosses a line boundary.
+        /// </exception>
+        public void Unread(int count)
+        {
+            if (count < 0 || count > Position)
+            {
+                throw new InvalidOperationException("Cannot unread beyond start of buffer");
+            }
+
+            for (int i = 1; i <= count; i++)
+            {
+                if (_buffer[Position - i] == '\n')
+                {
+                    throw new InvalidOperationException("Unread cannot cross line boundaries");
+                }
+            }
+
+            Position -= count;
+            ColumnNumber -= count;
+        }
+
         private void UpdateLineColumnNumbers(int offset)
         {
             for (int i = 0; i < offset; i++)

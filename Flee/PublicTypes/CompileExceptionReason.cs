@@ -35,11 +35,6 @@ namespace Flee.PublicTypes
         FunctionHasNoReturnValue,
 
         /// <summary>
-        /// An explicit cast targeted a type that has no valid conversion from the source type.
-        /// </summary>
-        InvalidExplicitCast,
-
-        /// <summary>
         /// An overload could not be uniquely resolved.
         /// </summary>
         AmbiguousMatch,

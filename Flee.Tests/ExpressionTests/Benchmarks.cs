@@ -573,7 +573,7 @@ AND NOT
     OR ( 492 In (VAR29)) 
     OR ( 492 In (VAR30))
 )";
-        private const String SmallExpression = "(4 ^ 3.4 * 18 - VAR1) * (14 / 3) + VAR2";
+        private const String SmallExpression = "(4 * 3.4 * 18 - VAR1) * (14 / 3) + VAR2";
 
         [TestMethod]
         [Description("Compile complicated expressions")]

@@ -23,16 +23,6 @@ namespace Flee.InternalTypes
         /// <summary>
         /// Division (<c>/</c>).
         /// </summary>
-        Divide,
-
-        /// <summary>
-        /// Remainder (<c>%</c>).
-        /// </summary>
-        Mod,
-
-        /// <summary>
-        /// Exponentiation (<c>^</c>).
-        /// </summary>
-        Power
+        Divide
     }
 }

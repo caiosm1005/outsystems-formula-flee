@@ -18,7 +18,7 @@ namespace Flee.Parsing
     /// Subclass of the Grammatica-generated <see cref="ExpressionAnalyzer"/> that walks the
     /// parse tree and produces <see cref="ExpressionElement"/> nodes. Adds Flee-specific
     /// behavior on top of the generated visitor (services, escape handling, unary-negate
-    /// tracking, etc.).
+    /// tracking, SQL-op dispatch, etc.).
     /// </summary>
     internal class FleeExpressionAnalyzer : ExpressionAnalyzer
     {
@@ -79,17 +79,6 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Folds an XOR sub-expression into a binary-op element.
-        /// </summary>
-        /// <param name="node">The XOR production.</param>
-        /// <returns>The same node.</returns>
-        public override Node ExitXorExpression(Production node)
-        {
-            AddBinaryOp(node, typeof(XorElement));
-            return node;
-        }
-
-        /// <summary>
         /// Folds an OR sub-expression into a binary-op element.
         /// </summary>
         /// <param name="node">The OR production.</param>
@@ -134,17 +123,6 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Folds a shift sub-expression into a binary-op element.
-        /// </summary>
-        /// <param name="node">The shift production.</param>
-        /// <returns>The same node.</returns>
-        public override Node ExitShiftExpression(Production node)
-        {
-            AddBinaryOp(node, typeof(ShiftElement));
-            return node;
-        }
-
-        /// <summary>
         /// Folds an additive sub-expression into a binary-op element.
         /// </summary>
         /// <param name="node">The additive production.</param>
@@ -167,17 +145,6 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Folds a power sub-expression into a binary-op element.
-        /// </summary>
-        /// <param name="node">The power production.</param>
-        /// <returns>The same node.</returns>
-        public override Node ExitPowerExpression(Production node)
-        {
-            AddBinaryOp(node, typeof(ArithmeticElement));
-            return node;
-        }
-
-        /// <summary>
         /// Folds a unary-negate sub-expression into either a negated literal (for integer
         /// constants such as <c>int.MinValue</c>) or a regular <see cref="NegateElement"/>.
         /// </summary>
@@ -187,25 +154,20 @@ namespace Flee.Parsing
         {
             IList childValues = GetChildValues(node);
 
-            // Get last child
             ExpressionElement childElement = (ExpressionElement)childValues[childValues.Count - 1]!;
 
-            // Is it an signed integer constant?
             if (ReferenceEquals(childElement.GetType(), typeof(Int32LiteralElement)) & childValues.Count == 2)
             {
                 ((Int32LiteralElement)childElement).Negate();
-                // Add it directly instead of the negate element since it will already be negated
                 node.AddValue(childElement);
             }
             else if (ReferenceEquals(childElement.GetType(), typeof(Int64LiteralElement)) & childValues.Count == 2)
             {
                 ((Int64LiteralElement)childElement).Negate();
-                // Add it directly instead of the negate element since it will already be negated
                 node.AddValue(childElement);
             }
             else
             {
-                // No so just add a regular negate
                 AddUnaryOp(node, typeof(NegateElement));
             }
 
@@ -262,17 +224,6 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Lifts the value produced by the special-function child to this node.
-        /// </summary>
-        /// <param name="node">The special-function-expression production.</param>
-        /// <returns>The same node.</returns>
-        public override Node ExitSpecialFunctionExpression(Production node)
-        {
-            AddFirstChildValue(node);
-            return node;
-        }
-
-        /// <summary>
         /// Builds a ternary <see cref="ConditionalElement"/> (the <c>if(cond, then, else)</c>
         /// builtin).
         /// </summary>
@@ -290,12 +241,12 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Builds an <see cref="InElement"/> from a left-hand operand and either a literal
-        /// list or a member-invocation list.
+        /// Combines the left-hand <see cref="CompareExpression"/> with an optional SQL-op
+        /// builder produced by the right-hand <c>SqlOpRhs</c>.
         /// </summary>
-        /// <param name="node">The in-expression production.</param>
+        /// <param name="node">The sql-op-expression production.</param>
         /// <returns>The same node.</returns>
-        public override Node ExitInExpression(Production node)
+        public override Node ExitSqlOpExpression(Production node)
         {
             IList childValues = GetChildValues(node);
 
@@ -306,22 +257,163 @@ namespace Flee.Parsing
             }
 
             ExpressionElement operand = (ExpressionElement)childValues[0]!;
-            childValues.RemoveAt(0);
+            Func<ExpressionElement, ExpressionElement> builder =
+                (Func<ExpressionElement, ExpressionElement>)childValues[1]!;
+            node.AddValue(builder(operand));
+            return node;
+        }
 
-            object second = childValues[0]!;
-            InElement op;
-
-            if (second is IList)
+        /// <summary>
+        /// Lifts the inner builder from the chosen alternative, wrapping it in a NOT when the
+        /// negated branch fires.
+        /// </summary>
+        /// <param name="node">The sql-op-rhs production.</param>
+        /// <returns>The same node.</returns>
+        public override Node ExitSqlOpRhs(Production node)
+        {
+            IList childValues = GetChildValues(node);
+            // NOT branch flattens a synthetic subproduction whose children are
+            // [NOT_token (string.Empty), inner builder].
+            if (childValues.Count == 2)
             {
-                op = new InElement(operand, (IList)second);
+                Func<ExpressionElement, ExpressionElement> inner =
+                    (Func<ExpressionElement, ExpressionElement>)childValues[1]!;
+                node.AddValue(WrapWithNot(inner));
+                return node;
+            }
+            AddFirstChildValue(node);
+            return node;
+        }
+
+        /// <summary>
+        /// Lifts the inner builder produced by the chosen alternative.
+        /// </summary>
+        /// <param name="node">The negated-sql-op-rhs production.</param>
+        /// <returns>The same node.</returns>
+        public override Node ExitNegatedSqlOpRhs(Production node)
+        {
+            AddFirstChildValue(node);
+            return node;
+        }
+
+        /// <summary>
+        /// Builds the <c>IN</c> builder. Returns a <see cref="Func{T,TResult}"/> that, given
+        /// the operand from <see cref="ExitSqlOpExpression"/>, produces an
+        /// <see cref="InElement"/>.
+        /// </summary>
+        /// <param name="node">The in-rhs production.</param>
+        /// <returns>The same node.</returns>
+        public override Node ExitInRhs(Production node)
+        {
+            IList childValues = GetChildValues(node);
+            object target = childValues[0]!;
+            Func<ExpressionElement, ExpressionElement> builder = operand =>
+            {
+                if (target is IList list)
+                {
+                    return new InElement(operand, list);
+                }
+                List<object?> chain = [target];
+                InvocationListElement il = new(chain, _myServices!);
+                return new InElement(operand, il);
+            };
+            node.AddValue(builder);
+            return node;
+        }
+
+        /// <summary>
+        /// Builds the <c>LIKE</c> builder.
+        /// </summary>
+        /// <param name="node">The like-rhs production.</param>
+        /// <returns>The same node.</returns>
+        public override Node ExitLikeRhs(Production node)
+        {
+            IList childValues = GetChildValues(node);
+            ExpressionElement pattern = (ExpressionElement)childValues[0]!;
+            Func<ExpressionElement, ExpressionElement> builder = operand => new LikeElement(operand, pattern);
+            node.AddValue(builder);
+            return node;
+        }
+
+        /// <summary>
+        /// Builds the <c>MATCH</c> builder. The right-hand side is a REGEXP token whose
+        /// <see cref="ExitRegexp"/> hook produced a <see cref="RegexLiteralElement"/>.
+        /// </summary>
+        /// <param name="node">The match-rhs production.</param>
+        /// <returns>The same node.</returns>
+        public override Node ExitMatchRhs(Production node)
+        {
+            IList childValues = GetChildValues(node);
+            RegexLiteralElement regex = (RegexLiteralElement)childValues[0]!;
+            Func<ExpressionElement, ExpressionElement> builder = operand => new MatchElement(operand, regex);
+            node.AddValue(builder);
+            return node;
+        }
+
+        /// <summary>
+        /// Builds the <c>CONTAINS</c> builder. Inspects the contains-target shape to decide
+        /// which <see cref="ContainsElement"/> overload to construct.
+        /// </summary>
+        /// <param name="node">The contains-rhs production.</param>
+        /// <returns>The same node.</returns>
+        public override Node ExitContainsRhs(Production node)
+        {
+            IList childValues = GetChildValues(node);
+            object target = childValues[0]!;
+            Func<ExpressionElement, ExpressionElement> builder = collection =>
+                ContainsElement.Build(collection, target, _myServices!);
+            node.AddValue(builder);
+            return node;
+        }
+
+        /// <summary>
+        /// Lifts the contains-target value (quantifier wrapper, regex literal, or plain
+        /// expression) so <see cref="ExitContainsRhs"/> can inspect it.
+        /// </summary>
+        /// <param name="node">The contains-target-expression production.</param>
+        /// <returns>The same node.</returns>
+        public override Node ExitContainsTargetExpression(Production node)
+        {
+            IList childValues = GetChildValues(node);
+            // ANY / ALL branches flatten a synthetic subproduction so the children are
+            // [ANY_token (string.Empty), arg list]. Wrap as a quantifier marker.
+            if (childValues.Count == 2)
+            {
+                ContainsQuantifier quantifier = node.GetChildAt(0)!.GetValue(0) is string s && s == "ALL"
+                    ? ContainsQuantifier.All
+                    : ContainsQuantifier.Any;
+                node.AddValue(new ContainsElement.QuantifiedTarget(quantifier, childValues[1]!));
             }
             else
             {
-                InvocationListElement il = new(childValues, _myServices!);
-                op = new InElement(operand, il);
+                AddFirstChildValue(node);
             }
+            return node;
+        }
 
-            node.AddValue(op);
+        /// <summary>
+        /// Lifts the contains-arg-list value. A bare member reference (the <c>MyArr2</c> in
+        /// <c>CONTAINS ANY MyArr2</c>) is wrapped in an <see cref="InvocationListElement"/> so
+        /// its <see cref="ExpressionElement.ResultType"/> resolves at compile time — mirroring
+        /// what <see cref="ExitInRhs"/> does for the parenthesised IN target. The literal-list
+        /// branch (already an <see cref="IList"/>) is forwarded unchanged.
+        /// </summary>
+        /// <param name="node">The contains-arg-list production.</param>
+        /// <returns>The same node.</returns>
+        public override Node ExitContainsArgList(Production node)
+        {
+            IList childValues = GetChildValues(node);
+            object first = childValues[0]!;
+            if (first is ExpressionElement)
+            {
+                List<object?> chain = [first];
+                InvocationListElement il = new(chain, _myServices!);
+                node.AddValue(il);
+            }
+            else
+            {
+                node.AddValue(first);
+            }
             return node;
         }
 
@@ -338,7 +430,7 @@ namespace Flee.Parsing
 
         /// <summary>
         /// Stores the list of in-target values directly on the node so the parent
-        /// <see cref="ExitInExpression"/> can fork on it being a list.
+        /// <see cref="ExitInRhs"/> can fork on it being a list.
         /// </summary>
         /// <param name="node">The in-list-target-expression production.</param>
         /// <returns>The same node.</returns>
@@ -346,53 +438,6 @@ namespace Flee.Parsing
         {
             IList childValues = GetChildValues(node);
             node.AddValue(childValues);
-            return node;
-        }
-
-        /// <summary>
-        /// Builds a <see cref="CastElement"/> from the operand, target type parts, and
-        /// array-flag produced by the cast-type sub-expression.
-        /// </summary>
-        /// <param name="node">The cast-expression production.</param>
-        /// <returns>The same node.</returns>
-        public override Node ExitCastExpression(Production node)
-        {
-            IList childValues = GetChildValues(node);
-            string[] destTypeParts = (string[])childValues[1]!;
-            bool isArray = (bool)childValues[2]!;
-            CastElement op = new((ExpressionElement)childValues[0]!, destTypeParts, isArray, _myServices!);
-            node.AddValue(op);
-            return node;
-        }
-
-        /// <summary>
-        /// Splits the cast-type production into the type-name parts and an array-flag.
-        /// </summary>
-        /// <param name="node">The cast-type-expression production.</param>
-        /// <returns>The same node, now carrying the parts and array flag.</returns>
-        public override Node ExitCastTypeExpression(Production node)
-        {
-            IList childValues = GetChildValues(node);
-            List<string> parts = [];
-
-            foreach (string? part in childValues)
-            {
-                if (part != null)
-                {
-                    parts.Add(part);
-                }
-            }
-
-            bool isArray = false;
-
-            if (parts[parts.Count - 1] == "[]")
-            {
-                isArray = true;
-                parts.RemoveAt(parts.Count - 1);
-            }
-
-            node.AddValue(parts.ToArray());
-            node.AddValue(isArray);
             return node;
         }
 
@@ -414,7 +459,6 @@ namespace Flee.Parsing
         /// <returns>The same node.</returns>
         public override Node ExitFieldPropertyExpression(Production node)
         {
-            //string name = ((Token)node.GetChildAt(0))?.Image;
             string name = node.GetChildAt(0)!.GetValue(0).ToString()!;
             IdentifierElement elem = new(name);
             node.AddValue(elem);
@@ -513,6 +557,18 @@ namespace Flee.Parsing
             }
         }
 
+        private static Func<ExpressionElement, ExpressionElement> WrapWithNot(
+            Func<ExpressionElement, ExpressionElement> inner)
+        {
+            return operand =>
+            {
+                ExpressionElement built = inner(operand);
+                NotElement notElem = new();
+                notElem.SetChild(built);
+                return notElem;
+            };
+        }
+
         /// <summary>
         /// Builds a <see cref="RealLiteralElement"/> from the matched real-number token.
         /// </summary>
@@ -536,19 +592,6 @@ namespace Flee.Parsing
         public override Node ExitInteger(Token node)
         {
             LiteralElement element = IntegralLiteralElement.Create(node.Image, false, _myInUnaryNegate, _myServices!);
-            node.AddValue(element);
-            return node;
-        }
-
-        /// <summary>
-        /// Builds an <see cref="IntegralLiteralElement"/> from the matched hexadecimal-integer
-        /// token.
-        /// </summary>
-        /// <param name="node">The hexadecimal-literal token.</param>
-        /// <returns>The same token.</returns>
-        public override Node ExitHexLiteral(Token node)
-        {
-            LiteralElement element = IntegralLiteralElement.Create(node.Image, true, _myInUnaryNegate, _myServices!);
             node.AddValue(element);
             return node;
         }
@@ -588,7 +631,9 @@ namespace Flee.Parsing
 
         /// <summary>
         /// Builds a <see cref="StringLiteralElement"/>, applying escape-sequence processing
-        /// to the string token.
+        /// to the string token. Accepts both double-quoted (<c>"..."</c>) and single-quoted
+        /// (<c>'...'</c>) literals; the leading and trailing delimiter is stripped before
+        /// escape decoding.
         /// </summary>
         /// <param name="node">The string-literal token.</param>
         /// <returns>The same token.</returns>
@@ -601,50 +646,65 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Builds a <see cref="CharLiteralElement"/>, applying escape-sequence processing to
-        /// the character token.
-        /// </summary>
-        /// <param name="node">The character-literal token.</param>
-        /// <returns>The same token.</returns>
-        public override Node ExitCharLiteral(Token node)
-        {
-            string s = DoEscapes(node.Image);
-            node.AddValue(new CharLiteralElement(s[0]));
-            return node;
-        }
-
-        /// <summary>
         /// Builds a <see cref="DateTimeLiteralElement"/> by stripping the leading and
-        /// trailing <c>#</c> markers from the matched token.
+        /// trailing <c>#</c> markers from the matched token and parsing
+        /// <c>yyyy-M-d H:m:s</c>.
         /// </summary>
         /// <param name="node">The date-time literal token.</param>
         /// <returns>The same token.</returns>
         public override Node ExitDatetime(Token node)
         {
-            ExpressionContext context = (ExpressionContext)_myServices!.GetService(typeof(ExpressionContext))!;
             string image = node.Image.Substring(1, node.Image.Length - 2);
-            DateTimeLiteralElement element = new(image, context);
+            DateTimeLiteralElement element = new(image);
             node.AddValue(element);
             return node;
         }
 
         /// <summary>
-        /// Builds a <see cref="TimeSpanLiteralElement"/> by stripping the leading <c>##</c>
-        /// and trailing <c>#</c> markers from the matched token.
+        /// Builds a <see cref="DateLiteralElement"/> by stripping the leading and trailing
+        /// <c>#</c> markers from the matched token and parsing <c>yyyy-M-d</c>.
         /// </summary>
-        /// <param name="node">The time-span literal token.</param>
+        /// <param name="node">The date literal token.</param>
         /// <returns>The same token.</returns>
-        public override Node ExitTimespan(Token node)
+        public override Node ExitDate(Token node)
         {
-            string image = node.Image.Substring(2, node.Image.Length - 3);
-            TimeSpanLiteralElement element = new(image);
+            string image = node.Image.Substring(1, node.Image.Length - 2);
+            DateLiteralElement element = new(image);
+            node.AddValue(element);
+            return node;
+        }
+
+        /// <summary>
+        /// Builds a <see cref="TimeLiteralElement"/> by stripping the leading and trailing
+        /// <c>#</c> markers from the matched token and parsing <c>H:m:s</c>.
+        /// </summary>
+        /// <param name="node">The time literal token.</param>
+        /// <returns>The same token.</returns>
+        public override Node ExitTime(Token node)
+        {
+            string image = node.Image.Substring(1, node.Image.Length - 2);
+            TimeLiteralElement element = new(image);
+            node.AddValue(element);
+            return node;
+        }
+
+        /// <summary>
+        /// Builds a <see cref="RegexLiteralElement"/> from the JS-style <c>/pattern/flags</c>
+        /// token (the leading and trailing <c>/</c> and any flag letters are part of
+        /// <see cref="Token.Image"/>).
+        /// </summary>
+        /// <param name="node">The regex token.</param>
+        /// <returns>The same token.</returns>
+        public override Node ExitRegexp(Token node)
+        {
+            RegexLiteralElement element = new(node.Image);
             node.AddValue(element);
             return node;
         }
 
         private string DoEscapes(string image)
         {
-            // Remove outer quotes
+            // Remove outer quotes (works for both '...' and "...")
             image = image.Substring(1, image.Length - 2);
             image = _myUnicodeEscapeRegex.Replace(image, UnicodeEscapeMatcher);
             image = _myRegularEscapeRegex.Replace(image, RegularEscapeMatcher);
@@ -689,7 +749,8 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Lifts the matched identifier text onto the token.
+        /// Lifts the matched identifier text onto the token. The verbatim image — including
+        /// any leading <c>@</c> or <c>@@</c> prefix — is used as the variable lookup key.
         /// </summary>
         /// <param name="node">The identifier token.</param>
         /// <returns>The same token.</returns>
@@ -700,19 +761,7 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Builds a <see cref="NullLiteralElement"/> for the <c>null</c> literal.
-        /// </summary>
-        /// <param name="node">The null-literal token.</param>
-        /// <returns>The same token.</returns>
-        public override Node ExitNullLiteral(Token node)
-        {
-            node.AddValue(new NullLiteralElement());
-            return node;
-        }
-
-        /// <summary>
-        /// Carries up the literal <c>"[]"</c> string for the array-braces token, used by
-        /// <see cref="ExitCastTypeExpression"/> to detect array casts.
+        /// Carries up the literal <c>"[]"</c> string for the array-braces token.
         /// </summary>
         /// <param name="node">The array-braces token.</param>
         /// <returns>The same token.</returns>
@@ -767,29 +816,7 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Records the modulo operation for the <c>%</c> token.
-        /// </summary>
-        /// <param name="node">The mod token.</param>
-        /// <returns>The same token.</returns>
-        public override Node ExitMod(Token node)
-        {
-            node.AddValue(BinaryArithmeticOperation.Mod);
-            return node;
-        }
-
-        /// <summary>
-        /// Records the power operation for the <c>^</c> token.
-        /// </summary>
-        /// <param name="node">The power token.</param>
-        /// <returns>The same token.</returns>
-        public override Node ExitPower(Token node)
-        {
-            node.AddValue(BinaryArithmeticOperation.Power);
-            return node;
-        }
-
-        /// <summary>
-        /// Records the equality operation for the <c>=</c> / <c>==</c> token.
+        /// Records the equality operation for the <c>=</c> token.
         /// </summary>
         /// <param name="node">The eq token.</param>
         /// <returns>The same token.</returns>
@@ -800,7 +827,7 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Records the inequality operation for the <c>&lt;&gt;</c> / <c>!=</c> token.
+        /// Records the inequality operation for the <c>&lt;&gt;</c> token.
         /// </summary>
         /// <param name="node">The ne token.</param>
         /// <returns>The same token.</returns>
@@ -855,7 +882,7 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Records the AND operation for the <c>and</c>/<c>&amp;&amp;</c> token.
+        /// Records the AND operation for the <c>AND</c> token.
         /// </summary>
         /// <param name="node">The and token.</param>
         /// <returns>The same token.</returns>
@@ -866,24 +893,13 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Records the OR operation for the <c>or</c>/<c>||</c> token.
+        /// Records the OR operation for the <c>OR</c> token.
         /// </summary>
         /// <param name="node">The or token.</param>
         /// <returns>The same token.</returns>
         public override Node ExitOr(Token node)
         {
             node.AddValue(AndOrOperation.Or);
-            return node;
-        }
-
-        /// <summary>
-        /// Records a sentinel <c>"Xor"</c> string for the XOR token.
-        /// </summary>
-        /// <param name="node">The xor token.</param>
-        /// <returns>The same token.</returns>
-        public override Node ExitXor(Token node)
-        {
-            node.AddValue("Xor");
             return node;
         }
 
@@ -899,24 +915,26 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// Records the left-shift operation for the <c>&lt;&lt;</c> token.
+        /// Records the literal text "ANY" for the quantifier token, used by
+        /// <see cref="ExitContainsTargetExpression"/> to pick the quantifier.
         /// </summary>
-        /// <param name="node">The left-shift token.</param>
+        /// <param name="node">The any token.</param>
         /// <returns>The same token.</returns>
-        public override Node ExitLeftShift(Token node)
+        public override Node ExitAny(Token node)
         {
-            node.AddValue(ShiftOperation.LeftShift);
+            node.AddValue("ANY");
             return node;
         }
 
         /// <summary>
-        /// Records the right-shift operation for the <c>&gt;&gt;</c> token.
+        /// Records the literal text "ALL" for the quantifier token, used by
+        /// <see cref="ExitContainsTargetExpression"/> to pick the quantifier.
         /// </summary>
-        /// <param name="node">The right-shift token.</param>
+        /// <param name="node">The all token.</param>
         /// <returns>The same token.</returns>
-        public override Node ExitRightShift(Token node)
+        public override Node ExitAll(Token node)
         {
-            node.AddValue(ShiftOperation.RightShift);
+            node.AddValue("ALL");
             return node;
         }
 

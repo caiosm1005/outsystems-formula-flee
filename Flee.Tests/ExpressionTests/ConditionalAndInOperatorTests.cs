@@ -129,12 +129,51 @@ namespace Flee.Tests.ExpressionTests
         }
 
         [TestMethod]
-        public void NotIn_ListMissingValue_ReturnsTrue()
+        public void NotIn_PrefixForm_ListMissingValue_ReturnsTrue()
         {
+            // Legacy `NOT <expr> IN (...)` form — unary NOT applied to the bool result of IN.
             var context = new ExpressionContext();
             var e = context.CompileDynamic("NOT 99 IN (1, 2, 3, 4)");
 
             Assert.AreEqual(true, e.Evaluate());
+        }
+
+        [TestMethod]
+        public void NotIn_PostfixForm_ListMissingValue_ReturnsTrue()
+        {
+            // SQL-style `<expr> NOT IN (...)` form — the NOT is part of the SQL operator.
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("99 NOT IN (1, 2, 3, 4)");
+
+            Assert.AreEqual(true, e.Evaluate());
+        }
+
+        [TestMethod]
+        public void NotIn_PostfixForm_ListContainsValue_ReturnsFalse()
+        {
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("3 NOT IN (1, 2, 3, 4)");
+
+            Assert.AreEqual(false, e.Evaluate());
+        }
+
+        [TestMethod]
+        public void NotIn_PostfixForm_StringList_MatchesByValue()
+        {
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("\"foo\" NOT IN (\"a\", \"b\", \"c\")");
+
+            Assert.AreEqual(true, e.Evaluate());
+        }
+
+        [TestMethod]
+        public void NotIn_PostfixForm_VariableCollection_FindsValue()
+        {
+            var context = new ExpressionContext();
+            context.Variables.Add("arr", new[] { 1, 5, 9 });
+            var e = context.CompileDynamic("5 NOT IN arr");
+
+            Assert.AreEqual(false, e.Evaluate());
         }
 
         [TestMethod]

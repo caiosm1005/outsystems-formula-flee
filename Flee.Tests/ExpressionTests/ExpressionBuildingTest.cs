@@ -13,13 +13,13 @@ namespace Flee.Tests.ExpressionTests
             ExpressionContext context = new();
             context.Imports.AddType(typeof(Math));
             context.Variables.Add("a", 3.14);
-            IDynamicExpression e1 = context.CompileDynamic("cos(a) ^ 2");
+            IDynamicExpression e1 = context.CompileDynamic("cos(a) * cos(a)");
 
             context = new ExpressionContext();
             context.Imports.AddType(typeof(Math));
             context.Variables.Add("a", 3.14);
 
-            IDynamicExpression e2 = context.CompileDynamic("sin(a) ^ 2");
+            IDynamicExpression e2 = context.CompileDynamic("sin(a) * sin(a)");
 
             // Use the two expressions as variables in another expression
             context = new ExpressionContext();
@@ -56,26 +56,6 @@ namespace Flee.Tests.ExpressionTests
             IDynamicExpression e = context.CompileDynamic("if(1>2; 3; 4)");
 
             Assert.IsTrue((int)e.Evaluate() == resultWhenFalse);
-        }
-
-        [TestMethod]
-        public void NullCheck()
-        {
-            ExpressionContext context = new();
-            context.Variables.Add("a", "stringObject");
-            IDynamicExpression e1 = context.CompileDynamic("a = null");
-
-            Assert.IsFalse((bool)e1.Evaluate());
-        }
-
-        [TestMethod]
-        public void NullIsNullCheck()
-        {
-            ExpressionContext context = new();
-            context.Variables.Add("a", "stringObject");
-            IDynamicExpression e1 = context.CompileDynamic("null = null");
-
-            Assert.IsTrue((bool)e1.Evaluate());
         }
 
         [TestMethod]

@@ -77,10 +77,10 @@ namespace Flee.Tests.CalcEngineTests
 
             variables.Add("a", 10);
             variables.Add("b", 20);
-            ce.Add("x", "((a * 2) + (b ^ 2)) - (100 % 5)", context);
+            ce.Add("x", "((a * 2) + (b * b)) - (100 / 5)", context);
             ce.Recalculate("x");
             var result = ce.GetResult<int>("x");
-            Assert.AreEqual(420, result);
+            Assert.AreEqual(400, result);
         }
 
         [TestMethod]
@@ -98,7 +98,7 @@ namespace Flee.Tests.CalcEngineTests
         }
 
         [TestMethod]
-        public void Test_And_Or_Xor_Not_Operators()
+        public void Test_And_Or_Not_Operators()
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
@@ -115,18 +115,6 @@ namespace Flee.Tests.CalcEngineTests
             ce.Recalculate("x");
             result = ce.GetResult<bool>("x");
             Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        public void Test_Shift_Operators()
-        {
-            var ce = new CalculationEngine();
-            var context = new ExpressionContext();
-
-            ce.Add("x", "100 >> 2", context);
-            ce.Recalculate("x");
-            var result = ce.GetResult<int>("x");
-            Assert.AreEqual(25, result);
         }
 
         [TestMethod]

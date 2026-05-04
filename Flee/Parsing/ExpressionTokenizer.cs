@@ -19,7 +19,7 @@
  * MA 02111-1307, USA.
  *
  *
- * Copyright (c) 2007 Eugene Ciloci
+ * Copyright (c) 2026 Caio Santana Magalhães
  */
 
 using Flee.PublicTypes;
@@ -32,6 +32,7 @@ namespace Flee.Parsing {
     internal class ExpressionTokenizer : Tokenizer {
 
         private readonly ExpressionContext _myContext = null!;
+        private Token? _lastEmittedNonIgnored;
 
         public ExpressionTokenizer(TextReader input, ExpressionContext context)
             : base(input, true) {
@@ -44,6 +45,34 @@ namespace Flee.Parsing {
             : base(input, true) {
 
             CreatePatterns();
+        }
+
+        /// <summary>
+        /// Overridden to gate REGEXP lexing: the regex literal <c>/pattern/flags</c> is only
+        /// emitted when the previously emitted non-ignored token is MATCH or CONTAINS.
+        /// Otherwise the leading <c>/</c> is reinterpreted as DIV — mirroring how <c>a / b / c</c>
+        /// stays as integer division.
+        /// </summary>
+        protected override Token? NextToken() {
+            Token? previous = _lastEmittedNonIgnored;
+            Token? token = base.NextToken();
+            if (token != null && token.Pattern.Id == (int) ExpressionConstants.REGEXP) {
+                bool allowed = previous is { } prev
+                    && (prev.Pattern.Id == (int) ExpressionConstants.MATCH
+                        || prev.Pattern.Id == (int) ExpressionConstants.CONTAINS);
+                if (!allowed) {
+                    int extra = token.Image.Length - 1;
+                    if (extra > 0) {
+                        Buffer.Unread(extra);
+                    }
+                    TokenPattern divPattern = GetPattern((int) ExpressionConstants.DIV)!;
+                    token = new Token(divPattern, "/", token.StartLine, token.StartColumn);
+                }
+            }
+            if (token != null && !token.Pattern.Ignore) {
+                _lastEmittedNonIgnored = token;
+            }
+            return token;
         }
 
         /**
@@ -79,18 +108,6 @@ namespace Flee.Parsing {
                                        "DIV",
                                        TokenPattern.PatternType.STRING,
                                        "/");
-            AddPattern(pattern);
-
-            pattern = new TokenPattern((int) ExpressionConstants.POWER,
-                                       "POWER",
-                                       TokenPattern.PatternType.STRING,
-                                       "^");
-            AddPattern(pattern);
-
-            pattern = new TokenPattern((int) ExpressionConstants.MOD,
-                                       "MOD",
-                                       TokenPattern.PatternType.STRING,
-                                       "%");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) ExpressionConstants.LEFT_PAREN,
@@ -165,12 +182,6 @@ namespace Flee.Parsing {
                                        "OR");
             AddPattern(pattern);
 
-            pattern = new TokenPattern((int) ExpressionConstants.XOR,
-                                       "XOR",
-                                       TokenPattern.PatternType.STRING,
-                                       "XOR");
-            AddPattern(pattern);
-
             pattern = new TokenPattern((int) ExpressionConstants.NOT,
                                        "NOT",
                                        TokenPattern.PatternType.STRING,
@@ -180,7 +191,37 @@ namespace Flee.Parsing {
             pattern = new TokenPattern((int) ExpressionConstants.IN,
                                        "IN",
                                        TokenPattern.PatternType.STRING,
-                                       "in");
+                                       "IN");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) ExpressionConstants.LIKE,
+                                       "LIKE",
+                                       TokenPattern.PatternType.STRING,
+                                       "LIKE");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) ExpressionConstants.MATCH,
+                                       "MATCH",
+                                       TokenPattern.PatternType.STRING,
+                                       "MATCH");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) ExpressionConstants.CONTAINS,
+                                       "CONTAINS",
+                                       TokenPattern.PatternType.STRING,
+                                       "CONTAINS");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) ExpressionConstants.ANY,
+                                       "ANY",
+                                       TokenPattern.PatternType.STRING,
+                                       "ANY");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) ExpressionConstants.ALL,
+                                       "ALL",
+                                       TokenPattern.PatternType.STRING,
+                                       "ALL");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) ExpressionConstants.DOT,
@@ -204,18 +245,6 @@ namespace Flee.Parsing {
                                        "ARRAY_BRACES",
                                        TokenPattern.PatternType.STRING,
                                        "[]");
-            AddPattern(pattern);
-
-            pattern = new TokenPattern((int) ExpressionConstants.LEFT_SHIFT,
-                                       "LEFT_SHIFT",
-                                       TokenPattern.PatternType.STRING,
-                                       "<<");
-            AddPattern(pattern);
-
-            pattern = new TokenPattern((int) ExpressionConstants.RIGHT_SHIFT,
-                                       "RIGHT_SHIFT",
-                                       TokenPattern.PatternType.STRING,
-                                       ">>");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) ExpressionConstants.SINGLE_LINE_COMMENT,
@@ -259,13 +288,7 @@ namespace Flee.Parsing {
             pattern = new TokenPattern((int) ExpressionConstants.STRING_LITERAL,
                                        "STRING_LITERAL",
                                        TokenPattern.PatternType.REGEXP,
-                                       "\"([^\"\\r\\n\\\\]|\\\\u[0-9a-f]{4}|\\\\[\\\\\"'trn])*\"");
-            AddPattern(pattern, false);
-
-            pattern = new TokenPattern((int) ExpressionConstants.CHAR_LITERAL,
-                                       "CHAR_LITERAL",
-                                       TokenPattern.PatternType.REGEXP,
-                                       "'([^'\\r\\n\\\\]|\\\\u[0-9a-f]{4}|\\\\[\\\\\"'trn])'");
+                                       "\"([^\"\\r\\n\\\\]|\\\\u[0-9a-f]{4}|\\\\[\\\\\"'trn])*\"|'([^'\\r\\n\\\\]|\\\\u[0-9a-f]{4}|\\\\[\\\\\"'trn])*'");
             AddPattern(pattern, false);
 
             pattern = new TokenPattern((int) ExpressionConstants.TRUE,
@@ -280,46 +303,40 @@ namespace Flee.Parsing {
                                        "False");
             AddPattern(pattern);
 
-            pattern = new TokenPattern((int) ExpressionConstants.IDENTIFIER,
-                                       "IDENTIFIER",
-                                       TokenPattern.PatternType.REGEXP,
-                                       "[a-z_]\\w*");
-            AddPattern(pattern);
-
-            pattern = new TokenPattern((int) ExpressionConstants.HEX_LITERAL,
-                                       "HEX_LITERAL",
-                                       TokenPattern.PatternType.REGEXP,
-                                       "0x[0-9a-f]+(u|l|ul|lu)?");
-            AddPattern(pattern);
-
-            pattern = new TokenPattern((int) ExpressionConstants.NULL_LITERAL,
-                                       "NULL_LITERAL",
-                                       TokenPattern.PatternType.STRING,
-                                       "null");
-            AddPattern(pattern);
-
-            pattern = new TokenPattern((int) ExpressionConstants.TIMESPAN,
-                                       "TIMESPAN",
-                                       TokenPattern.PatternType.REGEXP,
-                                       "##(\\d+\\.)?\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,7})?)?#");
-            AddPattern(pattern, false);
-
             pattern = new TokenPattern((int) ExpressionConstants.DATETIME,
                                        "DATETIME",
                                        TokenPattern.PatternType.REGEXP,
-                                       "#[^#]+#");
+                                       "#\\d{4}-\\d?\\d-\\d?\\d \\d?\\d:\\d?\\d:\\d?\\d#");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) ExpressionConstants.DATE,
+                                       "DATE",
+                                       TokenPattern.PatternType.REGEXP,
+                                       "#\\d{4}-\\d?\\d-\\d?\\d#");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) ExpressionConstants.TIME,
+                                       "TIME",
+                                       TokenPattern.PatternType.REGEXP,
+                                       "#\\d?\\d:\\d?\\d:\\d?\\d#");
+            AddPattern(pattern);
+
+            pattern = new TokenPattern((int) ExpressionConstants.REGEXP,
+                                       "REGEXP",
+                                       TokenPattern.PatternType.REGEXP,
+                                       "/([^/\\\\\\r\\n]|\\\\.)+/[gimsuy]*");
+            AddPattern(pattern, false);
+
+            pattern = new TokenPattern((int) ExpressionConstants.IDENTIFIER,
+                                       "IDENTIFIER",
+                                       TokenPattern.PatternType.REGEXP,
+                                       "@?@?[a-z_]\\w*");
             AddPattern(pattern);
 
             pattern = new TokenPattern((int) ExpressionConstants.IF,
                                        "IF",
                                        TokenPattern.PatternType.STRING,
                                        "if");
-            AddPattern(pattern);
-
-            pattern = new TokenPattern((int) ExpressionConstants.CAST,
-                                       "CAST",
-                                       TokenPattern.PatternType.STRING,
-                                       "cast");
             AddPattern(pattern);
         }
     }

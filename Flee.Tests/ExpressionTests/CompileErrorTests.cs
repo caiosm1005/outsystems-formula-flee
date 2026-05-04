@@ -121,16 +121,17 @@ namespace Flee.Tests.ExpressionTests
         // --- Invalid format (date) ---
 
         [TestMethod]
-        public void InvalidFormat_BadDateLiteral_IsInvalidFormat()
+        public void InvalidFormat_BadDateLiteral_IsSyntaxError()
         {
+            // The new strict regex on DATE/DATETIME/TIME means a malformed literal isn't a
+            // recognized token at all — it's a lex-time syntax error rather than a parse-time
+            // CannotParseType failure.
             var context = new ExpressionContext();
-            context.ParserOptions.DateTimeFormat = "dd/MM/yyyy";
-            context.ParserOptions.RecreateParser();
 
             var ex = Assert.ThrowsException<ExpressionCompileException>(
                 () => context.CompileDynamic("#not-a-date#"));
 
-            Assert.AreEqual(CompileExceptionReason.InvalidFormat, ex.Reason);
+            Assert.AreEqual(CompileExceptionReason.SyntaxError, ex.Reason);
         }
 
         // --- Generic compile result-type mismatch ---

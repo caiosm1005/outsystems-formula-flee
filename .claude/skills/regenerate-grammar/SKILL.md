@@ -121,14 +121,59 @@ Add a `CustomTokenPattern customPattern;` declaration alongside the existing `To
 
 ## 6. Use the two-arg `AddPattern(pattern, false)` overload for case-sensitive tokens
 
-`Expression.grammar` declares `CASESENSITIVE = "False"`, but several literal patterns must remain case-sensitive — `e` exponents in real numbers, `u`/`l` integer suffixes, `\u` escape sequences in strings, etc. Switch the following `AddPattern(pattern)` calls to `AddPattern(pattern, false)`:
+`Expression.grammar` declares `CASESENSITIVE = "False"`, but several literal patterns must remain case-sensitive — `e` exponents in real numbers, `u`/`l` integer suffixes, `\u` escape sequences in strings, regex flag letters, etc. Switch the following `AddPattern(pattern)` calls to `AddPattern(pattern, false)`:
 
 - `STRING_LITERAL`
-- `CHAR_LITERAL`
-- `TIMESPAN`
+- `REGEXP`
 - the `RealPattern` from step 5
 
 Grammatica only emits the single-arg `AddPattern(pattern)` overload, so this flag has to be added by hand each regeneration.
+
+## 7. Add the REGEXP contextual lex override
+
+The grammar declares `REGEXP = </…/[gimsuy]*>`, which collides with the `DIV` operator (`/`) — without help, `a / b / c` would tokenize as `a` REGEXP(`/ b /`) `c` and break division. To resolve this, REGEXP is only emitted when the previously emitted non-ignored token is `MATCH` or `CONTAINS`; everywhere else the leading `/` is reinterpreted as `DIV`.
+
+This relies on three pieces:
+
+- **Permanent base-class hooks** in `Flee/Parsing/Tokenizer.cs` (set up once; do not remove on regen):
+  - `protected virtual Token? NextToken()` — the read hook subclasses can override.
+  - `protected virtual Token NewToken(...)` — already virtual; subclasses can intercept token construction.
+  - `protected ReaderBuffer Buffer => _buffer;` — exposes the buffer so a subclass can `Unread(int n)` characters.
+  - `protected TokenPattern? GetPattern(int id)` — looks up a registered pattern across all matchers.
+- **`ReaderBuffer.Unread(int count)`** in `Flee/Parsing/ReaderBuffer.cs` — rewinds Position and ColumnNumber for short single-line undo. Throws if the unread region crosses a newline.
+- **The override block** added to `ExpressionTokenizer.cs` during each regeneration:
+
+```csharp
+private Token? _lastEmittedToken;
+
+protected override Token NewToken(TokenPattern pattern, string image, int line, int column) {
+    Token t = base.NewToken(pattern, image, line, column);
+    if (!pattern.Ignore) {
+        _lastEmittedToken = t;
+    }
+    return t;
+}
+
+protected override Token? NextToken() {
+    Token? token = base.NextToken();
+    if (token != null && token.Pattern.Id == (int) ExpressionConstants.REGEXP) {
+        bool allowed = _lastEmittedToken is { } prev
+            && (prev.Pattern.Id == (int) ExpressionConstants.MATCH
+                || prev.Pattern.Id == (int) ExpressionConstants.CONTAINS);
+        if (!allowed) {
+            int extra = token.Image.Length - 1;
+            if (extra > 0) {
+                Buffer.Unread(extra);
+            }
+            TokenPattern divPattern = GetPattern((int) ExpressionConstants.DIV)!;
+            token = NewToken(divPattern, "/", token.StartLine, token.StartColumn);
+        }
+    }
+    return token;
+}
+```
+
+Place these alongside the constructors (above `CreatePatterns`). Also switch the REGEXP `AddPattern(pattern)` call to `AddPattern(pattern, false)` (case-sensitive flags).
 
 ## Verification
 
@@ -139,4 +184,6 @@ dotnet build Flee.sln
 dotnet test Flee.Tests/Flee.Tests.csproj
 ```
 
-The `ValidExpressions.txt` / `InvalidExpressions.txt` data-driven tests are the strongest signal — they exercise the full token surface (operators, hex/char/null/timespan/datetime literals, etc.). If any of them regress after a regeneration, suspect a missed step above.
+The `ValidExpressions.txt` / `InvalidExpressions.txt` data-driven tests are the strongest signal — they exercise the full token surface (operators, datetime/date/time literals, like/match/contains, etc.). If any of them regress after a regeneration, suspect a missed step above.
+
+Smoke-check the REGEXP gate specifically — `1 / 2 / 3` must still parse as integer division.

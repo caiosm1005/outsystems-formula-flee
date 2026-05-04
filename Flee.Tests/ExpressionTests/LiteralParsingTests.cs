@@ -4,8 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Flee.Tests.ExpressionTests
 {
     /// <summary>
-    /// Exercises literal parsing: numeric suffixes, hex literals, char escapes, string escapes,
-    /// boolean keywords, and the null literal.
+    /// Exercises literal parsing: numeric suffixes, real-number formats, boolean keywords,
+    /// string escapes (both quoting styles), and the new date/time/regex literals.
     /// </summary>
     [TestClass]
     public class LiteralParsingTests
@@ -65,50 +65,10 @@ namespace Flee.Tests.ExpressionTests
         [TestMethod]
         public void UnsignedLongSuffix_LU_AlsoWorks()
         {
-            // Both UL and LU are accepted.
             var context = new ExpressionContext();
             var e = context.CompileDynamic("100LU");
 
             Assert.AreEqual(100UL, e.Evaluate());
-        }
-
-        // --- Hex literals ---
-
-        [TestMethod]
-        public void HexLiteral_Lowercase_ParsesCorrectly()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("0xff");
-
-            Assert.AreEqual(255, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void HexLiteral_MixedCase_ParsesCorrectly()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("0xDeaD");
-
-            Assert.AreEqual(0xDEAD, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void HexLiteral_NegativePrefix_ParsesAsNegated()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("-0xA");
-
-            Assert.AreEqual(-10, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void HexLiteral_WithLongSuffix_PromotesToLong()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("0xDeaDL");
-
-            Assert.AreEqual(0xDEADL, e.Evaluate());
-            Assert.AreEqual(typeof(long), e.Evaluate().GetType());
         }
 
         // --- Real (floating-point) literals and suffixes ---
@@ -156,7 +116,6 @@ namespace Flee.Tests.ExpressionTests
         [TestMethod]
         public void RealLiteral_NoLeadingZero_AcceptedByDefault()
         {
-            // ExpressionParserOptions.RequireDigitsBeforeDecimalPoint defaults to false.
             var context = new ExpressionContext();
             var e = context.CompileDynamic(".25");
 
@@ -195,7 +154,6 @@ namespace Flee.Tests.ExpressionTests
         [TestMethod]
         public void BoolLiteral_TitleCase_ParsesAsTrue()
         {
-            // CaseSensitive default is false — keyword case shouldn't matter.
             var context = new ExpressionContext();
             var e = context.CompileDynamic("True");
 
@@ -211,56 +169,7 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(false, e.Evaluate());
         }
 
-        // --- Char literals ---
-
-        [TestMethod]
-        public void CharLiteral_PlainAscii_ParsesAsChar()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("'a'");
-
-            Assert.AreEqual('a', e.Evaluate());
-            Assert.AreEqual(typeof(char), e.Evaluate().GetType());
-        }
-
-        [TestMethod]
-        public void CharLiteral_EscapedQuote_ParsesCorrectly()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("'\\''");
-
-            Assert.AreEqual('\'', e.Evaluate());
-        }
-
-        [TestMethod]
-        public void CharLiteral_EscapedBackslash_ParsesCorrectly()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("'\\\\'");
-
-            Assert.AreEqual('\\', e.Evaluate());
-        }
-
-        [TestMethod]
-        public void CharLiteral_UnicodeEscape_ParsesCorrectly()
-        {
-            // ^ = '^'
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("'\\u005E'");
-
-            Assert.AreEqual('^', e.Evaluate());
-        }
-
-        [TestMethod]
-        public void CharLiteral_TabEscape_ParsesAsTab()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("'\\t'");
-
-            Assert.AreEqual('\t', e.Evaluate());
-        }
-
-        // --- String literals ---
+        // --- String literals: double-quoted ---
 
         [TestMethod]
         public void StringLiteral_Empty_ParsesAsEmptyString()
@@ -283,7 +192,6 @@ namespace Flee.Tests.ExpressionTests
         [TestMethod]
         public void StringLiteral_WithUnicodeEscape_PreservesChar()
         {
-            // B = 'B'
             var context = new ExpressionContext();
             var e = context.CompileDynamic("\"a\\u0042c\"");
 
@@ -308,84 +216,98 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual("a\\b", e.Evaluate());
         }
 
-        // --- Null literal ---
+        // --- String literals: single-quoted (JS-style) ---
 
         [TestMethod]
-        public void NullLiteral_StandaloneEqualsNull_IsTrue()
+        public void StringLiteral_SingleQuoted_Empty_ParsesAsEmptyString()
         {
             var context = new ExpressionContext();
-            var e = context.CompileDynamic("null = null");
+            var e = context.CompileDynamic("''");
 
-            Assert.AreEqual(true, e.Evaluate());
+            Assert.AreEqual(string.Empty, e.Evaluate());
         }
 
         [TestMethod]
-        public void NullLiteral_StringConcat_TreatsNullAsEmpty()
+        public void StringLiteral_SingleQuoted_PlainText_ParsesAsString()
         {
             var context = new ExpressionContext();
-            var e = context.CompileDynamic("\"abc\" + null");
+            var e = context.CompileDynamic("'hello'");
 
-            Assert.AreEqual("abc", e.Evaluate());
+            Assert.AreEqual("hello", e.Evaluate());
         }
 
-        // --- DateTime / TimeSpan literals ---
-
-        /// <summary>
-        /// Builds a context with an explicit DateTime parse format so tests are not affected
-        /// by the ambient system culture.
-        /// </summary>
-        private static ExpressionContext NewDateContext(string format = "dd/MM/yyyy")
+        [TestMethod]
+        public void StringLiteral_SingleQuoted_EscapedApostrophe_PreservesApostrophe()
         {
             var context = new ExpressionContext();
-            context.ParserOptions.DateTimeFormat = format;
-            context.ParserOptions.RecreateParser();
-            return context;
+            var e = context.CompileDynamic("'don\\'t'");
+
+            Assert.AreEqual("don't", e.Evaluate());
         }
 
         [TestMethod]
-        public void DateTimeLiteral_DayMonthYearFormat_ParsesCorrectly()
+        public void StringLiteral_SingleQuoted_ContainsDoubleQuote_NoEscapeNeeded()
         {
-            // Use an unambiguous date — only valid as dd/MM/yyyy.
-            var context = NewDateContext();
-            var e = context.CompileDynamic("#31/12/2008#");
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("'say \"hi\"'");
 
-            Assert.AreEqual(new System.DateTime(2008, 12, 31), e.Evaluate());
+            Assert.AreEqual("say \"hi\"", e.Evaluate());
+        }
+
+        // --- Date/Time/DateTime literals ---
+
+        [TestMethod]
+        public void DateLiteral_YearMonthDay_ParsesAsDateTime()
+        {
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("#2026-05-04#");
+
+            Assert.AreEqual(new System.DateTime(2026, 5, 4), e.Evaluate());
         }
 
         [TestMethod]
-        public void TimeSpanLiteral_HoursMinutes_ParsesCorrectly()
+        public void DateLiteral_SingleDigitMonth_ParsesCorrectly()
         {
-            var context = NewDateContext();
-            var e = context.CompileDynamic("##23:45#");
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("#2026-5-4#");
 
-            Assert.AreEqual(new System.TimeSpan(23, 45, 0), e.Evaluate());
+            Assert.AreEqual(new System.DateTime(2026, 5, 4), e.Evaluate());
         }
 
         [TestMethod]
-        public void TimeSpanLiteral_DaysHoursMinutesSeconds_ParsesCorrectly()
+        public void DateTimeLiteral_FullForm_ParsesCorrectly()
         {
-            var context = NewDateContext();
-            var e = context.CompileDynamic("##12.23:45:11#");
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("#2026-05-04 12:30:45#");
 
-            Assert.AreEqual(new System.TimeSpan(12, 23, 45, 11), e.Evaluate());
+            Assert.AreEqual(new System.DateTime(2026, 5, 4, 12, 30, 45), e.Evaluate());
+        }
+
+        [TestMethod]
+        public void TimeLiteral_HoursMinutesSeconds_ParsesAsTimeSpan()
+        {
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("#12:30:45#");
+
+            Assert.AreEqual(new System.TimeSpan(12, 30, 45), e.Evaluate());
+        }
+
+        [TestMethod]
+        public void TimeLiteral_SingleDigitHour_ParsesCorrectly()
+        {
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("#5:6:7#");
+
+            Assert.AreEqual(new System.TimeSpan(5, 6, 7), e.Evaluate());
         }
 
         [TestMethod]
         public void DateTime_Subtraction_ProducesTimeSpan()
         {
-            var context = NewDateContext();
-            var e = context.CompileDynamic("#15/12/2008# - #14/12/2008#");
+            var context = new ExpressionContext();
+            var e = context.CompileDynamic("#2026-05-04# - #2026-05-03#");
 
             Assert.AreEqual(System.TimeSpan.FromDays(1), e.Evaluate());
-        }
-
-        [TestMethod]
-        public void DateTime_AddTimeSpan_ProducesNewDateTime()
-        {
-            var context = NewDateContext();
-            var e = context.CompileDynamic("#15/12/2008# + ##1.00:00#");
-
-            Assert.AreEqual(new System.DateTime(2008, 12, 16), e.Evaluate());
         }
     }
 }

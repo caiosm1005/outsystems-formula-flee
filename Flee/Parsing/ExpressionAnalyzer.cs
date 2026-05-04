@@ -19,7 +19,7 @@
  * MA 02111-1307, USA.
  *
  *
- * Copyright (c) 2007 Eugene Ciloci
+ * Copyright (c) 2026 Caio Santana Magalhães
  */
 
 namespace Flee.Parsing {
@@ -51,12 +51,6 @@ namespace Flee.Parsing {
                 break;
             case (int) ExpressionConstants.DIV:
                 EnterDiv((Token) node);
-                break;
-            case (int) ExpressionConstants.POWER:
-                EnterPower((Token) node);
-                break;
-            case (int) ExpressionConstants.MOD:
-                EnterMod((Token) node);
                 break;
             case (int) ExpressionConstants.LEFT_PAREN:
                 EnterLeftParen((Token) node);
@@ -94,14 +88,26 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.OR:
                 EnterOr((Token) node);
                 break;
-            case (int) ExpressionConstants.XOR:
-                EnterXor((Token) node);
-                break;
             case (int) ExpressionConstants.NOT:
                 EnterNot((Token) node);
                 break;
             case (int) ExpressionConstants.IN:
                 EnterIn((Token) node);
+                break;
+            case (int) ExpressionConstants.LIKE:
+                EnterLike((Token) node);
+                break;
+            case (int) ExpressionConstants.MATCH:
+                EnterMatch((Token) node);
+                break;
+            case (int) ExpressionConstants.CONTAINS:
+                EnterContains((Token) node);
+                break;
+            case (int) ExpressionConstants.ANY:
+                EnterAny((Token) node);
+                break;
+            case (int) ExpressionConstants.ALL:
+                EnterAll((Token) node);
                 break;
             case (int) ExpressionConstants.DOT:
                 EnterDot((Token) node);
@@ -112,12 +118,6 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.ARRAY_BRACES:
                 EnterArrayBraces((Token) node);
                 break;
-            case (int) ExpressionConstants.LEFT_SHIFT:
-                EnterLeftShift((Token) node);
-                break;
-            case (int) ExpressionConstants.RIGHT_SHIFT:
-                EnterRightShift((Token) node);
-                break;
             case (int) ExpressionConstants.INTEGER:
                 EnterInteger((Token) node);
                 break;
@@ -127,41 +127,32 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.STRING_LITERAL:
                 EnterStringLiteral((Token) node);
                 break;
-            case (int) ExpressionConstants.CHAR_LITERAL:
-                EnterCharLiteral((Token) node);
-                break;
             case (int) ExpressionConstants.TRUE:
                 EnterTrue((Token) node);
                 break;
             case (int) ExpressionConstants.FALSE:
                 EnterFalse((Token) node);
                 break;
-            case (int) ExpressionConstants.IDENTIFIER:
-                EnterIdentifier((Token) node);
-                break;
-            case (int) ExpressionConstants.HEX_LITERAL:
-                EnterHexLiteral((Token) node);
-                break;
-            case (int) ExpressionConstants.NULL_LITERAL:
-                EnterNullLiteral((Token) node);
-                break;
-            case (int) ExpressionConstants.TIMESPAN:
-                EnterTimespan((Token) node);
-                break;
             case (int) ExpressionConstants.DATETIME:
                 EnterDatetime((Token) node);
+                break;
+            case (int) ExpressionConstants.DATE:
+                EnterDate((Token) node);
+                break;
+            case (int) ExpressionConstants.TIME:
+                EnterTime((Token) node);
+                break;
+            case (int) ExpressionConstants.REGEXP:
+                EnterRegexp((Token) node);
+                break;
+            case (int) ExpressionConstants.IDENTIFIER:
+                EnterIdentifier((Token) node);
                 break;
             case (int) ExpressionConstants.IF:
                 EnterIf((Token) node);
                 break;
-            case (int) ExpressionConstants.CAST:
-                EnterCast((Token) node);
-                break;
             case (int) ExpressionConstants.EXPRESSION:
                 EnterExpression((Production) node);
-                break;
-            case (int) ExpressionConstants.XOR_EXPRESSION:
-                EnterXorExpression((Production) node);
                 break;
             case (int) ExpressionConstants.OR_EXPRESSION:
                 EnterOrExpression((Production) node);
@@ -172,8 +163,32 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.NOT_EXPRESSION:
                 EnterNotExpression((Production) node);
                 break;
-            case (int) ExpressionConstants.IN_EXPRESSION:
-                EnterInExpression((Production) node);
+            case (int) ExpressionConstants.SQL_OP_EXPRESSION:
+                EnterSqlOpExpression((Production) node);
+                break;
+            case (int) ExpressionConstants.SQL_OP_RHS:
+                EnterSqlOpRhs((Production) node);
+                break;
+            case (int) ExpressionConstants.NEGATED_SQL_OP_RHS:
+                EnterNegatedSqlOpRhs((Production) node);
+                break;
+            case (int) ExpressionConstants.IN_RHS:
+                EnterInRhs((Production) node);
+                break;
+            case (int) ExpressionConstants.LIKE_RHS:
+                EnterLikeRhs((Production) node);
+                break;
+            case (int) ExpressionConstants.MATCH_RHS:
+                EnterMatchRhs((Production) node);
+                break;
+            case (int) ExpressionConstants.CONTAINS_RHS:
+                EnterContainsRhs((Production) node);
+                break;
+            case (int) ExpressionConstants.CONTAINS_TARGET_EXPRESSION:
+                EnterContainsTargetExpression((Production) node);
+                break;
+            case (int) ExpressionConstants.CONTAINS_ARG_LIST:
+                EnterContainsArgList((Production) node);
                 break;
             case (int) ExpressionConstants.IN_TARGET_EXPRESSION:
                 EnterInTargetExpression((Production) node);
@@ -184,17 +199,11 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.COMPARE_EXPRESSION:
                 EnterCompareExpression((Production) node);
                 break;
-            case (int) ExpressionConstants.SHIFT_EXPRESSION:
-                EnterShiftExpression((Production) node);
-                break;
             case (int) ExpressionConstants.ADDITIVE_EXPRESSION:
                 EnterAdditiveExpression((Production) node);
                 break;
             case (int) ExpressionConstants.MULTIPLICATIVE_EXPRESSION:
                 EnterMultiplicativeExpression((Production) node);
-                break;
-            case (int) ExpressionConstants.POWER_EXPRESSION:
-                EnterPowerExpression((Production) node);
                 break;
             case (int) ExpressionConstants.NEGATE_EXPRESSION:
                 EnterNegateExpression((Production) node);
@@ -214,17 +223,8 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
                 EnterFieldPropertyExpression((Production) node);
                 break;
-            case (int) ExpressionConstants.SPECIAL_FUNCTION_EXPRESSION:
-                EnterSpecialFunctionExpression((Production) node);
-                break;
             case (int) ExpressionConstants.IF_EXPRESSION:
                 EnterIfExpression((Production) node);
-                break;
-            case (int) ExpressionConstants.CAST_EXPRESSION:
-                EnterCastExpression((Production) node);
-                break;
-            case (int) ExpressionConstants.CAST_TYPE_EXPRESSION:
-                EnterCastTypeExpression((Production) node);
                 break;
             case (int) ExpressionConstants.INDEX_EXPRESSION:
                 EnterIndexExpression((Production) node);
@@ -268,10 +268,6 @@ namespace Flee.Parsing {
                 return ExitMul((Token) node);
             case (int) ExpressionConstants.DIV:
                 return ExitDiv((Token) node);
-            case (int) ExpressionConstants.POWER:
-                return ExitPower((Token) node);
-            case (int) ExpressionConstants.MOD:
-                return ExitMod((Token) node);
             case (int) ExpressionConstants.LEFT_PAREN:
                 return ExitLeftParen((Token) node);
             case (int) ExpressionConstants.RIGHT_PAREN:
@@ -296,74 +292,84 @@ namespace Flee.Parsing {
                 return ExitAnd((Token) node);
             case (int) ExpressionConstants.OR:
                 return ExitOr((Token) node);
-            case (int) ExpressionConstants.XOR:
-                return ExitXor((Token) node);
             case (int) ExpressionConstants.NOT:
                 return ExitNot((Token) node);
             case (int) ExpressionConstants.IN:
                 return ExitIn((Token) node);
+            case (int) ExpressionConstants.LIKE:
+                return ExitLike((Token) node);
+            case (int) ExpressionConstants.MATCH:
+                return ExitMatch((Token) node);
+            case (int) ExpressionConstants.CONTAINS:
+                return ExitContains((Token) node);
+            case (int) ExpressionConstants.ANY:
+                return ExitAny((Token) node);
+            case (int) ExpressionConstants.ALL:
+                return ExitAll((Token) node);
             case (int) ExpressionConstants.DOT:
                 return ExitDot((Token) node);
             case (int) ExpressionConstants.ARGUMENT_SEPARATOR:
                 return ExitArgumentSeparator((Token) node);
             case (int) ExpressionConstants.ARRAY_BRACES:
                 return ExitArrayBraces((Token) node);
-            case (int) ExpressionConstants.LEFT_SHIFT:
-                return ExitLeftShift((Token) node);
-            case (int) ExpressionConstants.RIGHT_SHIFT:
-                return ExitRightShift((Token) node);
             case (int) ExpressionConstants.INTEGER:
                 return ExitInteger((Token) node);
             case (int) ExpressionConstants.REAL:
                 return ExitReal((Token) node);
             case (int) ExpressionConstants.STRING_LITERAL:
                 return ExitStringLiteral((Token) node);
-            case (int) ExpressionConstants.CHAR_LITERAL:
-                return ExitCharLiteral((Token) node);
             case (int) ExpressionConstants.TRUE:
                 return ExitTrue((Token) node);
             case (int) ExpressionConstants.FALSE:
                 return ExitFalse((Token) node);
-            case (int) ExpressionConstants.IDENTIFIER:
-                return ExitIdentifier((Token) node);
-            case (int) ExpressionConstants.HEX_LITERAL:
-                return ExitHexLiteral((Token) node);
-            case (int) ExpressionConstants.NULL_LITERAL:
-                return ExitNullLiteral((Token) node);
-            case (int) ExpressionConstants.TIMESPAN:
-                return ExitTimespan((Token) node);
             case (int) ExpressionConstants.DATETIME:
                 return ExitDatetime((Token) node);
+            case (int) ExpressionConstants.DATE:
+                return ExitDate((Token) node);
+            case (int) ExpressionConstants.TIME:
+                return ExitTime((Token) node);
+            case (int) ExpressionConstants.REGEXP:
+                return ExitRegexp((Token) node);
+            case (int) ExpressionConstants.IDENTIFIER:
+                return ExitIdentifier((Token) node);
             case (int) ExpressionConstants.IF:
                 return ExitIf((Token) node);
-            case (int) ExpressionConstants.CAST:
-                return ExitCast((Token) node);
             case (int) ExpressionConstants.EXPRESSION:
                 return ExitExpression((Production) node);
-            case (int) ExpressionConstants.XOR_EXPRESSION:
-                return ExitXorExpression((Production) node);
             case (int) ExpressionConstants.OR_EXPRESSION:
                 return ExitOrExpression((Production) node);
             case (int) ExpressionConstants.AND_EXPRESSION:
                 return ExitAndExpression((Production) node);
             case (int) ExpressionConstants.NOT_EXPRESSION:
                 return ExitNotExpression((Production) node);
-            case (int) ExpressionConstants.IN_EXPRESSION:
-                return ExitInExpression((Production) node);
+            case (int) ExpressionConstants.SQL_OP_EXPRESSION:
+                return ExitSqlOpExpression((Production) node);
+            case (int) ExpressionConstants.SQL_OP_RHS:
+                return ExitSqlOpRhs((Production) node);
+            case (int) ExpressionConstants.NEGATED_SQL_OP_RHS:
+                return ExitNegatedSqlOpRhs((Production) node);
+            case (int) ExpressionConstants.IN_RHS:
+                return ExitInRhs((Production) node);
+            case (int) ExpressionConstants.LIKE_RHS:
+                return ExitLikeRhs((Production) node);
+            case (int) ExpressionConstants.MATCH_RHS:
+                return ExitMatchRhs((Production) node);
+            case (int) ExpressionConstants.CONTAINS_RHS:
+                return ExitContainsRhs((Production) node);
+            case (int) ExpressionConstants.CONTAINS_TARGET_EXPRESSION:
+                return ExitContainsTargetExpression((Production) node);
+            case (int) ExpressionConstants.CONTAINS_ARG_LIST:
+                return ExitContainsArgList((Production) node);
             case (int) ExpressionConstants.IN_TARGET_EXPRESSION:
                 return ExitInTargetExpression((Production) node);
             case (int) ExpressionConstants.IN_LIST_TARGET_EXPRESSION:
                 return ExitInListTargetExpression((Production) node);
             case (int) ExpressionConstants.COMPARE_EXPRESSION:
                 return ExitCompareExpression((Production) node);
-            case (int) ExpressionConstants.SHIFT_EXPRESSION:
-                return ExitShiftExpression((Production) node);
             case (int) ExpressionConstants.ADDITIVE_EXPRESSION:
                 return ExitAdditiveExpression((Production) node);
             case (int) ExpressionConstants.MULTIPLICATIVE_EXPRESSION:
                 return ExitMultiplicativeExpression((Production) node);
-            case (int) ExpressionConstants.POWER_EXPRESSION:
-                return ExitPowerExpression((Production) node);
             case (int) ExpressionConstants.NEGATE_EXPRESSION:
                 return ExitNegateExpression((Production) node);
             case (int) ExpressionConstants.MEMBER_EXPRESSION:
@@ -376,14 +382,8 @@ namespace Flee.Parsing {
                 return ExitMemberFunctionExpression((Production) node);
             case (int) ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
                 return ExitFieldPropertyExpression((Production) node);
-            case (int) ExpressionConstants.SPECIAL_FUNCTION_EXPRESSION:
-                return ExitSpecialFunctionExpression((Production) node);
             case (int) ExpressionConstants.IF_EXPRESSION:
                 return ExitIfExpression((Production) node);
-            case (int) ExpressionConstants.CAST_EXPRESSION:
-                return ExitCastExpression((Production) node);
-            case (int) ExpressionConstants.CAST_TYPE_EXPRESSION:
-                return ExitCastTypeExpression((Production) node);
             case (int) ExpressionConstants.INDEX_EXPRESSION:
                 return ExitIndexExpression((Production) node);
             case (int) ExpressionConstants.FUNCTION_CALL_EXPRESSION:
@@ -415,9 +415,6 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.EXPRESSION:
                 ChildExpression(node, child);
                 break;
-            case (int) ExpressionConstants.XOR_EXPRESSION:
-                ChildXorExpression(node, child);
-                break;
             case (int) ExpressionConstants.OR_EXPRESSION:
                 ChildOrExpression(node, child);
                 break;
@@ -427,8 +424,32 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.NOT_EXPRESSION:
                 ChildNotExpression(node, child);
                 break;
-            case (int) ExpressionConstants.IN_EXPRESSION:
-                ChildInExpression(node, child);
+            case (int) ExpressionConstants.SQL_OP_EXPRESSION:
+                ChildSqlOpExpression(node, child);
+                break;
+            case (int) ExpressionConstants.SQL_OP_RHS:
+                ChildSqlOpRhs(node, child);
+                break;
+            case (int) ExpressionConstants.NEGATED_SQL_OP_RHS:
+                ChildNegatedSqlOpRhs(node, child);
+                break;
+            case (int) ExpressionConstants.IN_RHS:
+                ChildInRhs(node, child);
+                break;
+            case (int) ExpressionConstants.LIKE_RHS:
+                ChildLikeRhs(node, child);
+                break;
+            case (int) ExpressionConstants.MATCH_RHS:
+                ChildMatchRhs(node, child);
+                break;
+            case (int) ExpressionConstants.CONTAINS_RHS:
+                ChildContainsRhs(node, child);
+                break;
+            case (int) ExpressionConstants.CONTAINS_TARGET_EXPRESSION:
+                ChildContainsTargetExpression(node, child);
+                break;
+            case (int) ExpressionConstants.CONTAINS_ARG_LIST:
+                ChildContainsArgList(node, child);
                 break;
             case (int) ExpressionConstants.IN_TARGET_EXPRESSION:
                 ChildInTargetExpression(node, child);
@@ -439,17 +460,11 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.COMPARE_EXPRESSION:
                 ChildCompareExpression(node, child);
                 break;
-            case (int) ExpressionConstants.SHIFT_EXPRESSION:
-                ChildShiftExpression(node, child);
-                break;
             case (int) ExpressionConstants.ADDITIVE_EXPRESSION:
                 ChildAdditiveExpression(node, child);
                 break;
             case (int) ExpressionConstants.MULTIPLICATIVE_EXPRESSION:
                 ChildMultiplicativeExpression(node, child);
-                break;
-            case (int) ExpressionConstants.POWER_EXPRESSION:
-                ChildPowerExpression(node, child);
                 break;
             case (int) ExpressionConstants.NEGATE_EXPRESSION:
                 ChildNegateExpression(node, child);
@@ -469,17 +484,8 @@ namespace Flee.Parsing {
             case (int) ExpressionConstants.FIELD_PROPERTY_EXPRESSION:
                 ChildFieldPropertyExpression(node, child);
                 break;
-            case (int) ExpressionConstants.SPECIAL_FUNCTION_EXPRESSION:
-                ChildSpecialFunctionExpression(node, child);
-                break;
             case (int) ExpressionConstants.IF_EXPRESSION:
                 ChildIfExpression(node, child);
-                break;
-            case (int) ExpressionConstants.CAST_EXPRESSION:
-                ChildCastExpression(node, child);
-                break;
-            case (int) ExpressionConstants.CAST_TYPE_EXPRESSION:
-                ChildCastTypeExpression(node, child);
                 break;
             case (int) ExpressionConstants.INDEX_EXPRESSION:
                 ChildIndexExpression(node, child);
@@ -603,58 +609,6 @@ namespace Flee.Parsing {
          * discovered errors</exception>
          */
         public virtual Node ExitDiv(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterPower(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitPower(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterMod(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitMod(Token node) {
             return node;
         }
 
@@ -978,32 +932,6 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterXor(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitXor(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public virtual void EnterNot(Token node) {
         }
 
@@ -1045,6 +973,136 @@ namespace Flee.Parsing {
          * discovered errors</exception>
          */
         public virtual Node ExitIn(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterLike(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitLike(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterMatch(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitMatch(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterContains(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitContains(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterAny(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitAny(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterAll(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitAll(Token node) {
             return node;
         }
 
@@ -1134,58 +1192,6 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterLeftShift(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitLeftShift(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterRightShift(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitRightShift(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public virtual void EnterInteger(Token node) {
         }
 
@@ -1264,32 +1270,6 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterCharLiteral(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitCharLiteral(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public virtual void EnterTrue(Token node) {
         }
 
@@ -1342,110 +1322,6 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterIdentifier(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitIdentifier(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterHexLiteral(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitHexLiteral(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterNullLiteral(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitNullLiteral(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterTimespan(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitTimespan(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public virtual void EnterDatetime(Token node) {
         }
 
@@ -1472,6 +1348,110 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
+        public virtual void EnterDate(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitDate(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterTime(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitTime(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterRegexp(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitRegexp(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterIdentifier(Token node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitIdentifier(Token node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
         public virtual void EnterIf(Token node) {
         }
 
@@ -1487,32 +1467,6 @@ namespace Flee.Parsing {
          * discovered errors</exception>
          */
         public virtual Node ExitIf(Token node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterCast(Token node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitCast(Token node) {
             return node;
         }
 
@@ -1553,46 +1507,6 @@ namespace Flee.Parsing {
          * discovered errors</exception>
          */
         public virtual void ChildExpression(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterXorExpression(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitXorExpression(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildXorExpression(Production node, Node child) {
             node.AddChild(child);
         }
 
@@ -1724,7 +1638,7 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterInExpression(Production node) {
+        public virtual void EnterSqlOpExpression(Production node) {
         }
 
         /**
@@ -1738,7 +1652,7 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual Node ExitInExpression(Production node) {
+        public virtual Node ExitSqlOpExpression(Production node) {
             return node;
         }
 
@@ -1752,7 +1666,327 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void ChildInExpression(Production node, Node child) {
+        public virtual void ChildSqlOpExpression(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterSqlOpRhs(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitSqlOpRhs(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildSqlOpRhs(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterNegatedSqlOpRhs(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitNegatedSqlOpRhs(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildNegatedSqlOpRhs(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterInRhs(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitInRhs(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildInRhs(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterLikeRhs(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitLikeRhs(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildLikeRhs(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterMatchRhs(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitMatchRhs(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildMatchRhs(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterContainsRhs(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitContainsRhs(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildContainsRhs(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterContainsTargetExpression(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitContainsTargetExpression(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildContainsTargetExpression(Production node, Node child) {
+            node.AddChild(child);
+        }
+
+        /**
+         * <summary>Called when entering a parse tree node.</summary>
+         *
+         * <param name='node'>the node being entered</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void EnterContainsArgList(Production node) {
+        }
+
+        /**
+         * <summary>Called when exiting a parse tree node.</summary>
+         *
+         * <param name='node'>the node being exited</param>
+         *
+         * <returns>the node to add to the parse tree, or
+         *          null if no parse tree should be created</returns>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual Node ExitContainsArgList(Production node) {
+            return node;
+        }
+
+        /**
+         * <summary>Called when adding a child to a parse tree
+         * node.</summary>
+         *
+         * <param name='node'>the parent node</param>
+         * <param name='child'>the child node, or null</param>
+         *
+         * <exception cref='ParseException'>if the node analysis
+         * discovered errors</exception>
+         */
+        public virtual void ChildContainsArgList(Production node, Node child) {
             node.AddChild(child);
         }
 
@@ -1884,46 +2118,6 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterShiftExpression(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitShiftExpression(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildShiftExpression(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public virtual void EnterAdditiveExpression(Production node) {
         }
 
@@ -1993,46 +2187,6 @@ namespace Flee.Parsing {
          * discovered errors</exception>
          */
         public virtual void ChildMultiplicativeExpression(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterPowerExpression(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitPowerExpression(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildPowerExpression(Production node, Node child) {
             node.AddChild(child);
         }
 
@@ -2284,46 +2438,6 @@ namespace Flee.Parsing {
          * <exception cref='ParseException'>if the node analysis
          * discovered errors</exception>
          */
-        public virtual void EnterSpecialFunctionExpression(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitSpecialFunctionExpression(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildSpecialFunctionExpression(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
         public virtual void EnterIfExpression(Production node) {
         }
 
@@ -2353,86 +2467,6 @@ namespace Flee.Parsing {
          * discovered errors</exception>
          */
         public virtual void ChildIfExpression(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterCastExpression(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitCastExpression(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildCastExpression(Production node, Node child) {
-            node.AddChild(child);
-        }
-
-        /**
-         * <summary>Called when entering a parse tree node.</summary>
-         *
-         * <param name='node'>the node being entered</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void EnterCastTypeExpression(Production node) {
-        }
-
-        /**
-         * <summary>Called when exiting a parse tree node.</summary>
-         *
-         * <param name='node'>the node being exited</param>
-         *
-         * <returns>the node to add to the parse tree, or
-         *          null if no parse tree should be created</returns>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual Node ExitCastTypeExpression(Production node) {
-            return node;
-        }
-
-        /**
-         * <summary>Called when adding a child to a parse tree
-         * node.</summary>
-         *
-         * <param name='node'>the parent node</param>
-         * <param name='child'>the child node, or null</param>
-         *
-         * <exception cref='ParseException'>if the node analysis
-         * discovered errors</exception>
-         */
-        public virtual void ChildCastTypeExpression(Production node, Node child) {
             node.AddChild(child);
         }
 

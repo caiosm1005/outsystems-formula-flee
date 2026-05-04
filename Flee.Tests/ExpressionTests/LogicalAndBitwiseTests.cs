@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Flee.Tests.ExpressionTests
 {
     /// <summary>
-    /// Exercises AND/OR/XOR/NOT in both their bitwise (integer) and logical (boolean) forms.
+    /// Exercises AND/OR/NOT in both their bitwise (integer) and logical (boolean) forms.
     /// </summary>
     [TestClass]
     public class LogicalAndBitwiseTests
@@ -27,15 +27,6 @@ namespace Flee.Tests.ExpressionTests
             var e = context.CompileDynamic("800 OR 12");
 
             Assert.AreEqual(800 | 12, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Xor_TwoInts_ReturnsBitwiseXor()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("456 XOR 100");
-
-            Assert.AreEqual(456 ^ 100, e.Evaluate());
         }
 
         [TestMethod]
@@ -92,15 +83,6 @@ namespace Flee.Tests.ExpressionTests
             var e = context.CompileDynamic("true OR false");
 
             Assert.AreEqual(true, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Xor_TwoBools_ReturnsLogicalXor()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("true XOR true");
-
-            Assert.AreEqual(false, e.Evaluate());
         }
 
         [TestMethod]
@@ -221,14 +203,14 @@ namespace Flee.Tests.ExpressionTests
         // --- Combined ---
 
         [TestMethod]
-        public void Combined_AndOrXor_AreLeftAssociative()
+        public void Combined_AndOr_AreLeftAssociative()
         {
-            // Unlike C#, Flee gives AND/OR/XOR the same precedence and chains them left-to-right:
-            // 123 AND 100 OR 1245 XOR 80 → ((123 AND 100) OR 1245) XOR 80
+            // Unlike C#, Flee gives AND/OR the same precedence and chains them left-to-right:
+            // 123 AND 100 OR 1245 → (123 AND 100) OR 1245
             var context = new ExpressionContext();
-            var e = context.CompileDynamic("123 AND 100 OR 1245 XOR 80");
+            var e = context.CompileDynamic("123 AND 100 OR 1245");
 
-            int expected = ((123 & 100) | 1245) ^ 80;
+            int expected = (123 & 100) | 1245;
             Assert.AreEqual(expected, e.Evaluate());
         }
     }

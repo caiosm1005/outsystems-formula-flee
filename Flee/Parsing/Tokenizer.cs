@@ -59,11 +59,28 @@ namespace Flee.Parsing
         /// <returns>The short description, or an empty string when no pattern matches.</returns>
         public string GetPatternDescription(int id)
         {
+            var pattern = GetPattern(id);
+            return pattern?.ToShortString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Looks up the registered pattern with id <paramref name="id"/> across all matchers.
+        /// </summary>
+        /// <param name="id">The pattern id.</param>
+        /// <returns>The matching pattern, or <see langword="null"/> when none.</returns>
+        protected TokenPattern? GetPattern(int id)
+        {
             var pattern = _stringDfaMatcher.GetPattern(id);
             pattern ??= _nfaMatcher.GetPattern(id);
             pattern ??= _regExpMatcher.GetPattern(id);
-            return pattern?.ToShortString() ?? string.Empty;
+            return pattern;
         }
+
+        /// <summary>
+        /// Gets the input buffer. Subclasses may use this to peek ahead or unread characters
+        /// when overriding <see cref="NextToken"/>.
+        /// </summary>
+        protected ReaderBuffer Buffer => _buffer;
 
         /// <summary>
         /// Returns the current line number reported by the input buffer.
@@ -201,7 +218,14 @@ namespace Flee.Parsing
             return token;
         }
 
-        private Token? NextToken()
+        /// <summary>
+        /// Reads the next token from the input buffer. Subclasses may override to suppress
+        /// or replace tokens based on context (e.g. context-sensitive lexing). Returns
+        /// <see langword="null"/> at end of stream.
+        /// </summary>
+        /// <returns>The next token, or <see langword="null"/>.</returns>
+        /// <exception cref="ParseException">If matching fails.</exception>
+        protected virtual Token? NextToken()
         {
             try
             {

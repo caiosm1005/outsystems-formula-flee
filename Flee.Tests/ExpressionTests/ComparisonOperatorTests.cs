@@ -194,54 +194,13 @@ namespace Flee.Tests.ExpressionTests
             Assert.AreEqual(true, e.Evaluate());
         }
 
-        // --- Char comparisons ---
+        // --- Single-quoted string comparisons ---
 
         [TestMethod]
-        public void Equal_TwoChars_ReturnsTrue()
+        public void Equal_TwoSingleQuotedStrings_ReturnsTrue()
         {
             var context = new ExpressionContext();
             var e = context.CompileDynamic("'a' = 'a'");
-
-            Assert.AreEqual(true, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void GreaterThan_TwoChars_UsesCharCode()
-        {
-            // 'b' (0x62) > 'a' (0x61)
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("'b' > 'a'");
-
-            Assert.AreEqual(true, e.Evaluate());
-        }
-
-        // --- Reference equality with null ---
-
-        [TestMethod]
-        public void Equal_NullToNull_ReturnsTrue()
-        {
-            var context = new ExpressionContext();
-            var e = context.CompileDynamic("null = null");
-
-            Assert.AreEqual(true, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void Equal_NonNullStringToNull_ReturnsFalse()
-        {
-            var context = new ExpressionContext();
-            context.Variables.Add("s", "hello");
-            var e = context.CompileDynamic("s = null");
-
-            Assert.AreEqual(false, e.Evaluate());
-        }
-
-        [TestMethod]
-        public void NotEqual_NonNullStringToNull_ReturnsTrue()
-        {
-            var context = new ExpressionContext();
-            context.Variables.Add("s", "hello");
-            var e = context.CompileDynamic("s <> null");
 
             Assert.AreEqual(true, e.Evaluate());
         }
