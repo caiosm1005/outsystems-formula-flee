@@ -3,23 +3,18 @@ namespace Flee.Parsing
     /**
      * A single character match transition.
      */
-    internal class NFACharTransition : NFATransition
+    internal class NFACharTransition(char match, NFAState state) : NFATransition(state)
     {
-        private readonly char _match;
-
-        public NFACharTransition(char match, NFAState state) : base(state)
-        {
-            _match = match;
-        }
+        private readonly char _match = match;
 
         public override bool IsAscii()
         {
-            return 0 <= _match && _match < 128;
+            return _match is >= (char)0 and < (char)128;
         }
 
         public override bool Match(char ch)
         {
-            return this._match == ch;
+            return _match == ch;
         }
 
         public override NFATransition Copy(NFAState state)

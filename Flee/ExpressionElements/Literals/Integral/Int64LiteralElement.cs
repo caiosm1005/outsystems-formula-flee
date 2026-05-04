@@ -24,39 +24,21 @@ namespace Flee.ExpressionElements.Literals.Integral
 
         public static Int64LiteralElement? TryCreate(string image, bool isHex, bool negated)
         {
-            if (negated == true & image == MinValue)
+            if (negated & image == MinValue)
             {
                 return new Int64LiteralElement();
             }
-            else if (isHex == true)
+            else if (isHex)
             {
-                Int64 value = default(Int64);
 
-                if (Int64.TryParse(image, NumberStyles.AllowHexSpecifier, null, out value) == false)
-                {
-                    return null;
-                }
-                else if (value >= 0 & value <= Int64.MaxValue)
-                {
-                    return new Int64LiteralElement(value);
-                }
-                else
-                {
-                    return null;
-                }
+                return !Int64.TryParse(image, NumberStyles.AllowHexSpecifier, null, out long value)
+                    ? null
+                    : value >= 0 & value <= Int64.MaxValue ? new Int64LiteralElement(value) : null;
             }
             else
             {
-                Int64 value = default(Int64);
 
-                if (Int64.TryParse(image, out value) == true)
-                {
-                    return new Int64LiteralElement(value);
-                }
-                else
-                {
-                    return null;
-                }
+                return Int64.TryParse(image, out long value) ? new Int64LiteralElement(value) : null;
             }
         }
 
@@ -67,16 +49,9 @@ namespace Flee.ExpressionElements.Literals.Integral
 
         public void Negate()
         {
-            if (_myIsMinValue == true)
-            {
-                _myValue = Int64.MinValue;
-            }
-            else
-            {
-                _myValue = -_myValue;
-            }
+            _myValue = _myIsMinValue ? long.MinValue : -_myValue;
         }
 
-        public override System.Type ResultType => typeof(Int64);
+        public override Type ResultType => typeof(Int64);
     }
 }

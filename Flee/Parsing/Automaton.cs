@@ -3,7 +3,7 @@ namespace Flee.Parsing
     internal class Automaton
     {
         private object? _value;
-        private readonly AutomatonTree _tree = new AutomatonTree();
+        private readonly AutomatonTree _tree = new();
 
         public Automaton()
         {
@@ -13,7 +13,7 @@ namespace Flee.Parsing
         {
             if (str.Length == 0)
             {
-                this._value = value;
+                _value = value;
             }
             else
             {
@@ -35,13 +35,10 @@ namespace Flee.Parsing
         {
 
             object? result = null;
-            Automaton? state = null;
-            int c = 0;
-
-            c = input.Peek(pos);
+            int c = input.Peek(pos);
             if (_tree != null && c >= 0)
             {
-                state = _tree.Find(Convert.ToChar(c), caseInsensitive);
+                Automaton? state = _tree.Find(Convert.ToChar(c), caseInsensitive);
                 if (state != null)
                 {
                     result = state.MatchFrom(input, pos + 1, caseInsensitive);

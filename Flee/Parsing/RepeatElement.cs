@@ -8,7 +8,11 @@ namespace Flee.Parsing
      * matches from a specified element, attempting to reach the
      * maximum repetition count.
      */
-    internal class RepeatElement : Element
+    internal class RepeatElement(
+        Element elem,
+        int min,
+        int max,
+        RepeatElement.RepeatType type) : Element
     {
         public enum RepeatType
         {
@@ -16,33 +20,12 @@ namespace Flee.Parsing
             RELUCTANT = 2,
             POSSESSIVE = 3
         }
-        private readonly Element _elem;
-        private readonly int _min;
-        private readonly int _max;
-        private readonly RepeatType _type;
-        private int _matchStart;
-        private BitArray? _matches;
-
-        public RepeatElement(Element elem,
-                             int min,
-                             int max,
-                             RepeatType type)
-        {
-
-            this._elem = elem;
-            this._min = min;
-            if (max <= 0)
-            {
-                this._max = Int32.MaxValue;
-            }
-            else
-            {
-                this._max = max;
-            }
-            this._type = type;
-            this._matchStart = -1;
-            this._matches = null;
-        }
+        private readonly Element _elem = elem;
+        private readonly int _min = min;
+        private readonly int _max = max <= 0 ? int.MaxValue : max;
+        private readonly RepeatType _type = type;
+        private int _matchStart = -1;
+        private BitArray? _matches = null;
 
         public override object Clone()
         {
@@ -73,6 +56,8 @@ namespace Flee.Parsing
                     {
                         return MatchPossessive(m, buffer, start, 0);
                     }
+                    break;
+                default:
                     break;
             }
             return -1;
@@ -159,14 +144,7 @@ namespace Flee.Parsing
             }
 
             // Return result
-            if (_min <= count && count <= _max)
-            {
-                return length;
-            }
-            else
-            {
-                return -1;
-            }
+            return _min <= count && count <= _max ? length : -1;
         }
 
         private void FindMatches(Matcher m,

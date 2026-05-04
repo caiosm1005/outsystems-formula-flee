@@ -6,24 +6,23 @@ namespace Flee.PublicTypes
 {
     public sealed class ExpressionCompileException : Exception
     {
-        private readonly CompileExceptionReason _myReason;
         internal ExpressionCompileException(string message, CompileExceptionReason reason) : base(message)
         {
-            _myReason = reason;
+            Reason = reason;
         }
 
         internal ExpressionCompileException(ParserLogException parseException) : base(string.Empty, parseException)
         {
-            _myReason = CompileExceptionReason.SyntaxError;
+            Reason = CompileExceptionReason.SyntaxError;
         }
 
         public override string Message
         {
             get
             {
-                if (_myReason == CompileExceptionReason.SyntaxError)
+                if (Reason == CompileExceptionReason.SyntaxError)
                 {
-                    Exception? innerEx = this.InnerException;
+                    Exception? innerEx = InnerException;
                     string msg = $"{Utility.GetCompileErrorMessage(CompileErrorResourceKeys.SyntaxError)}: {innerEx?.Message}";
                     return msg;
                 }
@@ -34,6 +33,6 @@ namespace Flee.PublicTypes
             }
         }
 
-        public CompileExceptionReason Reason => _myReason;
+        public CompileExceptionReason Reason { get; }
     }
 }

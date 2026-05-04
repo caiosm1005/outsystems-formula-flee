@@ -2,17 +2,11 @@ using Flee.PublicTypes;
 
 namespace Flee.CalcEngine.InternalTypes
 {
-    internal class BatchLoadInfo
+    internal class BatchLoadInfo(string name, string text, ExpressionContext context)
     {
-        public string Name;
-        public string ExpressionText;
+        public string Name = name;
+        public string ExpressionText = text;
 
-        public ExpressionContext Context;
-        public BatchLoadInfo(string name, string text, ExpressionContext context)
-        {
-            this.Name = name;
-            this.ExpressionText = text;
-            this.Context = context;
-        }
+        public ExpressionContext Context = context;
     }
 }

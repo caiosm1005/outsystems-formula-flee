@@ -34,25 +34,18 @@ namespace Flee.CalcEngine.InternalTypes
 
         private IDictionary<T, object?>? GetInnerDictionary(T tail)
         {
-            if (_myDependentsMap.TryGetValue(tail, out Dictionary<T, object?>? value) == true)
-            {
-                return value;
-            }
-            else
-            {
-                return null;
-            }
+            return _myDependentsMap.TryGetValue(tail, out Dictionary<T, object?>? value) ? value : (IDictionary<T, object?>?)null;
         }
 
         // Create a dependency list with only the dependents of the given tails
         public DependencyManager<T> CloneDependents(T[] tails)
         {
-            IDictionary<T, object?> seenNodes = this.CreateInnerDictionary();
-            DependencyManager<T> copy = new DependencyManager<T>(_myEqualityComparer);
+            IDictionary<T, object?> seenNodes = CreateInnerDictionary();
+            DependencyManager<T> copy = new(_myEqualityComparer);
 
             foreach (T tail in tails)
             {
-                this.CloneDependentsInternal(tail, copy, seenNodes);
+                CloneDependentsInternal(tail, copy, seenNodes);
             }
 
             return copy;
@@ -60,7 +53,7 @@ namespace Flee.CalcEngine.InternalTypes
 
         private void CloneDependentsInternal(T tail, DependencyManager<T> target, IDictionary<T, object?> seenNodes)
         {
-            if (seenNodes.ContainsKey(tail) == true)
+            if (seenNodes.ContainsKey(tail))
             {
                 // We've already added this node so just return
                 return;
@@ -72,13 +65,13 @@ namespace Flee.CalcEngine.InternalTypes
                 target.AddTail(tail);
             }
 
-            IDictionary<T, object?> innerDict = this.GetInnerDictionary(tail)!;
+            IDictionary<T, object?> innerDict = GetInnerDictionary(tail)!;
 
             // Do the recursive add
             foreach (T head in innerDict.Keys)
             {
                 target.AddDepedency(tail, head);
-                this.CloneDependentsInternal(head, target, seenNodes);
+                CloneDependentsInternal(head, target, seenNodes);
             }
         }
 
@@ -99,14 +92,14 @@ namespace Flee.CalcEngine.InternalTypes
         {
             Dictionary<T, object?> value = _myDependentsMap[old];
 
-            _myDependentsMap.Remove(old);
+            _ = _myDependentsMap.Remove(old);
             _myDependentsMap.Add(replaceWith, value);
 
             foreach (Dictionary<T, object?> innerDict in _myDependentsMap.Values)
             {
-                if (innerDict.ContainsKey(old) == true)
+                if (innerDict.ContainsKey(old))
                 {
-                    innerDict.Remove(old);
+                    _ = innerDict.Remove(old);
                     innerDict.Add(replaceWith, null);
                 }
             }
@@ -114,34 +107,34 @@ namespace Flee.CalcEngine.InternalTypes
 
         public void AddTail(T tail)
         {
-            if (_myDependentsMap.ContainsKey(tail) == false)
+            if (!_myDependentsMap.ContainsKey(tail))
             {
-                _myDependentsMap.Add(tail, (Dictionary<T, object?>)this.CreateInnerDictionary());
+                _myDependentsMap.Add(tail, (Dictionary<T, object?>)CreateInnerDictionary());
             }
         }
 
         public void AddDepedency(T tail, T head)
         {
-            IDictionary<T, object?> innerDict = this.GetInnerDictionary(tail)!;
+            IDictionary<T, object?> innerDict = GetInnerDictionary(tail)!;
 
-            if (innerDict.ContainsKey(head) == false)
+            if (!innerDict.ContainsKey(head))
             {
                 innerDict.Add(head, head);
-                this.AddPrecedent(head);
+                AddPrecedent(head);
             }
         }
 
         public void RemoveDependency(T tail, T head)
         {
-            IDictionary<T, object?> innerDict = this.GetInnerDictionary(tail)!;
-            this.RemoveHead(head, innerDict);
+            IDictionary<T, object?> innerDict = GetInnerDictionary(tail)!;
+            RemoveHead(head, innerDict);
         }
 
         private void RemoveHead(T head, IDictionary<T, object?> dict)
         {
-            if (dict.Remove(head) == true)
+            if (dict.Remove(head))
             {
-                this.RemovePrecedent(head);
+                RemovePrecedent(head);
             }
         }
 
@@ -151,26 +144,26 @@ namespace Flee.CalcEngine.InternalTypes
             {
                 foreach (T tail in tails)
                 {
-                    this.RemoveHead(tail, innerDict);
+                    RemoveHead(tail, innerDict);
                 }
             }
 
             foreach (T tail in tails)
             {
-                _myDependentsMap.Remove(tail);
+                _ = _myDependentsMap.Remove(tail);
             }
         }
 
         public void GetDirectDependents(T tail, List<T> dest)
         {
-            Dictionary<T, object?> innerDict = (Dictionary<T, object?>)this.GetInnerDictionary(tail)!;
+            Dictionary<T, object?> innerDict = (Dictionary<T, object?>)GetInnerDictionary(tail)!;
             dest.AddRange(innerDict.Keys);
         }
 
         public T[] GetDependents(T tail)
         {
-            Dictionary<T, object?> dependents = (Dictionary<T, object?>)this.CreateInnerDictionary();
-            this.GetDependentsRecursive(tail, dependents);
+            Dictionary<T, object?> dependents = (Dictionary<T, object?>)CreateInnerDictionary();
+            GetDependentsRecursive(tail, dependents);
 
             T[] arr = new T[dependents.Count];
             dependents.Keys.CopyTo(arr, 0);
@@ -180,11 +173,11 @@ namespace Flee.CalcEngine.InternalTypes
         private void GetDependentsRecursive(T tail, Dictionary<T, object?> dependents)
         {
             dependents[tail] = null;
-            Dictionary<T, object?> directDependents = (Dictionary<T, object?>)this.GetInnerDictionary(tail)!;
+            Dictionary<T, object?> directDependents = (Dictionary<T, object?>)GetInnerDictionary(tail)!;
 
             foreach (T pair in directDependents.Keys)
             {
-                this.GetDependentsRecursive(pair, dependents);
+                GetDependentsRecursive(pair, dependents);
             }
         }
 
@@ -192,8 +185,8 @@ namespace Flee.CalcEngine.InternalTypes
         {
             foreach (T tail in _myDependentsMap.Keys)
             {
-                Dictionary<T, object?> innerDict = (Dictionary<T, object?>)this.GetInnerDictionary(tail)!;
-                if (innerDict.ContainsKey(head) == true)
+                Dictionary<T, object?> innerDict = (Dictionary<T, object?>)GetInnerDictionary(tail)!;
+                if (innerDict.ContainsKey(head))
                 {
                     dest.Add(tail);
                 }
@@ -202,8 +195,7 @@ namespace Flee.CalcEngine.InternalTypes
 
         private void AddPrecedent(T head)
         {
-            int count = 0;
-            _myPrecedentsMap.TryGetValue(head, out count);
+            _ = _myPrecedentsMap.TryGetValue(head, out int count);
             _myPrecedentsMap[head] = count + 1;
         }
 
@@ -213,7 +205,7 @@ namespace Flee.CalcEngine.InternalTypes
 
             if (count == 0)
             {
-                _myPrecedentsMap.Remove(head);
+                _ = _myPrecedentsMap.Remove(head);
             }
             else
             {
@@ -228,7 +220,7 @@ namespace Flee.CalcEngine.InternalTypes
 
         public bool HasDependents(T tail)
         {
-            Dictionary<T, object?> innerDict = (Dictionary<T, object?>)this.GetInnerDictionary(tail)!;
+            Dictionary<T, object?> innerDict = (Dictionary<T, object?>)GetInnerDictionary(tail)!;
             return innerDict.Count > 0;
         }
 
@@ -243,14 +235,7 @@ namespace Flee.CalcEngine.InternalTypes
                 strings[i] = keys[i].ToString() ?? string.Empty;
             }
 
-            if (strings.Length == 0)
-            {
-                return "<empty>";
-            }
-            else
-            {
-                return string.Join(",", strings);
-            }
+            return strings.Length == 0 ? "<empty>" : string.Join(",", strings);
         }
 
         /// <summary>
@@ -260,11 +245,11 @@ namespace Flee.CalcEngine.InternalTypes
         /// <returns></returns>
         public Queue<T> GetSources(T[] rootTails)
         {
-            Queue<T> q = new Queue<T>();
+            Queue<T> q = new();
 
             foreach (T rootTail in rootTails)
             {
-                if (this.HasPrecedents(rootTail) == false)
+                if (!HasPrecedents(rootTail))
                 {
                     q.Enqueue(rootTail);
                 }
@@ -275,8 +260,8 @@ namespace Flee.CalcEngine.InternalTypes
 
         public IList<T> TopologicalSort(Queue<T> sources)
         {
-            IList<T> output = new List<T>();
-            List<T> directDependents = new List<T>();
+            IList<T> output = [];
+            List<T> directDependents = [];
 
             while (sources.Count > 0)
             {
@@ -284,25 +269,20 @@ namespace Flee.CalcEngine.InternalTypes
                 output.Add(n);
 
                 directDependents.Clear();
-                this.GetDirectDependents(n, directDependents);
+                GetDirectDependents(n, directDependents);
 
                 foreach (T m in directDependents)
                 {
-                    this.RemoveDependency(n, m);
+                    RemoveDependency(n, m);
 
-                    if (this.HasPrecedents(m) == false)
+                    if (!HasPrecedents(m))
                     {
                         sources.Enqueue(m);
                     }
                 }
             }
 
-            if (output.Count != this.Count)
-            {
-                throw new CircularReferenceException();
-            }
-
-            return output;
+            return output.Count != Count ? throw new CircularReferenceException() : output;
         }
 
         public string DependencyGraph
@@ -315,12 +295,12 @@ namespace Flee.CalcEngine.InternalTypes
                 foreach (KeyValuePair<T, Dictionary<T, object?>> pair in _myDependentsMap)
                 {
                     T key = pair.Key;
-                    string s = this.FormatValues(pair.Value.Keys);
+                    string s = FormatValues(pair.Value.Keys);
                     lines[index] = $"{key} -> {s}";
                     index += 1;
                 }
 
-                return string.Join(System.Environment.NewLine, lines);
+                return string.Join(Environment.NewLine, lines);
             }
         }
 

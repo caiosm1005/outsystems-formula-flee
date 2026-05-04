@@ -22,7 +22,7 @@ namespace Flee.ExpressionElements.Literals.Real
         public static DoubleLiteralElement? Parse(string image, IServiceProvider services)
         {
             ExpressionParserOptions options = (ExpressionParserOptions)services.GetService(typeof(ExpressionParserOptions))!;
-            DoubleLiteralElement element = new DoubleLiteralElement();
+            DoubleLiteralElement element = new();
 
             try
             {
@@ -41,6 +41,6 @@ namespace Flee.ExpressionElements.Literals.Real
             ilg.Emit(OpCodes.Ldc_R8, _myValue);
         }
 
-        public override System.Type ResultType => typeof(double);
+        public override Type ResultType => typeof(double);
     }
 }

@@ -4,32 +4,22 @@ using System.Reflection.Emit;
 
 namespace Flee.InternalTypes
 {
-    internal class FleeILGenerator
+    internal class FleeILGenerator(ILGenerator ilg)
     {
-        private ILGenerator _myIlGenerator;
-        private int _myLength;
-        private readonly Dictionary<Type, LocalBuilder> _localBuilderTemp;
-        private int _myPass;
-        private BranchManager _bm;
-
-        public FleeILGenerator(ILGenerator ilg)
-        {
-            _myIlGenerator = ilg;
-            _localBuilderTemp = new Dictionary<Type, LocalBuilder>();
-            _myLength = 0;
-            _myPass = 1;
-            _bm = new BranchManager();
-        }
+        private ILGenerator _myIlGenerator = ilg;
+        private readonly Dictionary<Type, LocalBuilder> _localBuilderTemp = [];
+        private int _myPass = 1;
+        private readonly BranchManager _bm = new();
 
         public int GetTempLocalIndex(Type localType)
         {
-            if (_localBuilderTemp.TryGetValue(localType, out LocalBuilder? local) == false)
+            if (!_localBuilderTemp.TryGetValue(localType, out LocalBuilder? local))
             {
                 local = _myIlGenerator.DeclareLocal(localType);
                 _localBuilderTemp.Add(localType, local);
             }
 
-            return local!.LocalIndex;
+            return local.LocalIndex;
         }
 
         /// <summary>
@@ -49,94 +39,94 @@ namespace Flee.InternalTypes
         /// <param name="ilg"></param>
         public void PrepareSecondPass(ILGenerator ilg)
         {
-            _bm.ComputeBranches();
+            _ = _bm.ComputeBranches();
             _localBuilderTemp.Clear();
             _myIlGenerator = ilg;
-            _myLength = 0;
+            Length = 0;
             _myPass++;
         }
 
         public void Emit(OpCode op)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op);
         }
 
         public void Emit(OpCode op, Type arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, ConstructorInfo arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, MethodInfo arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, FieldInfo arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, byte arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, sbyte arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, short arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, int arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, long arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, float arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, double arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, string arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
         public void Emit(OpCode op, Label arg)
         {
-            this.RecordOpcode(op);
+            RecordOpcode(op);
             _myIlGenerator.Emit(op, arg);
         }
 
@@ -147,7 +137,7 @@ namespace Flee.InternalTypes
                 _bm.AddBranch(this, arg);
                 Emit(OpCodes.Br_S, arg);
             }
-            else if (_bm.IsLongBranch(this) == false)
+            else if (!_bm.IsLongBranch(this))
             {
                 Emit(OpCodes.Br_S, arg);
             }
@@ -164,7 +154,7 @@ namespace Flee.InternalTypes
                 _bm.AddBranch(this, arg);
                 Emit(OpCodes.Brfalse_S, arg);
             }
-            else if (_bm.IsLongBranch(this) == false)
+            else if (!_bm.IsLongBranch(this))
             {
                 Emit(OpCodes.Brfalse_S, arg);
             }
@@ -181,7 +171,7 @@ namespace Flee.InternalTypes
                 _bm.AddBranch(this, arg);
                 Emit(OpCodes.Brtrue_S, arg);
             }
-            else if (_bm.IsLongBranch(this) == false)
+            else if (!_bm.IsLongBranch(this))
             {
                 Emit(OpCodes.Brtrue_S, arg);
             }
@@ -213,48 +203,44 @@ namespace Flee.InternalTypes
         {
             //Trace.WriteLine(String.Format("{0:x}: {1}", MyLength, op.Name))
             int operandLength = GetOpcodeOperandSize(op.OperandType);
-            _myLength += op.Size + operandLength;
+            Length += op.Size + operandLength;
         }
 
         private static int GetOpcodeOperandSize(OperandType operand)
         {
-            switch (operand)
+            if (operand == OperandType.InlineNone)
             {
-                case OperandType.InlineNone:
-                    return 0;
-                case OperandType.ShortInlineBrTarget:
-                case OperandType.ShortInlineI:
-                case OperandType.ShortInlineVar:
-                    return 1;
-                case OperandType.InlineVar:
-                    return 2;
-                case OperandType.InlineBrTarget:
-                case OperandType.InlineField:
-                case OperandType.InlineI:
-                case OperandType.InlineMethod:
-                case OperandType.InlineSig:
-                case OperandType.InlineString:
-                case OperandType.InlineTok:
-                case OperandType.InlineType:
-                case OperandType.ShortInlineR:
-                    return 4;
-                case OperandType.InlineI8:
-                case OperandType.InlineR:
-                    return 8;
-                default:
-                    Debug.Fail("Unknown operand type");
-                    break;
+                return 0;
             }
+            if (operand is OperandType.ShortInlineBrTarget or OperandType.ShortInlineI or OperandType.ShortInlineVar)
+            {
+                return 1;
+            }
+            if (operand == OperandType.InlineVar)
+            {
+                return 2;
+            }
+            if (operand is OperandType.InlineBrTarget or OperandType.InlineField or OperandType.InlineI
+                or OperandType.InlineMethod or OperandType.InlineSig or OperandType.InlineString
+                or OperandType.InlineTok or OperandType.InlineType or OperandType.ShortInlineR)
+            {
+                return 4;
+            }
+            if (operand is OperandType.InlineI8 or OperandType.InlineR)
+            {
+                return 8;
+            }
+            Debug.Fail("Unknown operand type");
             return 0;
         }
 
         [Conditional("DEBUG")]
         public void ValidateLength()
         {
-            Debug.Assert(this.Length == this.ILGeneratorLength, "ILGenerator length mismatch");
+            Debug.Assert(Length == ILGeneratorLength, "ILGenerator length mismatch");
         }
 
-        public int Length => _myLength;
+        public int Length { get; private set; } = 0;
 
         private int ILGeneratorLength => _myIlGenerator.ILOffset;
     }

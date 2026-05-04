@@ -14,12 +14,11 @@ namespace Flee.CalcEngine.InternalTypes
 
         public T Result => MyResult;
 
-        public override System.Type ResultType => typeof(T);
+        public override Type ResultType => typeof(T);
 
         public override object ResultAsObject
         {
-            get { return MyResult!; }
-            set { MyResult = (T)value; }
+            get => MyResult!; set => MyResult = (T)value;
         }
     }
 }

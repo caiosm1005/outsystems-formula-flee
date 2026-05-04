@@ -2,30 +2,16 @@ namespace Flee.PublicTypes
 {
     public class ResolveVariableValueEventArgs : EventArgs
     {
-        private readonly string _myName;
-        private readonly Type _myType;
-
-        private object? MyValue;
         internal ResolveVariableValueEventArgs(string name, Type t)
         {
-            _myName = name;
-            _myType = t;
+            VariableName = name;
+            VariableType = t;
         }
 
-        public string VariableName
-        {
-            get { return _myName; }
-        }
+        public string VariableName { get; }
 
-        public Type VariableType
-        {
-            get { return _myType; }
-        }
+        public Type VariableType { get; }
 
-        public object? VariableValue
-        {
-            get { return MyValue; }
-            set { MyValue = value; }
-        }
+        public object? VariableValue { get; set; }
     }
 }

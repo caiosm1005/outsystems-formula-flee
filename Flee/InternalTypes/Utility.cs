@@ -41,6 +41,8 @@ namespace Flee.InternalTypes
                     case 3:
                         ilg.Emit(OpCodes.Stloc_3);
                         break;
+                    default:
+                        break;
                 }
             }
             else if (index < 256)
@@ -74,6 +76,8 @@ namespace Flee.InternalTypes
                     case 3:
                         ilg.Emit(OpCodes.Ldloc_3);
                         break;
+                    default:
+                        break;
                 }
             }
             else if (index < 256)
@@ -105,46 +109,51 @@ namespace Flee.InternalTypes
         {
             TypeCode tc = Type.GetTypeCode(elementType);
 
-            switch (tc)
+            if (tc == TypeCode.Byte)
             {
-                case TypeCode.Byte:
-                    ilg.Emit(OpCodes.Ldelem_U1);
-                    break;
-                case TypeCode.SByte:
-                case TypeCode.Boolean:
-                    ilg.Emit(OpCodes.Ldelem_I1);
-                    break;
-                case TypeCode.Int16:
-                    ilg.Emit(OpCodes.Ldelem_I2);
-                    break;
-                case TypeCode.UInt16:
-                    ilg.Emit(OpCodes.Ldelem_U2);
-                    break;
-                case TypeCode.Int32:
-                    ilg.Emit(OpCodes.Ldelem_I4);
-                    break;
-                case TypeCode.UInt32:
-                    ilg.Emit(OpCodes.Ldelem_U4);
-                    break;
-                case TypeCode.Int64:
-                case TypeCode.UInt64:
-                    ilg.Emit(OpCodes.Ldelem_I8);
-                    break;
-                case TypeCode.Single:
-                    ilg.Emit(OpCodes.Ldelem_R4);
-                    break;
-                case TypeCode.Double:
-                    ilg.Emit(OpCodes.Ldelem_R8);
-                    break;
-                case TypeCode.Object:
-                case TypeCode.String:
-                    ilg.Emit(OpCodes.Ldelem_Ref);
-                    break;
-                default:
-                    // Must be a non-primitive value type
-                    ilg.Emit(OpCodes.Ldelema, elementType);
-                    ilg.Emit(OpCodes.Ldobj, elementType);
-                    return;
+                ilg.Emit(OpCodes.Ldelem_U1);
+            }
+            else if (tc is TypeCode.SByte or TypeCode.Boolean)
+            {
+                ilg.Emit(OpCodes.Ldelem_I1);
+            }
+            else if (tc == TypeCode.Int16)
+            {
+                ilg.Emit(OpCodes.Ldelem_I2);
+            }
+            else if (tc == TypeCode.UInt16)
+            {
+                ilg.Emit(OpCodes.Ldelem_U2);
+            }
+            else if (tc == TypeCode.Int32)
+            {
+                ilg.Emit(OpCodes.Ldelem_I4);
+            }
+            else if (tc == TypeCode.UInt32)
+            {
+                ilg.Emit(OpCodes.Ldelem_U4);
+            }
+            else if (tc is TypeCode.Int64 or TypeCode.UInt64)
+            {
+                ilg.Emit(OpCodes.Ldelem_I8);
+            }
+            else if (tc == TypeCode.Single)
+            {
+                ilg.Emit(OpCodes.Ldelem_R4);
+            }
+            else if (tc == TypeCode.Double)
+            {
+                ilg.Emit(OpCodes.Ldelem_R8);
+            }
+            else if (tc is TypeCode.Object or TypeCode.String)
+            {
+                ilg.Emit(OpCodes.Ldelem_Ref);
+            }
+            else
+            {
+                // Must be a non-primitive value type
+                ilg.Emit(OpCodes.Ldelema, elementType);
+                ilg.Emit(OpCodes.Ldobj, elementType);
             }
         }
 
@@ -152,73 +161,51 @@ namespace Flee.InternalTypes
         {
             TypeCode tc = Type.GetTypeCode(elementType);
 
-            switch (tc)
+            if (tc is TypeCode.Byte or TypeCode.SByte or TypeCode.Boolean)
             {
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Boolean:
-                    ilg.Emit(OpCodes.Stelem_I1);
-                    break;
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                    ilg.Emit(OpCodes.Stelem_I2);
-                    break;
-                case TypeCode.Int32:
-                case TypeCode.UInt32:
-                    ilg.Emit(OpCodes.Stelem_I4);
-                    break;
-                case TypeCode.Int64:
-                case TypeCode.UInt64:
-                    ilg.Emit(OpCodes.Stelem_I8);
-                    break;
-                case TypeCode.Single:
-                    ilg.Emit(OpCodes.Stelem_R4);
-                    break;
-                case TypeCode.Double:
-                    ilg.Emit(OpCodes.Stelem_R8);
-                    break;
-                case TypeCode.Object:
-                case TypeCode.String:
-                    ilg.Emit(OpCodes.Stelem_Ref);
-                    break;
-                default:
-                    // Must be a non-primitive value type
-                    ilg.Emit(OpCodes.Stelem, elementType);
-                    break;
+                ilg.Emit(OpCodes.Stelem_I1);
+            }
+            else if (tc is TypeCode.Int16 or TypeCode.UInt16)
+            {
+                ilg.Emit(OpCodes.Stelem_I2);
+            }
+            else if (tc is TypeCode.Int32 or TypeCode.UInt32)
+            {
+                ilg.Emit(OpCodes.Stelem_I4);
+            }
+            else if (tc is TypeCode.Int64 or TypeCode.UInt64)
+            {
+                ilg.Emit(OpCodes.Stelem_I8);
+            }
+            else if (tc == TypeCode.Single)
+            {
+                ilg.Emit(OpCodes.Stelem_R4);
+            }
+            else if (tc == TypeCode.Double)
+            {
+                ilg.Emit(OpCodes.Stelem_R8);
+            }
+            else if (tc is TypeCode.Object or TypeCode.String)
+            {
+                ilg.Emit(OpCodes.Stelem_Ref);
+            }
+            else
+            {
+                // Must be a non-primitive value type
+                ilg.Emit(OpCodes.Stelem, elementType);
             }
         }
 
- 
+
 
         public static bool IsIntegralType(Type t)
         {
-            TypeCode tc = Type.GetTypeCode(t);
-            switch (tc)
-            {
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                case TypeCode.UInt32:
-                case TypeCode.Int64:
-                case TypeCode.UInt64:
-                    return true;
-                default:
-                    return false;
-            }
+            return Type.GetTypeCode(t) is TypeCode.Byte or TypeCode.SByte or TypeCode.Int16 or TypeCode.UInt16 or TypeCode.Int32 or TypeCode.UInt32 or TypeCode.Int64 or TypeCode.UInt64;
         }
 
         public static Type? GetBitwiseOpType(Type leftType, Type rightType)
         {
-            if (IsIntegralType(leftType) == false || IsIntegralType(rightType) == false)
-            {
-                return null;
-            }
-            else
-            {
-                return ImplicitConverter.GetBinaryResultType(leftType, rightType);
-            }
+            return !IsIntegralType(leftType) || !IsIntegralType(rightType) ? null : ImplicitConverter.GetBinaryResultType(leftType, rightType);
         }
 
         /// <summary>
@@ -230,19 +217,21 @@ namespace Flee.InternalTypes
         /// <returns>The operator's method or null of no match is found</returns>
         public static MethodInfo? GetSimpleOverloadedOperator(string name, Type sourceType, Type? destType)
         {
-            Hashtable data = new Hashtable();
-            data.Add("Name", string.Concat("op_", name));
-            data.Add("sourceType", sourceType);
-            data.Add("destType", destType!);
+            Hashtable data = new()
+            {
+                { "Name", string.Concat("op_", name) },
+                { "sourceType", sourceType },
+                { "destType", destType }
+            };
 
             const BindingFlags flags = BindingFlags.Public | BindingFlags.Static;
 
             // Look on the source type and its ancestors
-            MemberInfo[] members = new MemberInfo[0];
+            MemberInfo[] members = [];
             Type? sourceWalk = sourceType;
             do
             {
-                members = sourceWalk!.FindMembers(MemberTypes.Method, flags, SimpleOverloadedOperatorFilter, data);
+                members = sourceWalk.FindMembers(MemberTypes.Method, flags, SimpleOverloadedOperatorFilter, data);
             } while (members.Length == 0 && (sourceWalk = sourceWalk.BaseType) != null);
 
             if (members.Length == 0 && destType != null)
@@ -251,7 +240,7 @@ namespace Flee.InternalTypes
                 Type? destWalk = destType;
                 do
                 {
-                    members = destWalk!.FindMembers(MemberTypes.Method, flags, SimpleOverloadedOperatorFilter, data);
+                    members = destWalk.FindMembers(MemberTypes.Method, flags, SimpleOverloadedOperatorFilter, data);
                 } while (members.Length == 0 && (destWalk = destWalk.BaseType) != null);
             }
 
@@ -280,9 +269,9 @@ namespace Flee.InternalTypes
             IDictionary data = (IDictionary)value!;
             MethodInfo method = (MethodInfo)member;
 
-            bool nameMatch = method.IsSpecialName == true && method.Name.Equals((string)data["Name"]!, StringComparison.OrdinalIgnoreCase);
+            bool nameMatch = method.IsSpecialName && method.Name.Equals((string)data["Name"]!, StringComparison.OrdinalIgnoreCase);
 
-            if (nameMatch == false)
+            if (!nameMatch)
             {
                 return false;
             }
@@ -292,9 +281,9 @@ namespace Flee.InternalTypes
 
             if (destType != null)
             {
-                bool returnTypeMatch = object.ReferenceEquals(destType, method.ReturnType);
+                bool returnTypeMatch = ReferenceEquals(destType, method.ReturnType);
 
-                if (returnTypeMatch == false)
+                if (!returnTypeMatch)
                 {
                     return false;
                 }
@@ -309,12 +298,11 @@ namespace Flee.InternalTypes
         public static MethodInfo? GetOverloadedOperator(string name, Type sourceType, Binder binder, params Type[] argumentTypes)
         {
             name = string.Concat("op_", name);
-            MethodInfo? mi = null;
             Type? sourceWalk = sourceType;
             do
             {
-                mi = sourceWalk!.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
-                if (mi != null && mi.IsSpecialName == true)
+                MethodInfo? mi = sourceWalk.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
+                if (mi != null && mi.IsSpecialName)
                 {
                     return mi;
                 }

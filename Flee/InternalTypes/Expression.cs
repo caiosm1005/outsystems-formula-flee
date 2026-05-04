@@ -1,4 +1,4 @@
-using System.ComponentModel.Design;
+﻿using System.ComponentModel.Design;
 using System.Reflection.Emit;
 using System.Reflection;
 using Flee.ExpressionElements;
@@ -11,10 +11,7 @@ namespace Flee.InternalTypes
 {
     internal class Expression<T> : IExpression, IDynamicExpression, IGenericExpression<T>
     {
-        private readonly string _myExpression;
-        private ExpressionContext _myContext;
         private ExpressionOptions _myOptions = null!;
-        private readonly ExpressionInfo _myInfo;
         private ExpressionEvaluator<T> _myEvaluator = null!;
 
         private object _myOwner;
@@ -24,27 +21,27 @@ namespace Flee.InternalTypes
         public Expression(string expression, ExpressionContext context, bool isGeneric)
         {
             Utility.AssertNotNull(expression, "expression");
-            _myExpression = expression;
+            Text = expression;
             _myOwner = context.ExpressionOwner;
 
-            _myContext = context;
+            Context = context;
 
-            if (context.NoClone == false)
+            if (!context.NoClone)
             {
-                _myContext = context.CloneInternal(false);
+                Context = context.CloneInternal(false);
             }
 
-            _myInfo = new ExpressionInfo();
+            Info1 = new ExpressionInfo();
 
-            this.SetupOptions(_myContext.Options, isGeneric);
+            SetupOptions(Context.Options, isGeneric);
 
-            _myContext.Imports.ImportOwner(_myOptions.OwnerType);
+            Context.Imports.ImportOwner(_myOptions.OwnerType);
 
-            this.ValidateOwner(_myOwner!);
+            ValidateOwner(_myOwner!);
 
-            this.Compile(expression, _myOptions);
+            Compile(expression, _myOptions);
 
-            _myContext.CalculationEngine?.FixTemporaryHead(this, _myContext, _myOptions.ResultType);
+            Context.CalculationEngine?.FixTemporaryHead(this, Context, _myOptions.ResultType);
         }
 
         private void SetupOptions(ExpressionOptions options, bool isGeneric)
@@ -65,28 +62,28 @@ namespace Flee.InternalTypes
         {
             // Add the services that will be used by elements during the compile
             IServiceContainer services = new ServiceContainer();
-            this.AddServices(services);
+            AddServices(services);
 
             // Parse and get the root element of the parse tree
-            ExpressionElement topElement = _myContext.Parse(expression, services);
+            ExpressionElement topElement = Context.Parse(expression, services);
 
             if (options.ResultType == null)
             {
                 options.ResultType = topElement.ResultType;
             }
 
-            RootExpressionElement rootElement = new RootExpressionElement(topElement, options.ResultType);
+            RootExpressionElement rootElement = new(topElement, options.ResultType);
 
-            DynamicMethod dm = this.CreateDynamicMethod();
+            DynamicMethod dm = CreateDynamicMethod();
 
-            FleeILGenerator ilg = new FleeILGenerator(dm.GetILGenerator());
+            FleeILGenerator ilg = new(dm.GetILGenerator());
 
             // Emit the IL
             rootElement.Emit(ilg, services);
             if (ilg.NeedsSecondPass())
             {
                 // second pass required due to long branches.
-                dm = this.CreateDynamicMethod();
+                dm = CreateDynamicMethod();
                 ilg.PrepareSecondPass(dm.GetILGenerator());
                 rootElement.Emit(ilg, services);
             }
@@ -94,7 +91,7 @@ namespace Flee.InternalTypes
             ilg.ValidateLength();
 
             // Emit to an assembly if required
-            if (options.EmitToAssembly == true)
+            if (options.EmitToAssembly)
             {
                 EmitToAssembly(ilg, rootElement, services);
             }
@@ -106,11 +103,11 @@ namespace Flee.InternalTypes
         private DynamicMethod CreateDynamicMethod()
         {
             // Create the dynamic method
-            Type[] parameterTypes = {
+            Type[] parameterTypes = [
             typeof(object),
             typeof(ExpressionContext),
             typeof(VariableCollection)
-        };
+        ];
             DynamicMethod dm;
 
             dm = new DynamicMethod(DynamicMethodName, typeof(T), parameterTypes, _myOptions.OwnerType);
@@ -121,10 +118,10 @@ namespace Flee.InternalTypes
         private void AddServices(IServiceContainer dest)
         {
             dest.AddService(typeof(ExpressionOptions), _myOptions);
-            dest.AddService(typeof(ExpressionParserOptions), _myContext.ParserOptions);
-            dest.AddService(typeof(ExpressionContext), _myContext);
+            dest.AddService(typeof(ExpressionParserOptions), Context.ParserOptions);
+            dest.AddService(typeof(ExpressionContext), Context);
             dest.AddService(typeof(IExpression), this);
-            dest.AddService(typeof(ExpressionInfo), _myInfo);
+            dest.AddService(typeof(ExpressionInfo), Info1);
         }
 
         /// <summary>
@@ -136,15 +133,15 @@ namespace Flee.InternalTypes
         /// <param name="services"></param>
         private static void EmitToAssembly(FleeILGenerator ilg, ExpressionElement rootElement, IServiceContainer services)
         {
-            AssemblyName assemblyName = new AssemblyName(EmitAssemblyName);
+            AssemblyName assemblyName = new(EmitAssemblyName);
 
             string assemblyFileName = string.Format("{0}.dll", EmitAssemblyName);
 
             AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyFileName);
 
-            MethodBuilder mb = moduleBuilder.DefineGlobalMethod("Evaluate", MethodAttributes.Public | MethodAttributes.Static, typeof(T), new Type[] {
-            typeof(object),typeof(ExpressionContext),typeof(VariableCollection)});
+            MethodBuilder mb = moduleBuilder.DefineGlobalMethod("Evaluate", MethodAttributes.Public | MethodAttributes.Static, typeof(T), [
+            typeof(object),typeof(ExpressionContext),typeof(VariableCollection)]);
             // already emitted once for local use,
             ilg.PrepareSecondPass(mb.GetILGenerator());
 
@@ -152,13 +149,13 @@ namespace Flee.InternalTypes
 
             moduleBuilder.CreateGlobalFunctions();
             //assemblyBuilder.Save(assemblyFileName);
-            assemblyBuilder.CreateInstance(assemblyFileName);
+            _ = assemblyBuilder.CreateInstance(assemblyFileName);
         }
 
         private void ValidateOwner(object owner)
         {
             Utility.AssertNotNull(owner, "owner");
-            if (_myOptions.OwnerType.IsAssignableFrom(owner.GetType()) == false)
+            if (!_myOptions.OwnerType.IsAssignableFrom(owner.GetType()))
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.NewOwnerTypeNotAssignableToCurrentOwner);
                 throw new ArgumentException(msg);
@@ -167,12 +164,12 @@ namespace Flee.InternalTypes
 
         public object Evaluate()
         {
-            return _myEvaluator(_myOwner, _myContext, _myContext.Variables)!;
+            return _myEvaluator(_myOwner, Context, Context.Variables)!;
         }
 
         public T EvaluateGeneric()
         {
-            return _myEvaluator(_myOwner, _myContext, _myContext.Variables);
+            return _myEvaluator(_myOwner, Context, Context.Variables);
         }
         T IGenericExpression<T>.Evaluate()
         {
@@ -181,35 +178,35 @@ namespace Flee.InternalTypes
 
         public IExpression Clone()
         {
-            Expression<T> copy = (Expression<T>)this.MemberwiseClone();
-            copy._myContext = _myContext.CloneInternal(true);
-            copy._myOptions = copy._myContext.Options;
+            Expression<T> copy = (Expression<T>)MemberwiseClone();
+            copy.Context = Context.CloneInternal(true);
+            copy._myOptions = copy.Context.Options;
             return copy;
         }
 
         public override string ToString()
         {
-            return _myExpression;
+            return Text;
         }
 
         internal Type ResultType => _myOptions.ResultType;
 
-        public string Text => _myExpression;
+        public string Text { get; }
 
-        public ExpressionInfo Info1 => _myInfo;
+        public ExpressionInfo Info1 { get; }
 
         ExpressionInfo IExpression.Info => Info1;
 
         public object? Owner
         {
-            get { return _myOwner; }
+            get => _myOwner;
             set
             {
-                this.ValidateOwner(value!);
+                ValidateOwner(value!);
                 _myOwner = value!;
             }
         }
 
-        public ExpressionContext Context => _myContext;
+        public ExpressionContext Context { get; private set; }
     }
 }

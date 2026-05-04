@@ -8,19 +8,19 @@ namespace Flee.InternalTypes
 
         public Stack Operands;
         public Stack Operators;
-        private Dictionary<object, Label> Labels;
+        private readonly Dictionary<object, Label> Labels;
 
         public ShortCircuitInfo()
         {
-            this.Operands = new Stack();
-            this.Operators = new Stack();
-            this.Labels = new Dictionary<object, Label>();
+            Operands = new Stack();
+            Operators = new Stack();
+            Labels = [];
         }
 
         public void ClearTempState()
         {
-            this.Operands.Clear();
-            this.Operators.Clear();
+            Operands.Clear();
+            Operators.Clear();
         }
 
         public Label AddLabel(object key, Label lbl)

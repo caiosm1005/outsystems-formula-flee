@@ -4,12 +4,8 @@ namespace Flee.Parsing
      * The non-digit character set transition. This transition
      * matches a single non-numeric character.
      */
-    internal class NFANonDigitTransition : NFATransition
+    internal class NFANonDigitTransition(NFAState state) : NFATransition(state)
     {
-        public NFANonDigitTransition(NFAState state) : base(state)
-        {
-        }
-
         public override bool IsAscii()
         {
             return false;
@@ -17,7 +13,7 @@ namespace Flee.Parsing
 
         public override bool Match(char ch)
         {
-            return ch < '0' || '9' < ch;
+            return ch is < '0' or > '9';
         }
 
         public override NFATransition Copy(NFAState state)

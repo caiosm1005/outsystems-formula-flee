@@ -15,7 +15,7 @@ namespace Flee.InternalTypes
 
         public PropertyDictionary Clone()
         {
-            PropertyDictionary copy = new PropertyDictionary();
+            PropertyDictionary copy = new();
 
             foreach (KeyValuePair<string, object?> pair in _myProperties)
             {
@@ -27,8 +27,7 @@ namespace Flee.InternalTypes
 
         public T GetValue<T>(string name)
         {
-            object? value = default(T);
-            if (_myProperties.TryGetValue(name, out value) == false)
+            if (!_myProperties.TryGetValue(name, out object? value))
             {
                 Debug.Fail($"Unknown property '{name}'");
             }
@@ -37,8 +36,8 @@ namespace Flee.InternalTypes
 
         public void SetToDefault<T>(string name)
         {
-            T? value = default(T);
-            this.SetValue(name, value);
+            T? value = default;
+            SetValue(name, value);
         }
 
         public void SetValue(string name, object? value)

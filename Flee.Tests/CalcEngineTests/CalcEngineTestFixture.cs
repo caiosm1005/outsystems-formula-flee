@@ -44,7 +44,7 @@ namespace Flee.Tests.CalcEngineTests
             ce.Add("b", "a + a + a", context);
             ce.Recalculate("a");
             var result = ce.GetResult<int>("b");
-            Assert.AreEqual((100 * 2) * 3, result);
+            Assert.AreEqual(100 * 2 * 3, result);
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace Flee.Tests.CalcEngineTests
             ce.Recalculate("a", "b");
 
             var result = ce.GetResult<int>("e");
-            Assert.AreEqual((100 * 2) + (24 * 2) + ((100 * 2) + (24 * 2)) + 80, result);
+            Assert.AreEqual((100 * 2) + (24 * 2) + (100 * 2) + (24 * 2) + 80, result);
         }
 
         [TestMethod]
@@ -122,7 +122,6 @@ namespace Flee.Tests.CalcEngineTests
         {
             var ce = new CalculationEngine();
             var context = new ExpressionContext();
-            var variables = context.Variables;
 
             ce.Add("x", "100 >> 2", context);
             ce.Recalculate("x");
@@ -144,7 +143,7 @@ namespace Flee.Tests.CalcEngineTests
             ce.Add("c", "b * 2", context);
             ce.Recalculate("a", "b");
             var result = ce.GetResult<int>("c");
-            Assert.AreEqual(((100) * 2 + 1) * 2, result);
+            Assert.AreEqual(((100 * 2) + 1) * 2, result);
         }
 
         [TestMethod]
@@ -184,20 +183,28 @@ namespace Flee.Tests.CalcEngineTests
         public void Test_Boolean_Expression()
         {
             string expression = "a AND NOT b AND NOT c AND d";
-            Dictionary<string, object> expressionVariables = new Dictionary<string, object>();
-            expressionVariables.Add("a", 1);
-            expressionVariables.Add("b", 0);
-            expressionVariables.Add("c", 0);
-            expressionVariables.Add("d", 1);
+            Dictionary<string, object> expressionVariables = new()
+            {
+                { "a", 1 },
+                { "b", 0 },
+                { "c", 0 },
+                { "d", 1 }
+            };
 
             var context = new ExpressionContext();
             var vars = context.Variables;
             foreach (var expressionVariable in expressionVariables.Keys)
+            {
                 vars.Add(expressionVariable, expressionVariables[expressionVariable]);
+            }
+
             IDynamicExpression dynamicExpression = context.CompileDynamic(expression);
             foreach (var expressionVariable in expressionVariables.Keys)
+            {
                 vars[expressionVariable] = expressionVariables[expressionVariable];
-            var a = dynamicExpression.Evaluate();
+            }
+
+            _ = dynamicExpression.Evaluate();
 
             //ExpressionContext context = new ExpressionContext();
             //VariableCollection variables = context.Variables;

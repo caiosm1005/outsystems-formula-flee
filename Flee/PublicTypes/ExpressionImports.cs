@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Flee.InternalTypes;
 using Flee.Resources;
 
@@ -7,35 +7,35 @@ namespace Flee.PublicTypes
     public sealed class ExpressionImports
     {
 
-        private static Dictionary<string, Type> OurBuiltinTypeMap = CreateBuiltinTypeMap();
-        private NamespaceImport MyRootImport;
+        private static readonly Dictionary<string, Type> OurBuiltinTypeMap = CreateBuiltinTypeMap();
         private TypeImport MyOwnerImport = null!;
 
         private ExpressionContext MyContext = null!;
         internal ExpressionImports()
         {
-            MyRootImport = new NamespaceImport("true");
+            RootImport = new NamespaceImport("true");
         }
 
         private static Dictionary<string, Type> CreateBuiltinTypeMap()
         {
-            Dictionary<string, Type> map = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-
-            map.Add("boolean", typeof(bool));
-            map.Add("byte", typeof(byte));
-            map.Add("sbyte", typeof(sbyte));
-            map.Add("short", typeof(short));
-            map.Add("ushort", typeof(UInt16));
-            map.Add("int", typeof(Int32));
-            map.Add("uint", typeof(UInt32));
-            map.Add("long", typeof(long));
-            map.Add("ulong", typeof(ulong));
-            map.Add("single", typeof(float));
-            map.Add("double", typeof(double));
-            map.Add("decimal", typeof(decimal));
-            map.Add("char", typeof(char));
-            map.Add("object", typeof(object));
-            map.Add("string", typeof(string));
+            Dictionary<string, Type> map = new(StringComparer.OrdinalIgnoreCase)
+            {
+                { "boolean", typeof(bool) },
+                { "byte", typeof(byte) },
+                { "sbyte", typeof(sbyte) },
+                { "short", typeof(short) },
+                { "ushort", typeof(UInt16) },
+                { "int", typeof(Int32) },
+                { "uint", typeof(UInt32) },
+                { "long", typeof(long) },
+                { "ulong", typeof(ulong) },
+                { "single", typeof(float) },
+                { "double", typeof(double) },
+                { "decimal", typeof(decimal) },
+                { "char", typeof(char) },
+                { "object", typeof(object) },
+                { "string", typeof(string) }
+            };
 
             return map;
         }
@@ -44,15 +44,16 @@ namespace Flee.PublicTypes
         internal void SetContext(ExpressionContext context)
         {
             MyContext = context;
-            MyRootImport.SetContext(context);
+            RootImport.SetContext(context);
         }
 
         internal ExpressionImports Clone()
         {
-            ExpressionImports copy = new ExpressionImports();
-
-            copy.MyRootImport = (NamespaceImport)MyRootImport.Clone();
-            copy.MyOwnerImport = MyOwnerImport;
+            ExpressionImports copy = new()
+            {
+                RootImport = (NamespaceImport)RootImport.Clone(),
+                MyOwnerImport = MyOwnerImport
+            };
 
             return copy;
         }
@@ -65,29 +66,27 @@ namespace Flee.PublicTypes
 
         internal bool HasNamespace(string ns)
         {
-            NamespaceImport? import = MyRootImport.FindImport(ns) as NamespaceImport;
-            return (import != null);
+            return RootImport.FindImport(ns) is NamespaceImport;
         }
 
         internal NamespaceImport GetImport(string ns)
         {
             if (ns.Length == 0)
             {
-                return MyRootImport;
+                return RootImport;
             }
 
-            NamespaceImport? import = MyRootImport.FindImport(ns) as NamespaceImport;
 
-            if (import == null)
+            if (RootImport.FindImport(ns) is not NamespaceImport import)
             {
                 import = new NamespaceImport(ns);
-                MyRootImport.Add(import);
+                RootImport.Add(import);
             }
 
             return import;
         }
 
-        internal MemberInfo[] FindOwnerMembers(string memberName, System.Reflection.MemberTypes memberType)
+        internal MemberInfo[] FindOwnerMembers(string memberName, MemberTypes memberType)
         {
             return MyOwnerImport.FindMembers(memberName, memberType);
         }
@@ -97,8 +96,8 @@ namespace Flee.PublicTypes
             string[] namespaces = new string[typeNameParts.Length - 1];
             string typeName = typeNameParts[typeNameParts.Length - 1];
 
-            System.Array.Copy(typeNameParts, namespaces, namespaces.Length);
-            ImportBase? currentImport = MyRootImport;
+            Array.Copy(typeNameParts, namespaces, namespaces.Length);
+            ImportBase? currentImport = RootImport;
 
             foreach (string ns in namespaces)
             {
@@ -112,16 +111,9 @@ namespace Flee.PublicTypes
             return currentImport?.FindType(typeName);
         }
 
-        static internal Type? GetBuiltinType(string name)
+        internal static Type? GetBuiltinType(string name)
         {
-            if (OurBuiltinTypeMap.TryGetValue(name, out Type? t) == true)
-            {
-                return t;
-            }
-            else
-            {
-                return null;
-            }
+            return OurBuiltinTypeMap.TryGetValue(name, out Type? t) ? t : null;
         }
         #endregion
 
@@ -133,13 +125,13 @@ namespace Flee.PublicTypes
 
             MyContext.AssertTypeIsAccessible(t);
 
-            NamespaceImport import = this.GetImport(ns);
+            NamespaceImport import = GetImport(ns);
             import.Add(new TypeImport(t, BindingFlags.Public | BindingFlags.Static, false));
         }
 
         public void AddType(Type t)
         {
-            this.AddType(t, string.Empty);
+            AddType(t, string.Empty);
         }
 
         public void AddMethod(string methodName, Type t, string ns)
@@ -156,7 +148,7 @@ namespace Flee.PublicTypes
                 throw new ArgumentException(msg);
             }
 
-            this.AddMethod(mi, ns);
+            AddMethod(mi, ns);
         }
 
         public void AddMethod(MethodInfo mi, string ns)
@@ -166,13 +158,13 @@ namespace Flee.PublicTypes
 
             MyContext.AssertTypeIsAccessible(mi.ReflectedType!);
 
-            if (mi.IsStatic == false | mi.IsPublic == false)
+            if (!mi.IsStatic | !mi.IsPublic)
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.OnlyPublicStaticMethodsCanBeImported);
                 throw new ArgumentException(msg);
             }
 
-            NamespaceImport import = this.GetImport(ns);
+            NamespaceImport import = GetImport(ns);
             import.Add(new MethodImport(mi));
         }
 
@@ -180,13 +172,13 @@ namespace Flee.PublicTypes
         {
             foreach (KeyValuePair<string, Type> pair in OurBuiltinTypeMap)
             {
-                this.AddType(pair.Value, pair.Key);
+                AddType(pair.Value, pair.Key);
             }
         }
         #endregion
 
         #region "Properties - Public"
-        public NamespaceImport RootImport => MyRootImport;
+        public NamespaceImport RootImport { get; private set; }
 
         #endregion
     }

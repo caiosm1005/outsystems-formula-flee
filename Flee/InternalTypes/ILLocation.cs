@@ -57,7 +57,7 @@ namespace Flee.InternalTypes
         {
             return other != null && _myPosition == other._myPosition;
         }
-        bool System.IEquatable<ILLocation>.Equals(ILLocation? other)
+        bool IEquatable<ILLocation>.Equals(ILLocation? other)
         {
             return Equals1(other);
         }

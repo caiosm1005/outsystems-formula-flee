@@ -1,4 +1,4 @@
-using Flee.InternalTypes;
+﻿using Flee.InternalTypes;
 using Flee.Resources;
 using System.ComponentModel;
 using System.Reflection;
@@ -24,8 +24,8 @@ namespace Flee.PublicTypes
         internal VariableCollection(ExpressionContext context)
         {
             _myContext = context;
-            this.CreateDictionary();
-            this.HookOptions();
+            CreateDictionary();
+            HookOptions();
         }
 
         #region "Methods - Non Public"
@@ -42,7 +42,7 @@ namespace Flee.PublicTypes
 
         private void OnOptionsCaseSensitiveChanged(object? sender, EventArgs e)
         {
-            this.CreateDictionary();
+            CreateDictionary();
         }
 
         internal void Copy(VariableCollection dest)
@@ -61,13 +61,13 @@ namespace Flee.PublicTypes
         {
             Utility.AssertNotNull(variableType, "variableType");
 
-            if (_myVariables.ContainsKey(name) == true)
+            if (_myVariables.ContainsKey(name))
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.VariableWithNameAlreadyDefined, name);
                 throw new ArgumentException(msg);
             }
 
-            IVariable v = this.CreateVariable(variableType, variableValue);
+            IVariable v = CreateVariable(variableType, variableValue);
             _myVariables.Add(name, v);
         }
 
@@ -75,12 +75,12 @@ namespace Flee.PublicTypes
         {
             bool success = _myVariables.TryGetValue(name, out IVariable? value);
 
-            if (success == true)
+            if (success)
             {
                 return value!.VariableType;
             }
 
-            ResolveVariableTypeEventArgs args = new ResolveVariableTypeEventArgs(name);
+            ResolveVariableTypeEventArgs args = new(name);
             ResolveVariableType?.Invoke(this, args);
 
             return args.VariableType;
@@ -90,7 +90,7 @@ namespace Flee.PublicTypes
         {
             bool success = _myVariables.TryGetValue(name, out IVariable? value);
 
-            if (success == false & throwOnNotFound == true)
+            if (!success & throwOnNotFound)
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.UndefinedVariable, name);
                 throw new ArgumentException(msg);
@@ -106,9 +106,8 @@ namespace Flee.PublicTypes
             Type variableType;
 
             // Is the variable value an expression?
-            IExpression? expression = variableValue as IExpression;
 
-            if (expression != null)
+            if (variableValue is IExpression expression)
             {
                 ExpressionOptions options = expression.Context.Options;
                 // Get its result type
@@ -116,14 +115,7 @@ namespace Flee.PublicTypes
 
                 // Create a variable that wraps the expression
 
-                if (options.IsGeneric == false)
-                {
-                    variableType = typeof(DynamicExpressionVariable<>);
-                }
-                else
-                {
-                    variableType = typeof(GenericExpressionVariable<>);
-                }
+                variableType = !options.IsGeneric ? typeof(DynamicExpressionVariable<>) : typeof(GenericExpressionVariable<>);
             }
             else
             {
@@ -141,21 +133,14 @@ namespace Flee.PublicTypes
 
         internal Type? ResolveOnDemandFunction(string name, Type[] argumentTypes)
         {
-            ResolveFunctionEventArgs args = new ResolveFunctionEventArgs(name, argumentTypes);
+            ResolveFunctionEventArgs args = new(name, argumentTypes);
             ResolveFunction?.Invoke(this, args);
             return args.ReturnType;
         }
 
         private static T? ReturnGenericValue<T>(object? value)
         {
-            if (value == null)
-            {
-                return default(T);
-            }
-            else
-            {
-                return (T)value;
-            }
+            return value == null ? default : (T)value;
         }
 
         private static void ValidateSetValueType(Type requiredType, object? value)
@@ -168,7 +153,7 @@ namespace Flee.PublicTypes
 
             Type valueType = value.GetType();
 
-            if (requiredType.IsAssignableFrom(valueType) == false)
+            if (!requiredType.IsAssignableFrom(valueType))
             {
                 string msg = Utility.GetGeneralErrorMessage(GeneralErrorResourceKeys.VariableValueNotAssignableToType, valueType.Name, requiredType.Name);
                 throw new ArgumentException(msg);
@@ -198,7 +183,7 @@ namespace Flee.PublicTypes
 
         private Dictionary<string, object> GetNameValueDictionary()
         {
-            Dictionary<string, object> dict = new Dictionary<string, object>();
+            Dictionary<string, object> dict = [];
 
             foreach (KeyValuePair<string, IVariable> pair in _myVariables)
             {
@@ -214,13 +199,13 @@ namespace Flee.PublicTypes
 
         public Type GetVariableType(string name)
         {
-            IVariable v = this.GetVariable(name, true)!;
+            IVariable v = GetVariable(name, true)!;
             return v.VariableType;
         }
 
         public void DefineVariable(string name, Type variableType)
         {
-            this.DefineVariableInternal(name, variableType, null);
+            DefineVariableInternal(name, variableType, null);
         }
 
         public T? GetVariableValueInternal<T>(string name)
@@ -234,8 +219,8 @@ namespace Flee.PublicTypes
             }
 
             GenericVariable<T> result;
-            GenericVariable<T> vTemp = new GenericVariable<T>();
-            ResolveVariableValueEventArgs args = new ResolveVariableValueEventArgs(name, typeof(T));
+            GenericVariable<T> vTemp = new();
+            ResolveVariableValueEventArgs args = new(name, typeof(T));
             ResolveVariableValue?.Invoke(this, args);
 
             ValidateSetValueType(typeof(T), args.VariableValue);
@@ -256,11 +241,8 @@ namespace Flee.PublicTypes
 
         public T? GetFunctionResultInternal<T>(string name, object[] arguments)
         {
-            InvokeFunctionEventArgs args = new InvokeFunctionEventArgs(name, arguments);
-            if (InvokeFunction != null)
-            {
-                InvokeFunction(this, args);
-            }
+            InvokeFunctionEventArgs args = new(name, arguments);
+            InvokeFunction?.Invoke(this, args);
 
             object? result = args.Result;
             ValidateSetValueType(typeof(T), result);
@@ -272,12 +254,12 @@ namespace Flee.PublicTypes
 
         #region "IDictionary Implementation"
 
-        private void Add1(System.Collections.Generic.KeyValuePair<string, object> item)
+        private void Add1(KeyValuePair<string, object> item)
         {
-            this.Add(item.Key, item.Value);
+            Add(item.Key, item.Value);
         }
 
-        void System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>.Add(System.Collections.Generic.KeyValuePair<string, object> item)
+        void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
         {
             Add1(item);
         }
@@ -287,29 +269,29 @@ namespace Flee.PublicTypes
             _myVariables.Clear();
         }
 
-        private bool Contains1(System.Collections.Generic.KeyValuePair<string, object> item)
+        private bool Contains1(KeyValuePair<string, object> item)
         {
-            return this.ContainsKey(item.Key);
+            return ContainsKey(item.Key);
         }
 
-        bool System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>.Contains(System.Collections.Generic.KeyValuePair<string, object> item)
+        bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
         {
             return Contains1(item);
         }
 
-        private void CopyTo(System.Collections.Generic.KeyValuePair<string, object>[] array, int arrayIndex)
+        private void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
-            Dictionary<string, object> dict = this.GetNameValueDictionary();
+            Dictionary<string, object> dict = GetNameValueDictionary();
             ICollection<KeyValuePair<string, object>> coll = dict;
             coll.CopyTo(array, arrayIndex);
         }
 
-        private bool Remove1(System.Collections.Generic.KeyValuePair<string, object> item)
+        private bool Remove1(KeyValuePair<string, object> item)
         {
-            return this.Remove(item.Key);
+            return Remove(item.Key);
         }
 
-        bool System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>.Remove(System.Collections.Generic.KeyValuePair<string, object> item)
+        bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
         {
             return Remove1(item);
         }
@@ -317,7 +299,7 @@ namespace Flee.PublicTypes
         public void Add(string name, object value)
         {
             Utility.AssertNotNull(value, "value");
-            this.DefineVariableInternal(name, value.GetType(), value);
+            DefineVariableInternal(name, value.GetType(), value);
             this[name] = value;
         }
 
@@ -333,20 +315,20 @@ namespace Flee.PublicTypes
 
         public bool TryGetValue(string key, out object value)
         {
-            IVariable? v = this.GetVariable(key, false);
+            IVariable? v = GetVariable(key, false);
             value = v?.ValueAsObject!;
-            return v != null;
+            return v != null!;
         }
 
-        public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string, object>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
-            Dictionary<string, object> dict = this.GetNameValueDictionary();
+            Dictionary<string, object> dict = GetNameValueDictionary();
             return dict.GetEnumerator();
         }
 
         private System.Collections.IEnumerator GetEnumerator1()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -362,29 +344,29 @@ namespace Flee.PublicTypes
         {
             get
             {
-                IVariable v = this.GetVariable(name, true)!;
+                IVariable v = GetVariable(name, true)!;
                 return v.ValueAsObject;
             }
             set
             {
-                if (_myVariables.TryGetValue(name, out IVariable? v) == true)
+                if (_myVariables.TryGetValue(name, out IVariable? v))
                 {
-                    v!.ValueAsObject = value;
+                    v.ValueAsObject = value;
                 }
                 else
                 {
-                    this.Add(name, value);
+                    Add(name, value);
                 }
             }
         }
 
-        public System.Collections.Generic.ICollection<string> Keys => _myVariables.Keys;
+        public ICollection<string> Keys => _myVariables.Keys;
 
-        public System.Collections.Generic.ICollection<object> Values
+        public ICollection<object> Values
         {
             get
             {
-                Dictionary<string, object> dict = this.GetNameValueDictionary();
+                Dictionary<string, object> dict = GetNameValueDictionary();
                 return dict.Values;
             }
         }

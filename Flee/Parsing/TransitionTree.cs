@@ -19,18 +19,9 @@ namespace Flee.Parsing
             {
                 c = Char.ToLower(c);
             }
-            if (_value == '\0' || _value == c)
-            {
-                return _state;
-            }
-            else if (_value > c)
-            {
-                return _left!.Find(c, false);
-            }
-            else
-            {
-                return _right!.Find(c, false);
-            }
+            return _value == '\0' || _value == c
+                ? _state
+                : _value > c ? _left!.Find(c, false) : _right!.Find(c, false);
         }
 
         public void Add(char c, bool lowerCase, DFAState state)
@@ -41,10 +32,10 @@ namespace Flee.Parsing
             }
             if (_value == '\0')
             {
-                this._value = c;
-                this._state = state;
-                this._left = new TransitionTree();
-                this._right = new TransitionTree();
+                _value = c;
+                _state = state;
+                _left = new TransitionTree();
+                _right = new TransitionTree();
             }
             else if (_value > c)
             {
@@ -59,20 +50,20 @@ namespace Flee.Parsing
         public void PrintTo(StringBuilder buffer, String indent)
         {
             _left?.PrintTo(buffer, indent);
-            if (this._value != '\0')
+            if (_value != '\0')
             {
                 if (buffer.Length > 0 && buffer[buffer.Length - 1] == '\n')
                 {
-                    buffer.Append(indent);
+                    _ = buffer.Append(indent);
                 }
-                buffer.Append(this._value);
-                if (this._state!.Value != null)
+                _ = buffer.Append(_value);
+                if (_state!.Value != null)
                 {
-                    buffer.Append(": ");
-                    buffer.Append(this._state.Value);
-                    buffer.Append("\n");
+                    _ = buffer.Append(": ");
+                    _ = buffer.Append(_state.Value);
+                    _ = buffer.Append("\n");
                 }
-                this._state.Tree.PrintTo(buffer, indent + " ");
+                _state.Tree.PrintTo(buffer, indent + " ");
             }
             _right?.PrintTo(buffer, indent);
         }

@@ -4,7 +4,7 @@ namespace Flee.InternalTypes
     {
 
 
-        private static readonly DefaultExpressionOwner OurInstance = new DefaultExpressionOwner();
+        private static readonly DefaultExpressionOwner OurInstance = new();
 
         private DefaultExpressionOwner()
         {

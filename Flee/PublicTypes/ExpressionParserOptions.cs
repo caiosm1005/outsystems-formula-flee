@@ -9,13 +9,13 @@ namespace Flee.PublicTypes
         private readonly ExpressionContext _myOwner;
         private readonly CultureInfo _myParseCulture;
 
-        private NumberStyles NumberStyles = NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent | NumberStyles.None;
+        private readonly NumberStyles NumberStyles = NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent | NumberStyles.None;
         internal ExpressionParserOptions(ExpressionContext owner)
         {
             _myOwner = owner;
             _myProperties = new PropertyDictionary();
             _myParseCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
-            this.InitializeProperties();
+            InitializeProperties();
         }
 
         #region "Methods - Public"
@@ -31,7 +31,7 @@ namespace Flee.PublicTypes
 
         internal ExpressionParserOptions Clone()
         {
-            ExpressionParserOptions copy = (ExpressionParserOptions)this.MemberwiseClone();
+            ExpressionParserOptions copy = (ExpressionParserOptions)MemberwiseClone();
             copy._myProperties = _myProperties.Clone();
             return copy;
         }
@@ -56,10 +56,10 @@ namespace Flee.PublicTypes
 
         private void InitializeProperties()
         {
-            this.DateTimeFormat = "dd/MM/yyyy";
-            this.RequireDigitsBeforeDecimalPoint = false;
-            this.DecimalSeparator = '.';
-            this.FunctionArgumentSeparator = ',';
+            DateTimeFormat = "dd/MM/yyyy";
+            RequireDigitsBeforeDecimalPoint = false;
+            DecimalSeparator = '.';
+            FunctionArgumentSeparator = ',';
         }
 
         #endregion
@@ -68,19 +68,17 @@ namespace Flee.PublicTypes
 
         public string DateTimeFormat
         {
-            get { return _myProperties.GetValue<string>("DateTimeFormat"); }
-            set { _myProperties.SetValue("DateTimeFormat", value); }
+            get => _myProperties.GetValue<string>("DateTimeFormat"); set => _myProperties.SetValue("DateTimeFormat", value);
         }
 
         public bool RequireDigitsBeforeDecimalPoint
         {
-            get { return _myProperties.GetValue<bool>("RequireDigitsBeforeDecimalPoint"); }
-            set { _myProperties.SetValue("RequireDigitsBeforeDecimalPoint", value); }
+            get => _myProperties.GetValue<bool>("RequireDigitsBeforeDecimalPoint"); set => _myProperties.SetValue("RequireDigitsBeforeDecimalPoint", value);
         }
 
         public char DecimalSeparator
         {
-            get { return _myProperties.GetValue<char>("DecimalSeparator"); }
+            get => _myProperties.GetValue<char>("DecimalSeparator");
             set
             {
                 _myProperties.SetValue("DecimalSeparator", value);
@@ -90,8 +88,7 @@ namespace Flee.PublicTypes
 
         public char FunctionArgumentSeparator
         {
-            get { return _myProperties.GetValue<char>("FunctionArgumentSeparator"); }
-            set { _myProperties.SetValue("FunctionArgumentSeparator", value); }
+            get => _myProperties.GetValue<char>("FunctionArgumentSeparator"); set => _myProperties.SetValue("FunctionArgumentSeparator", value);
         }
 
         #endregion

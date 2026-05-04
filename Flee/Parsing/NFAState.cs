@@ -7,8 +7,8 @@ namespace Flee.Parsing
     internal class NFAState
     {
         internal TokenPattern? Value = null;
-        internal NFATransition[] Incoming = new NFATransition[0];
-        internal NFATransition[] Outgoing = new NFATransition[0];
+        internal NFATransition[] Incoming = [];
+        internal NFATransition[] Outgoing = [];
         internal bool EpsilonOut = false;
 
         public bool HasTransitions()
@@ -37,12 +37,9 @@ namespace Flee.Parsing
         {
             if (ignoreCase)
             {
-                if (state == null)
-                {
-                    state = new NFAState();
-                }
-                AddOut(new NFACharTransition(Char.ToLower(ch), state));
-                AddOut(new NFACharTransition(Char.ToUpper(ch), state));
+                state ??= new NFAState();
+                _ = AddOut(new NFACharTransition(Char.ToLower(ch), state));
+                _ = AddOut(new NFACharTransition(Char.ToUpper(ch), state));
                 return state;
             }
             else
@@ -81,7 +78,7 @@ namespace Flee.Parsing
             Incoming = null!;
             for (int i = 0; i < Outgoing.Length; i++)
             {
-                state.AddOut(Outgoing[i]);
+                _ = state.AddOut(Outgoing[i]);
             }
             Outgoing = null!;
         }

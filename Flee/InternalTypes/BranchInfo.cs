@@ -5,19 +5,11 @@ namespace Flee.InternalTypes
     /// <summary>
     /// Represents a branch from a start location to an end location.
     /// </summary>
-    internal class BranchInfo
+    internal class BranchInfo(ILLocation startLocation, Label endLabel)
     {
-        private readonly ILLocation _myStart;
-        private readonly ILLocation _myEnd;
-        private Label _myLabel;
-        private bool _myIsLongBranch;
-
-        public BranchInfo(ILLocation startLocation, Label endLabel)
-        {
-            _myStart = startLocation;
-            _myLabel = endLabel;
-            _myEnd = new ILLocation();
-        }
+        private readonly ILLocation _myStart = startLocation;
+        private readonly ILLocation _myEnd = new();
+        private readonly Label _myLabel = endLabel;
 
         public void AdjustForLongBranches(int longBranchCount)
         {
@@ -29,7 +21,7 @@ namespace Flee.InternalTypes
 
         public void BakeIsLongBranch()
         {
-            _myIsLongBranch = this.ComputeIsLongBranch();
+            IsLongBranch = ComputeIsLongBranch();
         }
 
         public void AdjustForLongBranchesBetween(int betweenLongBranchCount)
@@ -49,7 +41,7 @@ namespace Flee.InternalTypes
 
         public void Mark(Label target, int position)
         {
-            if (_myLabel.Equals(target) == true)
+            if (_myLabel.Equals(target))
             {
                 _myEnd.SetPosition(position);
             }
@@ -72,6 +64,6 @@ namespace Flee.InternalTypes
             return $"{_myStart} -> {_myEnd} (L={_myStart.IsLongBranch(_myEnd)})";
         }
 
-        public bool IsLongBranch => _myIsLongBranch;
+        public bool IsLongBranch { get; private set; }
     }
 }

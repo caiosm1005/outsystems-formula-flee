@@ -15,7 +15,7 @@ namespace Flee.ExpressionElements.Literals.Integral
             }
             catch (OverflowException)
             {
-                base.OnParseOverflow(image);
+                OnParseOverflow(image);
             }
         }
 
@@ -29,6 +29,6 @@ namespace Flee.ExpressionElements.Literals.Integral
             EmitLoad(Convert.ToInt64(_myValue), ilg);
         }
 
-        public override System.Type ResultType => typeof(UInt64);
+        public override Type ResultType => typeof(UInt64);
     }
 }

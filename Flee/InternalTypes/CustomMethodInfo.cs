@@ -8,50 +8,31 @@ namespace Flee.InternalTypes
     /// <summary>
     /// Helper class to resolve overloads.
     /// </summary>
-    internal class CustomMethodInfo : IComparable<CustomMethodInfo>, IEquatable<CustomMethodInfo>
+    internal class CustomMethodInfo(MethodInfo target) : IComparable<CustomMethodInfo>, IEquatable<CustomMethodInfo>
     {
-        /// <summary>
-        /// Method we are wrapping
-        /// </summary>
-        private readonly MethodInfo _myTarget;
         /// <summary>
         /// The rating of how close the method matches the given arguments (0 is best)
         /// </summary>
         private float _myScore;
         public bool IsParamArray;
-        public Type[] MyFixedArgTypes = Array.Empty<Type>();
-        public Type[] MyParamArrayArgTypes = Array.Empty<Type>();
+        public Type[] MyFixedArgTypes = [];
+        public Type[] MyParamArrayArgTypes = [];
         public bool IsExtensionMethod;
         public Type? ParamArrayElementType;
-        public CustomMethodInfo(MethodInfo target)
-        {
-            _myTarget = target;
-        }
 
         public void ComputeScore(Type[] argTypes)
         {
-            ParameterInfo[] @params = _myTarget.GetParameters();
+            ParameterInfo[] @params = Target.GetParameters();
 
-            if (@params.Length == 0)
-            {
-                _myScore = 0.0F;
-            }
-            else if (@params.Length == 1 && argTypes.Length == 0)//extension method without parameter support -> prefer members
-            {
-                _myScore = 0.1F;
-            }
-            else if (IsParamArray == true)
-            {
-                _myScore = this.ComputeScoreForParamArray(@params, argTypes);
-            }
-            else if (IsExtensionMethod == true)
-            {
-                _myScore = this.ComputeScoreExtensionMethodInternal(@params, argTypes);
-            }
-            else
-            {
-                _myScore = this.ComputeScoreInternal(@params, argTypes);
-            }
+            _myScore = @params.Length == 0
+                ? 0.0F
+                : @params.Length == 1 && argTypes.Length == 0
+                    ? 0.1F
+                    : IsParamArray
+                        ? ComputeScoreForParamArray(@params, argTypes)
+                        : IsExtensionMethod
+                            ? ComputeScoreExtensionMethodInternal(@params, argTypes)
+                            : ComputeScoreInternal(@params, argTypes);
         }
 
         /// <summary>
@@ -84,7 +65,7 @@ namespace Flee.InternalTypes
             // Our score is the average of the scores of each parameter.  The lower the score, the better the match.
             int sum = ComputeSum(parameters, argTypes);
 
-            return (float)sum / (float)argTypes.Length;
+            return sum / (float)argTypes.Length;
         }
 
         private static int ComputeSum(ParameterInfo[] parameters, Type[] argTypes)
@@ -107,7 +88,7 @@ namespace Flee.InternalTypes
 
             ParameterInfo[] fixedParameters = new ParameterInfo[fixedParameterCount];
 
-            System.Array.Copy(parameters, fixedParameters, fixedParameterCount);
+            Array.Copy(parameters, fixedParameters, fixedParameterCount);
 
             int fixedSum = ComputeSum(fixedParameters, MyFixedArgTypes);
 
@@ -120,16 +101,7 @@ namespace Flee.InternalTypes
                 paramArraySum += ImplicitConverter.GetImplicitConvertScore(argType, paramArrayElementType);
             }
 
-            float score = 0;
-
-            if (argTypes.Length > 0)
-            {
-                score = (fixedSum + paramArraySum) / argTypes.Length;
-            }
-            else
-            {
-                score = 0;
-            }
+            float score = argTypes.Length > 0 ? (fixedSum + paramArraySum) / argTypes.Length : 0;
 
             // The param array score gets a slight penalty so that it scores worse than direct matches
             return score + 1;
@@ -137,7 +109,7 @@ namespace Flee.InternalTypes
 
         public bool IsAccessible(MemberElement owner)
         {
-            return owner.IsMemberAccessible(_myTarget);
+            return owner.IsMemberAccessible(Target);
         }
 
         /// <summary>
@@ -147,7 +119,7 @@ namespace Flee.InternalTypes
         /// <returns></returns>
         public bool IsMatch(Type[] argTypes, MemberElement? previous, ExpressionContext context)
         {
-            ParameterInfo[] parameters = _myTarget.GetParameters();
+            ParameterInfo[] parameters = Target.GetParameters();
 
             // If there are no parameters and no arguments were passed, then we are a match.
             if (parameters.Length == 0 & argTypes.Length == 0)
@@ -164,7 +136,7 @@ namespace Flee.InternalTypes
             // Is the last parameter a paramArray?
             ParameterInfo lastParam = parameters[parameters.Length - 1];
 
-            if (lastParam.IsDefined(typeof(ParamArrayAttribute), false) == false)
+            if (!lastParam.IsDefined(typeof(ParamArrayAttribute), false))
             {
                 //Extension method support
                 if (parameters.Length == argTypes.Length + 1)
@@ -172,7 +144,7 @@ namespace Flee.InternalTypes
                     IsExtensionMethod = true;
                     return AreValidExtensionMethodArgumentsForParameters(argTypes, parameters, previous, context);
                 }
-                if ((parameters.Length != argTypes.Length))
+                if (parameters.Length != argTypes.Length)
                 {
                     // Not a paramArray and parameter and argument counts don't match
                     return false;
@@ -187,11 +159,11 @@ namespace Flee.InternalTypes
             // At this point, we are dealing with a paramArray call
 
             // If the parameter and argument counts are equal and there is an implicit conversion from one to the other, we are a match.
-            if (parameters.Length == argTypes.Length && AreValidArgumentsForParameters(argTypes, parameters) == true)
+            if (parameters.Length == argTypes.Length && AreValidArgumentsForParameters(argTypes, parameters))
             {
                 return true;
             }
-            else if (this.IsParamArrayMatch(argTypes, parameters, lastParam) == true)
+            else if (IsParamArrayMatch(argTypes, parameters, lastParam))
             {
                 IsParamArray = true;
                 return true;
@@ -210,11 +182,11 @@ namespace Flee.InternalTypes
             ParameterInfo[] fixedParameters = new ParameterInfo[fixedParameterCount];
 
             // Get the argument types and parameters before the paramArray
-            System.Array.Copy(argTypes, fixedArgTypes, fixedParameterCount);
-            System.Array.Copy(parameters, fixedParameters, fixedParameterCount);
+            Array.Copy(argTypes, fixedArgTypes, fixedParameterCount);
+            Array.Copy(parameters, fixedParameters, fixedParameterCount);
 
             // If the fixed arguments don't match, we are not a match
-            if (AreValidArgumentsForParameters(fixedArgTypes, fixedParameters) == false)
+            if (!AreValidArgumentsForParameters(fixedArgTypes, fixedParameters))
             {
                 return false;
             }
@@ -224,12 +196,12 @@ namespace Flee.InternalTypes
 
             // Get the types of the arguments passed to the paramArray
             Type[] paramArrayArgTypes = new Type[argTypes.Length - fixedParameterCount];
-            System.Array.Copy(argTypes, fixedParameterCount, paramArrayArgTypes, 0, paramArrayArgTypes.Length);
+            Array.Copy(argTypes, fixedParameterCount, paramArrayArgTypes, 0, paramArrayArgTypes.Length);
 
             // Check each argument
             foreach (Type argType in paramArrayArgTypes)
             {
-                if (ImplicitConverter.EmitImplicitConvert(argType, ParamArrayElementType, null) == false)
+                if (!ImplicitConverter.EmitImplicitConvert(argType, ParamArrayElementType, null))
                 {
                     return false;
                 }
@@ -248,23 +220,27 @@ namespace Flee.InternalTypes
 
             if (previous != null)
             {
-                if (ImplicitConverter.EmitImplicitConvert(previous.ResultType, parameters[0].ParameterType, null) == false)
+                if (!ImplicitConverter.EmitImplicitConvert(previous.ResultType, parameters[0].ParameterType, null))
                 {
                     return false;
                 }
             }
             else if (context.ExpressionOwner != null)
             {
-                if (ImplicitConverter.EmitImplicitConvert(context.ExpressionOwner.GetType(), parameters[0].ParameterType, null) == false)
+                if (!ImplicitConverter.EmitImplicitConvert(context.ExpressionOwner.GetType(), parameters[0].ParameterType, null))
+                {
                     return false;
+                }
             }
             else
+            {
                 return false;
+            }
 
             //Match if every given argument is implicitly convertible to the method's corresponding parameter
             for (int i = 0; i <= argTypes.Length - 1; i++)
             {
-                if (ImplicitConverter.EmitImplicitConvert(argTypes[i], parameters[i + 1].ParameterType, null) == false)
+                if (!ImplicitConverter.EmitImplicitConvert(argTypes[i], parameters[i + 1].ParameterType, null))
                 {
                     return false;
                 }
@@ -278,7 +254,7 @@ namespace Flee.InternalTypes
             // Match if every given argument is implicitly convertible to the method's corresponding parameter
             for (int i = 0; i <= argTypes.Length - 1; i++)
             {
-                if (ImplicitConverter.EmitImplicitConvert(argTypes[i], parameters[i].ParameterType, null) == false)
+                if (!ImplicitConverter.EmitImplicitConvert(argTypes[i], parameters[i].ParameterType, null))
                 {
                     return false;
                 }
@@ -296,11 +272,11 @@ namespace Flee.InternalTypes
         {
             return other != null && _myScore == other._myScore;
         }
-        bool System.IEquatable<CustomMethodInfo>.Equals(CustomMethodInfo? other)
+        bool IEquatable<CustomMethodInfo>.Equals(CustomMethodInfo? other)
         {
             return Equals1(other);
         }
 
-        public MethodInfo Target => _myTarget;
+        public MethodInfo Target { get; } = target;
     }
 }

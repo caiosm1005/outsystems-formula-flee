@@ -10,26 +10,21 @@ namespace Flee.Parsing
      * characters. The set may also be inverted, meaning that only
      * characters not inside the set will be considered to match.
      */
-    internal class CharacterSetElement : Element
+    internal class CharacterSetElement(bool inverted) : Element
     {
-        public static CharacterSetElement Dot = new CharacterSetElement(false);
-        public static CharacterSetElement Digit = new CharacterSetElement(false);
-        public static CharacterSetElement NonDigit = new CharacterSetElement(true);
-        public static CharacterSetElement Whitespace = new CharacterSetElement(false);
-        public static CharacterSetElement NonWhitespace = new CharacterSetElement(true);
-        public static CharacterSetElement Word = new CharacterSetElement(false);
-        public static CharacterSetElement NonWord = new CharacterSetElement(true);
-        private readonly bool _inverted;
-        private readonly ArrayList _contents = new ArrayList();
-
-        public CharacterSetElement(bool inverted)
-        {
-            this._inverted = inverted;
-        }
+        public static CharacterSetElement Dot = new(false);
+        public static CharacterSetElement Digit = new(false);
+        public static CharacterSetElement NonDigit = new(true);
+        public static CharacterSetElement Whitespace = new(false);
+        public static CharacterSetElement NonWhitespace = new(true);
+        public static CharacterSetElement Word = new(false);
+        public static CharacterSetElement NonWord = new(true);
+        private readonly bool _inverted = inverted;
+        private readonly ArrayList _contents = [];
 
         public void AddCharacter(char c)
         {
-            _contents.Add(c);
+            _ = _contents.Add(c);
         }
 
         public void AddCharacters(string str)
@@ -47,12 +42,12 @@ namespace Flee.Parsing
 
         public void AddRange(char min, char max)
         {
-            _contents.Add(new Range(min, max));
+            _ = _contents.Add(new Range(min, max));
         }
 
         public void AddCharacterSet(CharacterSetElement elem)
         {
-            _contents.Add(elem);
+            _ = _contents.Add(elem);
         }
 
         public override object Clone()
@@ -80,77 +75,50 @@ namespace Flee.Parsing
             }
             if (m.IsCaseInsensitive())
             {
-                c = (int)Char.ToLower((char)c);
+                c = Char.ToLower((char)c);
             }
             return InSet((char)c) ? 1 : -1;
         }
 
         private bool InSet(char c)
         {
-            if (this == Dot)
-            {
-                return InDotSet(c);
-            }
-            else if (this == Digit || this == NonDigit)
-            {
-                return InDigitSet(c) != _inverted;
-            }
-            else if (this == Whitespace || this == NonWhitespace)
-            {
-                return InWhitespaceSet(c) != _inverted;
-            }
-            else if (this == Word || this == NonWord)
-            {
-                return InWordSet(c) != _inverted;
-            }
-            else
-            {
-                return InUserSet(c) != _inverted;
-            }
+            return this == Dot
+                ? InDotSet(c)
+                : this == Digit || this == NonDigit
+                    ? InDigitSet(c) != _inverted
+                    : this == Whitespace || this == NonWhitespace
+                        ? InWhitespaceSet(c) != _inverted
+                        : this == Word || this == NonWord
+                            ? InWordSet(c) != _inverted
+                            : InUserSet(c) != _inverted;
         }
 
         private bool InDotSet(char c)
         {
-            switch (c)
+            return c switch
             {
-                case '\n':
-                case '\r':
-                case '\u0085':
-                case '\u2028':
-                case '\u2029':
-                    return false;
-                default:
-                    return true;
-            }
+                '\n' or '\r' or '\u0085' or '\u2028' or '\u2029' => false,
+                _ => true,
+            };
         }
 
         private bool InDigitSet(char c)
         {
-            return '0' <= c && c <= '9';
+            return c is >= '0' and <= '9';
         }
 
         private bool InWhitespaceSet(char c)
         {
-            switch (c)
+            return c switch
             {
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\f':
-                case '\r':
-                case (char)11:
-                    return true;
-                default:
-                    return false;
-            }
+                ' ' or '\t' or '\n' or '\f' or '\r' or (char)11 => true,
+                _ => false,
+            };
         }
 
         private bool InWordSet(char c)
         {
-            return ('a' <= c && c <= 'z')
-                || ('A' <= c && c <= 'Z')
-                || ('0' <= c && c <= '9')
-                || c == '_';
+            return c is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9') or '_';
         }
 
         private bool InUserSet(char value)
@@ -158,25 +126,22 @@ namespace Flee.Parsing
             for (int i = 0; i < _contents.Count; i++)
             {
                 var obj = _contents[i];
-                if (obj is char)
+                if (obj is char c)
                 {
-                    var c = (char)obj;
                     if (c == value)
                     {
                         return true;
                     }
                 }
-                else if (obj is Range)
+                else if (obj is Range r)
                 {
-                    var r = (Range)obj;
                     if (r.Inside(value))
                     {
                         return true;
                     }
                 }
-                else if (obj is CharacterSetElement)
+                else if (obj is CharacterSetElement e)
                 {
-                    var e = (CharacterSetElement)obj;
                     if (e.InSet(value))
                     {
                         return true;
@@ -224,34 +189,21 @@ namespace Flee.Parsing
             }
 
             // Handle user-defined character sets
-            var buffer = new StringBuilder();
-            if (_inverted)
-            {
-                buffer.Append("^[");
-            }
-            else
-            {
-                buffer.Append("[");
-            }
+            StringBuilder buffer = new();
+            _ = buffer.Append(_inverted ? "^[" : "[");
             for (int i = 0; i < _contents.Count; i++)
             {
-                buffer.Append(_contents[i]);
+                _ = buffer.Append(_contents[i]);
             }
-            buffer.Append("]");
+            _ = buffer.Append("]");
 
             return buffer.ToString();
         }
 
-        private class Range
+        private class Range(char min, char max)
         {
-            private readonly char _min;
-            private readonly char _max;
-
-            public Range(char min, char max)
-            {
-                this._min = min;
-                this._max = max;
-            }
+            private readonly char _min = min;
+            private readonly char _max = max;
 
             public bool Inside(char c)
             {

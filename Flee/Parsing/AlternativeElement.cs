@@ -4,16 +4,10 @@ namespace Flee.Parsing
       * A regular expression alternative element. This element matches
       * the longest alternative element.
       */
-    internal class AlternativeElement : Element
+    internal class AlternativeElement(Element first, Element second) : Element
     {
-        private readonly Element _elem1;
-        private readonly Element _elem2;
-
-        public AlternativeElement(Element first, Element second)
-        {
-            _elem1 = first;
-            _elem2 = second;
-        }
+        private readonly Element _elem1 = first;
+        private readonly Element _elem2 = second;
 
         public override object Clone()
         {
@@ -26,15 +20,13 @@ namespace Flee.Parsing
                                   int skip)
         {
             int length = 0;
-            int length1 = -1;
-            int length2 = -1;
             int skip1 = 0;
             int skip2 = 0;
 
             while (length >= 0 && skip1 + skip2 <= skip)
             {
-                length1 = _elem1.Match(m, buffer, start, skip1);
-                length2 = _elem2.Match(m, buffer, start, skip2);
+                int length1 = _elem1.Match(m, buffer, start, skip1);
+                int length2 = _elem2.Match(m, buffer, start, skip2);
                 if (length1 >= length2)
                 {
                     length = length1;

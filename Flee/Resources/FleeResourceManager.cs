@@ -5,9 +5,8 @@ namespace Flee.Resources
     internal class FleeResourceManager
     {
 
-        private Dictionary<string, ResourceManager> MyResourceManagers;
+        private readonly Dictionary<string, ResourceManager> MyResourceManagers;
 
-        private static FleeResourceManager OurInstance = new FleeResourceManager();
         private FleeResourceManager()
         {
             MyResourceManagers = new Dictionary<string, ResourceManager>(StringComparer.OrdinalIgnoreCase);
@@ -17,40 +16,37 @@ namespace Flee.Resources
         {
             lock (this)
             {
-                if (MyResourceManagers.TryGetValue(resourceFile, out ResourceManager? rm) == false)
+                if (!MyResourceManagers.TryGetValue(resourceFile, out ResourceManager? rm))
                 {
                     Type t = typeof(FleeResourceManager);
                     rm = new ResourceManager(string.Format("{0}.{1}", t.Namespace, resourceFile), t.Assembly);
                     MyResourceManagers.Add(resourceFile, rm);
                 }
-                return rm!;
+                return rm;
             }
         }
 
         private string? GetResourceString(string resourceFile, string key)
         {
-            ResourceManager rm = this.GetResourceManager(resourceFile);
+            ResourceManager rm = GetResourceManager(resourceFile);
             return rm.GetString(key);
         }
 
         public string? GetCompileErrorString(string key)
         {
-            return this.GetResourceString("CompileErrors", key);
+            return GetResourceString("CompileErrors", key);
         }
 
         public string? GetElementNameString(string key)
         {
-            return this.GetResourceString("ElementNames", key);
+            return GetResourceString("ElementNames", key);
         }
 
         public string? GetGeneralErrorString(string key)
         {
-            return this.GetResourceString("GeneralErrors", key);
+            return GetResourceString("GeneralErrors", key);
         }
 
-        public static FleeResourceManager Instance
-        {
-            get { return OurInstance; }
-        }
+        public static FleeResourceManager Instance { get; } = new FleeResourceManager();
     }
 }

@@ -14,14 +14,14 @@ namespace Flee.ExpressionElements.Base.Literals
         {
             LiteralElement? element = CreateSingle(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
 
             element = CreateDecimal(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
@@ -29,33 +29,28 @@ namespace Flee.ExpressionElements.Base.Literals
             ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions))!;
 
             // Convert to a double if option is set
-            if (options.IntegersAsDoubles == true)
-            {
-                return DoubleLiteralElement.Parse(image, services);
-            }
-
-            return null;
+            return options.IntegersAsDoubles ? DoubleLiteralElement.Parse(image, services) : (LiteralElement?)null;
         }
 
         public static LiteralElement Create(string image, IServiceProvider services)
         {
             LiteralElement? element = CreateSingle(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
 
             element = CreateDecimal(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
 
             element = CreateDouble(image, services);
 
-            if ((element != null))
+            if (element != null)
             {
                 return element;
             }
@@ -86,7 +81,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
         private static DoubleLiteralElement? CreateDouble(string image, IServiceProvider services)
         {
-            if (image.EndsWith("d", StringComparison.OrdinalIgnoreCase) == true)
+            if (image.EndsWith("d", StringComparison.OrdinalIgnoreCase))
             {
                 image = image.Remove(image.Length - 1);
                 return DoubleLiteralElement.Parse(image, services);
@@ -99,7 +94,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
         private static SingleLiteralElement? CreateSingle(string image, IServiceProvider services)
         {
-            if (image.EndsWith("f", StringComparison.OrdinalIgnoreCase) == true)
+            if (image.EndsWith("f", StringComparison.OrdinalIgnoreCase))
             {
                 image = image.Remove(image.Length - 1);
                 return SingleLiteralElement.Parse(image, services);
@@ -112,7 +107,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
         private static DecimalLiteralElement? CreateDecimal(string image, IServiceProvider services)
         {
-            if (image.EndsWith("m", StringComparison.OrdinalIgnoreCase) == true)
+            if (image.EndsWith("m", StringComparison.OrdinalIgnoreCase))
             {
                 image = image.Remove(image.Length - 1);
                 return DecimalLiteralElement.Parse(image, services);

@@ -13,7 +13,7 @@ namespace Flee.Parsing
                                   ReaderBuffer buffer,
                                   int start,
                                   int skip);
-       
+
         public abstract void PrintTo(TextWriter output, string indent);
     }
 }

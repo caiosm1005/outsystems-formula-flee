@@ -9,30 +9,30 @@ namespace Flee.ExpressionElements.Literals
 {
     internal class TimeSpanLiteralElement : LiteralElement
     {
-        private TimeSpan _myValue;
+        private readonly TimeSpan _myValue;
         public TimeSpanLiteralElement(string image)
         {
-            if (TimeSpan.TryParse(image, out _myValue) == false)
+            if (!TimeSpan.TryParse(image, out _myValue))
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(TimeSpan).Name);
+                ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, nameof(TimeSpan));
             }
         }
 
-        public override void Emit(FleeILGenerator ilg, System.IServiceProvider services)
+        public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             int index = ilg.GetTempLocalIndex(typeof(TimeSpan));
 
             Utility.EmitLoadLocalAddress(ilg, index);
 
-            LiteralElement.EmitLoad(_myValue.Ticks, ilg);
+            EmitLoad(_myValue.Ticks, ilg);
 
-            ConstructorInfo ci = typeof(TimeSpan).GetConstructor(new Type[] { typeof(long) })!;
+            ConstructorInfo ci = typeof(TimeSpan).GetConstructor([typeof(long)])!;
 
             ilg.Emit(OpCodes.Call, ci);
 
             Utility.EmitLoadLocal(ilg, index);
         }
 
-        public override System.Type ResultType => typeof(TimeSpan);
+        public override Type ResultType => typeof(TimeSpan);
     }
 }

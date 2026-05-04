@@ -11,7 +11,7 @@ namespace Flee.ExpressionElements.Base.Literals
     {
         protected void OnParseOverflow(string image)
         {
-            base.ThrowCompileException(CompileErrorResourceKeys.ValueNotRepresentableInType, CompileExceptionReason.ConstantOverflow, image, this.ResultType.Name);
+            ThrowCompileException(CompileErrorResourceKeys.ValueNotRepresentableInType, CompileExceptionReason.ConstantOverflow, image, ResultType.Name);
         }
 
         public static void EmitLoad(Int32 value, FleeILGenerator ilg)
@@ -50,7 +50,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
         protected static void EmitLoad(bool value, FleeILGenerator ilg)
         {
-            if (value == true)
+            if (value)
             {
                 ilg.Emit(OpCodes.Ldc_I4_1);
             }
@@ -62,7 +62,7 @@ namespace Flee.ExpressionElements.Base.Literals
 
         private static void EmitSuperShort(Int32 value, FleeILGenerator ilg)
         {
-            OpCode ldcOpcode = default(OpCode);
+            OpCode ldcOpcode = default;
 
             switch (value)
             {

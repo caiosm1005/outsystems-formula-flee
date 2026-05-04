@@ -19,31 +19,31 @@ namespace Flee.ExpressionElements.MemberElements
 
         private string[] GetArgumentTypeNames()
         {
-            List<string> l = new List<string>();
+            List<string> l = [];
 
             foreach (ExpressionElement e in _myElements)
             {
                 l.Add(e.ResultType.Name);
             }
 
-            return l.ToArray();
+            return [.. l];
         }
 
         public Type[] GetArgumentTypes()
         {
-            List<Type> l = new List<Type>();
+            List<Type> l = [];
 
             foreach (ExpressionElement e in _myElements)
             {
                 l.Add(e.ResultType);
             }
 
-            return l.ToArray();
+            return [.. l];
         }
 
         public override string ToString()
         {
-            string[] typeNames = this.GetArgumentTypeNames();
+            string[] typeNames = GetArgumentTypeNames();
             return Utility.FormatList(typeNames);
         }
 

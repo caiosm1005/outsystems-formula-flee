@@ -11,6 +11,6 @@ namespace Flee.ExpressionElements.Literals
             ilg.Emit(OpCodes.Ldnull);
         }
 
-        public override System.Type ResultType => typeof(Null);
+        public override Type ResultType => typeof(Null);
     }
 }

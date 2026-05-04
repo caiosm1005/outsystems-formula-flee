@@ -1,15 +1,9 @@
 namespace Flee.Parsing
 {
-    internal class CombineElement : Element
+    internal class CombineElement(Element first, Element second) : Element
     {
-        private readonly Element _elem1;
-        private readonly Element _elem2;
-
-        public CombineElement(Element first, Element second)
-        {
-            _elem1 = first;
-            _elem2 = second;
-        }
+        private readonly Element _elem1 = first;
+        private readonly Element _elem2 = second;
 
         public override object Clone()
         {

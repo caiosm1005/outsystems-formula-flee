@@ -2,16 +2,11 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-    internal abstract class TokenMatcher
+    internal abstract class TokenMatcher(bool ignoreCase)
     {
-        protected TokenPattern[] Patterns = new TokenPattern[0];
+        protected TokenPattern[] Patterns = [];
 
-        protected bool IgnoreCase = false;
-
-        protected TokenMatcher(bool ignoreCase)
-        {
-            IgnoreCase = ignoreCase;
-        }
+        protected bool IgnoreCase = ignoreCase;
 
         public abstract void Match(ReaderBuffer buffer, TokenMatch match);
 
@@ -34,12 +29,12 @@ namespace Flee.Parsing
         }
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < Patterns.Length; i++)
             {
-                buffer.Append(Patterns[i]);
-                buffer.Append("\n\n");
+                _ = buffer.Append(Patterns[i]);
+                _ = buffer.Append("\n\n");
             }
             return buffer.ToString();
         }

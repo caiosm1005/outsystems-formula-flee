@@ -1,16 +1,8 @@
 namespace Flee.PublicTypes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class ExpressionOwnerMemberAccessAttribute : Attribute
+    public sealed class ExpressionOwnerMemberAccessAttribute(bool allowAccess) : Attribute
     {
-
-
-        private readonly bool _myAllowAccess;
-        public ExpressionOwnerMemberAccessAttribute(bool allowAccess)
-        {
-            _myAllowAccess = allowAccess;
-        }
-
-        internal bool AllowAccess => _myAllowAccess;
+        internal bool AllowAccess { get; } = allowAccess;
     }
 }

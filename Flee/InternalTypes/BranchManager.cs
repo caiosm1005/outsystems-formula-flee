@@ -11,7 +11,7 @@ namespace Flee.InternalTypes
 
         public BranchManager()
         {
-            MyBranchInfos = new List<BranchInfo>();
+            MyBranchInfos = [];
         }
 
         /// <summary>
@@ -22,7 +22,10 @@ namespace Flee.InternalTypes
         {
             foreach (BranchInfo bi in MyBranchInfos)
             {
-                if (bi.ComputeIsLongBranch()) return true;
+                if (bi.ComputeIsLongBranch())
+                {
+                    return true;
+                }
             }
             return false;
         }
@@ -40,17 +43,19 @@ namespace Flee.InternalTypes
             // starting location, as branch between our
             // branch could push our branch to a long branch.
             //
-            for( var idx=MyBranchInfos.Count-1; idx >= 0; idx--)
+            for (var idx = MyBranchInfos.Count - 1; idx >= 0; idx--)
             {
                 var bi = MyBranchInfos[idx];
 
                 // count long branches between
                 int longBranchesBetween = 0;
-                for( var ii=idx+1; ii < MyBranchInfos.Count; ii++)
+                for (var ii = idx + 1; ii < MyBranchInfos.Count; ii++)
                 {
                     var bi2 = MyBranchInfos[ii];
                     if (bi2.IsBetween(bi) && bi2.ComputeIsLongBranch())
+                    {
                         ++longBranchesBetween;
+                    }
                 }
 
                 // Adjust the branch as necessary
@@ -72,7 +77,7 @@ namespace Flee.InternalTypes
                 longBranchCount += Convert.ToInt32(bi.IsLongBranch);
             }
 
-            return  (longBranchCount > 0);
+            return longBranchCount > 0;
         }
 
 
@@ -84,12 +89,14 @@ namespace Flee.InternalTypes
         /// <remarks></remarks>
         public bool IsLongBranch(FleeILGenerator ilg)
         {
-            ILLocation startLoc = new ILLocation(ilg.Length);
+            ILLocation startLoc = new(ilg.Length);
 
             foreach (var bi in MyBranchInfos)
             {
                 if (bi.Equals(startLoc))
+                {
                     return bi.IsLongBranch;
+                }
             }
 
             // we don't really know since this branch didn't exist.
@@ -106,9 +113,9 @@ namespace Flee.InternalTypes
         /// <remarks></remarks>
         public void AddBranch(FleeILGenerator ilg, Label target)
         {
-            ILLocation startLoc = new ILLocation(ilg.Length);
+            ILLocation startLoc = new(ilg.Length);
 
-            BranchInfo bi = new BranchInfo(startLoc, target);
+            BranchInfo bi = new(startLoc, target);
             // branches will be sorted in order
             MyBranchInfos.Add(bi);
         }
@@ -139,7 +146,7 @@ namespace Flee.InternalTypes
                 arr[i] = MyBranchInfos[i].ToString();
             }
 
-            return string.Join(System.Environment.NewLine, arr);
+            return string.Join(Environment.NewLine, arr);
         }
     }
 }

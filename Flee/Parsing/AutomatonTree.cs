@@ -20,18 +20,9 @@ namespace Flee.Parsing
             {
                 c = Char.ToLower(c);
             }
-            if (_value == (char)0 || _value == c)
-            {
-                return _state;
-            }
-            else if (_value > c)
-            {
-                return _left!.Find(c, false);
-            }
-            else
-            {
-                return _right!.Find(c, false);
-            }
+            return _value == (char)0 || _value == c
+                ? _state
+                : _value > c ? _left!.Find(c, false) : _right!.Find(c, false);
         }
 
         public void Add(char c, bool lowerCase, Automaton state)
@@ -42,10 +33,10 @@ namespace Flee.Parsing
             }
             if (_value == (char)0)
             {
-                this._value = c;
-                this._state = state;
-                this._left = new AutomatonTree();
-                this._right = new AutomatonTree();
+                _value = c;
+                _state = state;
+                _left = new AutomatonTree();
+                _right = new AutomatonTree();
             }
             else if (_value > c)
             {

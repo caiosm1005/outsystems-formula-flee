@@ -5,12 +5,8 @@ namespace Flee.Parsing
      * matches a single character that is not equal to a newline
      * character.
      */
-    internal class NFADotTransition : NFATransition
+    internal class NFADotTransition(NFAState state) : NFATransition(state)
     {
-        public NFADotTransition(NFAState state) : base(state)
-        {
-        }
-
         public override bool IsAscii()
         {
             return false;
@@ -18,17 +14,11 @@ namespace Flee.Parsing
 
         public override bool Match(char ch)
         {
-            switch (ch)
+            return ch switch
             {
-                case '\n':
-                case '\r':
-                case '\u0085':
-                case '\u2028':
-                case '\u2029':
-                    return false;
-                default:
-                    return true;
-            }
+                '\n' or '\r' or '\u0085' or '\u2028' or '\u2029' => false,
+                _ => true,
+            };
         }
 
         public override NFATransition Copy(NFAState state)

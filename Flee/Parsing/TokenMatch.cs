@@ -1,4 +1,4 @@
-namespace Flee.Parsing
+﻿namespace Flee.Parsing
 {
     /**
      * The token match status. This class contains logic to ensure that
@@ -6,25 +6,22 @@ namespace Flee.Parsing
      */
     internal class TokenMatch
     {
-        private int _length = 0;
-        private TokenPattern? _pattern = null;
-
         public void Clear()
         {
-            _length = 0;
-            _pattern = null;
+            Length = 0;
+            Pattern = null!;
         }
 
-        public int Length => _length;
+        public int Length { get; private set; } = 0;
 
-        public TokenPattern Pattern => _pattern!;
+        public TokenPattern Pattern { get; private set; } = null!;
 
         public void Update(int length, TokenPattern pattern)
         {
-            if (this._length < length)
+            if (Length < length)
             {
-                this._length = length;
-                this._pattern = pattern;
+                Length = length;
+                Pattern = pattern;
             }
         }
     }

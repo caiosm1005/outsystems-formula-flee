@@ -9,48 +9,28 @@ namespace Flee.Parsing
     * are created by a parser, that adds children a according to a
     * set of production patterns (i.e. grammar rules).
     */
-    internal class Production : Node
+    internal class Production(ProductionPattern pattern) : Node
     {
-        private readonly ProductionPattern _pattern;
-        private readonly ArrayList _children;
+        private readonly ArrayList _children = [];
 
-        public Production(ProductionPattern pattern)
-        {
-            this._pattern = pattern;
-            this._children = new ArrayList();
-        }
+        public override int Id => Pattern.Id;
 
-        public override int Id => _pattern.Id;
-
-        public override string Name => _pattern.Name;
+        public override string Name => Pattern.Name;
 
         public override int Count => _children.Count;
 
-        public override Node this[int index]
-        {
-            get
-            {
-                if (index < 0 || index >= _children.Count)
-                {
-                    return null!;
-                }
-                else
-                {
-                    return (Node)_children[index]!;
-                }
-            }
-        }
+        public override Node this[int index] => index < 0 || index >= _children.Count ? null! : (Node)_children[index]!;
 
         public void AddChild(Node child)
         {
             if (child != null)
             {
                 child.SetParent(this);
-                _children.Add(child);
+                _ = _children.Add(child);
             }
         }
 
-        public ProductionPattern Pattern => _pattern;
+        public ProductionPattern Pattern { get; } = pattern;
 
         public ProductionPattern GetPattern()
         {
@@ -59,12 +39,12 @@ namespace Flee.Parsing
 
         internal override bool IsHidden()
         {
-            return _pattern.Synthetic;
+            return Pattern.Synthetic;
         }
 
         public override string ToString()
         {
-            return _pattern.Name + '(' + _pattern.Id + ')';
+            return Pattern.Name + '(' + Pattern.Id + ')';
         }
     }
 }

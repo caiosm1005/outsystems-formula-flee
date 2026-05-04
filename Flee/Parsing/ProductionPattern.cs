@@ -13,50 +13,26 @@ namespace Flee.Parsing
      * referencing the production pattern from production pattern
      * elements.
      */
-    internal class ProductionPattern
+    internal class ProductionPattern(int id, string name)
     {
+        private readonly ArrayList _alternatives = [];
+        private int _defaultAlt = -1;
 
-        private readonly int _id;
-        private readonly string _name;
-        private bool _synthetic;
-        private readonly ArrayList _alternatives;
-        private int _defaultAlt;
-        private LookAheadSet? _lookAhead;
-
-        public ProductionPattern(int id, string name)
-        {
-            this._id = id;
-            this._name = name;
-            this._synthetic = false;
-            this._alternatives = new ArrayList();
-            this._defaultAlt = -1;
-            this._lookAhead = null;
-        }
-        public int Id => _id;
+        public int Id { get; } = id;
 
         public int GetId()
         {
             return Id;
         }
 
-        public string Name => _name;
+        public string Name { get; } = name;
 
         public string GetName()
         {
             return Name;
         }
 
-        public bool Synthetic
-        {
-            get
-            {
-                return _synthetic;
-            }
-            set
-            {
-                _synthetic = value;
-            }
-        }
+        public bool Synthetic { get; set; }
 
         public bool IsSyntetic()
         {
@@ -68,17 +44,7 @@ namespace Flee.Parsing
             Synthetic = synthetic;
         }
 
-        internal LookAheadSet LookAhead
-        {
-            get
-            {
-                return _lookAhead!;
-            }
-            set
-            {
-                _lookAhead = value;
-            }
-        }
+        internal LookAheadSet LookAhead { get; set; } = null!;
 
         internal ProductionPatternAlternative? DefaultAlternative
         {
@@ -172,40 +138,40 @@ namespace Flee.Parsing
             {
                 throw new ParserCreationException(
                     ParserCreationException.ErrorType.INVALID_PRODUCTION,
-                    _name,
+                    Name,
                     "two identical alternatives exist");
             }
             alt.SetPattern(this);
-            _alternatives.Add(alt);
+            _ = _alternatives.Add(alt);
         }
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
-            StringBuilder indent = new StringBuilder();
+            StringBuilder buffer = new();
+            StringBuilder indent = new();
             int i;
 
-            buffer.Append(_name);
-            buffer.Append("(");
-            buffer.Append(_id);
-            buffer.Append(") ");
+            _ = buffer.Append(Name);
+            _ = buffer.Append("(");
+            _ = buffer.Append(Id);
+            _ = buffer.Append(") ");
             for (i = 0; i < buffer.Length; i++)
             {
-                indent.Append(" ");
+                _ = indent.Append(" ");
             }
             for (i = 0; i < _alternatives.Count; i++)
             {
                 if (i == 0)
                 {
-                    buffer.Append("= ");
+                    _ = buffer.Append("= ");
                 }
                 else
                 {
-                    buffer.Append("\n");
-                    buffer.Append(indent);
-                    buffer.Append("| ");
+                    _ = buffer.Append("\n");
+                    _ = buffer.Append(indent);
+                    _ = buffer.Append("| ");
                 }
-                buffer.Append(_alternatives[i]);
+                _ = buffer.Append(_alternatives[i]);
             }
             return buffer.ToString();
         }

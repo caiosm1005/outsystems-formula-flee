@@ -9,9 +9,8 @@ namespace Flee.ExpressionElements.LogicalBitwise
     internal class AndOrElement : BinaryExpressionElement
     {
         private AndOrOperation _myOperation;
-        private static readonly object OurTrueTerminalKey = new object();
-        private static readonly object OurFalseTerminalKey = new object();
-        private static readonly object OurEndLabelKey = new object();
+        private static readonly object OurTrueTerminalKey = new();
+        private static readonly object OurFalseTerminalKey = new();
 
         public void New()
         {
@@ -22,37 +21,26 @@ namespace Flee.ExpressionElements.LogicalBitwise
             _myOperation = (AndOrOperation)operation;
         }
 
-        protected override System.Type? GetResultType(System.Type leftType, System.Type rightType)
+        protected override Type? GetResultType(Type leftType, Type rightType)
         {
             Type? bitwiseOpType = Utility.GetBitwiseOpType(leftType, rightType);
-            if ((bitwiseOpType != null))
-            {
-                return bitwiseOpType;
-            }
-            else if (this.AreBothChildrenOfType(typeof(bool)))
-            {
-                return typeof(bool);
-            }
-            else
-            {
-                return null;
-            }
+            return bitwiseOpType ?? (AreBothChildrenOfType(typeof(bool)) ? typeof(bool) : null);
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type resultType = this.ResultType;
+            Type resultType = ResultType;
 
-            if (object.ReferenceEquals(resultType, typeof(bool)))
+            if (ReferenceEquals(resultType, typeof(bool)))
             {
-                this.DoEmitLogical(ilg, services);
+                DoEmitLogical(ilg, services);
             }
             else
             {
                 MyLeftChild.Emit(ilg, services);
-                ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, resultType, ilg);
+                _ = ImplicitConverter.EmitImplicitConvert(MyLeftChild.ResultType, resultType, ilg);
                 MyRightChild.Emit(ilg, services);
-                ImplicitConverter.EmitImplicitConvert(MyRightChild.ResultType, resultType, ilg);
+                _ = ImplicitConverter.EmitImplicitConvert(MyRightChild.ResultType, resultType, ilg);
                 EmitBitwiseOperation(ilg, _myOperation);
             }
         }
@@ -76,10 +64,10 @@ namespace Flee.ExpressionElements.LogicalBitwise
         private void DoEmitLogical(FleeILGenerator ilg, IServiceProvider services)
         {
             // We have to do a 'fake' emit so we can get the positions of the labels
-            ShortCircuitInfo info = new ShortCircuitInfo();
+            ShortCircuitInfo info = new();
 
             // Do the real emit
-            this.EmitLogical(ilg, info, services);
+            EmitLogical(ilg, info, services);
         }
 
         /// <summary>
@@ -99,7 +87,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             Label endLabel = ilg.DefineLabel();
 
             // Populate our data structures
-            this.PopulateData(info);
+            PopulateData(info);
 
             // Emit the sequence
             EmitLogicalShortCircuit(ilg, info, services);
@@ -140,18 +128,22 @@ namespace Flee.ExpressionElements.LogicalBitwise
                 // Get the label for the short-circuit case
                 Label l = GetShortCircuitLabel(op, info, ilg);
                 // Emit the branch
-                EmitBranch(op, ilg, l, info);
+                EmitBranch(op, ilg, l);
             }
         }
 
 
-        private static void EmitBranch(AndOrElement op, FleeILGenerator ilg, Label target, ShortCircuitInfo info)
+        private static void EmitBranch(AndOrElement op, FleeILGenerator ilg, Label target)
         {
             // Get the branch opcode
             if (op._myOperation == AndOrOperation.And)
+            {
                 ilg.EmitBranchFalse(target);
+            }
             else
+            {
                 ilg.EmitBranchTrue(target);
+            }
         }
 
 
@@ -192,22 +184,15 @@ namespace Flee.ExpressionElements.LogicalBitwise
             }
 
             // We've reached the end of the stack so return the label for the appropriate true/false terminal
-            if (current._myOperation == AndOrOperation.And)
-            {
-                return GetLabel(OurFalseTerminalKey, ilg, info);
-            }
-            else
-            {
-                return GetLabel(OurTrueTerminalKey, ilg, info);
-            }
+            return current._myOperation == AndOrOperation.And
+                ? GetLabel(OurFalseTerminalKey, ilg, info)
+                : GetLabel(OurTrueTerminalKey, ilg, info);
         }
 
         private void PopRightChild(Stack operands, Stack operators)
         {
-            AndOrElement? andOrChild = MyRightChild as AndOrElement;
-
             // What kind of child do we have?
-            if ((andOrChild != null))
+            if (MyRightChild is AndOrElement andOrChild)
             {
                 // Another and/or expression so recurse
                 andOrChild.Pop(operands, operators);
@@ -215,7 +200,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             else
             {
                 // A terminal so pop it off the operands stack
-                operands.Pop();
+                _ = operands.Pop();
             }
         }
 
@@ -226,12 +211,12 @@ namespace Flee.ExpressionElements.LogicalBitwise
         /// <param name="operators"></param>
         private void Pop(Stack operands, Stack operators)
         {
-            operators.Pop();
+            _ = operators.Pop();
 
             AndOrElement? andOrChild = MyLeftChild as AndOrElement;
             if (andOrChild == null)
             {
-                operands.Pop();
+                _ = operands.Pop();
             }
             else
             {
@@ -242,7 +227,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
 
             if (andOrChild == null)
             {
-                operands.Pop();
+                _ = operands.Pop();
             }
             else
             {
@@ -253,7 +238,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         private static void EmitOperand(ExpressionElement operand, ShortCircuitInfo info, FleeILGenerator ilg, IServiceProvider services)
         {
             // Is this operand the target of a label?
-            if (info.HasLabel(operand) == true)
+            if (info.HasLabel(operand))
             {
                 // Yes, so mark it
                 Label leftLabel = info.FindLabel(operand);
@@ -273,7 +258,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
         private static void EmitTerminals(ShortCircuitInfo info, FleeILGenerator ilg, Label endLabel)
         {
             // Emit the false case if it was used
-            if (info.HasLabel(OurFalseTerminalKey) == true)
+            if (info.HasLabel(OurFalseTerminalKey))
             {
                 Label falseLabel = info.FindLabel(OurFalseTerminalKey);
 
@@ -283,7 +268,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
                 ilg.Emit(OpCodes.Ldc_I4_0);
 
                 // If we also have a true terminal, then skip over it
-                if (info.HasLabel(OurTrueTerminalKey) == true)
+                if (info.HasLabel(OurTrueTerminalKey))
                 {
                     // only 1-3 opcodes, always a short branch
                     ilg.Emit(OpCodes.Br_S, endLabel);
@@ -291,7 +276,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
             }
 
             // Emit the true case if it was used
-            if (info.HasLabel(OurTrueTerminalKey) == true)
+            if (info.HasLabel(OurTrueTerminalKey))
             {
                 Label trueLabel = info.FindLabel(OurTrueTerminalKey);
 
@@ -305,9 +290,7 @@ namespace Flee.ExpressionElements.LogicalBitwise
 
         private static Label GetLabel(object key, FleeILGenerator ilg, ShortCircuitInfo info)
         {
-            if (info.HasLabel(key))
-                return info.FindLabel(key);
-            return info.AddLabel(key, ilg.DefineLabel());
+            return info.HasLabel(key) ? info.FindLabel(key) : info.AddLabel(key, ilg.DefineLabel());
         }
 
         /// <summary>

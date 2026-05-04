@@ -18,7 +18,7 @@ namespace Flee.InternalTypes
         static ImplicitConverter()
         {
             // Create a table with all the primitive types
-            Type[] types = {
+            Type[] types = [
             typeof(char),
             typeof(byte),
             typeof(sbyte),
@@ -30,7 +30,7 @@ namespace Flee.InternalTypes
             typeof(UInt64),
             typeof(float),
             typeof(double)
-        };
+        ];
             OurBinaryTypes = types;
             Type[,] table = new Type[types.Length, types.Length];
             OurBinaryResultTable = table;
@@ -128,27 +128,15 @@ namespace Flee.InternalTypes
 
         private static int GetTypeIndex(Type t)
         {
-            return System.Array.IndexOf(OurBinaryTypes, t);
+            return Array.IndexOf(OurBinaryTypes, t);
         }
 
         public static bool EmitImplicitConvert(Type sourceType, Type destType, FleeILGenerator? ilg)
         {
-            if (object.ReferenceEquals(sourceType, destType))
-            {
-                return true;
-            }
-            else if (EmitOverloadedImplicitConvert(sourceType, destType, ilg) == true)
-            {
-                return true;
-            }
-            else if (ImplicitConvertToReferenceType(sourceType, destType, ilg) == true)
-            {
-                return true;
-            }
-            else
-            {
-                return ImplicitConvertToValueType(sourceType, destType, ilg);
-            }
+            return ReferenceEquals(sourceType, destType)
+                || EmitOverloadedImplicitConvert(sourceType, destType, ilg)
+                || ImplicitConvertToReferenceType(sourceType, destType, ilg)
+                || ImplicitConvertToValueType(sourceType, destType, ilg);
         }
 
         private static bool EmitOverloadedImplicitConvert(Type sourceType, Type destType, FleeILGenerator? ilg)
@@ -162,38 +150,32 @@ namespace Flee.InternalTypes
                 return false;
             }
 
-            if ((ilg != null))
-            {
-                ilg.Emit(OpCodes.Call, mi);
-            }
+            ilg?.Emit(OpCodes.Call, mi);
 
             return true;
         }
 
         private static bool ImplicitConvertToReferenceType(Type sourceType, Type destType, FleeILGenerator? ilg)
         {
-            if (destType.IsValueType == true)
+            if (destType.IsValueType)
             {
                 return false;
             }
 
-            if (object.ReferenceEquals(sourceType, typeof(Null)))
+            if (ReferenceEquals(sourceType, typeof(Null)))
             {
                 // Null is always convertible to a reference type
                 return true;
             }
 
-            if (destType.IsAssignableFrom(sourceType) == false)
+            if (!destType.IsAssignableFrom(sourceType))
             {
                 return false;
             }
 
-            if (sourceType.IsValueType == true)
+            if (sourceType.IsValueType)
             {
-                if ((ilg != null))
-                {
-                    ilg.Emit(OpCodes.Box, sourceType);
-                }
+                ilg?.Emit(OpCodes.Box, sourceType);
             }
 
             return true;
@@ -202,19 +184,14 @@ namespace Flee.InternalTypes
         private static bool ImplicitConvertToValueType(Type sourceType, Type destType, FleeILGenerator? ilg)
         {
             // We only handle value types
-            if (sourceType.IsValueType == false & destType.IsValueType == false)
+            if (!sourceType.IsValueType & !destType.IsValueType)
             {
                 return false;
             }
 
             // No implicit conversion to enum.  Have to do this check here since calling GetTypeCode on an enum will return the typecode
             // of the underlying type which screws us up.
-            if (sourceType.IsEnum == true | destType.IsEnum == true)
-            {
-                return false;
-            }
-
-            return EmitImplicitNumericConvert(sourceType, destType, ilg);
+            return !(sourceType.IsEnum | destType.IsEnum) && EmitImplicitNumericConvert(sourceType, destType, ilg);
         }
 
         /// <summary>
@@ -230,192 +207,97 @@ namespace Flee.InternalTypes
             TypeCode sourceTypeCode = Type.GetTypeCode(sourceType);
             TypeCode destTypeCode = Type.GetTypeCode(destType);
 
-            switch (destTypeCode)
-            {
-                case TypeCode.Int16:
-                    return ImplicitConvertToInt16(sourceTypeCode, ilg);
-                case TypeCode.UInt16:
-                    return ImplicitConvertToUInt16(sourceTypeCode, ilg);
-                case TypeCode.Int32:
-                    return ImplicitConvertToInt32(sourceTypeCode, ilg);
-                case TypeCode.UInt32:
-                    return ImplicitConvertToUInt32(sourceTypeCode, ilg);
-                case TypeCode.Double:
-                    return ImplicitConvertToDouble(sourceTypeCode, ilg);
-                case TypeCode.Single:
-                    return ImplicitConvertToSingle(sourceTypeCode, ilg);
-                case TypeCode.Int64:
-                    return ImplicitConvertToInt64(sourceTypeCode, ilg);
-                case TypeCode.UInt64:
-                    return ImplicitConvertToUInt64(sourceTypeCode, ilg);
-                default:
-                    return false;
-            }
+            return destTypeCode == TypeCode.Int16 ? ImplicitConvertToInt16(sourceTypeCode)
+                : destTypeCode == TypeCode.UInt16 ? ImplicitConvertToUInt16(sourceTypeCode)
+                : destTypeCode == TypeCode.Int32 ? ImplicitConvertToInt32(sourceTypeCode)
+                : destTypeCode == TypeCode.UInt32 ? ImplicitConvertToUInt32(sourceTypeCode)
+                : destTypeCode == TypeCode.Double ? ImplicitConvertToDouble(sourceTypeCode, ilg)
+                : destTypeCode == TypeCode.Single ? ImplicitConvertToSingle(sourceTypeCode, ilg)
+                : destTypeCode == TypeCode.Int64 ? ImplicitConvertToInt64(sourceTypeCode, ilg)
+                : destTypeCode == TypeCode.UInt64 && ImplicitConvertToUInt64(sourceTypeCode, ilg);
         }
 
 
-        private static bool ImplicitConvertToInt16(TypeCode sourceTypeCode, FleeILGenerator? ilg)
+        private static bool ImplicitConvertToInt16(TypeCode sourceTypeCode)
         {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                    return true;
-                default:
-                    return false;
-            }
+            return sourceTypeCode is TypeCode.Byte or TypeCode.SByte or TypeCode.Int16;
         }
 
-        private static bool ImplicitConvertToUInt16(TypeCode sourceTypeCode, FleeILGenerator? ilg)
+        private static bool ImplicitConvertToUInt16(TypeCode sourceTypeCode)
         {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.UInt16:
-                    return true;
-                default:
-                    return false;
-            }
+            return sourceTypeCode is TypeCode.Char or TypeCode.Byte or TypeCode.UInt16;
         }
 
-        private static bool ImplicitConvertToInt32(TypeCode sourceTypeCode, FleeILGenerator? ilg)
+        private static bool ImplicitConvertToInt32(TypeCode sourceTypeCode)
         {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                    return true;
-                default:
-                    return false;
-            }
+            return sourceTypeCode is TypeCode.Char or TypeCode.Byte or TypeCode.SByte or TypeCode.Int16 or TypeCode.UInt16 or TypeCode.Int32;
         }
 
-        private static bool ImplicitConvertToUInt32(TypeCode sourceTypeCode, FleeILGenerator? ilg)
+        private static bool ImplicitConvertToUInt32(TypeCode sourceTypeCode)
         {
-            switch (sourceTypeCode)
-            {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                    return true;
-                default:
-                    return false;
-            }
+            return sourceTypeCode is TypeCode.Char or TypeCode.Byte or TypeCode.SByte or TypeCode.Int16 or TypeCode.UInt16 or TypeCode.UInt32;
         }
 
         private static bool ImplicitConvertToDouble(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
-            switch (sourceTypeCode)
+            if (sourceTypeCode is TypeCode.Char or TypeCode.SByte or TypeCode.Byte or TypeCode.Int16 or TypeCode.UInt16 or TypeCode.Int32 or TypeCode.Single or TypeCode.Int64)
             {
-                case TypeCode.Char:
-                case TypeCode.SByte:
-                case TypeCode.Byte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                case TypeCode.Single:
-                case TypeCode.Int64:
-                    EmitConvert(ilg, OpCodes.Conv_R8);
-                    break;
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    EmitConvert(ilg, OpCodes.Conv_R_Un);
-                    EmitConvert(ilg, OpCodes.Conv_R8);
-                    break;
-                case TypeCode.Double:
-                    break;
-                default:
-                    return false;
+                EmitConvert(ilg, OpCodes.Conv_R8);
+                return true;
             }
-
-            return true;
+            if (sourceTypeCode is TypeCode.UInt32 or TypeCode.UInt64)
+            {
+                EmitConvert(ilg, OpCodes.Conv_R_Un);
+                EmitConvert(ilg, OpCodes.Conv_R8);
+                return true;
+            }
+            return sourceTypeCode == TypeCode.Double;
         }
 
         private static bool ImplicitConvertToSingle(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
-            switch (sourceTypeCode)
+            if (sourceTypeCode is TypeCode.Char or TypeCode.Byte or TypeCode.SByte or TypeCode.Int16 or TypeCode.UInt16 or TypeCode.Int32 or TypeCode.Int64)
             {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                    EmitConvert(ilg, OpCodes.Conv_R4);
-                    break;
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    EmitConvert(ilg, OpCodes.Conv_R_Un);
-                    EmitConvert(ilg, OpCodes.Conv_R4);
-                    break;
-                case TypeCode.Single:
-                    break;
-                default:
-                    return false;
+                EmitConvert(ilg, OpCodes.Conv_R4);
+                return true;
             }
-
-            return true;
+            if (sourceTypeCode is TypeCode.UInt32 or TypeCode.UInt64)
+            {
+                EmitConvert(ilg, OpCodes.Conv_R_Un);
+                EmitConvert(ilg, OpCodes.Conv_R4);
+                return true;
+            }
+            return sourceTypeCode == TypeCode.Single;
         }
 
         private static bool ImplicitConvertToInt64(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
-            switch (sourceTypeCode)
+            if (sourceTypeCode is TypeCode.SByte or TypeCode.Int16 or TypeCode.Int32)
             {
-                case TypeCode.SByte:
-                case TypeCode.Int16:
-                case TypeCode.Int32:
-                    EmitConvert(ilg, OpCodes.Conv_I8);
-                    break;
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                    EmitConvert(ilg, OpCodes.Conv_U8);
-                    break;
-                case TypeCode.Int64:
-                    break;
-                default:
-                    return false;
+                EmitConvert(ilg, OpCodes.Conv_I8);
+                return true;
             }
-
-            return true;
+            if (sourceTypeCode is TypeCode.Char or TypeCode.Byte or TypeCode.UInt16 or TypeCode.UInt32)
+            {
+                EmitConvert(ilg, OpCodes.Conv_U8);
+                return true;
+            }
+            return sourceTypeCode == TypeCode.Int64;
         }
 
         private static bool ImplicitConvertToUInt64(TypeCode sourceTypeCode, FleeILGenerator? ilg)
         {
-            switch (sourceTypeCode)
+            if (sourceTypeCode is TypeCode.Char or TypeCode.Byte or TypeCode.UInt16 or TypeCode.UInt32)
             {
-                case TypeCode.Char:
-                case TypeCode.Byte:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                    EmitConvert(ilg, OpCodes.Conv_U8);
-                    break;
-                case TypeCode.UInt64:
-                    break;
-                default:
-                    return false;
+                EmitConvert(ilg, OpCodes.Conv_U8);
+                return true;
             }
-
-            return true;
+            return sourceTypeCode == TypeCode.UInt64;
         }
 
         private static void EmitConvert(FleeILGenerator? ilg, OpCode convertOpcode)
         {
-            if ((ilg != null))
-            {
-                ilg.Emit(convertOpcode);
-            }
+            ilg?.Emit(convertOpcode);
         }
 
         /// <summary>
@@ -429,24 +311,17 @@ namespace Flee.InternalTypes
             int index1 = GetTypeIndex(t1);
             int index2 = GetTypeIndex(t2);
 
-            if (index1 == -1 | index2 == -1)
-            {
-                return null;
-            }
-            else
-            {
-                return OurBinaryResultTable[index1, index2];
-            }
+            return index1 == -1 | index2 == -1 ? null : OurBinaryResultTable[index1, index2];
         }
 
         public static int GetImplicitConvertScore(Type sourceType, Type destType)
         {
-            if (object.ReferenceEquals(sourceType, destType))
+            if (ReferenceEquals(sourceType, destType))
             {
                 return 0;
             }
 
-            if (object.ReferenceEquals(sourceType, typeof(Null)))
+            if (ReferenceEquals(sourceType, typeof(Null)))
             {
                 return GetInverseDistanceToObject(destType);
             }
@@ -457,9 +332,9 @@ namespace Flee.InternalTypes
                 return 1;
             }
 
-            if (sourceType.IsValueType == true)
+            if (sourceType.IsValueType)
             {
-                if (destType.IsValueType == true)
+                if (destType.IsValueType)
                 {
                     // Value type -> value type
                     int sourceScore = GetValueTypeImplicitConvertScore(sourceType);
@@ -475,7 +350,7 @@ namespace Flee.InternalTypes
             }
             else
             {
-                if (destType.IsValueType == true)
+                if (destType.IsValueType)
                 {
                     // Reference type -> value type
                     // Reference types can never be implicitly converted to value types
@@ -494,52 +369,29 @@ namespace Flee.InternalTypes
         {
             TypeCode tc = Type.GetTypeCode(t);
 
-            switch (tc)
+            return tc switch
             {
-                case TypeCode.Byte:
-                    return 1;
-                case TypeCode.SByte:
-                    return 2;
-                case TypeCode.Char:
-                    return 3;
-                case TypeCode.Int16:
-                    return 4;
-                case TypeCode.UInt16:
-                    return 5;
-                case TypeCode.Int32:
-                    return 6;
-                case TypeCode.UInt32:
-                    return 7;
-                case TypeCode.Int64:
-                    return 8;
-                case TypeCode.UInt64:
-                    return 9;
-                case TypeCode.Single:
-                    return 10;
-                case TypeCode.Double:
-                    return 11;
-                case TypeCode.Decimal:
-                    return 11;
-                case TypeCode.Boolean:
-                    return 12;
-                case TypeCode.DateTime:
-                    return 13;
-                default:
-                    Debug.Assert(false, "unknown value type");
-                    return -1;
-            }
+                TypeCode.Byte => 1,
+                TypeCode.SByte => 2,
+                TypeCode.Char => 3,
+                TypeCode.Int16 => 4,
+                TypeCode.UInt16 => 5,
+                TypeCode.Int32 => 6,
+                TypeCode.UInt32 => 7,
+                TypeCode.Int64 => 8,
+                TypeCode.UInt64 => 9,
+                TypeCode.Single => 10,
+                TypeCode.Double or TypeCode.Decimal => 11,
+                TypeCode.Boolean => 12,
+                TypeCode.DateTime => 13,
+                TypeCode.Empty or TypeCode.Object or TypeCode.DBNull or TypeCode.String => -1,
+                _ => -1,
+            };
         }
 
         private static int GetReferenceTypeImplicitConvertScore(Type sourceType, Type destType)
         {
-            if (destType.IsInterface == true)
-            {
-                return 100;
-            }
-            else
-            {
-                return GetInheritanceDistance(sourceType, destType);
-            }
+            return destType.IsInterface ? 100 : GetInheritanceDistance(sourceType, destType);
         }
 
         private static int GetInheritanceDistance(Type sourceType, Type destType)
@@ -547,7 +399,7 @@ namespace Flee.InternalTypes
             int count = 0;
             Type? current = sourceType;
 
-            while ((!object.ReferenceEquals(current, destType)))
+            while (!ReferenceEquals(current, destType))
             {
                 count += 1;
                 current = current?.BaseType;
@@ -561,7 +413,7 @@ namespace Flee.InternalTypes
             int score = 1000;
             Type? current = t.BaseType;
 
-            while ((current != null))
+            while (current != null)
             {
                 score -= 100;
                 current = current.BaseType;

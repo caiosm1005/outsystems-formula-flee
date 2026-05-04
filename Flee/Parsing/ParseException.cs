@@ -6,7 +6,22 @@ namespace Flee.Parsing
     /**
      * A parse exception.
      */
-    public class ParseException : Exception
+    /// <summary>
+    /// Creates a new parse exception. This constructor is only
+    /// used to supply the detailed information array, which is
+    /// only used for expected token errors. The list then contains
+    /// descriptions of the expected tokens.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="info"></param>
+    /// <param name="details"></param>
+    /// <param name="line"></param>
+    /// <param name="column"></param>
+    public class ParseException(ParseException.ErrorType type,
+                          string? info,
+                          ArrayList? details,
+                          int line,
+                          int column) : Exception
     {
         public enum ErrorType
         {
@@ -58,11 +73,7 @@ namespace Flee.Parsing
             ANALYSIS
         }
 
-        private readonly ErrorType _type;
-        private readonly string? _info;
-        private readonly ArrayList? _details;
-        private readonly int _line;
-        private readonly int _column;
+        private readonly ArrayList? _details = details;
 
 
         /// <summary>
@@ -80,83 +91,57 @@ namespace Flee.Parsing
         {
         }
 
-        /// <summary>
-        /// Creates a new parse exception. This constructor is only
-        /// used to supply the detailed information array, which is
-        /// only used for expected token errors. The list then contains
-        /// descriptions of the expected tokens.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="info"></param>
-        /// <param name="details"></param>
-        /// <param name="line"></param>
-        /// <param name="column"></param>
-        public ParseException(ErrorType type,
-                              string? info,
-                              ArrayList? details,
-                              int line,
-                              int column)
-        {
-
-            this._type = type;
-            this._info = info;
-            this._details = details;
-            this._line = line;
-            this._column = column;
-        }
-
-        
-        public ErrorType Type => _type;
+        public ErrorType Type { get; } = type;
 
         public ErrorType GetErrorType()
         {
             return Type;
         }
 
-        public string? Info => _info;
+        public string? Info { get; } = info;
 
         public string? GetInfo()
         {
             return Info;
         }
 
-        public ArrayList Details => new ArrayList(_details!);
+        public ArrayList Details => new(_details!);
 
         public ArrayList GetDetails()
         {
             return Details;
         }
 
-        public int Line => _line;
+        public int Line { get; } = line;
 
         public int GetLine()
         {
             return Line;
         }
 
-        public int Column => _column;
+        public int Column { get; } = column;
 
         public int GetColumn()
         {
-            return _column;
+            return Column;
         }
 
         public override string Message
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 // Add error description
-                buffer.Append(ErrorMessage);
+                _ = buffer.Append(ErrorMessage);
 
                 // Add line and column
-                if (_line > 0 && _column > 0)
+                if (Line > 0 && Column > 0)
                 {
-                    buffer.Append(", on line: ");
-                    buffer.Append(_line);
-                    buffer.Append(" column: ");
-                    buffer.Append(_column);
+                    _ = buffer.Append(", on line: ");
+                    _ = buffer.Append(Line);
+                    _ = buffer.Append(" column: ");
+                    _ = buffer.Append(Column);
                 }
 
                 return buffer.ToString();
@@ -172,48 +157,50 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 // Add type and info
-                switch (_type)
+                switch (Type)
                 {
                     case ErrorType.IO:
-                        buffer.Append("I/O error: ");
-                        buffer.Append(_info);
+                        _ = buffer.Append("I/O error: ");
+                        _ = buffer.Append(Info);
                         break;
                     case ErrorType.UNEXPECTED_EOF:
-                        buffer.Append("unexpected end of file");
+                        _ = buffer.Append("unexpected end of file");
                         break;
                     case ErrorType.UNEXPECTED_CHAR:
-                        buffer.Append("unexpected character '");
-                        buffer.Append(_info);
-                        buffer.Append("'");
+                        _ = buffer.Append("unexpected character '");
+                        _ = buffer.Append(Info);
+                        _ = buffer.Append("'");
                         break;
                     case ErrorType.UNEXPECTED_TOKEN:
-                        buffer.Append("unexpected token ");
-                        buffer.Append(_info);
+                        _ = buffer.Append("unexpected token ");
+                        _ = buffer.Append(Info);
                         if (_details != null)
                         {
-                            buffer.Append(", expected ");
+                            _ = buffer.Append(", expected ");
                             if (_details.Count > 1)
                             {
-                                buffer.Append("one of ");
+                                _ = buffer.Append("one of ");
                             }
-                            buffer.Append(GetMessageDetails());
+                            _ = buffer.Append(GetMessageDetails());
                         }
                         break;
                     case ErrorType.INVALID_TOKEN:
-                        buffer.Append(_info);
+                        _ = buffer.Append(Info);
                         break;
                     case ErrorType.ANALYSIS:
-                        buffer.Append(_info);
+                        _ = buffer.Append(Info);
+                        break;
+                    case ErrorType.INTERNAL:
                         break;
                     default:
-                        buffer.Append("internal error");
-                        if (_info != null)
+                        _ = buffer.Append("internal error");
+                        if (Info != null)
                         {
-                            buffer.Append(": ");
-                            buffer.Append(_info);
+                            _ = buffer.Append(": ");
+                            _ = buffer.Append(Info);
                         }
                         break;
                 }
@@ -229,19 +216,19 @@ namespace Flee.Parsing
 
         private string GetMessageDetails()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _details!.Count; i++)
             {
                 if (i > 0)
                 {
-                    buffer.Append(", ");
+                    _ = buffer.Append(", ");
                     if (i + 1 == _details.Count)
                     {
-                        buffer.Append("or ");
+                        _ = buffer.Append("or ");
                     }
                 }
-                buffer.Append(_details[i]);
+                _ = buffer.Append(_details[i]);
             }
 
             return buffer.ToString();

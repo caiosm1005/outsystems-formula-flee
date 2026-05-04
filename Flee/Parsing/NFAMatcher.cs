@@ -1,13 +1,9 @@
 namespace Flee.Parsing
 {
-    internal class NFAMatcher : TokenMatcher
+    internal class NFAMatcher(bool ignoreCase) : TokenMatcher(ignoreCase)
     {
 
-        private readonly TokenNFA _automaton = new TokenNFA();
-
-        public NFAMatcher(bool ignoreCase) : base(ignoreCase)
-        {
-        }
+        private readonly TokenNFA _automaton = new();
 
         public override void AddPattern(TokenPattern pattern)
         {
@@ -24,7 +20,7 @@ namespace Flee.Parsing
 
         public override void Match(ReaderBuffer buffer, TokenMatch match)
         {
-            _automaton.Match(buffer, match);
+            _ = _automaton.Match(buffer, match);
         }
     }
 }

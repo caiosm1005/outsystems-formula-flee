@@ -29,8 +29,7 @@ namespace Flee.Tests.ExpressionTests
             {
                 vars["a"] = 200;
                 vars["b"] = 300;
-                var result = e.Evaluate();
-                
+                _ = e.Evaluate();
             }
             sw.Stop();
             this.PrintSpeedMessage("Fast variables", iterations, sw);
@@ -575,7 +574,6 @@ AND NOT
     OR ( 492 In (VAR30))
 )";
         private const String SmallExpression = "(4 ^ 3.4 * 18 - VAR1) * (14 / 3) + VAR2";
-        private const String SmallBranching = "If(If(23 > 15 AND 3*7 = 21 OR (25/5 > 10 AND 6+8 = 14), If(2.1=2.1,(4 ^ 3.4 * 18 - VAR1),If(2.1=2.1,0,1)), (14 / 3) + VAR2) <> 0 or true, If(2.1 <> 2.1 AND 3.1=3.1 OF 6.2=6.7, 2.1, 3.1), If(2.1=2.1 AND 3.2=3.2 OR 3.1<>3.1 OR 2.1<>2.3,3, 4))";
 
         [TestMethod]
         [Description("Compile complicated expressions")]
@@ -636,31 +634,17 @@ AND NOT
 
         private static void Variables_ResolveVariableType(object? sender, ResolveVariableTypeEventArgs e)
         {
-            if (e.VariableName.StartsWith("VARBOOL"))
-            {
-                e.VariableType = typeof(bool);
-            }
-            else
-            {
-                e.VariableType = typeof(int);
-            }
+            e.VariableType = e.VariableName.StartsWith("VARBOOL") ? typeof(bool) : typeof(int);
         }
 
         private static void Variables_ResolveVariableValue(object? sender, ResolveVariableValueEventArgs e)
         {
-            if (e.VariableType == typeof(bool))
-            {
-                e.VariableValue = false;
-            }
-            else
-            {
-                e.VariableValue = 0;
-            }
+            e.VariableValue = e.VariableType == typeof(bool) ? false : 0;
         }
 
         private void PrintSpeedMessage(string title, int iterations, Stopwatch sw)
         {
-            this.WriteMessage("{0}: {1:n0} iterations in {2:n2}ms = {3:n2} iterations/sec", title, iterations, sw.ElapsedMilliseconds, iterations*1000 / (sw.ElapsedMilliseconds));
+            this.WriteMessage("{0}: {1:n0} iterations in {2:n2}ms = {3:n2} iterations/sec", title, iterations, sw.ElapsedMilliseconds, iterations*1000 / sw.ElapsedMilliseconds);
         }
     }
 }

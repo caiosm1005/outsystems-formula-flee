@@ -11,35 +11,25 @@ namespace Flee.ExpressionElements
         {
         }
 
-        protected override System.Type? GetResultType(System.Type childType)
+        protected override Type? GetResultType(Type childType)
         {
-            TypeCode tc = Type.GetTypeCode(childType);
-
             MethodInfo? mi = Utility.GetSimpleOverloadedOperator("UnaryNegation", childType, null);
-            if ((mi != null))
+            if (mi != null)
             {
                 return mi.ReturnType;
             }
 
-            switch (tc)
-            {
-                case TypeCode.Single:
-                case TypeCode.Double:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                    return childType;
-                case TypeCode.UInt32:
-                    return typeof(Int64);
-                default:
-                    return null;
-            }
+            TypeCode tc = Type.GetTypeCode(childType);
+            return tc is TypeCode.Single or TypeCode.Double or TypeCode.Int32 or TypeCode.Int64
+                ? childType
+                : tc == TypeCode.UInt32 ? typeof(Int64) : null;
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            Type resultType = this.ResultType;
+            Type resultType = ResultType;
             MyChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(MyChild.ResultType, resultType, ilg);
+            _ = ImplicitConverter.EmitImplicitConvert(MyChild.ResultType, resultType, ilg);
 
             MethodInfo? mi = Utility.GetSimpleOverloadedOperator("UnaryNegation", resultType, null);
 

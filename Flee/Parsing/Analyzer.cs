@@ -23,22 +23,17 @@ namespace Flee.Parsing
 
         public Node Analyze(Node node)
         {
-            ParserLogException log = new ParserLogException();
+            ParserLogException log = new();
 
             Node? result = Analyze(node, log);
-            if (log.Count > 0)
-            {
-                throw log;
-            }
-            return result!;
+            return log.Count > 0 ? throw log : result!;
         }
 
         private Node? Analyze(Node node, ParserLogException log)
         {
             var errorCount = log.Count;
-            if (node is Production)
+            if (node is Production prod)
             {
-                var prod = (Production)node;
                 prod = NewProduction(prod.Pattern);
                 try
                 {
@@ -126,16 +121,12 @@ namespace Flee.Parsing
                     -1,
                     -1);
             }
-            var child = node[pos];
-            if (child == null)
-            {
-                throw new ParseException(
+            var child = node[pos] ?? throw new ParseException(
                     ParseException.ErrorType.INTERNAL,
                     "node '" + node.Name + "' has no child at " +
                     "position " + pos,
                     node.StartLine,
                     node.StartColumn);
-            }
             return child;
         }
 
@@ -174,58 +165,44 @@ namespace Flee.Parsing
                     -1,
                     -1);
             }
-            var value = node.Values[pos];
-            if (value == null)
-            {
-                throw new ParseException(
+            var value = node.Values[pos] ?? throw new ParseException(
                     ParseException.ErrorType.INTERNAL,
                     "node '" + node.Name + "' has no value at " +
                     "position " + pos,
                     node.StartLine,
                     node.StartColumn);
-            }
             return value;
         }
 
         protected int GetIntValue(Node node, int pos)
         {
             var value = GetValue(node, pos);
-            if (value is int)
-            {
-                return (int)value;
-            }
-            else
-            {
-                throw new ParseException(
+            return value is int
+                ? (int)value
+                : throw new ParseException(
                     ParseException.ErrorType.INTERNAL,
                     "node '" + node.Name + "' has no integer value " +
                     "at position " + pos,
                     node.StartLine,
                     node.StartColumn);
-            }
         }
-       
+
         protected string GetStringValue(Node node, int pos)
         {
             var value = GetValue(node, pos);
-            if (value is string)
-            {
-                return (string)value;
-            }
-            else
-            {
-                throw new ParseException(
+            return value is string
+                ? (string)value
+                : throw new ParseException(
                     ParseException.ErrorType.INTERNAL,
                     "node '" + node.Name + "' has no string value " +
                     "at position " + pos,
                     node.StartLine,
                     node.StartColumn);
-            }
         }
 
         protected ArrayList GetChildValues(Node node)
         {
-            ArrayList result = new ArrayList();
+            ArrayList result = [];
 
             for (int i = 0; i < node.Count; i++)
             {

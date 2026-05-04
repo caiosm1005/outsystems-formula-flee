@@ -4,19 +4,15 @@ using Flee.InternalTypes;
 
 namespace Flee.ExpressionElements.Literals
 {
-    internal class BooleanLiteralElement : LiteralElement
+    internal class BooleanLiteralElement(bool value) : LiteralElement
     {
-        private readonly bool _myValue;
-        public BooleanLiteralElement(bool value)
-        {
-            _myValue = value;
-        }
+        private readonly bool _myValue = value;
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             EmitLoad(_myValue, ilg);
         }
 
-        public override System.Type ResultType => typeof(bool);
+        public override Type ResultType => typeof(bool);
     }
 }

@@ -12,8 +12,8 @@ namespace Flee.Parsing
     internal class TokenNFA
     {
         private readonly NFAState[] _initialChar = new NFAState[128];
-        private readonly NFAState _initial = new NFAState();
-        private readonly NFAStateQueue _queue = new NFAStateQueue();
+        private readonly NFAState _initial = new();
+        private readonly NFAStateQueue _queue = new();
 
         public void AddTextMatch(string str, bool ignoreCase, TokenPattern value)
         {
@@ -23,10 +23,7 @@ namespace Flee.Parsing
             if (ch < 128 && !ignoreCase)
             {
                 state = _initialChar[ch];
-                if (state == null)
-                {
-                    state = _initialChar[ch] = new NFAState();
-                }
+                state ??= _initialChar[ch] = new NFAState();
             }
             else
             {
@@ -43,7 +40,7 @@ namespace Flee.Parsing
                                    bool ignoreCase,
                                    TokenPattern value)
         {
-            TokenRegExpParser parser = new TokenRegExpParser(pattern, ignoreCase);
+            TokenRegExpParser parser = new(pattern, ignoreCase);
             string debug = "DFA regexp; " + parser.GetDebugInfo();
 
             var isAscii = parser.Start.IsAsciiOutgoing();
@@ -69,7 +66,7 @@ namespace Flee.Parsing
             }
             if (parser.Start.Incoming.Length > 0)
             {
-                _initial.AddOut(new NFAEpsilonTransition(parser.Start));
+                _ = _initial.AddOut(new NFAEpsilonTransition(parser.Start));
                 debug += ", uses initial epsilon";
             }
             else if (isAscii && !ignoreCase)
@@ -103,40 +100,40 @@ namespace Flee.Parsing
 
             // The first step of the match loop has been unrolled and
             // optimized for performance below.
-            this._queue.Clear();
+            _queue.Clear();
             var peekChar = buffer.Peek(0);
-            if (0 <= peekChar && peekChar < 128)
+            if (peekChar is >= 0 and < 128)
             {
-                state = this._initialChar[peekChar];
+                state = _initialChar[peekChar];
                 if (state != null)
                 {
-                    this._queue.AddLast(state);
+                    _queue.AddLast(state);
                 }
             }
             if (peekChar >= 0)
             {
-                this._initial.MatchTransitions((char)peekChar, this._queue, true);
+                _initial.MatchTransitions((char)peekChar, _queue, true);
             }
-            this._queue.MarkEnd();
+            _queue.MarkEnd();
             peekChar = buffer.Peek(1);
 
             // The remaining match loop processes all subsequent states
-            while (!this._queue.Empty)
+            while (!_queue.Empty)
             {
-                if (this._queue.Marked)
+                if (_queue.Marked)
                 {
                     pos++;
                     peekChar = buffer.Peek(pos);
-                    this._queue.MarkEnd();
+                    _queue.MarkEnd();
                 }
-                state = this._queue.RemoveFirst()!;
+                state = _queue.RemoveFirst()!;
                 if (state.Value != null)
                 {
                     match.Update(pos, state.Value);
                 }
                 if (peekChar >= 0)
                 {
-                    state.MatchTransitions((char)peekChar, this._queue, false);
+                    state.MatchTransitions((char)peekChar, _queue, false);
                 }
             }
             return length;

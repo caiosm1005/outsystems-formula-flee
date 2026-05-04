@@ -8,25 +8,18 @@ namespace Flee.Parsing
     // * all the required characters from the current position an 
     // * onwards. This means that looking more characters ahead requires 
     // * more memory, and thus becomes unviable in the end. 
-    internal class LookAheadReader : TextReader
+    internal class LookAheadReader(TextReader input) : TextReader()
     {
         private const int StreamBlockSize = 4096;
         private const int BufferBlockSize = 1024;
         private char[] _buffer = new char[StreamBlockSize];
         private int _pos;
         private int _length;
-        private TextReader? _input = null;
-        private int _line = 1;
-        private int _column = 1;
+        private TextReader? _input = input;
 
-        public LookAheadReader(TextReader input) : base()
-        {
-            this._input = input;
-        }
+        public int LineNumber { get; private set; } = 1;
 
-        public int LineNumber => _line;
-
-        public int ColumnNumber => _column;
+        public int ColumnNumber { get; private set; } = 1;
 
         public override int Read()
         {
@@ -38,7 +31,7 @@ namespace Flee.Parsing
             else
             {
                 UpdateLineColumnNumbers(1);
-                return Convert.ToInt32(_buffer[System.Math.Max(System.Threading.Interlocked.Increment(ref _pos), _pos - 1)]);
+                return Convert.ToInt32(_buffer[Math.Max(Interlocked.Increment(ref _pos), _pos - 1)]);
             }
         }
 
@@ -92,14 +85,7 @@ namespace Flee.Parsing
         public int Peek(int off)
         {
             ReadAhead(off + 1);
-            if (_pos + off >= _length)
-            {
-                return -1;
-            }
-            else
-            {
-                return Convert.ToInt32(_buffer[_pos + off]);
-            }
+            return _pos + off >= _length ? -1 : Convert.ToInt32(_buffer[_pos + off]);
         }
 
         public string? PeekString(int off, int len)
@@ -125,25 +111,19 @@ namespace Flee.Parsing
             _buffer = null!;
             _pos = 0;
             _length = 0;
-            if (_input != null)
-            {
-                _input.Close();
-                _input = null;
-            }
+            _input?.Close();
+            _input = null;
         }
 
         private void ReadAhead(int offset)
         {
-            int size = 0;
-            int readSize = 0;
-
-            // Check for end of stream or already read characters 
+            // Check for end of stream or already read characters
             if (_input == null || _pos + offset < _length)
             {
                 return;
             }
 
-            // Remove old characters from buffer 
+            // Remove old characters from buffer
             if (_pos > BufferBlockSize)
             {
                 Array.Copy(_buffer, _pos, _buffer, 0, _length - _pos);
@@ -151,16 +131,17 @@ namespace Flee.Parsing
                 _pos = 0;
             }
 
-            // Calculate number of characters to read 
-            size = _pos + offset - _length + 1;
+            // Calculate number of characters to read
+            int size = _pos + offset - _length + 1;
             if (size % StreamBlockSize != 0)
             {
-                size = (size / StreamBlockSize) * StreamBlockSize;
+                size = size / StreamBlockSize * StreamBlockSize;
                 size += StreamBlockSize;
             }
             EnsureBufferCapacity(_length + size);
 
-            // Read characters 
+            // Read characters
+            int readSize;
             try
             {
                 readSize = _input.Read(_buffer, _length, size);
@@ -199,7 +180,7 @@ namespace Flee.Parsing
             }
             if (size % BufferBlockSize != 0)
             {
-                size = (size / BufferBlockSize) * BufferBlockSize;
+                size = size / BufferBlockSize * BufferBlockSize;
                 size += BufferBlockSize;
             }
             newbuf = new char[size];
@@ -213,12 +194,12 @@ namespace Flee.Parsing
             {
                 if (_buffer.Contains(_buffer[_pos + i]))
                 {
-                    _line += 1;
-                    _column = 1;
+                    LineNumber += 1;
+                    ColumnNumber = 1;
                 }
                 else
                 {
-                    _column += 1;
+                    ColumnNumber += 1;
                 }
             }
         }

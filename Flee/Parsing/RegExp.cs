@@ -26,10 +26,10 @@ namespace Flee.Parsing
 
         public RegExp(string pattern, bool ignoreCase)
         {
-            this._pattern = pattern;
-            this._ignoreCase = ignoreCase;
-            this._pos = 0;
-            this._element = ParseExpr();
+            _pattern = pattern;
+            _ignoreCase = ignoreCase;
+            _pos = 0;
+            _element = ParseExpr();
             if (_pos < pattern.Length)
             {
                 throw new RegExpException(
@@ -51,7 +51,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            var str = new StringWriter();
+            StringWriter str = new();
             str.WriteLine("Regular Expression");
             str.WriteLine("  Pattern: " + _pattern);
             str.Write("  Flags:");
@@ -74,7 +74,7 @@ namespace Flee.Parsing
             }
             else
             {
-                ReadChar('|');
+                _ = ReadChar('|');
                 var second = ParseExpr();
                 return new AlternativeElement(first, second);
             }
@@ -82,9 +82,7 @@ namespace Flee.Parsing
 
         private Element ParseTerm()
         {
-            ArrayList list = new ArrayList();
-
-            list.Add(ParseFact());
+            ArrayList list = [ParseFact()];
             while (true)
             {
                 switch (PeekChar(0))
@@ -99,7 +97,7 @@ namespace Flee.Parsing
                     case '|':
                         return CombineElements(list);
                     default:
-                        list.Add(ParseFact());
+                        _ = list.Add(ParseFact());
                         break;
                 }
             }
@@ -108,16 +106,11 @@ namespace Flee.Parsing
         private Element ParseFact()
         {
             var elem = ParseAtom();
-            switch (PeekChar(0))
+            return PeekChar(0) switch
             {
-                case '?':
-                case '*':
-                case '+':
-                case '{':
-                    return ParseAtomModifier(elem);
-                default:
-                    return elem;
-            }
+                '?' or '*' or '+' or '{' => ParseAtomModifier(elem),
+                _ => elem,
+            };
         }
 
         private Element ParseAtom()
@@ -127,17 +120,17 @@ namespace Flee.Parsing
             switch (PeekChar(0))
             {
                 case '.':
-                    ReadChar('.');
+                    _ = ReadChar('.');
                     return CharacterSetElement.Dot;
                 case '(':
-                    ReadChar('(');
+                    _ = ReadChar('(');
                     elem = ParseExpr();
-                    ReadChar(')');
+                    _ = ReadChar(')');
                     return elem;
                 case '[':
-                    ReadChar('[');
+                    _ = ReadChar('[');
                     elem = ParseCharSet();
-                    ReadChar(']');
+                    _ = ReadChar(']');
                     return elem;
                 case -1:
                 case ')':
@@ -159,13 +152,12 @@ namespace Flee.Parsing
 
         private Element ParseAtomModifier(Element elem)
         {
-            int min = 0;
-            int max = -1;
-            RepeatElement.RepeatType type;
+            int min;
+            int max;
             int firstPos;
 
             // Read min and max
-            type = RepeatElement.RepeatType.GREEDY;
+            RepeatElement.RepeatType type = RepeatElement.RepeatType.GREEDY;
             switch (ReadChar())
             {
                 case '?':
@@ -186,14 +178,14 @@ namespace Flee.Parsing
                     max = min;
                     if (PeekChar(0) == ',')
                     {
-                        ReadChar(',');
+                        _ = ReadChar(',');
                         max = -1;
                         if (PeekChar(0) != '}')
                         {
                             max = ReadNumber();
                         }
                     }
-                    ReadChar('}');
+                    _ = ReadChar('}');
                     if (max == 0 || (max > 0 && min > max))
                     {
                         throw new RegExpException(
@@ -212,12 +204,12 @@ namespace Flee.Parsing
             // Read operator mode
             if (PeekChar(0) == '?')
             {
-                ReadChar('?');
+                _ = ReadChar('?');
                 type = RepeatElement.RepeatType.RELUCTANT;
             }
             else if (PeekChar(0) == '+')
             {
-                ReadChar('+');
+                _ = ReadChar('+');
                 type = RepeatElement.RepeatType.POSSESSIVE;
             }
 
@@ -231,7 +223,7 @@ namespace Flee.Parsing
 
             if (PeekChar(0) == '^')
             {
-                ReadChar('^');
+                _ = ReadChar('^');
                 charset = new CharacterSetElement(true);
             }
             else
@@ -259,13 +251,13 @@ namespace Flee.Parsing
                         }
                         break;
                     default:
-                        ReadChar(start);
+                        _ = ReadChar(start);
                         if (PeekChar(0) == '-'
                             && PeekChar(1) > 0
                             && PeekChar(1) != ']')
                         {
 
-                            ReadChar('-');
+                            _ = ReadChar('-');
                             var end = ReadChar();
                             charset.AddRange(FixChar(start), FixChar(end));
                         }
@@ -282,19 +274,15 @@ namespace Flee.Parsing
 
         private Element ParseChar()
         {
-            switch (PeekChar(0))
+            return PeekChar(0) switch
             {
-                case '\\':
-                    return ParseEscapeChar();
-                case '^':
-                case '$':
-                    throw new RegExpException(
-                        RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
-                        _pos,
-                        _pattern);
-                default:
-                    return new StringElement(FixChar(ReadChar()));
-            }
+                '\\' => ParseEscapeChar(),
+                '^' or '$' => throw new RegExpException(
+                                        RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
+                                        _pos,
+                                        _pattern),
+                _ => new StringElement(FixChar(ReadChar())),
+            };
         }
 
         private Element ParseEscapeChar()
@@ -303,13 +291,13 @@ namespace Flee.Parsing
             string str;
             int value;
 
-            ReadChar('\\');
+            _ = ReadChar('\\');
             c = ReadChar();
             switch (c)
             {
                 case '0':
                     c = ReadChar();
-                    if (c < '0' || c > '3')
+                    if (c is < '0' or > '3')
                     {
                         throw new RegExpException(
                             RegExpException.ErrorType.UNSUPPORTED_ESCAPE_CHARACTER,
@@ -318,12 +306,12 @@ namespace Flee.Parsing
                     }
                     value = c - '0';
                     c = (char)PeekChar(0);
-                    if ('0' <= c && c <= '7')
+                    if (c is >= '0' and <= '7')
                     {
                         value *= 8;
                         value += ReadChar() - '0';
                         c = (char)PeekChar(0);
-                        if ('0' <= c && c <= '7')
+                        if (c is >= '0' and <= '7')
                         {
                             value *= 8;
                             value += ReadChar() - '0';
@@ -389,7 +377,7 @@ namespace Flee.Parsing
                 case 'W':
                     return CharacterSetElement.NonWord;
                 default:
-                    if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'))
+                    if (c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z'))
                     {
                         throw new RegExpException(
                             RegExpException.ErrorType.UNSUPPORTED_ESCAPE_CHARACTER,
@@ -407,23 +395,21 @@ namespace Flee.Parsing
 
         private int ReadNumber()
         {
-            StringBuilder buf = new StringBuilder();
+            StringBuilder buf = new();
             int c;
 
             c = PeekChar(0);
-            while ('0' <= c && c <= '9')
+            while (c is >= '0' and <= '9')
             {
-                buf.Append(ReadChar());
+                _ = buf.Append(ReadChar());
                 c = PeekChar(0);
             }
-            if (buf.Length <= 0)
-            {
-                throw new RegExpException(
+            return buf.Length <= 0
+                ? throw new RegExpException(
                     RegExpException.ErrorType.UNEXPECTED_CHARACTER,
                     _pos,
-                    _pattern);
-            }
-            return Int32.Parse(buf.ToString());
+                    _pattern)
+                : Int32.Parse(buf.ToString());
         }
 
         private char ReadChar()
@@ -446,26 +432,17 @@ namespace Flee.Parsing
 
         private char ReadChar(char c)
         {
-            if (c != ReadChar())
-            {
-                throw new RegExpException(
+            return c != ReadChar()
+                ? throw new RegExpException(
                     RegExpException.ErrorType.UNEXPECTED_CHARACTER,
                     _pos - 1,
-                    _pattern);
-            }
-            return c;
+                    _pattern)
+                : c;
         }
 
         private int PeekChar(int count)
         {
-            if (_pos + count < _pattern.Length)
-            {
-                return _pattern[_pos + count];
-            }
-            else
-            {
-                return -1;
-            }
+            return _pos + count < _pattern.Length ? _pattern[_pos + count] : -1;
         }
 
         private Element CombineElements(ArrayList list)
@@ -473,7 +450,7 @@ namespace Flee.Parsing
             Element elem;
             int i;
             // Concatenate string elements
-            var prev = (Element)list[0]!;
+            Element prev = (Element)list[0]!;
             for (i = 1; i < list.Count; i++)
             {
                 elem = (Element)list[i]!;

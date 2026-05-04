@@ -9,8 +9,6 @@ namespace Flee.CalcEngine.PublicTypes
         #region "Fields"
 
         private readonly IDictionary<string, IExpression> _myExpressions;
-
-        private ExpressionContext _myContext;
         #endregion
 
         #region "Constructor"
@@ -18,7 +16,7 @@ namespace Flee.CalcEngine.PublicTypes
         public SimpleCalcEngine()
         {
             _myExpressions = new Dictionary<string, IExpression>(StringComparer.OrdinalIgnoreCase);
-            _myContext = new ExpressionContext();
+            Context = new ExpressionContext();
         }
 
         #endregion
@@ -27,7 +25,7 @@ namespace Flee.CalcEngine.PublicTypes
 
         private void AddCompiledExpression(string expressionName, IExpression expression)
         {
-            if (_myExpressions.ContainsKey(expressionName) == true)
+            if (_myExpressions.ContainsKey(expressionName))
             {
                 throw new InvalidOperationException($"The calc engine already contains an expression named '{expressionName}'");
             }
@@ -41,14 +39,14 @@ namespace Flee.CalcEngine.PublicTypes
         {
             IdentifierAnalyzer analyzer = Context.ParseIdentifiers(expression);
 
-            ExpressionContext context2 = _myContext.CloneInternal(true);
-            this.LinkExpression(expressionName, context2, analyzer);
+            ExpressionContext context2 = Context.CloneInternal(true);
+            LinkExpression(expressionName, context2, analyzer);
 
             // Tell the expression not to clone the context since it's already been cloned
             context2.NoClone = true;
 
             // Clear our context's variables
-            _myContext.Variables.Clear();
+            Context.Variables.Clear();
 
             return context2;
         }
@@ -57,19 +55,19 @@ namespace Flee.CalcEngine.PublicTypes
         {
             foreach (string identifier in analyzer.GetIdentifiers(context))
             {
-                this.LinkIdentifier(identifier, expressionName, context);
+                LinkIdentifier(identifier, expressionName, context);
             }
         }
 
         private void LinkIdentifier(string identifier, string expressionName, ExpressionContext context)
         {
-            if (_myExpressions.TryGetValue(identifier, out IExpression? child) == false)
+            if (!_myExpressions.TryGetValue(identifier, out IExpression? child))
             {
                 string msg = $"Expression '{expressionName}' references unknown name '{identifier}'";
                 throw new InvalidOperationException(msg);
             }
 
-            context.Variables.Add(identifier, child!);
+            context.Variables.Add(identifier, child);
         }
 
         #endregion
@@ -78,16 +76,16 @@ namespace Flee.CalcEngine.PublicTypes
 
         public void AddDynamic(string expressionName, string expression)
         {
-            ExpressionContext linkedContext = this.ParseAndLink(expressionName, expression);
+            ExpressionContext linkedContext = ParseAndLink(expressionName, expression);
             IExpression e = linkedContext.CompileDynamic(expression);
-            this.AddCompiledExpression(expressionName, e);
+            AddCompiledExpression(expressionName, e);
         }
 
         public void AddGeneric<T>(string expressionName, string expression)
         {
-            ExpressionContext linkedContext = this.ParseAndLink(expressionName, expression);
+            ExpressionContext linkedContext = ParseAndLink(expressionName, expression);
             IExpression e = linkedContext.CompileGeneric<T>(expression);
-            this.AddCompiledExpression(expressionName, e);
+            AddCompiledExpression(expressionName, e);
         }
 
         public void Clear()
@@ -102,16 +100,12 @@ namespace Flee.CalcEngine.PublicTypes
         {
             get
             {
-                _myExpressions.TryGetValue(name, out IExpression? e);
+                _ = _myExpressions.TryGetValue(name, out IExpression? e);
                 return e;
             }
         }
 
-        public ExpressionContext Context
-        {
-            get { return _myContext; }
-            set { _myContext = value; }
-        }
+        public ExpressionContext Context { get; set; }
         #endregion
     }
 

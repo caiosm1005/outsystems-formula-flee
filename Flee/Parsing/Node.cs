@@ -10,7 +10,6 @@ namespace Flee.Parsing
      */
     internal abstract class Node
     {
-        private Node? _parent;
         private ArrayList? _values;
 
         internal virtual bool IsHidden()
@@ -124,7 +123,7 @@ namespace Flee.Parsing
             return EndColumn;
         }
 
-        public Node? Parent => _parent;
+        public Node? Parent { get; private set; }
 
         public Node? GetParent()
         {
@@ -133,7 +132,7 @@ namespace Flee.Parsing
 
         internal void SetParent(Node parent)
         {
-            this._parent = parent;
+            Parent = parent;
         }
 
         public virtual int Count => 0;
@@ -165,28 +164,16 @@ namespace Flee.Parsing
         {
             get
             {
-                if (_values == null)
-                {
-                    _values = new ArrayList();
-                }
+                _values ??= [];
                 return _values;
             }
-            set
-            {
-                this._values = value;
-            }
+
+            set => _values = value;
         }
 
         public int GetValueCount()
         {
-            if (_values == null)
-            {
-                return 0;
-            }
-            else
-            {
-                return _values.Count;
-            }
+            return _values == null ? 0 : _values.Count;
         }
 
         public object GetValue(int pos)
@@ -199,12 +186,12 @@ namespace Flee.Parsing
             return _values;
         }
 
-        
+
         public void AddValue(object value)
         {
             if (value != null)
             {
-                Values.Add(value);
+                _ = Values.Add(value);
             }
         }
 
@@ -230,7 +217,7 @@ namespace Flee.Parsing
         private void PrintTo(TextWriter output, string indent)
         {
             output.WriteLine(indent + ToString());
-            indent = indent + "  ";
+            indent += "  ";
             for (int i = 0; i < Count; i++)
             {
                 this[i].PrintTo(output, indent);

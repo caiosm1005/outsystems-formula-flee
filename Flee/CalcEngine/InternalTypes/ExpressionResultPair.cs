@@ -4,9 +4,6 @@ namespace Flee.CalcEngine.InternalTypes
 {
     internal abstract class ExpressionResultPair
     {
-
-        private string _myName = string.Empty;
-
         protected IDynamicExpression MyExpression = null!;
 
         protected ExpressionResultPair()
@@ -22,15 +19,15 @@ namespace Flee.CalcEngine.InternalTypes
 
         public void SetName(string name)
         {
-            _myName = name;
+            Name = name;
         }
 
         public override string ToString()
         {
-            return _myName;
+            return Name;
         }
 
-        public string Name => _myName;
+        public string Name { get; private set; } = string.Empty;
 
         public abstract Type ResultType { get; }
         public abstract object ResultAsObject { get; set; }

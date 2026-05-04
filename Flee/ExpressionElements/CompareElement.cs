@@ -27,7 +27,7 @@ namespace Flee.ExpressionElements
 
         public void Validate()
         {
-            this.ValidateInternal(_myOperation);
+            ValidateInternal(_myOperation);
         }
 
         protected override void GetOperation(object operation)
@@ -35,38 +35,38 @@ namespace Flee.ExpressionElements
             _myOperation = (LogicalCompareOperation)operation;
         }
 
-        protected override System.Type? GetResultType(System.Type leftType, System.Type rightType)
+        protected override Type? GetResultType(Type leftType, Type rightType)
         {
             Type? binaryResultType = ImplicitConverter.GetBinaryResultType(leftType, rightType);
-            MethodInfo? overloadedOperator = this.GetOverloadedCompareOperator();
+            MethodInfo? overloadedOperator = GetOverloadedCompareOperator();
             bool isEqualityOp = IsOpTypeEqualOrNotEqual(_myOperation);
 
             // Use our string equality instead of overloaded operator
-            if (object.ReferenceEquals(leftType, typeof(string)) & object.ReferenceEquals(rightType, typeof(string)) & isEqualityOp == true)
+            if (ReferenceEquals(leftType, typeof(string)) & ReferenceEquals(rightType, typeof(string)) & isEqualityOp)
             {
                 // String equality
                 return typeof(bool);
             }
-            else if ((overloadedOperator != null))
+            else if (overloadedOperator != null)
             {
                 return overloadedOperator.ReturnType;
             }
-            else if ((binaryResultType != null))
+            else if (binaryResultType != null)
             {
                 // Comparison of numeric operands
                 return typeof(bool);
             }
-            else if (object.ReferenceEquals(leftType, typeof(bool)) & object.ReferenceEquals(rightType, typeof(bool)) & isEqualityOp == true)
+            else if (ReferenceEquals(leftType, typeof(bool)) & ReferenceEquals(rightType, typeof(bool)) & isEqualityOp)
             {
                 // Boolean equality
                 return typeof(bool);
             }
-            else if (this.AreBothChildrenReferenceTypes() == true & isEqualityOp == true)
+            else if (AreBothChildrenReferenceTypes() & isEqualityOp)
             {
                 // Comparison of reference types
                 return typeof(bool);
             }
-            else if (this.AreBothChildrenSameEnum() == true)
+            else if (AreBothChildrenSameEnum())
             {
                 return typeof(bool);
             }
@@ -80,7 +80,7 @@ namespace Flee.ExpressionElements
         private MethodInfo? GetOverloadedCompareOperator()
         {
             string name = GetCompareOperatorName(_myOperation);
-            return base.GetOverloadedBinaryOperator(name, _myOperation);
+            return GetOverloadedBinaryOperator(name, _myOperation);
         }
 
         private static string GetCompareOperatorName(LogicalCompareOperation op)
@@ -108,39 +108,39 @@ namespace Flee.ExpressionElements
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             Type? binaryResultType = ImplicitConverter.GetBinaryResultType(MyLeftChild.ResultType, MyRightChild.ResultType);
-            MethodInfo? overloadedOperator = this.GetOverloadedCompareOperator();
+            MethodInfo? overloadedOperator = GetOverloadedCompareOperator();
 
-            if (this.AreBothChildrenOfType(typeof(string)))
+            if (AreBothChildrenOfType(typeof(string)))
             {
                 // String equality
                 MyLeftChild.Emit(ilg, services);
                 MyRightChild.Emit(ilg, services);
                 EmitStringEquality(ilg, _myOperation, services);
             }
-            else if ((overloadedOperator != null))
+            else if (overloadedOperator != null)
             {
-                base.EmitOverloadedOperatorCall(overloadedOperator, ilg, services);
+                EmitOverloadedOperatorCall(overloadedOperator, ilg, services);
             }
-            else if ((binaryResultType != null))
+            else if (binaryResultType != null)
             {
                 // Emit a compare of numeric operands
                 EmitChildWithConvert(MyLeftChild, binaryResultType, ilg, services);
                 EmitChildWithConvert(MyRightChild, binaryResultType, ilg, services);
                 EmitCompareOperation(ilg, _myOperation);
             }
-            else if (this.AreBothChildrenOfType(typeof(bool)))
+            else if (AreBothChildrenOfType(typeof(bool)))
             {
                 // Boolean equality
-                this.EmitRegular(ilg, services);
+                EmitRegular(ilg, services);
             }
-            else if (this.AreBothChildrenReferenceTypes() == true)
+            else if (AreBothChildrenReferenceTypes())
             {
                 // Reference equality
-                this.EmitRegular(ilg, services);
+                EmitRegular(ilg, services);
             }
-            else if (MyLeftChild.ResultType.IsEnum == true & MyRightChild.ResultType.IsEnum == true)
+            else if (MyLeftChild.ResultType.IsEnum & MyRightChild.ResultType.IsEnum)
             {
-                this.EmitRegular(ilg, services);
+                EmitRegular(ilg, services);
             }
             else
             {
@@ -152,19 +152,19 @@ namespace Flee.ExpressionElements
         {
             MyLeftChild.Emit(ilg, services);
             MyRightChild.Emit(ilg, services);
-            this.EmitCompareOperation(ilg, _myOperation);
+            EmitCompareOperation(ilg, _myOperation);
         }
 
         private static void EmitStringEquality(FleeILGenerator ilg, LogicalCompareOperation op, IServiceProvider services)
         {
             // Get the StringComparison from the options
             ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions))!;
-            Int32LiteralElement ic = new Int32LiteralElement((int)options.StringComparison);
+            Int32LiteralElement ic = new((int)options.StringComparison);
 
             ic.Emit(ilg, services);
 
             // and emit the method call
-            System.Reflection.MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(string), typeof(StringComparison) }, null)!;
+            MethodInfo mi = typeof(string).GetMethod("Equals", [typeof(string), typeof(string), typeof(StringComparison)], null)!;
             ilg.Emit(OpCodes.Call, mi);
 
             if (op == LogicalCompareOperation.NotEqual)
@@ -181,12 +181,12 @@ namespace Flee.ExpressionElements
 
         private bool AreBothChildrenReferenceTypes()
         {
-            return MyLeftChild.ResultType.IsValueType == false & MyRightChild.ResultType.IsValueType == false;
+            return !MyLeftChild.ResultType.IsValueType & !MyRightChild.ResultType.IsValueType;
         }
 
         private bool AreBothChildrenSameEnum()
         {
-            return MyLeftChild.ResultType.IsEnum == true && object.ReferenceEquals(MyLeftChild.ResultType, MyRightChild.ResultType);
+            return MyLeftChild.ResultType.IsEnum && ReferenceEquals(MyLeftChild.ResultType, MyRightChild.ResultType);
         }
 
         /// <summary>
@@ -196,8 +196,8 @@ namespace Flee.ExpressionElements
         /// <param name="op"></param>
         private void EmitCompareOperation(FleeILGenerator ilg, LogicalCompareOperation op)
         {
-            OpCode ltOpcode = this.GetCompareGTLTOpcode(false);
-            OpCode gtOpcode = this.GetCompareGTLTOpcode(true);
+            OpCode ltOpcode = GetCompareGTLTOpcode(false);
+            OpCode gtOpcode = GetCompareGTLTOpcode(true);
 
             switch (op)
             {
@@ -239,41 +239,15 @@ namespace Flee.ExpressionElements
         private OpCode GetCompareGTLTOpcode(bool greaterThan)
         {
             Type leftType = MyLeftChild.ResultType;
-
-            if (object.ReferenceEquals(leftType, MyRightChild.ResultType))
-            {
-                if (object.ReferenceEquals(leftType, typeof(UInt32)) | object.ReferenceEquals(leftType, typeof(UInt64)))
-                {
-                    if (greaterThan == true)
-                    {
-                        return OpCodes.Cgt_Un;
-                    }
-                    else
-                    {
-                        return OpCodes.Clt_Un;
-                    }
-                }
-                else
-                {
-                    return GetCompareOpcode(greaterThan);
-                }
-            }
-            else
-            {
-                return GetCompareOpcode(greaterThan);
-            }
+            return ReferenceEquals(leftType, MyRightChild.ResultType)
+                && (ReferenceEquals(leftType, typeof(UInt32)) | ReferenceEquals(leftType, typeof(UInt64)))
+                    ? (greaterThan ? OpCodes.Cgt_Un : OpCodes.Clt_Un)
+                    : GetCompareOpcode(greaterThan);
         }
 
         private static OpCode GetCompareOpcode(bool greaterThan)
         {
-            if (greaterThan == true)
-            {
-                return OpCodes.Cgt;
-            }
-            else
-            {
-                return OpCodes.Clt;
-            }
+            return greaterThan ? OpCodes.Cgt : OpCodes.Clt;
         }
     }
 }

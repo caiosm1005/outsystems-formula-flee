@@ -4,17 +4,12 @@ namespace Flee.Parsing
      * A regular expression string element. This element only matches
      * an exact string. Once created, the string element is immutable.
      */
-    internal class StringElement : Element
+    internal class StringElement(string str) : Element
     {
-        private readonly string _value;
+        private readonly string _value = str;
         public StringElement(char c)
             : this(c.ToString())
         {
-        }
-
-        public StringElement(string str)
-        {
-            _value = str;
         }
 
         public string GetString()
@@ -46,9 +41,9 @@ namespace Flee.Parsing
                 }
                 if (m.IsCaseInsensitive())
                 {
-                    c = (int)Char.ToLower((char)c);
+                    c = Char.ToLower((char)c);
                 }
-                if (c != (int)_value[i])
+                if (c != _value[i])
                 {
                     return -1;
                 }

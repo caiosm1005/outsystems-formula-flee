@@ -4,12 +4,8 @@ namespace Flee.Parsing
      * The whitespace character set transition. This transition
      * matches a single whitespace character.
      */
-    internal class NFAWhitespaceTransition : NFATransition
+    internal class NFAWhitespaceTransition(NFAState state) : NFATransition(state)
     {
-        public NFAWhitespaceTransition(NFAState state) : base(state)
-        {
-        }
-
         public override bool IsAscii()
         {
             return true;
@@ -17,18 +13,11 @@ namespace Flee.Parsing
 
         public override bool Match(char ch)
         {
-            switch (ch)
+            return ch switch
             {
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\f':
-                case '\r':
-                case (char)11:
-                    return true;
-                default:
-                    return false;
-            }
+                ' ' or '\t' or '\n' or '\f' or '\r' or (char)11 => true,
+                _ => false,
+            };
         }
 
         public override NFATransition Copy(NFAState state)

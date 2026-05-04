@@ -1,13 +1,9 @@
 namespace Flee.Parsing
 {
-    internal class StringDFAMatcher : TokenMatcher
+    internal class StringDFAMatcher(bool ignoreCase) : TokenMatcher(ignoreCase)
     {
 
-        private readonly TokenStringDFA _automaton = new TokenStringDFA();
-
-        public StringDFAMatcher(bool ignoreCase) : base(ignoreCase)
-        {
-        }
+        private readonly TokenStringDFA _automaton = new();
 
         public override void AddPattern(TokenPattern pattern)
         {

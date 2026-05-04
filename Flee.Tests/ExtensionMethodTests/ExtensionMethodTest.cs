@@ -1,14 +1,12 @@
+using Flee.PublicTypes;
+using Flee.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Flee.ExtensionMethodTests
+namespace Flee.Tests.ExtensionMethodTests
 {
-    using Flee.ExtensionMethodTests.ExtensionMethodTestData;
-    using global::Flee.PublicTypes;
-    using global::Flee.Tests.Infrastructure;
-
     /// <summary>The extension method test.</summary>
     [TestClass]
-    public class ExtensionMethodTest : ExpressionTests
+    public class ExtensionMethodTest : Flee.Tests.Infrastructure.ExpressionTests
     {
         [TestMethod]
         public void TestExtensionMethodCallOnOwner()

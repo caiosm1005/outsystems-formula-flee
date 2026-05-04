@@ -1,7 +1,7 @@
 namespace Flee.CalcEngine.PublicTypes
 {
 
-    public class CircularReferenceException : System.Exception
+    public class CircularReferenceException : Exception
     {
         private readonly string? _myCircularReferenceSource;
 
@@ -14,19 +14,8 @@ namespace Flee.CalcEngine.PublicTypes
             _myCircularReferenceSource = circularReferenceSource;
         }
 
-        public override string Message
-        {
-            get
-            {
-                if (_myCircularReferenceSource == null)
-                {
-                    return "Circular reference detected in calculation engine";
-                }
-                else
-                {
-                    return $"Circular reference detected in calculation engine at '{_myCircularReferenceSource}'";
-                }
-            }
-        }
+        public override string Message => _myCircularReferenceSource == null
+            ? "Circular reference detected in calculation engine"
+            : $"Circular reference detected in calculation engine at '{_myCircularReferenceSource}'";
     }
 }

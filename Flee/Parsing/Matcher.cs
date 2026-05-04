@@ -18,10 +18,10 @@ namespace Flee.Parsing
 
         internal Matcher(Element e, ReaderBuffer buffer, bool ignoreCase)
         {
-            this._element = e;
-            this._buffer = buffer;
-            this._ignoreCase = ignoreCase;
-            this._start = 0;
+            _element = e;
+            _buffer = buffer;
+            _ignoreCase = ignoreCase;
+            _start = 0;
             Reset();
         }
 
@@ -43,7 +43,7 @@ namespace Flee.Parsing
 
         public void Reset(ReaderBuffer buffer)
         {
-            this._buffer = buffer;
+            _buffer = buffer;
             Reset();
         }
 
@@ -54,14 +54,7 @@ namespace Flee.Parsing
 
         public int End()
         {
-            if (_length > 0)
-            {
-                return _start + _length;
-            }
-            else
-            {
-                return _start;
-            }
+            return _length > 0 ? _start + _length : _start;
         }
 
         public int Length()
@@ -89,14 +82,7 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            if (_length <= 0)
-            {
-                return "";
-            }
-            else
-            {
-                return _buffer.Substring(_buffer.Position, _length);
-            }
+            return _length <= 0 ? "" : _buffer.Substring(_buffer.Position, _length);
         }
 
         internal void SetReadEndOfString()

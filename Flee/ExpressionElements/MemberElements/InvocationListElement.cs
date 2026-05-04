@@ -12,7 +12,7 @@ namespace Flee.ExpressionElements.MemberElements
         private readonly MemberElement _myTail;
         public InvocationListElement(IList elements, IServiceProvider services)
         {
-            this.HandleFirstElement(elements, services);
+            HandleFirstElement(elements, services);
             LinkElements(elements);
             Resolve(elements, services);
             _myTail = (MemberElement)elements[elements.Count - 1]!;
@@ -41,14 +41,14 @@ namespace Flee.ExpressionElements.MemberElements
             ExpressionElement first = (ExpressionElement)elements[0]!;
 
             // If the first element is not a member element, then we assume it is an expression and replace it with the correct member element
-            if (!(first is MemberElement))
+            if (first is not MemberElement)
             {
-                ExpressionMemberElement actualFirst = new ExpressionMemberElement(first);
+                ExpressionMemberElement actualFirst = new(first);
                 elements[0] = actualFirst;
             }
             else
             {
-                this.ResolveNamespaces(elements, services);
+                ResolveNamespaces(elements, services);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Flee.ExpressionElements.MemberElements
 
             if (elements.Count == 0)
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.NamespaceCannotBeUsedAsType, CompileExceptionReason.TypeMismatch, currentImport.Name);
+                ThrowCompileException(CompileErrorResourceKeys.NamespaceCannotBeUsedAsType, CompileExceptionReason.TypeMismatch, currentImport.Name);
             }
         }
 
@@ -97,7 +97,7 @@ namespace Flee.ExpressionElements.MemberElements
             }
 
             // Is the first member a field/property element?
-            var fpe = elements[0] as IdentifierElement;
+            IdentifierElement? fpe = elements[0] as IdentifierElement;
 
             return fpe?.MemberName;
         }
@@ -115,6 +115,6 @@ namespace Flee.ExpressionElements.MemberElements
             _myTail.Emit(ilg, services);
         }
 
-        public override System.Type ResultType => _myTail.ResultType;
+        public override Type ResultType => _myTail.ResultType;
     }
 }

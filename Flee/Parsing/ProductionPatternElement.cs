@@ -12,10 +12,6 @@ namespace Flee.Parsing
     internal class ProductionPatternElement
     {
         private readonly bool _token;
-        private readonly int _id;
-        private readonly int _min;
-        private readonly int _max;
-        private LookAheadSet? _lookAhead;
 
         public ProductionPatternElement(bool isToken,
                                         int id,
@@ -23,13 +19,13 @@ namespace Flee.Parsing
                                         int max)
         {
 
-            this._token = isToken;
-            this._id = id;
+            _token = isToken;
+            Id = id;
             if (min < 0)
             {
                 min = 0;
             }
-            this._min = min;
+            MinCount = min;
             if (max <= 0)
             {
                 max = Int32.MaxValue;
@@ -38,42 +34,32 @@ namespace Flee.Parsing
             {
                 max = min;
             }
-            this._max = max;
-            this._lookAhead = null;
+            MaxCount = max;
+            LookAhead = null!;
         }
 
-        public int Id => _id;
+        public int Id { get; }
 
         public int GetId()
         {
             return Id;
         }
 
-        public int MinCount => _min;
+        public int MinCount { get; }
 
         public int GetMinCount()
         {
             return MinCount;
         }
 
-        public int MaxCount => _max;
+        public int MaxCount { get; }
 
         public int GetMaxCount()
         {
             return MaxCount;
         }
 
-        internal LookAheadSet LookAhead
-        {
-            get
-            {
-                return _lookAhead!;
-            }
-            set
-            {
-                _lookAhead = value;
-            }
-        }
+        internal LookAheadSet LookAhead { get; set; } = null!;
 
         public bool IsToken()
         {
@@ -87,50 +73,36 @@ namespace Flee.Parsing
 
         public bool IsMatch(Token? token)
         {
-            return IsToken() && token != null && token.Id == _id;
+            return IsToken() && token != null && token.Id == Id;
         }
 
         public override bool Equals(object? obj)
         {
-            if (obj is ProductionPatternElement)
-            {
-                var elem = (ProductionPatternElement)obj;
-                return this._token == elem._token
-                    && this._id == elem._id
-                    && this._min == elem._min
-                    && this._max == elem._max;
-            }
-            else
-            {
-                return false;
-            }
+            return obj is ProductionPatternElement elem
+                && _token == elem._token
+                && Id == elem.Id
+                && MinCount == elem.MinCount
+                && MaxCount == elem.MaxCount;
         }
 
         public override int GetHashCode()
         {
-            return this._id * 37;
+            return Id * 37;
         }
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
-            buffer.Append(_id);
-            if (_token)
+            _ = buffer.Append(Id);
+            _ = buffer.Append(_token ? "(Token)" : "(Production)");
+            if (MinCount != 1 || MaxCount != 1)
             {
-                buffer.Append("(Token)");
-            }
-            else
-            {
-                buffer.Append("(Production)");
-            }
-            if (_min != 1 || _max != 1)
-            {
-                buffer.Append("{");
-                buffer.Append(_min);
-                buffer.Append(",");
-                buffer.Append(_max);
-                buffer.Append("}");
+                _ = buffer.Append("{");
+                _ = buffer.Append(MinCount);
+                _ = buffer.Append(",");
+                _ = buffer.Append(MaxCount);
+                _ = buffer.Append("}");
             }
             return buffer.ToString();
         }

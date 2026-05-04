@@ -1,11 +1,9 @@
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Flee.PublicTypes
 {
     public abstract class ImportBase : IEnumerable<ImportBase>, IEquatable<ImportBase>
     {
-        private ExpressionContext _myContext = null!;
-
         internal ImportBase()
         {
         }
@@ -13,8 +11,8 @@ namespace Flee.PublicTypes
         #region "Methods - Non Public"
         internal virtual void SetContext(ExpressionContext context)
         {
-            _myContext = context;
-            this.Validate();
+            Context = context;
+            Validate();
         }
 
         internal abstract void Validate();
@@ -24,7 +22,7 @@ namespace Flee.PublicTypes
 
         internal ImportBase Clone()
         {
-            return (ImportBase)this.MemberwiseClone();
+            return (ImportBase)MemberwiseClone();
         }
 
         protected static void AddImportMembers(ImportBase import, string memberName, MemberTypes memberType, ICollection<MemberInfo> dest)
@@ -45,10 +43,7 @@ namespace Flee.PublicTypes
             }
         }
 
-        protected bool AlwaysMemberFilter(MemberInfo member, object? criteria)
-        {
-            return true;
-        }
+        protected static readonly MemberFilter AlwaysMemberFilter = (_, _) => true;
 
         internal abstract bool IsMatch(string name);
         internal abstract Type? FindType(string typename);
@@ -60,31 +55,31 @@ namespace Flee.PublicTypes
 
         internal MemberInfo[] FindMembers(string memberName, MemberTypes memberType)
         {
-            List<MemberInfo> found = new List<MemberInfo>();
-            this.AddMembers(memberName, memberType, found);
-            return found.ToArray();
+            List<MemberInfo> found = [];
+            AddMembers(memberName, memberType, found);
+            return [.. found];
         }
         #endregion
 
         #region "Methods - Public"
         public MemberInfo[] GetMembers(MemberTypes memberType)
         {
-            List<MemberInfo> found = new List<MemberInfo>();
-            this.AddMembers(memberType, found);
-            return found.ToArray();
+            List<MemberInfo> found = [];
+            AddMembers(memberType, found);
+            return [.. found];
         }
         #endregion
 
         #region "IEnumerable Implementation"
-        public virtual System.Collections.Generic.IEnumerator<ImportBase> GetEnumerator()
+        public virtual IEnumerator<ImportBase> GetEnumerator()
         {
-            List<ImportBase> coll = new List<ImportBase>();
+            List<ImportBase> coll = [];
             return coll.GetEnumerator();
         }
 
         private System.Collections.IEnumerator GetEnumerator1()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
@@ -95,14 +90,14 @@ namespace Flee.PublicTypes
         #region "IEquatable Implementation"
         public bool Equals(ImportBase? other)
         {
-            return other != null && this.EqualsInternal(other);
+            return other != null && EqualsInternal(other);
         }
 
         protected abstract bool EqualsInternal(ImportBase import);
         #endregion
 
         #region "Properties - Protected"
-        protected ExpressionContext Context => _myContext;
+        protected ExpressionContext Context { get; private set; } = null!;
 
         #endregion
 

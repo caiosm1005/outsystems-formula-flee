@@ -6,12 +6,8 @@ namespace Flee.Parsing
      * read any input. As such, it returns false in the match method
      * and is handled specially everywhere.
      */
-    internal class NFAEpsilonTransition : NFATransition
+    internal class NFAEpsilonTransition(NFAState state) : NFATransition(state)
     {
-        public NFAEpsilonTransition(NFAState state) : base(state)
-        {
-        }
-
         public override bool IsAscii()
         {
             return false;

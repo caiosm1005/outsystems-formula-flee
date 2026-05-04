@@ -8,7 +8,7 @@ namespace Flee.Parsing
      * regular expression couldn't be processed (or "compiled")
      * properly.
      */
-    internal class RegExpException : Exception
+    internal class RegExpException(RegExpException.ErrorType type, int pos, string pattern) : Exception
     {
         public enum ErrorType
         {
@@ -50,62 +50,43 @@ namespace Flee.Parsing
             INVALID_REPEAT_COUNT
         }
 
-        private readonly ErrorType _type;
-        private readonly int _position;
-        private readonly string _pattern;
-
-        public RegExpException(ErrorType type, int pos, string pattern)
-        {
-            this._type = type;
-            this._position = pos;
-            this._pattern = pattern;
-        }
+        private readonly ErrorType _type = type;
+        private readonly int _position = pos;
+        private readonly string _pattern = pattern;
 
         public override string Message => GetMessage();
 
         public string GetMessage()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             // Append error type name
-            switch (_type)
+            _ = buffer.Append(_type switch
             {
-                case ErrorType.UNEXPECTED_CHARACTER:
-                    buffer.Append("unexpected character");
-                    break;
-                case ErrorType.UNTERMINATED_PATTERN:
-                    buffer.Append("unterminated pattern");
-                    break;
-                case ErrorType.UNSUPPORTED_SPECIAL_CHARACTER:
-                    buffer.Append("unsupported character");
-                    break;
-                case ErrorType.UNSUPPORTED_ESCAPE_CHARACTER:
-                    buffer.Append("unsupported escape character");
-                    break;
-                case ErrorType.INVALID_REPEAT_COUNT:
-                    buffer.Append("invalid repeat count");
-                    break;
-                default:
-                    buffer.Append("internal error");
-                    break;
-            }
+                ErrorType.UNEXPECTED_CHARACTER => "unexpected character",
+                ErrorType.UNTERMINATED_PATTERN => "unterminated pattern",
+                ErrorType.UNSUPPORTED_SPECIAL_CHARACTER => "unsupported character",
+                ErrorType.UNSUPPORTED_ESCAPE_CHARACTER => "unsupported escape character",
+                ErrorType.INVALID_REPEAT_COUNT => "invalid repeat count",
+                _ => "internal error",
+            });
 
             // Append erroneous character
-            buffer.Append(": ");
+            _ = buffer.Append(": ");
             if (_position < _pattern.Length)
             {
-                buffer.Append('\'');
-                buffer.Append(_pattern.Substring(_position));
-                buffer.Append('\'');
+                _ = buffer.Append('\'');
+                _ = buffer.Append(_pattern.Substring(_position));
+                _ = buffer.Append('\'');
             }
             else
             {
-                buffer.Append("<end of pattern>");
+                _ = buffer.Append("<end of pattern>");
             }
 
             // Append position
-            buffer.Append(" at position ");
-            buffer.Append(_position);
+            _ = buffer.Append(" at position ");
+            _ = buffer.Append(_position);
 
             return buffer.ToString();
         }

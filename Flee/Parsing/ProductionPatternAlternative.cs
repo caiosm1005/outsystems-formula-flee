@@ -14,32 +14,20 @@ namespace Flee.Parsing
      */
     internal class ProductionPatternAlternative
     {
-        private ProductionPattern _pattern = null!;
-        private readonly ArrayList _elements = new ArrayList();
-        private LookAheadSet? _lookAhead = null;
+        private readonly ArrayList _elements = [];
 
         public ProductionPatternAlternative()
         {
         }
 
-        public ProductionPattern Pattern => _pattern;
+        public ProductionPattern Pattern { get; private set; } = null!;
 
         public ProductionPattern GetPattern()
         {
             return Pattern;
         }
 
-        internal LookAheadSet LookAhead
-        {
-            get
-            {
-                return _lookAhead!;
-            }
-            set
-            {
-                _lookAhead = value;
-            }
-        }
+        internal LookAheadSet LookAhead { get; set; } = null!;
 
         public int Count => _elements.Count;
 
@@ -59,8 +47,8 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < _elements.Count; i++)
             {
-                var elem = (ProductionPatternElement)_elements[i]!;
-                if (elem.Id == _pattern.Id)
+                ProductionPatternElement elem = (ProductionPatternElement)_elements[i]!;
+                if (elem.Id == Pattern.Id)
                 {
                     return true;
                 }
@@ -76,8 +64,8 @@ namespace Flee.Parsing
         {
             for (int i = _elements.Count - 1; i >= 0; i--)
             {
-                var elem = (ProductionPatternElement)_elements[i]!;
-                if (elem.Id == _pattern.Id)
+                ProductionPatternElement elem = (ProductionPatternElement)_elements[i]!;
+                if (elem.Id == Pattern.Id)
                 {
                     return true;
                 }
@@ -96,7 +84,7 @@ namespace Flee.Parsing
 
         internal void SetPattern(ProductionPattern pattern)
         {
-            this._pattern = pattern;
+            Pattern = pattern;
         }
 
         public int GetMinElementCount()
@@ -105,7 +93,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _elements.Count; i++)
             {
-                var elem = (ProductionPatternElement)_elements[i]!;
+                ProductionPatternElement elem = (ProductionPatternElement)_elements[i]!;
                 min += elem.MinCount;
             }
             return min;
@@ -117,7 +105,7 @@ namespace Flee.Parsing
 
             for (int i = 0; i < _elements.Count; i++)
             {
-                var elem = (ProductionPatternElement)_elements[i]!;
+                ProductionPatternElement elem = (ProductionPatternElement)_elements[i]!;
                 if (elem.MaxCount >= Int32.MaxValue)
                 {
                     return Int32.MaxValue;
@@ -142,7 +130,7 @@ namespace Flee.Parsing
 
         public void AddElement(ProductionPatternElement elem)
         {
-            _elements.Add(elem);
+            _ = _elements.Add(elem);
         }
 
         public void AddElement(ProductionPatternElement elem,
@@ -162,14 +150,7 @@ namespace Flee.Parsing
 
         public override bool Equals(object? obj)
         {
-            if (obj is ProductionPatternAlternative alternative)
-            {
-                return Equals(alternative);
-            }
-            else
-            {
-                return false;
-            }
+            return obj is ProductionPatternAlternative alternative && Equals(alternative);
         }
 
         public bool Equals(ProductionPatternAlternative alt)
@@ -195,15 +176,15 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _elements.Count; i++)
             {
                 if (i > 0)
                 {
-                    buffer.Append(" ");
+                    _ = buffer.Append(" ");
                 }
-                buffer.Append(_elements[i]);
+                _ = buffer.Append(_elements[i]);
             }
             return buffer.ToString();
         }

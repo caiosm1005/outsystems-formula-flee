@@ -8,21 +8,14 @@ namespace Flee.Tests.CalcEngineTests
     [TestClass]
     public class SimpleCalcEngineTests
     {
-        private SimpleCalcEngine _myEngine;
-        public SimpleCalcEngineTests()
+        [TestMethod]
+        public void TestScripts()
         {
             var engine = new SimpleCalcEngine();
             var context = new ExpressionContext();
             context.Imports.AddType(typeof(Math));
             context.Imports.AddType(typeof(Math), "math");
             engine.Context = context;
-            _myEngine = engine;
-        }
-
-        [TestMethod]
-        public void TestScripts()
-        {
-            
         }
     }
 }

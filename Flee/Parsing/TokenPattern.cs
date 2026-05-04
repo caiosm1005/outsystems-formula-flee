@@ -10,7 +10,10 @@ namespace Flee.Parsing
      *
     
      */
-    internal class TokenPattern
+    internal class TokenPattern(int id,
+                        string name,
+TokenPattern.PatternType type,
+                        string pattern)
     {
         public enum PatternType
         {
@@ -28,90 +31,40 @@ namespace Flee.Parsing
             REGEXP
         }
 
-        private int _id;
-        private string _name;
-        private PatternType _type;
-        private string _pattern;
         private bool _error;
         private string _errorMessage = string.Empty;
-        private bool _ignore;
-        private string _ignoreMessage = string.Empty;
-        private string _debugInfo = string.Empty;
 
-        public TokenPattern(int id,
-                            string name,
-                            PatternType type,
-                            string pattern)
-        {
-
-            this._id = id;
-            this._name = name;
-            this._type = type;
-            this._pattern = pattern;
-        }
-
-        public int Id
-        {
-            get
-            {
-                return _id;
-            }
-            set { _id = value; }
-        }
+        public int Id { get; set; } = id;
 
         public int GetId()
         {
-            return _id;
+            return Id;
         }
 
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set { _name = value; }
-        }
+        public string Name { get; set; } = name;
 
         public string GetName()
         {
-            return _name;
+            return Name;
         }
 
-        public PatternType Type
-        {
-            get
-            {
-                return _type;
-            }
-            set { _type = value; }
-        }
+        public PatternType Type { get; set; } = type;
 
         public PatternType GetPatternType()
         {
-            return _type;
+            return Type;
         }
 
-        public string Pattern
-        {
-            get
-            {
-                return _pattern;
-            }
-            set { _pattern = value; }
-        }
+        public string Pattern { get; set; } = pattern;
 
         public string GetPattern()
         {
-            return _pattern;
+            return Pattern;
         }
 
         public bool Error
         {
-            get
-            {
-                return _error;
-            }
+            get => _error;
             set
             {
                 _error = value;
@@ -124,10 +77,7 @@ namespace Flee.Parsing
 
         public string ErrorMessage
         {
-            get
-            {
-                return _errorMessage;
-            }
+            get => _errorMessage;
             set
             {
                 _error = true;
@@ -155,30 +105,16 @@ namespace Flee.Parsing
             ErrorMessage = message;
         }
 
-        public bool Ignore
-        {
-            get
-            {
-                return _ignore;
-            }
-            set
-            {
-                _ignore = value;
-            }
-        }
+        public bool Ignore { get; set; }
 
         public string IgnoreMessage
         {
-            get
+            get; set
             {
-                return _ignoreMessage;
+                Ignore = true;
+                field = value;
             }
-            set
-            {
-                _ignore = true;
-                _ignoreMessage = value;
-            }
-        }
+        } = string.Empty;
 
         public bool IsIgnore()
         {
@@ -190,103 +126,95 @@ namespace Flee.Parsing
             return IgnoreMessage;
         }
 
-       
+
         public void SetIgnore()
         {
             Ignore = true;
         }
 
-        
+
         public void SetIgnore(string message)
         {
             IgnoreMessage = message;
         }
 
-        public string DebugInfo
-        {
-            get
-            {
-                return _debugInfo;
-            }
-            set
-            {
-                _debugInfo = value;
-            }
-        }
+        public string DebugInfo { get; set; } = string.Empty;
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
-            buffer.Append(_name);
-            buffer.Append(" (");
-            buffer.Append(_id);
-            buffer.Append("): ");
-            switch (_type)
+            _ = buffer.Append(Name);
+            _ = buffer.Append(" (");
+            _ = buffer.Append(Id);
+            _ = buffer.Append("): ");
+            switch (Type)
             {
                 case PatternType.STRING:
-                    buffer.Append("\"");
-                    buffer.Append(_pattern);
-                    buffer.Append("\"");
+                    _ = buffer.Append("\"");
+                    _ = buffer.Append(Pattern);
+                    _ = buffer.Append("\"");
                     break;
                 case PatternType.REGEXP:
-                    buffer.Append("<<");
-                    buffer.Append(_pattern);
-                    buffer.Append(">>");
+                    _ = buffer.Append("<<");
+                    _ = buffer.Append(Pattern);
+                    _ = buffer.Append(">>");
+                    break;
+                default:
                     break;
             }
             if (_error)
             {
-                buffer.Append(" ERROR: \"");
-                buffer.Append(_errorMessage);
-                buffer.Append("\"");
+                _ = buffer.Append(" ERROR: \"");
+                _ = buffer.Append(_errorMessage);
+                _ = buffer.Append("\"");
             }
-            if (_ignore)
+            if (Ignore)
             {
-                buffer.Append(" IGNORE");
-                if (_ignoreMessage != null)
+                _ = buffer.Append(" IGNORE");
+                if (IgnoreMessage != null)
                 {
-                    buffer.Append(": \"");
-                    buffer.Append(_ignoreMessage);
-                    buffer.Append("\"");
+                    _ = buffer.Append(": \"");
+                    _ = buffer.Append(IgnoreMessage);
+                    _ = buffer.Append("\"");
                 }
             }
-            if (_debugInfo != null)
+            if (DebugInfo != null)
             {
-                buffer.Append("\n  ");
-                buffer.Append(_debugInfo);
+                _ = buffer.Append("\n  ");
+                _ = buffer.Append(DebugInfo);
             }
             return buffer.ToString();
         }
 
         public string ToShortString()
         {
-            StringBuilder buffer = new StringBuilder();
-            int newline = _pattern.IndexOf('\n');
+            StringBuilder buffer = new();
+            int newline = Pattern.IndexOf('\n');
 
-            if (_type == PatternType.STRING)
+            if (Type == PatternType.STRING)
             {
-                buffer.Append("\"");
+                _ = buffer.Append("\"");
                 if (newline >= 0)
                 {
-                    if (newline > 0 && _pattern[newline - 1] == '\r')
+                    if (newline > 0 && Pattern[newline - 1] == '\r')
                     {
                         newline--;
                     }
-                    buffer.Append(_pattern.Substring(0, newline));
-                    buffer.Append("(...)");
+                    _ = buffer.Append(Pattern.Substring(0, newline));
+                    _ = buffer.Append("(...)");
                 }
                 else
                 {
-                    buffer.Append(_pattern);
+                    _ = buffer.Append(Pattern);
                 }
-                buffer.Append("\"");
+                _ = buffer.Append("\"");
             }
             else
             {
-                buffer.Append("<");
-                buffer.Append(_name);
-                buffer.Append(">");
+                _ = buffer.Append("<");
+                _ = buffer.Append(Name);
+                _ = buffer.Append(">");
             }
 
             return buffer.ToString();

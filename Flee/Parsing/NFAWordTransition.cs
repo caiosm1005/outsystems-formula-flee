@@ -4,13 +4,8 @@ namespace Flee.Parsing
      * The word character set transition. This transition matches a
      * single word character.
      */
-    internal class NFAWordTransition : NFATransition
+    internal class NFAWordTransition(NFAState state) : NFATransition(state)
     {
-
-        public NFAWordTransition(NFAState state) : base(state)
-        {
-        }
-
         public override bool IsAscii()
         {
             return true;
@@ -19,10 +14,7 @@ namespace Flee.Parsing
 
         public override bool Match(char ch)
         {
-            return ('a' <= ch && ch <= 'z')
-                || ('A' <= ch && ch <= 'Z')
-                || ('0' <= ch && ch <= '9')
-                || ch == '_';
+            return ch is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9') or '_';
         }
 
         public override NFATransition Copy(NFAState state)

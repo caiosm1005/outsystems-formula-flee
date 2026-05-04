@@ -1,4 +1,4 @@
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 using Flee.ExpressionElements.Base;
 using Flee.InternalTypes;
 using Flee.PublicTypes;
@@ -18,29 +18,29 @@ namespace Flee.ExpressionElements
             _myWhenTrue = whenTrue;
             _myWhenFalse = whenFalse;
 
-            if ((!object.ReferenceEquals(_myCondition.ResultType, typeof(bool))))
+            if (!ReferenceEquals(_myCondition.ResultType, typeof(bool)))
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.FirstArgNotBoolean, CompileExceptionReason.TypeMismatch);
+                ThrowCompileException(CompileErrorResourceKeys.FirstArgNotBoolean, CompileExceptionReason.TypeMismatch);
             }
 
             // The result type is the type that is common to the true/false operands
-            if (ImplicitConverter.EmitImplicitConvert(_myWhenFalse.ResultType, _myWhenTrue.ResultType, null) == true)
+            if (ImplicitConverter.EmitImplicitConvert(_myWhenFalse.ResultType, _myWhenTrue.ResultType, null))
             {
                 _myResultType = _myWhenTrue.ResultType;
             }
-            else if (ImplicitConverter.EmitImplicitConvert(_myWhenTrue.ResultType, _myWhenFalse.ResultType, null) == true)
+            else if (ImplicitConverter.EmitImplicitConvert(_myWhenTrue.ResultType, _myWhenFalse.ResultType, null))
             {
                 _myResultType = _myWhenFalse.ResultType;
             }
             else
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther, CompileExceptionReason.TypeMismatch, _myWhenTrue.ResultType.Name, _myWhenFalse.ResultType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther, CompileExceptionReason.TypeMismatch, _myWhenTrue.ResultType.Name, _myWhenFalse.ResultType.Name);
             }
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            this.EmitConditional(ilg, services);
+            EmitConditional(ilg, services);
         }
 
         private void EmitConditional(FleeILGenerator ilg, IServiceProvider services)
@@ -56,7 +56,7 @@ namespace Flee.ExpressionElements
 
             // Emit the true operand
             _myWhenTrue.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(_myWhenTrue.ResultType, _myResultType, ilg);
+            _ = ImplicitConverter.EmitImplicitConvert(_myWhenTrue.ResultType, _myResultType, ilg);
 
             // Jump to end
             ilg.EmitBranch(endLabel);
@@ -65,11 +65,11 @@ namespace Flee.ExpressionElements
 
             // Emit the false operand
             _myWhenFalse.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(_myWhenFalse.ResultType, _myResultType, ilg);
+            _ = ImplicitConverter.EmitImplicitConvert(_myWhenFalse.ResultType, _myResultType, ilg);
             // Fall through to end
             ilg.MarkLabel(endLabel);
         }
 
-        public override System.Type ResultType => _myResultType;
+        public override Type ResultType => _myResultType;
     }
 }

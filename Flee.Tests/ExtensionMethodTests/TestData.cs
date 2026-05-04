@@ -1,13 +1,10 @@
-namespace Flee.ExtensionMethodTests.ExtensionMethodTestData
+namespace Flee.Tests.ExtensionMethodTests
 {
     internal class TestData
     {
         public required string Id { get; set; }
 
-        public TestData Sub
-        {
-            get { return new TestData { Id = "Sub" + this.Id }; }
-        }
+        public TestData Sub => new() { Id = "Sub" + Id };
 
         public string SayHello(int times)
         {
@@ -23,27 +20,33 @@ namespace Flee.ExtensionMethodTests.ExtensionMethodTestData
         /// <summary>
         /// A bug previous meant a small difference in
         /// parameters was not detected and treated
-        /// as ambiguous
+        /// as ambiguous. The parameter values are not inspected; only their
+        /// types matter, since these overloads exist to test that the binder
+        /// picks the correct one based on argument types.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <returns></returns>
         public string MatchParams(uint x, int y, int z)
         {
-            return "UII";
+            return Tag("UII", x, y, z);
         }
+
         public string MatchParams(int x, int y, int z)
         {
-            return "III";
+            return Tag("III", x, y, z);
         }
+
         public string MatchParams(float x, float y, double z)
         {
-            return "FFD";
+            return Tag("FFD", x, y, z);
         }
+
         public string MatchParams(double x, double y, double z)
         {
-            return "DDD";
+            return Tag("DDD", x, y, z);
+        }
+
+        private static string Tag(string label, object _1, object _2, object _3)
+        {
+            return label;
         }
     }
 }

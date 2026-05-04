@@ -4,13 +4,9 @@ using Flee.InternalTypes;
 
 namespace Flee.ExpressionElements.MemberElements
 {
-    internal class ExpressionMemberElement : MemberElement
+    internal class ExpressionMemberElement(ExpressionElement element) : MemberElement
     {
-        private readonly ExpressionElement _myElement;
-        public ExpressionMemberElement(ExpressionElement element)
-        {
-            _myElement = element;
-        }
+        private readonly ExpressionElement _myElement = element;
 
         protected override void ResolveInternal()
         {
@@ -20,9 +16,9 @@ namespace Flee.ExpressionElements.MemberElements
         {
             base.Emit(ilg, services);
             _myElement.Emit(ilg, services);
-            if (_myElement.ResultType.IsValueType == true)
+            if (_myElement.ResultType.IsValueType)
             {
-                EmitValueTypeLoadAddress(ilg, this.ResultType);
+                EmitValueTypeLoadAddress(ilg, ResultType);
             }
         }
 
@@ -33,6 +29,6 @@ namespace Flee.ExpressionElements.MemberElements
         public override bool IsStatic => false;
         public override bool IsExtensionMethod => false;
 
-        public override System.Type ResultType => _myElement.ResultType;
+        public override Type ResultType => _myElement.ResultType;
     }
 }

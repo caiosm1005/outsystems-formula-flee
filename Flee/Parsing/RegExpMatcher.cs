@@ -1,12 +1,8 @@
 namespace Flee.Parsing
 {
-    internal class RegExpMatcher : TokenMatcher
+    internal class RegExpMatcher(bool ignoreCase) : TokenMatcher(ignoreCase)
     {
-        private REHandler[] _regExps = new REHandler[0];
-
-        public RegExpMatcher(bool ignoreCase) : base(ignoreCase)
-        {
-        }
+        private REHandler[] _regExps = [];
 
         public override void AddPattern(TokenPattern pattern)
         {

@@ -10,8 +10,6 @@ namespace Flee.Parsing
      */
     internal class Token : Node
     {
-        private readonly TokenPattern _pattern;
-        private readonly string _image;
         private readonly int _startLine;
         private readonly int _startColumn;
         private readonly int _endLine;
@@ -21,23 +19,23 @@ namespace Flee.Parsing
 
         public Token(TokenPattern pattern, string image, int line, int col)
         {
-            this._pattern = pattern;
-            this._image = image;
-            this._startLine = line;
-            this._startColumn = col;
-            this._endLine = line;
-            this._endColumn = col + image.Length - 1;
+            Pattern = pattern;
+            Image = image;
+            _startLine = line;
+            _startColumn = col;
+            _endLine = line;
+            _endColumn = col + image.Length - 1;
             for (int pos = 0; image.IndexOf('\n', pos) >= 0;)
             {
                 pos = image.IndexOf('\n', pos) + 1;
-                this._endLine++;
+                _endLine++;
                 _endColumn = image.Length - pos;
             }
         }
 
-        public override int Id => _pattern.Id;
+        public override int Id => Pattern.Id;
 
-        public override string Name => _pattern.Name;
+        public override string Name => Pattern.Name;
 
         public override int StartLine => _startLine;
 
@@ -47,31 +45,22 @@ namespace Flee.Parsing
 
         public override int EndColumn => _endColumn;
 
-        public string Image => _image;
+        public string Image { get; }
 
         public string GetImage()
         {
             return Image;
         }
 
-        internal TokenPattern Pattern => _pattern;
+        internal TokenPattern Pattern { get; }
         public Token? Previous
         {
-            get
-            {
-                return _previous;
-            }
+            get => _previous;
             set
             {
-                if (_previous != null)
-                {
-                    _previous._next = null;
-                }
+                _ = (_previous?._next = null);
                 _previous = value;
-                if (_previous != null)
-                {
-                    _previous._next = this;
-                }
+                _ = (_previous?._next = this);
             }
         }
 
@@ -82,21 +71,12 @@ namespace Flee.Parsing
 
         public Token? Next
         {
-            get
-            {
-                return _next;
-            }
+            get => _next;
             set
             {
-                if (_next != null)
-                {
-                    _next._previous = null;
-                }
+                _ = (_next?._previous = null);
                 _next = value;
-                if (_next != null)
-                {
-                    _next._previous = this;
-                }
+                _ = (_next?._previous = this);
             }
         }
 
@@ -107,59 +87,59 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
-            int newline = _image.IndexOf('\n');
+            StringBuilder buffer = new();
+            int newline = Image.IndexOf('\n');
 
-            buffer.Append(_pattern.Name);
-            buffer.Append("(");
-            buffer.Append(_pattern.Id);
-            buffer.Append("): \"");
+            _ = buffer.Append(Pattern.Name);
+            _ = buffer.Append("(");
+            _ = buffer.Append(Pattern.Id);
+            _ = buffer.Append("): \"");
             if (newline >= 0)
             {
-                if (newline > 0 && _image[newline - 1] == '\r')
+                if (newline > 0 && Image[newline - 1] == '\r')
                 {
                     newline--;
                 }
-                buffer.Append(_image.Substring(0, newline));
-                buffer.Append("(...)");
+                _ = buffer.Append(Image.Substring(0, newline));
+                _ = buffer.Append("(...)");
             }
             else
             {
-                buffer.Append(_image);
+                _ = buffer.Append(Image);
             }
-            buffer.Append("\", line: ");
-            buffer.Append(_startLine);
-            buffer.Append(", col: ");
-            buffer.Append(_startColumn);
+            _ = buffer.Append("\", line: ");
+            _ = buffer.Append(_startLine);
+            _ = buffer.Append(", col: ");
+            _ = buffer.Append(_startColumn);
 
             return buffer.ToString();
         }
 
         public string ToShortString()
         {
-            StringBuilder buffer = new StringBuilder();
-            int newline = _image.IndexOf('\n');
+            StringBuilder buffer = new();
+            int newline = Image.IndexOf('\n');
 
-            buffer.Append('"');
+            _ = buffer.Append('"');
             if (newline >= 0)
             {
-                if (newline > 0 && _image[newline - 1] == '\r')
+                if (newline > 0 && Image[newline - 1] == '\r')
                 {
                     newline--;
                 }
-                buffer.Append(_image.Substring(0, newline));
-                buffer.Append("(...)");
+                _ = buffer.Append(Image.Substring(0, newline));
+                _ = buffer.Append("(...)");
             }
             else
             {
-                buffer.Append(_image);
+                _ = buffer.Append(Image);
             }
-            buffer.Append('"');
-            if (_pattern.Type == TokenPattern.PatternType.REGEXP)
+            _ = buffer.Append('"');
+            if (Pattern.Type == TokenPattern.PatternType.REGEXP)
             {
-                buffer.Append(" <");
-                buffer.Append(_pattern.Name);
-                buffer.Append(">");
+                _ = buffer.Append(" <");
+                _ = buffer.Append(Pattern.Name);
+                _ = buffer.Append(">");
             }
 
             return buffer.ToString();

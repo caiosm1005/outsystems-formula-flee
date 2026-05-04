@@ -7,7 +7,7 @@ namespace Flee.InternalTypes
         public object MyValue = null!;
         public IVariable Clone()
         {
-            GenericVariable<T> copy = new GenericVariable<T> { MyValue = MyValue };
+            GenericVariable<T> copy = new() { MyValue = MyValue };
             return copy;
         }
 
@@ -16,22 +16,12 @@ namespace Flee.InternalTypes
             return MyValue;
         }
 
-        public System.Type VariableType => typeof(T);
+        public Type VariableType => typeof(T);
 
         public object ValueAsObject
         {
-            get { return MyValue; }
-            set
-            {
-                if (value == null)
-                {
-                    MyValue = default(T)!;
-                }
-                else
-                {
-                    MyValue = value;
-                }
-            }
+            get => MyValue;
+            set => MyValue = value ?? default(T)!;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Flee.Parsing
         private readonly string _pattern;
         private readonly bool _ignoreCase;
         private int _pos;
-        internal NFAState Start = new NFAState();
+        internal NFAState Start = new();
         internal NFAState End;
         private int _stateCount;
         private int _transitionCount;
@@ -25,10 +25,10 @@ namespace Flee.Parsing
 
         public TokenRegExpParser(string pattern, bool ignoreCase)
         {
-            this._pattern = pattern;
-            this._ignoreCase = ignoreCase;
-            this._pos = 0;
-            this.End = ParseExpr(Start);
+            _pattern = pattern;
+            _ignoreCase = ignoreCase;
+            _pos = 0;
+            End = ParseExpr(Start);
             if (_pos < pattern.Length)
             {
                 throw new RegExpException(
@@ -42,7 +42,7 @@ namespace Flee.Parsing
         {
             if (_stateCount == 0)
             {
-                UpdateStats(Start, new Hashtable());
+                UpdateStats(Start, []);
             }
             return _stateCount + " states, " +
                    _transitionCount + " transitions, " +
@@ -69,14 +69,14 @@ namespace Flee.Parsing
 
         private NFAState ParseExpr(NFAState start)
         {
-            NFAState end = new NFAState();
+            NFAState end = new();
             do
             {
                 if (PeekChar(0) == '|')
                 {
-                    ReadChar('|');
+                    _ = ReadChar('|');
                 }
-                var subStart = new NFAState();
+                NFAState subStart = new();
                 var subEnd = ParseTerm(subStart);
                 if (subStart.Incoming.Length == 0)
                 {
@@ -84,7 +84,7 @@ namespace Flee.Parsing
                 }
                 else
                 {
-                    start.AddOut(new NFAEpsilonTransition(subStart));
+                    _ = start.AddOut(new NFAEpsilonTransition(subStart));
                 }
                 if (subEnd.Outgoing.Length == 0 ||
                     (!end.HasTransitions() && PeekChar(0) != '|'))
@@ -93,7 +93,7 @@ namespace Flee.Parsing
                 }
                 else
                 {
-                    subEnd.AddOut(new NFAEpsilonTransition(end));
+                    _ = subEnd.AddOut(new NFAEpsilonTransition(end));
                 }
             } while (PeekChar(0) == '|');
             return end;
@@ -124,7 +124,7 @@ namespace Flee.Parsing
 
         private NFAState ParseFact(NFAState start)
         {
-            NFAState placeholder = new NFAState();
+            NFAState placeholder = new();
 
             var end = ParseAtom(placeholder);
             switch (PeekChar(0))
@@ -135,10 +135,12 @@ namespace Flee.Parsing
                 case '{':
                     end = ParseAtomModifier(placeholder, end);
                     break;
+                default:
+                    break;
             }
             if (placeholder.Incoming.Length > 0 && start.Outgoing.Length > 0)
             {
-                start.AddOut(new NFAEpsilonTransition(placeholder));
+                _ = start.AddOut(new NFAEpsilonTransition(placeholder));
                 return end;
             }
             else
@@ -155,17 +157,17 @@ namespace Flee.Parsing
             switch (PeekChar(0))
             {
                 case '.':
-                    ReadChar('.');
+                    _ = ReadChar('.');
                     return start.AddOut(new NFADotTransition(new NFAState()));
                 case '(':
-                    ReadChar('(');
+                    _ = ReadChar('(');
                     end = ParseExpr(start);
-                    ReadChar(')');
+                    _ = ReadChar(')');
                     return end;
                 case '[':
-                    ReadChar('[');
+                    _ = ReadChar('[');
                     end = ParseCharSet(start);
-                    ReadChar(']');
+                    _ = ReadChar(']');
                     return end;
                 case -1:
                 case ')':
@@ -187,8 +189,8 @@ namespace Flee.Parsing
 
         private NFAState ParseAtomModifier(NFAState start, NFAState end)
         {
-            int min = 0;
-            int max = -1;
+            int min;
+            int max;
             int firstPos = _pos;
 
             // Read min and max
@@ -211,14 +213,14 @@ namespace Flee.Parsing
                     max = min;
                     if (PeekChar(0) == ',')
                     {
-                        ReadChar(',');
+                        _ = ReadChar(',');
                         max = -1;
                         if (PeekChar(0) != '}')
                         {
                             max = ReadNumber();
                         }
                     }
-                    ReadChar('}');
+                    _ = ReadChar('}');
                     if (max == 0 || (max > 0 && min > max))
                     {
                         throw new RegExpException(
@@ -263,24 +265,19 @@ namespace Flee.Parsing
                 }
                 else
                 {
-                    end.AddOut(new NFAEpsilonTransition(start));
+                    _ = end.AddOut(new NFAEpsilonTransition(start));
                 }
                 return start;
             }
             else if (min == 1 && max == -1)
             {
-                if (start.Outgoing.Length == 1 &&
+                _ = end.AddOut(
+                    start.Outgoing.Length == 1 &&
                     end.Outgoing.Length == 0 &&
                     end.Incoming.Length == 1 &&
-                    start.Outgoing[0] == end.Incoming[0])
-                {
-
-                    end.AddOut(start.Outgoing[0].Copy(end));
-                }
-                else
-                {
-                    end.AddOut(new NFAEpsilonTransition(start));
-                }
+                    start.Outgoing[0] == end.Incoming[0]
+                        ? start.Outgoing[0].Copy(end)
+                        : new NFAEpsilonTransition(start));
                 return end;
             }
             else
@@ -294,19 +291,19 @@ namespace Flee.Parsing
 
         private NFAState ParseCharSet(NFAState start)
         {
-            NFAState end = new NFAState();
+            NFAState end = new();
             NFACharRangeTransition range;
 
             if (PeekChar(0) == '^')
             {
-                ReadChar('^');
+                _ = ReadChar('^');
                 range = new NFACharRangeTransition(true, _ignoreCase, end);
             }
             else
             {
                 range = new NFACharRangeTransition(false, _ignoreCase, end);
             }
-            start.AddOut(range);
+            _ = start.AddOut(range);
             while (PeekChar(0) > 0)
             {
                 var min = (char)PeekChar(0);
@@ -318,13 +315,13 @@ namespace Flee.Parsing
                         range.AddCharacter(ReadEscapeChar());
                         break;
                     default:
-                        ReadChar(min);
+                        _ = ReadChar(min);
                         if (PeekChar(0) == '-' &&
                             PeekChar(1) > 0 &&
                             PeekChar(1) != ']')
                         {
 
-                            ReadChar('-');
+                            _ = ReadChar('-');
                             var max = ReadChar();
                             range.AddRange(min, max);
                         }
@@ -340,53 +337,51 @@ namespace Flee.Parsing
 
         private NFAState ParseChar(NFAState start)
         {
-            switch (PeekChar(0))
+            return PeekChar(0) switch
             {
-                case '\\':
-                    return ParseEscapeChar(start);
-                case '^':
-                case '$':
-                    throw new RegExpException(
-                        RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
-                        _pos,
-                        _pattern);
-                default:
-                    return start.AddOut(ReadChar(), _ignoreCase, new NFAState());
-            }
+                '\\' => ParseEscapeChar(start),
+                '^' or '$' => throw new RegExpException(
+                                        RegExpException.ErrorType.UNSUPPORTED_SPECIAL_CHARACTER,
+                                        _pos,
+                                        _pattern),
+                _ => start.AddOut(ReadChar(), _ignoreCase, new NFAState()),
+            };
         }
 
         private NFAState ParseEscapeChar(NFAState start)
         {
-            NFAState end = new NFAState();
+            NFAState end = new();
 
             if (PeekChar(0) == '\\' && PeekChar(1) > 0)
             {
                 switch ((char)PeekChar(1))
                 {
                     case 'd':
-                        ReadChar();
-                        ReadChar();
+                        _ = ReadChar();
+                        _ = ReadChar();
                         return start.AddOut(new NFADigitTransition(end));
                     case 'D':
-                        ReadChar();
-                        ReadChar();
+                        _ = ReadChar();
+                        _ = ReadChar();
                         return start.AddOut(new NFANonDigitTransition(end));
                     case 's':
-                        ReadChar();
-                        ReadChar();
+                        _ = ReadChar();
+                        _ = ReadChar();
                         return start.AddOut(new NFAWhitespaceTransition(end));
                     case 'S':
-                        ReadChar();
-                        ReadChar();
+                        _ = ReadChar();
+                        _ = ReadChar();
                         return start.AddOut(new NFANonWhitespaceTransition(end));
                     case 'w':
-                        ReadChar();
-                        ReadChar();
+                        _ = ReadChar();
+                        _ = ReadChar();
                         return start.AddOut(new NFAWordTransition(end));
                     case 'W':
-                        ReadChar();
-                        ReadChar();
+                        _ = ReadChar();
+                        _ = ReadChar();
                         return start.AddOut(new NFANonWordTransition(end));
+                    default:
+                        break;
                 }
             }
             return start.AddOut(ReadEscapeChar(), _ignoreCase, end);
@@ -397,13 +392,13 @@ namespace Flee.Parsing
             string str;
             int value;
 
-            ReadChar('\\');
+            _ = ReadChar('\\');
             var c = ReadChar();
             switch (c)
             {
                 case '0':
                     c = ReadChar();
-                    if (c < '0' || c > '3')
+                    if (c is < '0' or > '3')
                     {
                         throw new RegExpException(
                             RegExpException.ErrorType.UNSUPPORTED_ESCAPE_CHARACTER,
@@ -412,12 +407,12 @@ namespace Flee.Parsing
                     }
                     value = c - '0';
                     c = (char)PeekChar(0);
-                    if ('0' <= c && c <= '7')
+                    if (c is >= '0' and <= '7')
                     {
                         value *= 8;
                         value += ReadChar() - '0';
                         c = (char)PeekChar(0);
-                        if ('0' <= c && c <= '7')
+                        if (c is >= '0' and <= '7')
                         {
                             value *= 8;
                             value += ReadChar() - '0';
@@ -468,7 +463,7 @@ namespace Flee.Parsing
                 case 'e':
                     return '\u001B';
                 default:
-                    if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'))
+                    if (c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z'))
                     {
                         throw new RegExpException(
                             RegExpException.ErrorType.UNSUPPORTED_ESCAPE_CHARACTER,
@@ -481,23 +476,21 @@ namespace Flee.Parsing
 
         private int ReadNumber()
         {
-            StringBuilder buf = new StringBuilder();
+            StringBuilder buf = new();
             int c;
 
             c = PeekChar(0);
-            while ('0' <= c && c <= '9')
+            while (c is >= '0' and <= '9')
             {
-                buf.Append(ReadChar());
+                _ = buf.Append(ReadChar());
                 c = PeekChar(0);
             }
-            if (buf.Length <= 0)
-            {
-                throw new RegExpException(
+            return buf.Length <= 0
+                ? throw new RegExpException(
                     RegExpException.ErrorType.UNEXPECTED_CHARACTER,
                     _pos,
-                    _pattern);
-            }
-            return Int32.Parse(buf.ToString());
+                    _pattern)
+                : Int32.Parse(buf.ToString());
         }
 
         private char ReadChar()
@@ -520,26 +513,17 @@ namespace Flee.Parsing
 
         private char ReadChar(char c)
         {
-            if (c != ReadChar())
-            {
-                throw new RegExpException(
+            return c != ReadChar()
+                ? throw new RegExpException(
                     RegExpException.ErrorType.UNEXPECTED_CHARACTER,
                     _pos - 1,
-                    _pattern);
-            }
-            return c;
+                    _pattern)
+                : c;
         }
 
         private int PeekChar(int count)
         {
-            if (_pos + count < _pattern.Length)
-            {
-                return _pattern[_pos + count];
-            }
-            else
-            {
-                return -1;
-            }
+            return _pos + count < _pattern.Length ? _pattern[_pos + count] : -1;
         }
     }
 }

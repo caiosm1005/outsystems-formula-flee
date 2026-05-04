@@ -5,6 +5,6 @@ namespace Flee.Parsing
 
         internal TokenPattern? Value;
 
-        internal TransitionTree Tree = new TransitionTree();
+        internal TransitionTree Tree = new();
     }
 }

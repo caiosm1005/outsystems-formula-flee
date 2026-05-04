@@ -14,19 +14,19 @@ namespace Flee.ExpressionElements
         {
             _myChild = child;
             _myResultType = resultType;
-            this.Validate();
+            Validate();
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             _myChild.Emit(ilg, services);
-            ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, ilg);
+            _ = ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, ilg);
 
             ExpressionOptions options = (ExpressionOptions)services.GetService(typeof(ExpressionOptions))!;
 
-            if (options.IsGeneric == false)
+            if (!options.IsGeneric)
             {
-                ImplicitConverter.EmitImplicitConvert(_myResultType, typeof(object), ilg);
+                _ = ImplicitConverter.EmitImplicitConvert(_myResultType, typeof(object), ilg);
             }
 
             ilg.Emit(OpCodes.Ret);
@@ -34,12 +34,12 @@ namespace Flee.ExpressionElements
 
         private void Validate()
         {
-            if (ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, null) == false)
+            if (!ImplicitConverter.EmitImplicitConvert(_myChild.ResultType, _myResultType, null))
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.CannotConvertTypeToExpressionResult, CompileExceptionReason.TypeMismatch, _myChild.ResultType.Name, _myResultType.Name);
+                ThrowCompileException(CompileErrorResourceKeys.CannotConvertTypeToExpressionResult, CompileExceptionReason.TypeMismatch, _myChild.ResultType.Name, _myResultType.Name);
             }
         }
 
-        public override System.Type ResultType => typeof(object);
+        public override Type ResultType => typeof(object);
     }
 }

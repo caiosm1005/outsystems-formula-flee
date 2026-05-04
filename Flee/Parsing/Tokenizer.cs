@@ -9,14 +9,13 @@ namespace Flee.Parsing
       * search for, or a regular expression. If the stream of characters
       * don't match any of the token patterns, a parse exception is thrown.
       */
-    internal class Tokenizer
+    internal class Tokenizer(TextReader input, bool ignoreCase)
     {
-        private bool _useTokenList = false;
-        private readonly StringDFAMatcher _stringDfaMatcher;
-        private readonly NFAMatcher _nfaMatcher;
-        private readonly RegExpMatcher _regExpMatcher;
-        private ReaderBuffer _buffer;
-        private readonly TokenMatch _lastMatch = new TokenMatch();
+        private readonly StringDFAMatcher _stringDfaMatcher = new(ignoreCase);
+        private readonly NFAMatcher _nfaMatcher = new(ignoreCase);
+        private readonly RegExpMatcher _regExpMatcher = new(ignoreCase);
+        private ReaderBuffer _buffer = new(input);
+        private readonly TokenMatch _lastMatch = new();
         private Token? _previousToken = null;
 
         public Tokenizer(TextReader input)
@@ -24,47 +23,23 @@ namespace Flee.Parsing
         {
         }
 
-        public Tokenizer(TextReader input, bool ignoreCase)
-        {
-            this._stringDfaMatcher = new StringDFAMatcher(ignoreCase);
-            this._nfaMatcher = new NFAMatcher(ignoreCase);
-            this._regExpMatcher = new RegExpMatcher(ignoreCase);
-            this._buffer = new ReaderBuffer(input);
-        }
-
-        public bool UseTokenList
-        {
-            get
-            {
-                return _useTokenList;
-            }
-            set
-            {
-                _useTokenList = value;
-            }
-        }
+        public bool UseTokenList { get; set; } = false;
 
         public bool GetUseTokenList()
         {
-            return _useTokenList;
+            return UseTokenList;
         }
 
         public void SetUseTokenList(bool useTokenList)
         {
-            this._useTokenList = useTokenList;
+            UseTokenList = useTokenList;
         }
 
         public string GetPatternDescription(int id)
         {
             var pattern = _stringDfaMatcher.GetPattern(id);
-            if (pattern == null)
-            {
-                pattern = _nfaMatcher.GetPattern(id);
-            }
-            if (pattern == null)
-            {
-                pattern = _regExpMatcher.GetPattern(id);
-            }
+            pattern ??= _nfaMatcher.GetPattern(id);
+            pattern ??= _regExpMatcher.GetPattern(id);
             return pattern?.ToShortString() ?? string.Empty;
         }
 
@@ -81,7 +56,7 @@ namespace Flee.Parsing
         /**
          * nfa - true to attempt as an nfa pattern for regexp. This handles most things except the complex repeates, ie {1,4}
          */
-        public void AddPattern(TokenPattern pattern, bool nfa=true)
+        public void AddPattern(TokenPattern pattern, bool nfa = true)
         {
             switch (pattern.Type)
             {
@@ -140,9 +115,9 @@ namespace Flee.Parsing
         public void Reset(TextReader input)
         {
             //this.buffer.Dispose();
-            this._buffer = new ReaderBuffer(input);
-            this._previousToken = null;
-            this._lastMatch.Clear();
+            _buffer = new ReaderBuffer(input);
+            _previousToken = null;
+            _lastMatch.Clear();
         }
 
         public Token? Next()
@@ -157,7 +132,7 @@ namespace Flee.Parsing
                     _previousToken = null;
                     return null;
                 }
-                if (_useTokenList)
+                if (UseTokenList)
                 {
                     token.Previous = _previousToken;
                     _previousToken = token;
@@ -230,10 +205,10 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
-            buffer.Append(_stringDfaMatcher);
-            buffer.Append(_nfaMatcher);
-            buffer.Append(_regExpMatcher);
+            StringBuilder buffer = new();
+            _ = buffer.Append(_stringDfaMatcher);
+            _ = buffer.Append(_nfaMatcher);
+            _ = buffer.Append(_regExpMatcher);
             return buffer.ToString();
         }
     }

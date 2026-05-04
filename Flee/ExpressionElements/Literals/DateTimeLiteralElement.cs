@@ -11,14 +11,14 @@ namespace Flee.ExpressionElements.Literals
 {
     internal class DateTimeLiteralElement : LiteralElement
     {
-        private DateTime _myValue;
+        private readonly DateTime _myValue;
         public DateTimeLiteralElement(string image, ExpressionContext context)
         {
             ExpressionParserOptions options = context.ParserOptions;
 
-            if (DateTime.TryParseExact(image, options.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out _myValue) == false)
+            if (!DateTime.TryParseExact(image, options.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out _myValue))
             {
-                base.ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, typeof(DateTime).Name);
+                ThrowCompileException(CompileErrorResourceKeys.CannotParseType, CompileExceptionReason.InvalidFormat, nameof(DateTime));
             }
         }
 
@@ -28,15 +28,15 @@ namespace Flee.ExpressionElements.Literals
 
             Utility.EmitLoadLocalAddress(ilg, index);
 
-            LiteralElement.EmitLoad(_myValue.Ticks, ilg);
+            EmitLoad(_myValue.Ticks, ilg);
 
-            ConstructorInfo ci = typeof(DateTime).GetConstructor(new Type[] { typeof(long) })!;
+            ConstructorInfo ci = typeof(DateTime).GetConstructor([typeof(long)])!;
 
             ilg.Emit(OpCodes.Call, ci);
 
             Utility.EmitLoadLocal(ilg, index);
         }
 
-        public override System.Type ResultType => typeof(DateTime);
+        public override Type ResultType => typeof(DateTime);
     }
 }

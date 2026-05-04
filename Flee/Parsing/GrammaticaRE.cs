@@ -1,14 +1,9 @@
 namespace Flee.Parsing
 {
-    internal class GrammaticaRE : REHandler
+    internal class GrammaticaRE(string regex, bool ignoreCase) : REHandler
     {
-        private readonly RegExp _regExp;
+        private readonly RegExp _regExp = new(regex, ignoreCase);
         private Matcher? _matcher = null;
-
-        public GrammaticaRE(string regex, bool ignoreCase)
-        {
-            _regExp = new RegExp(regex, ignoreCase);
-        }
 
         public override int Match(ReaderBuffer buffer)
         {

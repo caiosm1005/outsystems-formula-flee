@@ -8,7 +8,10 @@ namespace Flee.Parsing
      * an error in the token or production patterns, making it impossible
      * to create a working parser or tokenizer.
      */
-    internal class ParserCreationException : Exception
+    internal class ParserCreationException(ParserCreationException.ErrorType type,
+                                   String? name,
+                                   String? info,
+                                   ArrayList? details) : Exception
     {
 
         /**
@@ -65,10 +68,7 @@ namespace Flee.Parsing
 
         }
 
-        private readonly ErrorType _type;
-        private readonly string? _name;
-        private readonly string? _info;
-        private readonly ArrayList? _details;
+        private readonly ArrayList? _details = details;
 
         public ParserCreationException(ErrorType type,
                                        String? info)
@@ -83,33 +83,21 @@ namespace Flee.Parsing
         {
         }
 
-        public ParserCreationException(ErrorType type,
-                                       String? name,
-                                       String? info,
-                                       ArrayList? details)
-        {
-
-            this._type = type;
-            this._name = name;
-            this._info = info;
-            this._details = details;
-        }
-
-        public ErrorType Type => _type;
+        public ErrorType Type { get; } = type;
 
         public ErrorType GetErrorType()
         {
             return Type;
         }
 
-        public string? Name => _name;
+        public string? Name { get; } = name;
 
         public string? GetName()
         {
             return Name;
         }
 
-        public string? Info => _info;
+        public string? Info { get; } = info;
 
         public string? GetInfo()
         {
@@ -120,7 +108,7 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
                 if (_details == null)
                 {
@@ -130,13 +118,13 @@ namespace Flee.Parsing
                 {
                     if (i > 0)
                     {
-                        buffer.Append(", ");
+                        _ = buffer.Append(", ");
                         if (i + 1 == _details.Count)
                         {
-                            buffer.Append("and ");
+                            _ = buffer.Append("and ");
                         }
                     }
-                    buffer.Append(_details[i]);
+                    _ = buffer.Append(_details[i]);
                 }
 
                 return buffer.ToString();
@@ -152,56 +140,51 @@ namespace Flee.Parsing
         {
             get
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new();
 
-                switch (_type)
+                switch (Type)
                 {
                     case ErrorType.INVALID_PARSER:
-                        buffer.Append("parser is invalid, as ");
-                        buffer.Append(_info);
+                        _ = buffer.Append("parser is invalid, as ");
+                        _ = buffer.Append(Info);
                         break;
                     case ErrorType.INVALID_TOKEN:
-                        buffer.Append("token '");
-                        buffer.Append(_name);
-                        buffer.Append("' is invalid, as ");
-                        buffer.Append(_info);
+                        _ = buffer.Append("token '");
+                        _ = buffer.Append(Name);
+                        _ = buffer.Append("' is invalid, as ");
+                        _ = buffer.Append(Info);
                         break;
                     case ErrorType.INVALID_PRODUCTION:
-                        buffer.Append("production '");
-                        buffer.Append(_name);
-                        buffer.Append("' is invalid, as ");
-                        buffer.Append(_info);
+                        _ = buffer.Append("production '");
+                        _ = buffer.Append(Name);
+                        _ = buffer.Append("' is invalid, as ");
+                        _ = buffer.Append(Info);
                         break;
                     case ErrorType.INFINITE_LOOP:
-                        buffer.Append("infinite loop found in production pattern '");
-                        buffer.Append(_name);
-                        buffer.Append("'");
+                        _ = buffer.Append("infinite loop found in production pattern '");
+                        _ = buffer.Append(Name);
+                        _ = buffer.Append("'");
                         break;
                     case ErrorType.INHERENT_AMBIGUITY:
-                        buffer.Append("inherent ambiguity in production '");
-                        buffer.Append(_name);
-                        buffer.Append("'");
-                        if (_info != null)
+                        _ = buffer.Append("inherent ambiguity in production '");
+                        _ = buffer.Append(Name);
+                        _ = buffer.Append("'");
+                        if (Info != null)
                         {
-                            buffer.Append(" ");
-                            buffer.Append(_info);
+                            _ = buffer.Append(" ");
+                            _ = buffer.Append(Info);
                         }
                         if (_details != null)
                         {
-                            buffer.Append(" starting with ");
-                            if (_details.Count > 1)
-                            {
-                                buffer.Append("tokens ");
-                            }
-                            else
-                            {
-                                buffer.Append("token ");
-                            }
-                            buffer.Append(Details);
+                            _ = buffer.Append(" starting with ");
+                            _ = buffer.Append(_details.Count > 1 ? "tokens " : "token ");
+                            _ = buffer.Append(Details);
                         }
                         break;
+                    case ErrorType.INTERNAL:
+                        break;
                     default:
-                        buffer.Append("internal error");
+                        _ = buffer.Append("internal error");
                         break;
                 }
                 return buffer.ToString();

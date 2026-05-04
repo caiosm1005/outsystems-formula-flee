@@ -4,21 +4,15 @@ namespace Flee.Parsing
      * A character range match transition. Used for user-defined
      * character sets in regular expressions.
      */
-    internal class NFACharRangeTransition : NFATransition
+    internal class NFACharRangeTransition(bool inverse,
+                                  bool ignoreCase,
+                                  NFAState state) : NFATransition(state)
     {
 
-        protected bool Inverse;
-        protected bool IgnoreCase;
+        protected bool Inverse = inverse;
+        protected bool IgnoreCase = ignoreCase;
 
-        private object[] _contents = new object[0];
-
-        public NFACharRangeTransition(bool inverse,
-                                      bool ignoreCase,
-                                      NFAState state) : base(state)
-        {
-            this.Inverse = inverse;
-            this.IgnoreCase = ignoreCase;
-        }
+        private object[] _contents = [];
 
         public override bool IsAscii()
         {
@@ -29,10 +23,9 @@ namespace Flee.Parsing
             for (int i = 0; i < _contents.Length; i++)
             {
                 var obj = _contents[i];
-                if (obj is char)
+                if (obj is char c)
                 {
-                    var c = (char)obj;
-                    if (c < 0 || 128 <= c)
+                    if (c is < (char)0 or >= (char)128)
                     {
                         return false;
                     }
@@ -108,20 +101,14 @@ namespace Flee.Parsing
 
         public override NFATransition Copy(NFAState state)
         {
-            var copy = new NFACharRangeTransition(Inverse, IgnoreCase, state) { _contents = _contents };
+            NFACharRangeTransition copy = new(Inverse, IgnoreCase, state) { _contents = _contents };
             return copy;
         }
 
-        private class Range
+        private class Range(char min, char max)
         {
-            private readonly char _min;
-            private readonly char _max;
-
-            public Range(char min, char max)
-            {
-                this._min = min;
-                this._max = max;
-            }
+            private readonly char _min = min;
+            private readonly char _max = max;
 
             public bool IsAscii()
             {

@@ -11,25 +11,17 @@ namespace Flee.Parsing
      * content. A few characters before the current position are always
      * kept to enable boundary condition checks.
      */
-    internal class ReaderBuffer
+    internal class ReaderBuffer(TextReader input)
     {
         public const int BlockSize = 1024;
         private char[] _buffer = new char[BlockSize * 4];
-        private int _pos = 0;
-        private int _length = 0;
-        private TextReader? _input;
-        private int _line = 1;
-        private int _column = 1;
+        private TextReader? _input = input;
 
-        public ReaderBuffer(TextReader input)
-        {
-            this._input = input;
-        }
         public void Dispose()
         {
             _buffer = null!;
-            _pos = 0;
-            _length = 0;
+            Position = 0;
+            Length = 0;
             if (_input != null)
             {
                 try
@@ -44,10 +36,10 @@ namespace Flee.Parsing
             }
         }
 
-        public int Position => _pos;
-        public int LineNumber => _line;
-        public int ColumnNumber => _column;
-        public int Length => _length;
+        public int Position { get; private set; } = 0;
+        public int LineNumber { get; private set; } = 1;
+        public int ColumnNumber { get; private set; } = 1;
+        public int Length { get; private set; } = 0;
 
         public string Substring(int index, int length)
         {
@@ -56,42 +48,42 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            return new string(_buffer, 0, _length);
+            return new string(_buffer, 0, Length);
         }
 
         public int Peek(int offset)
         {
-            int index = _pos + offset;
+            int index = Position + offset;
 
             // Avoid most calls to EnsureBuffered(), since we are in a
             // performance hotspot here. This check is not exhaustive,
             // but only present here to speed things up.
-            if (index >= _length)
+            if (index >= Length)
             {
                 EnsureBuffered(offset + 1);
-                index = _pos + offset;
+                index = Position + offset;
             }
-            return (index >= _length) ? -1 : _buffer[index];
+            return (index >= Length) ? -1 : _buffer[index];
         }
 
         public string? Read(int offset)
         {
             EnsureBuffered(offset + 1);
-            if (_pos >= _length)
+            if (Position >= Length)
             {
                 return null;
             }
             else
             {
-                var count = _length - _pos;
+                var count = Length - Position;
                 if (count > offset)
                 {
                     count = offset;
                 }
                 UpdateLineColumnNumbers(count);
-                var result = new string(_buffer, _pos, count);
-                _pos += count;
-                if (_input == null && _pos >= _length)
+                var result = new string(_buffer, Position, count);
+                Position += count;
+                if (_input == null && Position >= Length)
                 {
                     Dispose();
                 }
@@ -103,14 +95,14 @@ namespace Flee.Parsing
         {
             for (int i = 0; i < offset; i++)
             {
-                if (_buffer[_pos + i] == '\n')
+                if (_buffer[Position + i] == '\n')
                 {
-                    _line++;
-                    _column = 1;
+                    LineNumber++;
+                    ColumnNumber = 1;
                 }
                 else
                 {
-                    _column++;
+                    ColumnNumber++;
                 }
             }
         }
@@ -118,36 +110,36 @@ namespace Flee.Parsing
         private void EnsureBuffered(int offset)
         {
             // Check for end of stream or already read characters
-            if (_input == null || _pos + offset < _length)
+            if (_input == null || Position + offset < Length)
             {
                 return;
             }
 
             // Remove (almost all) old characters from buffer
-            if (_pos > BlockSize)
+            if (Position > BlockSize)
             {
-                _length -= (_pos - 16);
-                Array.Copy(_buffer, _pos - 16, _buffer, 0, _length);
-                _pos = 16;
+                Length -= Position - 16;
+                Array.Copy(_buffer, Position - 16, _buffer, 0, Length);
+                Position = 16;
             }
 
             // Calculate number of characters to read
-            var size = _pos + offset - _length + 1;
+            var size = Position + offset - Length + 1;
             if (size % BlockSize != 0)
             {
-                size = (1 + size / BlockSize) * BlockSize;
+                size = (1 + (size / BlockSize)) * BlockSize;
             }
-            EnsureCapacity(_length + size);
+            EnsureCapacity(Length + size);
 
             // Read characters
             try
             {
                 while (_input != null && size > 0)
                 {
-                    var readSize = _input.Read(_buffer, _length, size);
+                    var readSize = _input.Read(_buffer, Length, size);
                     if (readSize > 0)
                     {
-                        _length += readSize;
+                        Length += readSize;
                         size -= readSize;
                     }
                     else
@@ -172,7 +164,7 @@ namespace Flee.Parsing
             }
             if (size % BlockSize != 0)
             {
-                size = (1 + size / BlockSize) * BlockSize;
+                size = (1 + (size / BlockSize)) * BlockSize;
             }
             Array.Resize(ref _buffer, size);
         }

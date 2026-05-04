@@ -10,12 +10,10 @@ namespace Flee.Parsing
     internal abstract class Parser
     {
         private bool _initialized;
-        private readonly Tokenizer _tokenizer;
-        private Analyzer _analyzer;
-        private readonly ArrayList _patterns = new ArrayList();
-        private readonly Hashtable _patternIds = new Hashtable();
-        private readonly ArrayList _tokens = new ArrayList();
-        private ParserLogException _errorLog = new ParserLogException();
+        private readonly ArrayList _patterns = [];
+        private readonly Hashtable _patternIds = [];
+        private readonly ArrayList _tokens = [];
+        private ParserLogException _errorLog = new();
         private int _errorRecovery = -1;
 
         /// <summary>
@@ -33,8 +31,8 @@ namespace Flee.Parsing
         /// <param name="analyzer"></param>
         internal Parser(TextReader input, Analyzer? analyzer)
         {
-            _tokenizer = NewTokenizer(input);
-            this._analyzer = analyzer ?? NewAnalyzer();
+            Tokenizer = NewTokenizer(input);
+            Analyzer = analyzer ?? NewAnalyzer();
         }
 
         /**
@@ -48,8 +46,8 @@ namespace Flee.Parsing
 
         internal Parser(Tokenizer tokenizer, Analyzer? analyzer)
         {
-            this._tokenizer = tokenizer;
-            this._analyzer = analyzer ?? NewAnalyzer();
+            Tokenizer = tokenizer;
+            Analyzer = analyzer ?? NewAnalyzer();
         }
 
         protected virtual Tokenizer NewTokenizer(TextReader input)
@@ -66,9 +64,9 @@ namespace Flee.Parsing
             return new Analyzer();
         }
 
-        public Tokenizer Tokenizer => _tokenizer;
+        public Tokenizer Tokenizer { get; }
 
-        public Analyzer Analyzer => _analyzer;
+        public Analyzer Analyzer { get; private set; }
 
         public Tokenizer GetTokenizer()
         {
@@ -103,7 +101,7 @@ namespace Flee.Parsing
                     "another pattern with the same id (" + pattern.Id +
                     ") has already been added");
             }
-            _patterns.Add(pattern);
+            _ = _patterns.Add(pattern);
             _patternIds.Add(pattern.Id, pattern);
             SetInitialized(false);
         }
@@ -125,7 +123,11 @@ namespace Flee.Parsing
 
         private void CheckPattern(ProductionPattern? pattern)
         {
-            if (pattern == null) return;
+            if (pattern == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < pattern.Count; i++)
             {
                 CheckAlternative(pattern.Name, pattern[i]);
@@ -142,7 +144,7 @@ namespace Flee.Parsing
             }
         }
 
-        
+
         private void CheckElement(string name,
                                   ProductionPatternElement elem)
         {
@@ -159,14 +161,14 @@ namespace Flee.Parsing
 
         public void Reset(TextReader input)
         {
-            this._tokenizer.Reset(input);
-            this._analyzer.Reset();
+            Tokenizer.Reset(input);
+            Analyzer.Reset();
         }
 
         public void Reset(TextReader input, Analyzer analyzer)
         {
-            this._tokenizer.Reset(input);
-            this._analyzer = analyzer;
+            Tokenizer.Reset(input);
+            Analyzer = analyzer;
         }
 
         public Node Parse()
@@ -178,9 +180,9 @@ namespace Flee.Parsing
             {
                 Prepare();
             }
-            this._tokens.Clear();
-            this._errorLog = new ParserLogException();
-            this._errorRecovery = -1;
+            _tokens.Clear();
+            _errorLog = new ParserLogException();
+            _errorRecovery = -1;
 
             // Parse input
             try
@@ -193,19 +195,14 @@ namespace Flee.Parsing
             }
 
             // Check for errors
-            if (_errorLog.Count > 0)
-            {
-                throw _errorLog;
-            }
-
-            return root;
+            return _errorLog.Count > 0 ? throw _errorLog : root;
         }
 
         protected abstract Node ParseStart();
 
         protected virtual Production NewProduction(ProductionPattern pattern)
         {
-            return _analyzer.NewProduction(pattern);
+            return Analyzer.NewProduction(pattern);
         }
 
         internal void AddError(ParseException e, bool recovery)
@@ -227,14 +224,7 @@ namespace Flee.Parsing
 
         internal ProductionPattern? GetStartPattern()
         {
-            if (_patterns.Count <= 0)
-            {
-                return null;
-            }
-            else
-            {
-                return (ProductionPattern?)_patterns[0];
-            }
+            return _patterns.Count <= 0 ? null : (ProductionPattern?)_patterns[0];
         }
 
         internal ICollection GetPatterns()
@@ -248,7 +238,7 @@ namespace Flee.Parsing
             {
                 try
                 {
-                    _analyzer.Enter(node);
+                    Analyzer.Enter(node);
                 }
                 catch (ParseException e)
                 {
@@ -263,7 +253,7 @@ namespace Flee.Parsing
             {
                 try
                 {
-                    return _analyzer.Exit(node);
+                    return Analyzer.Exit(node);
                 }
                 catch (ParseException e)
                 {
@@ -294,7 +284,7 @@ namespace Flee.Parsing
             {
                 try
                 {
-                    _analyzer.Child(node, child!);
+                    Analyzer.Child(node, child!);
                 }
                 catch (ParseException e)
                 {
@@ -317,8 +307,8 @@ namespace Flee.Parsing
                 throw new ParseException(
                     ParseException.ErrorType.UNEXPECTED_EOF,
                     null,
-                    _tokenizer.GetCurrentLine(),
-                    _tokenizer.GetCurrentColumn());
+                    Tokenizer.GetCurrentLine(),
+                    Tokenizer.GetCurrentColumn());
             }
         }
 
@@ -336,7 +326,7 @@ namespace Flee.Parsing
             }
             else
             {
-                var list = new ArrayList(1) {_tokenizer.GetPatternDescription(id)};
+                ArrayList list = [Tokenizer.GetPatternDescription(id)];
                 throw new ParseException(
                     ParseException.ErrorType.UNEXPECTED_TOKEN,
                     token.ToShortString(),
@@ -352,14 +342,14 @@ namespace Flee.Parsing
             {
                 try
                 {
-                    var token = _tokenizer.Next();
+                    var token = Tokenizer.Next();
                     if (token == null)
                     {
                         return null;
                     }
                     else
                     {
-                        _tokens.Add(token);
+                        _ = _tokens.Add(token);
                     }
                 }
                 catch (ParseException e)
@@ -372,53 +362,53 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _patterns.Count; i++)
             {
-                buffer.Append(ToString((ProductionPattern)_patterns[i]!));
-                buffer.Append("\n");
+                _ = buffer.Append(ToString((ProductionPattern)_patterns[i]!));
+                _ = buffer.Append("\n");
             }
             return buffer.ToString();
         }
 
         private string ToString(ProductionPattern prod)
         {
-            StringBuilder buffer = new StringBuilder();
-            StringBuilder indent = new StringBuilder();
+            StringBuilder buffer = new();
+            StringBuilder indent = new();
             int i;
 
-            buffer.Append(prod.Name);
-            buffer.Append(" (");
-            buffer.Append(prod.Id);
-            buffer.Append(") ");
+            _ = buffer.Append(prod.Name);
+            _ = buffer.Append(" (");
+            _ = buffer.Append(prod.Id);
+            _ = buffer.Append(") ");
             for (i = 0; i < buffer.Length; i++)
             {
-                indent.Append(" ");
+                _ = indent.Append(" ");
             }
-            buffer.Append("= ");
-            indent.Append("| ");
+            _ = buffer.Append("= ");
+            _ = indent.Append("| ");
             for (i = 0; i < prod.Count; i++)
             {
                 if (i > 0)
                 {
-                    buffer.Append(indent);
+                    _ = buffer.Append(indent);
                 }
-                buffer.Append(ToString(prod[i]));
-                buffer.Append("\n");
+                _ = buffer.Append(ToString(prod[i]));
+                _ = buffer.Append("\n");
             }
             for (i = 0; i < prod.Count; i++)
             {
                 var set = prod[i].LookAhead;
                 if (set.GetMaxLength() > 1)
                 {
-                    buffer.Append("Using ");
-                    buffer.Append(set.GetMaxLength());
-                    buffer.Append(" token look-ahead for alternative ");
-                    buffer.Append(i + 1);
-                    buffer.Append(": ");
-                    buffer.Append(set.ToString(_tokenizer));
-                    buffer.Append("\n");
+                    _ = buffer.Append("Using ");
+                    _ = buffer.Append(set.GetMaxLength());
+                    _ = buffer.Append(" token look-ahead for alternative ");
+                    _ = buffer.Append(i + 1);
+                    _ = buffer.Append(": ");
+                    _ = buffer.Append(set.ToString(Tokenizer));
+                    _ = buffer.Append("\n");
                 }
             }
             return buffer.ToString();
@@ -426,70 +416,56 @@ namespace Flee.Parsing
 
         private string ToString(ProductionPatternAlternative alt)
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < alt.Count; i++)
             {
                 if (i > 0)
                 {
-                    buffer.Append(" ");
+                    _ = buffer.Append(" ");
                 }
-                buffer.Append(ToString(alt[i]));
+                _ = buffer.Append(ToString(alt[i]));
             }
             return buffer.ToString();
         }
 
         private string ToString(ProductionPatternElement elem)
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
             int min = elem.MinCount;
             int max = elem.MaxCount;
 
             if (min == 0 && max == 1)
             {
-                buffer.Append("[");
+                _ = buffer.Append("[");
             }
-            if (elem.IsToken())
-            {
-                buffer.Append(GetTokenDescription(elem.Id));
-            }
-            else
-            {
-                buffer.Append(GetPattern(elem.Id)!.Name);
-            }
+            _ = buffer.Append(elem.IsToken() ? GetTokenDescription(elem.Id) : GetPattern(elem.Id)!.Name);
             if (min == 0 && max == 1)
             {
-                buffer.Append("]");
+                _ = buffer.Append("]");
             }
             else if (min == 0 && max == Int32.MaxValue)
             {
-                buffer.Append("*");
+                _ = buffer.Append("*");
             }
             else if (min == 1 && max == Int32.MaxValue)
             {
-                buffer.Append("+");
+                _ = buffer.Append("+");
             }
             else if (min != 1 || max != 1)
             {
-                buffer.Append("{");
-                buffer.Append(min);
-                buffer.Append(",");
-                buffer.Append(max);
-                buffer.Append("}");
+                _ = buffer.Append("{");
+                _ = buffer.Append(min);
+                _ = buffer.Append(",");
+                _ = buffer.Append(max);
+                _ = buffer.Append("}");
             }
             return buffer.ToString();
         }
 
         internal string GetTokenDescription(int token)
         {
-            if (_tokenizer == null)
-            {
-                return "";
-            }
-            else
-            {
-                return _tokenizer.GetPatternDescription(token);
-            }
+            return Tokenizer == null ? "" : Tokenizer.GetPatternDescription(token);
         }
     }
 }

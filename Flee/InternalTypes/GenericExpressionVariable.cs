@@ -7,8 +7,10 @@ namespace Flee.InternalTypes
         private IGenericExpression<T> _myExpression = null!;
         public IVariable Clone()
         {
-            GenericExpressionVariable<T> copy = new GenericExpressionVariable<T>();
-            copy._myExpression = _myExpression;
+            GenericExpressionVariable<T> copy = new()
+            {
+                _myExpression = _myExpression
+            };
             return copy;
         }
 
@@ -19,10 +21,9 @@ namespace Flee.InternalTypes
 
         public object ValueAsObject
         {
-            get { return _myExpression; }
-            set { _myExpression = (IGenericExpression<T>)value; }
+            get => _myExpression; set => _myExpression = (IGenericExpression<T>)value;
         }
 
-        public System.Type VariableType => _myExpression.Context.Options.ResultType;
+        public Type VariableType => _myExpression.Context.Options.ResultType;
     }
 }

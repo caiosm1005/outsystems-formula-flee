@@ -13,8 +13,8 @@ namespace Flee.Parsing
 
         protected NFATransition(NFAState state)
         {
-            this.State = state;
-            this.State.AddIn(this);
+            State = state;
+            State.AddIn(this);
         }
 
         public abstract bool IsAscii();

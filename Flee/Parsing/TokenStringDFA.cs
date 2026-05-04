@@ -13,7 +13,7 @@ namespace Flee.Parsing
     {
 
         private readonly DFAState[] _ascii = new DFAState[128];
-        private readonly DFAState _nonAscii = new DFAState();
+        private readonly DFAState _nonAscii = new();
 
         public TokenStringDFA()
         {
@@ -32,10 +32,7 @@ namespace Flee.Parsing
             if (c < 128)
             {
                 state = _ascii[c];
-                if (state == null)
-                {
-                    state = _ascii[c] = new DFAState();
-                }
+                state ??= _ascii[c] = new DFAState();
                 start++;
             }
             else
@@ -105,18 +102,18 @@ namespace Flee.Parsing
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = new();
 
             for (int i = 0; i < _ascii.Length; i++)
             {
                 if (_ascii[i] != null)
                 {
-                    buffer.Append((char)i);
+                    _ = buffer.Append((char)i);
                     if (_ascii[i].Value != null)
                     {
-                        buffer.Append(": ");
-                        buffer.Append(_ascii[i].Value);
-                        buffer.Append("\n");
+                        _ = buffer.Append(": ");
+                        _ = buffer.Append(_ascii[i].Value);
+                        _ = buffer.Append("\n");
                     }
                     _ascii[i].Tree.PrintTo(buffer, " ");
                 }

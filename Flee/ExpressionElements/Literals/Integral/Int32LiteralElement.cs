@@ -8,12 +8,11 @@ namespace Flee.ExpressionElements.Literals.Integral
 {
     internal class Int32LiteralElement : IntegralLiteralElement
     {
-        private Int32 _myValue;
         private const string MinValue = "2147483648";
         private readonly bool _myIsMinValue;
         public Int32LiteralElement(Int32 value)
         {
-            _myValue = value;
+            Value = value;
         }
 
         private Int32LiteralElement()
@@ -23,62 +22,37 @@ namespace Flee.ExpressionElements.Literals.Integral
 
         public static Int32LiteralElement? TryCreate(string image, bool isHex, bool negated)
         {
-            if (negated == true & image == MinValue)
+            if (negated & image == MinValue)
             {
                 return new Int32LiteralElement();
             }
-            else if (isHex == true)
+            else if (isHex)
             {
-                Int32 value = default(Int32);
 
                 // Since Int32.TryParse will succeed for a string like 0xFFFFFFFF we have to do some special handling
-                if (Int32.TryParse(image, NumberStyles.AllowHexSpecifier, null, out value) == false)
-                {
-                    return null;
-                }
-                else if (value >= 0 & value <= Int32.MaxValue)
-                {
-                    return new Int32LiteralElement(value);
-                }
-                else
-                {
-                    return null;
-                }
+                return !Int32.TryParse(image, NumberStyles.AllowHexSpecifier, null, out int value)
+                    ? null
+                    : value >= 0 & value <= Int32.MaxValue ? new Int32LiteralElement(value) : null;
             }
             else
             {
-                Int32 value = default(Int32);
 
-                if (Int32.TryParse(image,out value) == true)
-                {
-                    return new Int32LiteralElement(value);
-                }
-                else
-                {
-                    return null;
-                }
+                return Int32.TryParse(image, out int value) ? new Int32LiteralElement(value) : null;
             }
         }
 
         public void Negate()
         {
-            if (_myIsMinValue == true)
-            {
-                _myValue = Int32.MinValue;
-            }
-            else
-            {
-                _myValue = -_myValue;
-            }
+            Value = _myIsMinValue ? int.MinValue : -Value;
         }
 
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
-            EmitLoad(_myValue, ilg);
+            EmitLoad(Value, ilg);
         }
 
-        public override System.Type ResultType => typeof(Int32);
+        public override Type ResultType => typeof(Int32);
 
-        public int Value => _myValue;
+        public int Value { get; private set; }
     }
 }
