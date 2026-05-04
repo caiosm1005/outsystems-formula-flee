@@ -1,19 +1,15 @@
 namespace Flee.Parsing
 {
-    /**
-     * An NFA state queue. This queue is used during processing to
-     * keep track of the current and subsequent NFA states. The
-     * current state is read from the beginning of the queue, and new
-     * states are added at the end. A marker index is used to
-     * separate the current from the subsequent states.<p>
-     *
-     * The queue implementation is optimized for quick removal at the
-     * beginning and addition at the end. It will attempt to use a
-     * fixed-size array to store the whole queue, and moves the data
-     * in this array only when absolutely needed. The array is also
-     * enlarged automatically if too many states are being processed
-     * at a single time.
-     */
+    /// <summary>
+    /// A queue of NFA states. Used during NFA processing to keep track of the current and
+    /// subsequent states; the current state is read from the front and new states are added at
+    /// the back, with a marker index separating the two halves.
+    /// </summary>
+    /// <remarks>
+    /// The queue is optimized for quick removal at the front and addition at the back. It uses
+    /// a fixed-size array for storage and only moves data when absolutely necessary; the array
+    /// is enlarged automatically if too many states are processed at once.
+    /// </remarks>
     internal class NFAStateQueue
     {
 
@@ -25,10 +21,20 @@ namespace Flee.Parsing
 
         private int _mark = 0;
 
+        /// <summary>
+        /// Returns whether the queue currently has no entries between the head and the back.
+        /// </summary>
         public bool Empty => _last <= _first;
 
+        /// <summary>
+        /// Returns whether the head of the queue has reached the marker (i.e. all entries
+        /// from the previous frame have been consumed).
+        /// </summary>
         public bool Marked => _first == _mark;
 
+        /// <summary>
+        /// Resets the queue to an empty state without releasing its underlying buffer.
+        /// </summary>
         public void Clear()
         {
             _first = 0;
@@ -36,11 +42,18 @@ namespace Flee.Parsing
             _mark = 0;
         }
 
+        /// <summary>
+        /// Marks the current end of the queue. Subsequent additions belong to the next frame.
+        /// </summary>
         public void MarkEnd()
         {
             _mark = _last;
         }
 
+        /// <summary>
+        /// Removes and returns the state at the front of the queue.
+        /// </summary>
+        /// <returns>The removed state, or <see langword="null"/> when the queue is empty.</returns>
         public NFAState? RemoveFirst()
         {
             if (_first < _last)
@@ -54,6 +67,11 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Appends <paramref name="state"/> to the back of the queue, growing or compacting
+        /// the underlying buffer as needed.
+        /// </summary>
+        /// <param name="state">The state to append.</param>
         public void AddLast(NFAState state)
         {
             if (_last >= _queue.Length)

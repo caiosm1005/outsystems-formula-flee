@@ -1,32 +1,67 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Text;
 
 namespace Flee.Parsing
 {
-    /**
-     * A regular expression character set element. This element
-     * matches a single character inside (or outside) a character set.
-     * The character set is user defined and may contain ranges of
-     * characters. The set may also be inverted, meaning that only
-     * characters not inside the set will be considered to match.
-     */
+    /// <summary>
+    /// A regular-expression character-set element. Matches a single character that is inside
+    /// (or, when inverted, outside) the character set. Sets may include literal characters,
+    /// character ranges, and other nested character sets.
+    /// </summary>
+    /// <param name="inverted">Whether the set's membership test should be inverted.</param>
     internal class CharacterSetElement(bool inverted) : Element
     {
+        /// <summary>
+        /// Predefined character set matching the regex dot (any character except line terminators).
+        /// </summary>
         public static CharacterSetElement Dot = new(false);
+
+        /// <summary>
+        /// Predefined character set matching <c>\d</c> (decimal digits).
+        /// </summary>
         public static CharacterSetElement Digit = new(false);
+
+        /// <summary>
+        /// Predefined character set matching <c>\D</c> (non-digits).
+        /// </summary>
         public static CharacterSetElement NonDigit = new(true);
+
+        /// <summary>
+        /// Predefined character set matching <c>\s</c> (whitespace).
+        /// </summary>
         public static CharacterSetElement Whitespace = new(false);
+
+        /// <summary>
+        /// Predefined character set matching <c>\S</c> (non-whitespace).
+        /// </summary>
         public static CharacterSetElement NonWhitespace = new(true);
+
+        /// <summary>
+        /// Predefined character set matching <c>\w</c> (word characters).
+        /// </summary>
         public static CharacterSetElement Word = new(false);
+
+        /// <summary>
+        /// Predefined character set matching <c>\W</c> (non-word characters).
+        /// </summary>
         public static CharacterSetElement NonWord = new(true);
+
         private readonly bool _inverted = inverted;
         private readonly ArrayList _contents = [];
 
+        /// <summary>
+        /// Adds a single literal character to the set.
+        /// </summary>
+        /// <param name="c">The character to add.</param>
         public void AddCharacter(char c)
         {
             _ = _contents.Add(c);
         }
 
+        /// <summary>
+        /// Adds every character of <paramref name="str"/> to the set.
+        /// </summary>
+        /// <param name="str">The characters to add.</param>
         public void AddCharacters(string str)
         {
             for (int i = 0; i < str.Length; i++)
@@ -35,26 +70,52 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Adds every character of <paramref name="elem"/> to the set.
+        /// </summary>
+        /// <param name="elem">The string element whose characters should be added.</param>
         public void AddCharacters(StringElement elem)
         {
             AddCharacters(elem.GetString());
         }
 
+        /// <summary>
+        /// Adds an inclusive character range to the set.
+        /// </summary>
+        /// <param name="min">The lowest character in the range.</param>
+        /// <param name="max">The highest character in the range.</param>
         public void AddRange(char min, char max)
         {
             _ = _contents.Add(new Range(min, max));
         }
 
+        /// <summary>
+        /// Nests another character set inside this one.
+        /// </summary>
+        /// <param name="elem">The character set to add.</param>
         public void AddCharacterSet(CharacterSetElement elem)
         {
             _ = _contents.Add(elem);
         }
 
+        /// <summary>
+        /// Returns this element unchanged. Character sets are treated as immutable, so a shared
+        /// reference is sufficient.
+        /// </summary>
+        /// <returns>This instance.</returns>
         public override object Clone()
         {
             return this;
         }
 
+        /// <summary>
+        /// Tests whether the next character at <paramref name="start"/> belongs to the set.
+        /// </summary>
+        /// <param name="m">The matcher tracking case sensitivity and end-of-stream state.</param>
+        /// <param name="buffer">The reader buffer to inspect.</param>
+        /// <param name="start">The starting position in the buffer.</param>
+        /// <param name="skip">The number of matches to skip before returning one.</param>
+        /// <returns><c>1</c> when a character was matched; <c>-1</c> otherwise.</returns>
         public override int Match(Matcher m,
                                   ReaderBuffer buffer,
                                   int start,
@@ -151,11 +212,21 @@ namespace Flee.Parsing
             return false;
         }
 
+        /// <summary>
+        /// Writes a textual description of this element to <paramref name="output"/>.
+        /// </summary>
+        /// <param name="output">The text writer that receives the description.</param>
+        /// <param name="indent">The indentation prefix to apply to the line.</param>
         public override void PrintTo(TextWriter output, string indent)
         {
             output.WriteLine(indent + ToString());
         }
 
+        /// <summary>
+        /// Returns a regex-style string representation of this character set, e.g. <c>\d</c>
+        /// or <c>[a-z0-9]</c>.
+        /// </summary>
+        /// <returns>The regex-style description.</returns>
         public override string ToString()
         {
             // Handle predefined character sets

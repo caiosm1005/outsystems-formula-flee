@@ -2,23 +2,31 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-    /**
-     * A deterministic finite state automaton for matching exact strings.
-     * It uses a sorted binary tree representation of the state
-     * transitions in order to enable quick matches with a minimal memory
-     * footprint. It only supports a single character transition between
-     * states, but may be run in an all case-insensitive mode.
-     */
+    /// <summary>
+    /// A deterministic finite automaton for matching exact strings. Uses a sorted binary tree
+    /// of state transitions to keep the memory footprint small while still allowing fast
+    /// matches. Supports a single-character transition between states and an optional
+    /// case-insensitive mode.
+    /// </summary>
     internal class TokenStringDFA
     {
 
         private readonly DFAState[] _ascii = new DFAState[128];
         private readonly DFAState _nonAscii = new();
 
+        /// <summary>
+        /// Initializes a new <see cref="TokenStringDFA"/> with no registered patterns.
+        /// </summary>
         public TokenStringDFA()
         {
         }
 
+        /// <summary>
+        /// Adds a string-to-pattern mapping to the DFA.
+        /// </summary>
+        /// <param name="str">The string to match.</param>
+        /// <param name="caseInsensitive">Whether matching should be case-insensitive.</param>
+        /// <param name="value">The token pattern accepted at the end of <paramref name="str"/>.</param>
         public void AddMatch(string str, bool caseInsensitive, TokenPattern value)
         {
             DFAState state;
@@ -52,6 +60,13 @@ namespace Flee.Parsing
             state.Value = value;
         }
 
+        /// <summary>
+        /// Attempts to match a registered string at the current position of
+        /// <paramref name="buffer"/>, returning the longest match.
+        /// </summary>
+        /// <param name="buffer">The reader buffer to inspect.</param>
+        /// <param name="caseInsensitive">Whether matching should be case-insensitive.</param>
+        /// <returns>The matched pattern, or <see langword="null"/> when no match was found.</returns>
         public TokenPattern? Match(ReaderBuffer buffer, bool caseInsensitive)
         {
             TokenPattern? result = null;
@@ -100,6 +115,10 @@ namespace Flee.Parsing
             return result;
         }
 
+        /// <summary>
+        /// Returns a textual description of the registered DFA states and transitions.
+        /// </summary>
+        /// <returns>The textual description.</returns>
         public override string ToString()
         {
             StringBuilder buffer = new();

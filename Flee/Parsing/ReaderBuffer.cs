@@ -1,22 +1,26 @@
 namespace Flee.Parsing
 {
-    /**
-     * A character buffer that automatically reads from an input source
-     * stream when needed. This class keeps track of the current position
-     * in the buffer and its line and column number in the original input
-     * source. It allows unlimited look-ahead of characters in the input,
-     * reading and buffering the required data internally. As the
-     * position is advanced, the buffer content prior to the current
-     * position is subject to removal to make space for reading new
-     * content. A few characters before the current position are always
-     * kept to enable boundary condition checks.
-     */
+    /// <summary>
+    /// A character buffer that automatically reads from an input source stream when needed.
+    /// Tracks the current position in the buffer along with its line and column number in the
+    /// original source. Supports unlimited look-ahead, internally buffering more characters as
+    /// needed; as the position advances, content prior to it may be discarded to free space,
+    /// keeping a few characters around for boundary checks.
+    /// </summary>
+    /// <param name="input">The underlying input source.</param>
     internal class ReaderBuffer(TextReader input)
     {
+        /// <summary>
+        /// The block size used for buffer growth and the underlying read loop.
+        /// </summary>
         public const int BlockSize = 1024;
+
         private char[] _buffer = new char[BlockSize * 4];
         private TextReader? _input = input;
 
+        /// <summary>
+        /// Releases the underlying buffer and closes the wrapped input source.
+        /// </summary>
         public void Dispose()
         {
             _buffer = null!;
@@ -36,21 +40,53 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Gets the current read position within the buffer.
+        /// </summary>
         public int Position { get; private set; } = 0;
+
+        /// <summary>
+        /// Gets the one-based line number of the next character to be read.
+        /// </summary>
         public int LineNumber { get; private set; } = 1;
+
+        /// <summary>
+        /// Gets the one-based column number of the next character to be read.
+        /// </summary>
         public int ColumnNumber { get; private set; } = 1;
+
+        /// <summary>
+        /// Gets the number of characters currently buffered.
+        /// </summary>
         public int Length { get; private set; } = 0;
 
+        /// <summary>
+        /// Returns the substring of length <paramref name="length"/> starting at
+        /// <paramref name="index"/> in the buffer.
+        /// </summary>
+        /// <param name="index">The starting offset.</param>
+        /// <param name="length">The substring length.</param>
+        /// <returns>The substring.</returns>
         public string Substring(int index, int length)
         {
             return new string(_buffer, index, length);
         }
 
+        /// <summary>
+        /// Returns the entire buffered content as a string.
+        /// </summary>
+        /// <returns>The buffered content.</returns>
         public override string ToString()
         {
             return new string(_buffer, 0, Length);
         }
 
+        /// <summary>
+        /// Returns the character at <paramref name="offset"/> from the current position
+        /// without advancing.
+        /// </summary>
+        /// <param name="offset">The zero-based offset to peek.</param>
+        /// <returns>The character peeked, or <c>-1</c> at end of stream.</returns>
         public int Peek(int offset)
         {
             int index = Position + offset;
@@ -66,6 +102,12 @@ namespace Flee.Parsing
             return (index >= Length) ? -1 : _buffer[index];
         }
 
+        /// <summary>
+        /// Reads up to <paramref name="offset"/> characters from the buffer, advancing the
+        /// position and updating line and column counters.
+        /// </summary>
+        /// <param name="offset">The maximum number of characters to read.</param>
+        /// <returns>The characters read, or <see langword="null"/> at end of stream.</returns>
         public string? Read(int offset)
         {
             EnsureBuffered(offset + 1);

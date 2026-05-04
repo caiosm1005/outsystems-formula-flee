@@ -2,24 +2,43 @@ using System.Collections;
 
 namespace Flee.Parsing
 {
-
-    /**
-     * A regular expression element repeater. The element repeats the
-     * matches from a specified element, attempting to reach the
-     * maximum repetition count.
-     */
+    /// <summary>
+    /// A regular-expression element repeater. Matches the wrapped element repeatedly,
+    /// honoring the configured minimum and maximum counts and the chosen
+    /// <see cref="RepeatType"/>.
+    /// </summary>
+    /// <param name="elem">The element to repeat.</param>
+    /// <param name="min">The minimum number of repetitions.</param>
+    /// <param name="max">The maximum number of repetitions, or zero/negative for unbounded.</param>
+    /// <param name="type">The repetition strategy.</param>
     internal class RepeatElement(
         Element elem,
         int min,
         int max,
         RepeatElement.RepeatType type) : Element
     {
+        /// <summary>
+        /// Enumerates the supported repetition strategies.
+        /// </summary>
         public enum RepeatType
         {
+            /// <summary>
+            /// Match as many repetitions as possible, then back off to satisfy the rest of the
+            /// expression.
+            /// </summary>
             GREEDY = 1,
+
+            /// <summary>
+            /// Match as few repetitions as possible, then advance.
+            /// </summary>
             RELUCTANT = 2,
+
+            /// <summary>
+            /// Match as many repetitions as possible without backing off.
+            /// </summary>
             POSSESSIVE = 3
         }
+
         private readonly Element _elem = elem;
         private readonly int _min = min;
         private readonly int _max = max <= 0 ? int.MaxValue : max;
@@ -27,6 +46,10 @@ namespace Flee.Parsing
         private int _matchStart = -1;
         private BitArray? _matches = null;
 
+        /// <summary>
+        /// Returns a deep clone wrapping a clone of the underlying element.
+        /// </summary>
+        /// <returns>The cloned repeater.</returns>
         public override object Clone()
         {
             return new RepeatElement((Element)_elem.Clone(),
@@ -35,6 +58,14 @@ namespace Flee.Parsing
                                      _type);
         }
 
+        /// <summary>
+        /// Matches the wrapped element repeatedly.
+        /// </summary>
+        /// <param name="m">The matcher tracking case sensitivity and end-of-stream state.</param>
+        /// <param name="buffer">The reader buffer to inspect.</param>
+        /// <param name="start">The starting position in the buffer.</param>
+        /// <param name="skip">The number of matches to skip before returning one.</param>
+        /// <returns>The match length, or <c>-1</c> if no match was found.</returns>
         public override int Match(Matcher m,
                                   ReaderBuffer buffer,
                                   int start,
@@ -199,6 +230,12 @@ namespace Flee.Parsing
                         0);
         }
 
+        /// <summary>
+        /// Writes a textual description of this repeater and its inner element to
+        /// <paramref name="output"/>.
+        /// </summary>
+        /// <param name="output">The text writer that receives the description.</param>
+        /// <param name="indent">The indentation prefix to apply to each line.</param>
         public override void PrintTo(TextWriter output, string indent)
         {
             output.Write(indent + "Repeat (" + _min + "," + _max + ")");

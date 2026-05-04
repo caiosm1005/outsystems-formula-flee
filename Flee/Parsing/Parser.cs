@@ -3,9 +3,9 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-
     /// <summary>
-    /// A base parser class. This class provides the standard parser interface, as well as token handling.
+    /// Common base class for parsers. Provides the standard parser interface as well as
+    /// shared token-handling, look-ahead, and analyzer-bridging logic.
     /// </summary>
     internal abstract class Parser
     {
@@ -17,39 +17,49 @@ namespace Flee.Parsing
         private int _errorRecovery = -1;
 
         /// <summary>
-        /// Creates a new parser.
+        /// Initializes a new parser that builds its own analyzer.
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">The input source.</param>
         internal Parser(TextReader input) : this(input, null)
         {
         }
 
         /// <summary>
-        /// Creates a new parser.
+        /// Initializes a new parser with the supplied analyzer (or builds the default one).
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="analyzer"></param>
+        /// <param name="input">The input source.</param>
+        /// <param name="analyzer">The analyzer to use, or <see langword="null"/> for the default.</param>
         internal Parser(TextReader input, Analyzer? analyzer)
         {
             Tokenizer = NewTokenizer(input);
             Analyzer = analyzer ?? NewAnalyzer();
         }
 
-        /**
-         * Creates a new parser.
-         *
-         * @param tokenizer       the tokenizer to use
-         */
+        /// <summary>
+        /// Initializes a new parser with the supplied tokenizer.
+        /// </summary>
+        /// <param name="tokenizer">The tokenizer to use.</param>
         internal Parser(Tokenizer tokenizer) : this(tokenizer, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a new parser with the supplied tokenizer and analyzer.
+        /// </summary>
+        /// <param name="tokenizer">The tokenizer to use.</param>
+        /// <param name="analyzer">The analyzer to use, or <see langword="null"/> for the default.</param>
         internal Parser(Tokenizer tokenizer, Analyzer? analyzer)
         {
             Tokenizer = tokenizer;
             Analyzer = analyzer ?? NewAnalyzer();
         }
 
+        /// <summary>
+        /// Creates the tokenizer used to read tokens from <paramref name="input"/>. Subclasses
+        /// override this to substitute a custom tokenizer.
+        /// </summary>
+        /// <param name="input">The input source.</param>
+        /// <returns>The new tokenizer.</returns>
         protected virtual Tokenizer NewTokenizer(TextReader input)
         {
             // TODO: This method should really be abstract, but it isn't in this
@@ -57,6 +67,11 @@ namespace Flee.Parsing
             return new Tokenizer(input);
         }
 
+        /// <summary>
+        /// Creates the analyzer used by the parser. Subclasses override this to substitute a
+        /// custom analyzer.
+        /// </summary>
+        /// <returns>The new analyzer.</returns>
         protected virtual Analyzer NewAnalyzer()
         {
             // TODO: This method should really be abstract, but it isn't in this
@@ -64,15 +79,29 @@ namespace Flee.Parsing
             return new Analyzer();
         }
 
+        /// <summary>
+        /// Gets the tokenizer used by this parser.
+        /// </summary>
         public Tokenizer Tokenizer { get; }
 
+        /// <summary>
+        /// Gets the analyzer used by this parser.
+        /// </summary>
         public Analyzer Analyzer { get; private set; }
 
+        /// <summary>
+        /// Returns the tokenizer used by this parser.
+        /// </summary>
+        /// <returns>The tokenizer.</returns>
         public Tokenizer GetTokenizer()
         {
             return Tokenizer;
         }
 
+        /// <summary>
+        /// Returns the analyzer used by this parser.
+        /// </summary>
+        /// <returns>The analyzer.</returns>
         public Analyzer GetAnalyzer()
         {
             return Analyzer;
@@ -83,6 +112,11 @@ namespace Flee.Parsing
             _initialized = initialized;
         }
 
+        /// <summary>
+        /// Adds a production pattern to the parser.
+        /// </summary>
+        /// <param name="pattern">The production pattern.</param>
+        /// <exception cref="ParserCreationException">If the pattern is invalid or already registered.</exception>
         public virtual void AddPattern(ProductionPattern pattern)
         {
             if (pattern.Count <= 0)
@@ -106,6 +140,11 @@ namespace Flee.Parsing
             SetInitialized(false);
         }
 
+        /// <summary>
+        /// Validates the registered patterns and prepares the parser for use. Subclasses can
+        /// extend this to compute look-ahead tables.
+        /// </summary>
+        /// <exception cref="ParserCreationException">If the parser configuration is invalid.</exception>
         public virtual void Prepare()
         {
             if (_patterns.Count <= 0)
@@ -159,18 +198,32 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Resets the parser to read from a new input source.
+        /// </summary>
+        /// <param name="input">The new input source.</param>
         public void Reset(TextReader input)
         {
             Tokenizer.Reset(input);
             Analyzer.Reset();
         }
 
+        /// <summary>
+        /// Resets the parser to read from a new input source using <paramref name="analyzer"/>.
+        /// </summary>
+        /// <param name="input">The new input source.</param>
+        /// <param name="analyzer">The analyzer to use.</param>
         public void Reset(TextReader input, Analyzer analyzer)
         {
             Tokenizer.Reset(input);
             Analyzer = analyzer;
         }
 
+        /// <summary>
+        /// Parses the input and returns the resulting parse tree.
+        /// </summary>
+        /// <returns>The root node of the parse tree.</returns>
+        /// <exception cref="ParserLogException">If one or more parse errors were encountered.</exception>
         public Node Parse()
         {
             Node root = null!;
@@ -198,8 +251,19 @@ namespace Flee.Parsing
             return _errorLog.Count > 0 ? throw _errorLog : root;
         }
 
+        /// <summary>
+        /// Parses the start production. Subclasses implement this to drive the actual parsing
+        /// algorithm.
+        /// </summary>
+        /// <returns>The root node of the parse tree.</returns>
         protected abstract Node ParseStart();
 
+        /// <summary>
+        /// Creates a new production node for <paramref name="pattern"/>, delegating to the
+        /// analyzer.
+        /// </summary>
+        /// <param name="pattern">The production pattern.</param>
+        /// <returns>The new production node.</returns>
         protected virtual Production NewProduction(ProductionPattern pattern)
         {
             return Analyzer.NewProduction(pattern);
@@ -360,6 +424,11 @@ namespace Flee.Parsing
             return (Token?)_tokens[steps];
         }
 
+        /// <summary>
+        /// Returns a textual description of every production pattern registered with this
+        /// parser.
+        /// </summary>
+        /// <returns>The textual description.</returns>
         public override string ToString()
         {
             StringBuilder buffer = new();

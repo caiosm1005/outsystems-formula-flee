@@ -6,21 +6,34 @@ using Flee.PublicTypes;
 
 namespace Flee.CalcEngine.PublicTypes
 {
+    /// <summary>
+    /// A DAG of named compiled expressions. Adding an expression registers its dependencies;
+    /// <see cref="Recalculate(string)"/> propagates new values to dependents in topological order.
+    /// </summary>
     public class CalculationEngine
     {
         #region "Fields"
         private readonly DependencyManager<ExpressionResultPair> _myDependencies;
+
         /// <summary>
-        /// Map of name to node
+        /// Map of name to node.
         /// </summary>
         private readonly Dictionary<string, ExpressionResultPair> _myNameNodeMap;
         #endregion
 
         #region "Events"
+
+        /// <summary>
+        /// Raised when a node finishes recalculating, carrying its new value.
+        /// </summary>
         public event EventHandler<NodeEventArgs>? NodeRecalculated;
         #endregion
 
         #region "Constructor"
+
+        /// <summary>
+        /// Initializes a new empty engine with case-insensitive name comparison.
+        /// </summary>
         public CalculationEngine()
         {
             _myDependencies = new DependencyManager<ExpressionResultPair>(new PairEqualityComparer());
@@ -153,7 +166,11 @@ namespace Flee.CalcEngine.PublicTypes
             ilg.Emit(OpCodes.Callvirt, pi.GetGetMethod()!);
 
             // Load the tail
-            MemberInfo[] methods = typeof(CalculationEngine).FindMembers(MemberTypes.Method, BindingFlags.Instance | BindingFlags.Public, Type.FilterNameIgnoreCase, "GetResult");
+            MemberInfo[] methods = typeof(CalculationEngine).FindMembers(
+                MemberTypes.Method,
+                BindingFlags.Instance | BindingFlags.Public,
+                Type.FilterNameIgnoreCase,
+                "GetResult");
             MethodInfo? mi = null;
 
             foreach (MethodInfo method in methods.Cast<MethodInfo>())
@@ -234,7 +251,8 @@ namespace Flee.CalcEngine.PublicTypes
 
             if (!ReferenceEquals(typeof(T), tail.ResultType))
             {
-                string msg = $"The result type of '{name}' ('{tail.ResultType.Name}') does not match the supplied type argument ('{typeof(T).Name}')";
+                string msg = $"The result type of '{name}' ('{tail.ResultType.Name}')"
+                    + $" does not match the supplied type argument ('{typeof(T).Name}')";
                 throw new ArgumentException(msg);
             }
 

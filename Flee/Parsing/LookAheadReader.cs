@@ -1,13 +1,12 @@
 namespace Flee.Parsing
 {
-    // * A look-ahead character stream reader. This class provides the 
-    // * functionalities of a buffered line-number reader, but with the 
-    // * additional possibility of peeking an unlimited number of 
-    // * characters ahead. When looking further and further ahead in the 
-    // * character stream, the buffer is continously enlarged to contain 
-    // * all the required characters from the current position an 
-    // * onwards. This means that looking more characters ahead requires 
-    // * more memory, and thus becomes unviable in the end. 
+    /// <summary>
+    /// A look-ahead character stream reader. Provides the functionality of a buffered
+    /// line-number reader with the additional ability to peek an unlimited number of
+    /// characters ahead. As look-ahead deepens, the buffer grows to hold every character from
+    /// the current position onward; very deep look-ahead is therefore memory-bounded.
+    /// </summary>
+    /// <param name="input">The underlying text reader to wrap.</param>
     internal class LookAheadReader(TextReader input) : TextReader()
     {
         private const int StreamBlockSize = 4096;
@@ -17,10 +16,20 @@ namespace Flee.Parsing
         private int _length;
         private TextReader? _input = input;
 
+        /// <summary>
+        /// Gets the one-based line number of the next character to be read.
+        /// </summary>
         public int LineNumber { get; private set; } = 1;
 
+        /// <summary>
+        /// Gets the one-based column number of the next character to be read.
+        /// </summary>
         public int ColumnNumber { get; private set; } = 1;
 
+        /// <summary>
+        /// Reads the next character and advances the position.
+        /// </summary>
+        /// <returns>The character read, or <c>-1</c> at end of stream.</returns>
         public override int Read()
         {
             ReadAhead(1);
@@ -35,6 +44,13 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Reads up to <paramref name="len"/> characters into <paramref name="cbuf"/>.
+        /// </summary>
+        /// <param name="cbuf">The destination buffer.</param>
+        /// <param name="off">The offset in <paramref name="cbuf"/> at which to begin writing.</param>
+        /// <param name="len">The maximum number of characters to read.</param>
+        /// <returns>The number of characters read, or <c>-1</c> at end of stream.</returns>
         public override int Read(char[] cbuf, int off, int len)
         {
             ReadAhead(len);
@@ -56,6 +72,11 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Reads up to <paramref name="len"/> characters and returns them as a string.
+        /// </summary>
+        /// <param name="len">The maximum number of characters to read.</param>
+        /// <returns>The characters read, or <see langword="null"/> at end of stream.</returns>
         public string? ReadString(int len)
         {
             ReadAhead(len);
@@ -77,17 +98,34 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Returns the next character without advancing the position.
+        /// </summary>
+        /// <returns>The character peeked, or <c>-1</c> at end of stream.</returns>
         public override int Peek()
         {
             return Peek(0);
         }
 
+        /// <summary>
+        /// Returns the character at offset <paramref name="off"/> from the current position
+        /// without advancing.
+        /// </summary>
+        /// <param name="off">The zero-based offset to peek.</param>
+        /// <returns>The character peeked, or <c>-1</c> at end of stream.</returns>
         public int Peek(int off)
         {
             ReadAhead(off + 1);
             return _pos + off >= _length ? -1 : Convert.ToInt32(_buffer[_pos + off]);
         }
 
+        /// <summary>
+        /// Returns up to <paramref name="len"/> characters at offset <paramref name="off"/>
+        /// from the current position without advancing.
+        /// </summary>
+        /// <param name="off">The zero-based offset to peek.</param>
+        /// <param name="len">The maximum number of characters to peek.</param>
+        /// <returns>The characters peeked, or <see langword="null"/> at end of stream.</returns>
         public string? PeekString(int off, int len)
         {
             ReadAhead(off + len + 1);
@@ -106,6 +144,9 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Closes the reader and releases the underlying buffer.
+        /// </summary>
         public override void Close()
         {
             _buffer = null!;
@@ -152,7 +193,7 @@ namespace Flee.Parsing
                 throw;
             }
 
-            // Append characters to buffer 
+            // Append characters to buffer
             if (readSize > 0)
             {
                 _length += readSize;

@@ -3,79 +3,78 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-    /**
-     * A parser creation exception. This exception is used for signalling
-     * an error in the token or production patterns, making it impossible
-     * to create a working parser or tokenizer.
-     */
+    /// <summary>
+    /// Signals an error in the token or production patterns that prevents creating a working
+    /// parser or tokenizer.
+    /// </summary>
+    /// <param name="type">The kind of creation error.</param>
+    /// <param name="name">The pattern name involved in the error, if any.</param>
+    /// <param name="info">An optional informational message.</param>
+    /// <param name="details">An optional list of detail strings.</param>
     internal class ParserCreationException(ParserCreationException.ErrorType type,
                                    String? name,
                                    String? info,
                                    ArrayList? details) : Exception
     {
-
-        /**
-         * The error type enumeration.
-         */
+        /// <summary>
+        /// Enumerates the kinds of parser-creation errors.
+        /// </summary>
         public enum ErrorType
         {
-
-            /**
-             * The internal error type is only used to signal an
-             * error that is a result of a bug in the parser or
-             * tokenizer code.
-             */
+            /// <summary>
+            /// Used to signal an error caused by a bug in the parser or tokenizer code itself.
+            /// </summary>
             INTERNAL,
 
-            /**
-             * The invalid parser error type is used when the parser
-             * as such is invalid. This error is typically caused by
-             * using a parser without any patterns.
-             */
+            /// <summary>
+            /// Used when the parser as a whole is invalid, typically because no patterns have
+            /// been registered.
+            /// </summary>
             INVALID_PARSER,
 
-            /**
-             * The invalid token error type is used when a token
-             * pattern is erroneous. This error is typically caused
-             * by an invalid pattern type or an erroneous regular
-             * expression.
-             */
+            /// <summary>
+            /// Used when a token pattern is malformed (e.g. an unsupported pattern type or an
+            /// invalid regular expression).
+            /// </summary>
             INVALID_TOKEN,
 
-            /**
-             * The invalid production error type is used when a
-             * production pattern is erroneous. This error is
-             * typically caused by referencing undeclared productions,
-             * or violating some other production pattern constraint.
-             */
+            /// <summary>
+            /// Used when a production pattern is malformed (e.g. references an undeclared
+            /// production or violates another constraint).
+            /// </summary>
             INVALID_PRODUCTION,
 
-            /**
-             * The infinite loop error type is used when an infinite
-             * loop has been detected in the grammar. One of the
-             * productions in the loop will be reported.
-             */
+            /// <summary>
+            /// Used when an infinite loop is detected in the grammar; one of the productions
+            /// in the loop is reported.
+            /// </summary>
             INFINITE_LOOP,
 
-            /**
-             * The inherent ambiguity error type is used when the set
-             * of production patterns (i.e. the grammar) contains
-             * ambiguities that cannot be resolved.
-             */
+            /// <summary>
+            /// Used when the grammar contains ambiguities that cannot be resolved.
+            /// </summary>
             INHERENT_AMBIGUITY
-
-
-
         }
 
         private readonly ArrayList? _details = details;
 
+        /// <summary>
+        /// Initializes a new <see cref="ParserCreationException"/> with no name and no details.
+        /// </summary>
+        /// <param name="type">The kind of creation error.</param>
+        /// <param name="info">An optional informational message.</param>
         public ParserCreationException(ErrorType type,
                                        String? info)
             : this(type, null, info)
         {
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="ParserCreationException"/> with no details.
+        /// </summary>
+        /// <param name="type">The kind of creation error.</param>
+        /// <param name="name">The pattern name involved in the error, if any.</param>
+        /// <param name="info">An optional informational message.</param>
         public ParserCreationException(ErrorType type,
                                        String? name,
                                        String? info)
@@ -83,27 +82,52 @@ namespace Flee.Parsing
         {
         }
 
+        /// <summary>
+        /// Gets the kind of creation error.
+        /// </summary>
         public ErrorType Type { get; } = type;
 
+        /// <summary>
+        /// Returns the kind of creation error.
+        /// </summary>
+        /// <returns>The error type.</returns>
         public ErrorType GetErrorType()
         {
             return Type;
         }
 
+        /// <summary>
+        /// Gets the pattern name involved in the error, if any.
+        /// </summary>
         public string? Name { get; } = name;
 
+        /// <summary>
+        /// Returns the pattern name involved in the error.
+        /// </summary>
+        /// <returns>The pattern name, or <see langword="null"/> when none is set.</returns>
         public string? GetName()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Gets the informational message attached to the error, if any.
+        /// </summary>
         public string? Info { get; } = info;
 
+        /// <summary>
+        /// Returns the informational message attached to the error.
+        /// </summary>
+        /// <returns>The information string, or <see langword="null"/> when none is set.</returns>
         public string? GetInfo()
         {
             return Info;
         }
 
+        /// <summary>
+        /// Gets the formatted details string, or <see langword="null"/> when no details were
+        /// attached.
+        /// </summary>
         public string? Details
         {
             get
@@ -131,11 +155,18 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Returns the formatted details string.
+        /// </summary>
+        /// <returns>The details string, or <see langword="null"/> when none was attached.</returns>
         public string? GetDetails()
         {
             return Details;
         }
 
+        /// <summary>
+        /// Gets the full error message.
+        /// </summary>
         public override string Message
         {
             get
@@ -191,6 +222,10 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Returns the full error message.
+        /// </summary>
+        /// <returns>The full error message.</returns>
         public string GetMessage()
         {
             return Message;

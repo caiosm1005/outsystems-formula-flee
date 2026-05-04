@@ -4,22 +4,28 @@ namespace Flee.CalcEngine.InternalTypes
 {
 
     /// <summary>
-    /// Keeps track of our dependencies
+    /// Keeps track of dependencies between nodes of type <typeparamref name="T"/>. Backs the
+    /// calculation engine's recalculation order via topological sort.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The node identifier type.</typeparam>
     internal class DependencyManager<T> where T : notnull
     {
-
         /// <summary>
-        /// Map of a node and the nodes that depend on it
+        /// Map of a node and the nodes that depend on it.
         /// </summary>
         private readonly Dictionary<T, Dictionary<T, object?>> _myDependentsMap;
+
         private readonly IEqualityComparer<T> _myEqualityComparer;
 
         /// <summary>
-        /// Map of a node and the number of nodes that point to it
+        /// Map of a node and the number of nodes that point to it.
         /// </summary>
         private readonly Dictionary<T, int> _myPrecedentsMap;
+
+        /// <summary>
+        /// Initializes a new instance using <paramref name="comparer"/> for node identity.
+        /// </summary>
+        /// <param name="comparer">The node-identity comparer.</param>
         public DependencyManager(IEqualityComparer<T> comparer)
         {
             _myEqualityComparer = comparer;
@@ -27,14 +33,26 @@ namespace Flee.CalcEngine.InternalTypes
             _myPrecedentsMap = new Dictionary<T, int>(_myEqualityComparer);
         }
 
+        /// <summary>
+        /// Creates an inner dictionary configured with the manager's identity comparer.
+        /// </summary>
+        /// <returns>The new dictionary.</returns>
         private IDictionary<T, object?> CreateInnerDictionary()
         {
             return new Dictionary<T, object?>(_myEqualityComparer);
         }
 
+        /// <summary>
+        /// Returns the inner dictionary for <paramref name="tail"/> or <see langword="null"/>
+        /// when none is registered.
+        /// </summary>
+        /// <param name="tail">The node id.</param>
+        /// <returns>The inner dictionary, or <see langword="null"/>.</returns>
         private IDictionary<T, object?>? GetInnerDictionary(T tail)
         {
-            return _myDependentsMap.TryGetValue(tail, out Dictionary<T, object?>? value) ? value : (IDictionary<T, object?>?)null;
+            return _myDependentsMap.TryGetValue(tail, out Dictionary<T, object?>? value)
+                ? value
+                : (IDictionary<T, object?>?)null;
         }
 
         // Create a dependency list with only the dependents of the given tails

@@ -1,20 +1,46 @@
 namespace Flee.Parsing
 {
-    /**
-     * An NFA state. The NFA consists of a series of states, each
-     * having zero or more transitions to other states.
-     */
+    /// <summary>
+    /// A single state in a non-deterministic finite automaton. Each state holds zero or more
+    /// incoming and outgoing transitions plus an optional accepted-token value.
+    /// </summary>
     internal class NFAState
     {
+        /// <summary>
+        /// The token pattern accepted at this state, or <see langword="null"/> if it is not
+        /// accepting.
+        /// </summary>
         internal TokenPattern? Value = null;
+
+        /// <summary>
+        /// The transitions that lead into this state.
+        /// </summary>
         internal NFATransition[] Incoming = [];
+
+        /// <summary>
+        /// The transitions that leave this state.
+        /// </summary>
         internal NFATransition[] Outgoing = [];
+
+        /// <summary>
+        /// Whether this state has at least one outgoing epsilon transition (precomputed for
+        /// performance).
+        /// </summary>
         internal bool EpsilonOut = false;
 
+        /// <summary>
+        /// Returns whether this state has any transitions.
+        /// </summary>
+        /// <returns><see langword="true"/> when at least one incoming or outgoing transition exists.</returns>
         public bool HasTransitions()
         {
             return Incoming.Length > 0 || Outgoing.Length > 0;
         }
+
+        /// <summary>
+        /// Returns whether every outgoing transition is restricted to ASCII characters.
+        /// </summary>
+        /// <returns><see langword="true"/> when every outgoing transition is ASCII-only.</returns>
         public bool IsAsciiOutgoing()
         {
             for (int i = 0; i < Outgoing.Length; i++)
@@ -27,12 +53,24 @@ namespace Flee.Parsing
             return true;
         }
 
+        /// <summary>
+        /// Adds <paramref name="trans"/> to the incoming-transition list.
+        /// </summary>
+        /// <param name="trans">The transition to add.</param>
         public void AddIn(NFATransition trans)
         {
             Array.Resize(ref Incoming, Incoming.Length + 1);
             Incoming[Incoming.Length - 1] = trans;
         }
 
+        /// <summary>
+        /// Adds an outgoing character transition keyed by <paramref name="ch"/>, optionally
+        /// reusing an existing equivalent transition.
+        /// </summary>
+        /// <param name="ch">The character that triggers the transition.</param>
+        /// <param name="ignoreCase">Whether to treat upper- and lower-case as equivalent.</param>
+        /// <param name="state">The destination state, or <see langword="null"/> to create a new one.</param>
+        /// <returns>The destination state actually used.</returns>
         public NFAState AddOut(char ch, bool ignoreCase, NFAState? state)
         {
             if (ignoreCase)
@@ -57,6 +95,12 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Adds <paramref name="trans"/> to the outgoing-transition list and returns its
+        /// destination state.
+        /// </summary>
+        /// <param name="trans">The transition to add.</param>
+        /// <returns>The destination state of <paramref name="trans"/>.</returns>
         public NFAState AddOut(NFATransition trans)
         {
             Array.Resize(ref Outgoing, Outgoing.Length + 1);
@@ -68,6 +112,11 @@ namespace Flee.Parsing
             return trans.State;
         }
 
+        /// <summary>
+        /// Merges this state into <paramref name="state"/>, redirecting all incoming and
+        /// outgoing transitions.
+        /// </summary>
+        /// <param name="state">The state that absorbs this one.</param>
         public void MergeInto(NFAState state)
         {
             for (int i = 0; i < Incoming.Length; i++)
@@ -111,6 +160,13 @@ namespace Flee.Parsing
             return res?.State;
         }
 
+        /// <summary>
+        /// Enqueues every successor state reachable from this one by consuming
+        /// <paramref name="ch"/>.
+        /// </summary>
+        /// <param name="ch">The next input character.</param>
+        /// <param name="queue">The queue to add successor states to.</param>
+        /// <param name="initial">Whether this is the initial-state expansion.</param>
         public void MatchTransitions(char ch, NFAStateQueue queue, bool initial)
         {
             for (int i = 0; i < Outgoing.Length; i++)
@@ -132,6 +188,10 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Enqueues every successor state reachable from this one through epsilon transitions.
+        /// </summary>
+        /// <param name="queue">The queue to add successor states to.</param>
         public void MatchEmpty(NFAStateQueue queue)
         {
             for (int i = 0; i < Outgoing.Length; i++)

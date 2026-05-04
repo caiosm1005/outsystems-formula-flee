@@ -9,14 +9,19 @@ using Flee.Resources;
 namespace Flee.ExpressionElements.MemberElements
 {
     /// <summary>
-    /// Element representing an array index.
+    /// Indexing operator (<c>x[i]</c>). Handles native CLR arrays directly and routes
+    /// indexer-property dispatch through a synthesized <see cref="FunctionCallElement"/>.
     /// </summary>
+    /// <param name="indexer">The argument list inside the brackets.</param>
     internal class IndexerElement(ArgumentList indexer) : MemberElement
     {
         private ExpressionElement _myIndexerElement = null!;
 
         private readonly ArgumentList _myIndexerElements = indexer;
 
+        /// <summary>
+        /// Resolves the indexer: native array or default-member property on the target type.
+        /// </summary>
         protected override void ResolveInternal()
         {
             // Are we are indexing on an array?
@@ -32,24 +37,44 @@ namespace Flee.ExpressionElements.MemberElements
             // Not an array, so try to find an indexer on the type
             if (!FindIndexer(target))
             {
-                ThrowCompileException(CompileErrorResourceKeys.TypeNotArrayAndHasNoIndexerOfType, CompileExceptionReason.TypeMismatch, target.Name, _myIndexerElements);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.TypeNotArrayAndHasNoIndexerOfType,
+                    CompileExceptionReason.TypeMismatch,
+                    target.Name,
+                    _myIndexerElements);
             }
         }
 
+        /// <summary>
+        /// Validates and stores the index expression for native-array indexing. Multiple
+        /// indices aren't supported and the index must be convertible to <see cref="int"/>.
+        /// </summary>
         private void SetupArrayIndexer()
         {
             _myIndexerElement = _myIndexerElements[0];
 
             if (_myIndexerElements.Count > 1)
             {
-                ThrowCompileException(CompileErrorResourceKeys.MultiArrayIndexNotSupported, CompileExceptionReason.TypeMismatch);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.MultiArrayIndexNotSupported,
+                    CompileExceptionReason.TypeMismatch);
             }
             else if (!ImplicitConverter.EmitImplicitConvert(_myIndexerElement.ResultType, typeof(Int32), null))
             {
-                ThrowCompileException(CompileErrorResourceKeys.ArrayIndexersMustBeOfType, CompileExceptionReason.TypeMismatch, nameof(Int32));
+                ThrowCompileException(
+                    CompileErrorResourceKeys.ArrayIndexersMustBeOfType,
+                    CompileExceptionReason.TypeMismatch,
+                    nameof(Int32));
             }
         }
 
+        /// <summary>
+        /// Looks for a default-member property indexer on <paramref name="targetType"/>.
+        /// Constructs a synthetic <see cref="FunctionCallElement"/> targeting the indexer's
+        /// getter and resolves it.
+        /// </summary>
+        /// <param name="targetType">The type being indexed.</param>
+        /// <returns><see langword="true"/> when the indexer is bound.</returns>
         private bool FindIndexer(Type targetType)
         {
             // Get the default members
@@ -78,6 +103,11 @@ namespace Flee.ExpressionElements.MemberElements
             return true;
         }
 
+        /// <summary>
+        /// Dispatches to the array or property-indexer emit.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             base.Emit(ilg, services);
@@ -92,6 +122,12 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
+        /// <summary>
+        /// Emits a native-array load: the index, an <c>int</c> conversion, and the right
+        /// <c>ldelem</c> variant.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         private void EmitArrayLoad(FleeILGenerator ilg, IServiceProvider services)
         {
             _myIndexerElement.Emit(ilg, services);
@@ -110,6 +146,12 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
+        /// <summary>
+        /// Emits a value-type array load. When the next element wants the address, emits
+        /// <c>ldelema</c>; otherwise emits the typed <c>ldelem</c>.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="elementType">The array element type.</param>
         private void EmitValueTypeArrayLoad(FleeILGenerator ilg, Type elementType)
         {
             if (NextRequiresAddress)
@@ -122,23 +164,53 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
+        /// <summary>
+        /// Emits an indexer-property call by delegating to the synthesized
+        /// <see cref="FunctionCallElement"/>.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         private void EmitIndexer(FleeILGenerator ilg, IServiceProvider services)
         {
             FunctionCallElement func = (FunctionCallElement)_myIndexerElement;
             func.EmitFunctionCall(NextRequiresAddress, ilg, services);
         }
 
+        /// <summary>
+        /// Gets the predecessor's array type when applicable, otherwise <see langword="null"/>.
+        /// </summary>
         private Type? ArrayType => IsArray ? MyPrevious!.TargetType : null;
 
+        /// <summary>
+        /// Gets a value indicating whether the predecessor's type is a CLR array.
+        /// </summary>
         private bool IsArray => MyPrevious!.TargetType.IsArray;
 
+        /// <summary>
+        /// Indexer-property results are addressable; native-array results are not.
+        /// </summary>
         protected override bool RequiresAddress => !IsArray;
 
-        public override Type ResultType => IsArray ? ArrayType!.GetElementType()! : _myIndexerElement.ResultType;
+        /// <summary>
+        /// Gets the element type for arrays or the indexer's return type for properties.
+        /// </summary>
+        public override Type ResultType =>
+            IsArray ? ArrayType!.GetElementType()! : _myIndexerElement.ResultType;
 
+        /// <summary>
+        /// Native-array indexers are always public; property-indexer accessibility comes from
+        /// the underlying element.
+        /// </summary>
         protected override bool IsPublic => IsArray || IsElementPublic((MemberElement)_myIndexerElement);
 
+        /// <summary>
+        /// Indexers are always instance-bound.
+        /// </summary>
         public override bool IsStatic => false;
+
+        /// <summary>
+        /// Never an extension method.
+        /// </summary>
         public override bool IsExtensionMethod => false;
     }
 }

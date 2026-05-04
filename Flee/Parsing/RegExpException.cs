@@ -3,50 +3,45 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-    /**
-     * A regular expression exception. This exception is thrown if a
-     * regular expression couldn't be processed (or "compiled")
-     * properly.
-     */
+    /// <summary>
+    /// A regular-expression exception. Thrown when a regular expression cannot be processed
+    /// (or "compiled") successfully.
+    /// </summary>
+    /// <param name="type">The kind of error.</param>
+    /// <param name="pos">The position in the pattern where the error occurred.</param>
+    /// <param name="pattern">The pattern that produced the error.</param>
     internal class RegExpException(RegExpException.ErrorType type, int pos, string pattern) : Exception
     {
+        /// <summary>
+        /// Enumerates the kinds of regex compilation errors.
+        /// </summary>
         public enum ErrorType
         {
-
-            /**
-             * The unexpected character error constant. This error is
-             * used when a character was read that didn't match the
-             * allowed set of characters at the given position.
-             */
+            /// <summary>
+            /// A character was read that didn't match the allowed set at the given position.
+            /// </summary>
             UNEXPECTED_CHARACTER,
 
-            /**
-             * The unterminated pattern error constant. This error is
-             * used when more characters were expected in the pattern.
-             */
+            /// <summary>
+            /// More characters were expected in the pattern.
+            /// </summary>
             UNTERMINATED_PATTERN,
 
-            /**
-             * The unsupported special character error constant. This
-             * error is used when special regular expression
-             * characters are used in the pattern, but not supported
-             * in this implementation.
-             */
+            /// <summary>
+            /// A special regular-expression character was used in the pattern that this
+            /// implementation does not support.
+            /// </summary>
             UNSUPPORTED_SPECIAL_CHARACTER,
 
-            /**
-             * The unsupported escape character error constant. This
-             * error is used when an escape character construct is
-             * used in the pattern, but not supported in this
-             * implementation.
-             */
+            /// <summary>
+            /// An escape-character construct was used in the pattern that this implementation
+            /// does not support.
+            /// </summary>
             UNSUPPORTED_ESCAPE_CHARACTER,
 
-            /**
-             * The invalid repeat count error constant. This error is
-             * used when a repetition count of zero is specified, or
-             * when the minimum exceeds the maximum.
-             */
+            /// <summary>
+            /// A repetition count of zero was specified, or the minimum exceeded the maximum.
+            /// </summary>
             INVALID_REPEAT_COUNT
         }
 
@@ -54,8 +49,16 @@ namespace Flee.Parsing
         private readonly int _position = pos;
         private readonly string _pattern = pattern;
 
+        /// <summary>
+        /// Gets the formatted error message.
+        /// </summary>
         public override string Message => GetMessage();
 
+        /// <summary>
+        /// Returns the formatted error message, including the offending substring and its
+        /// position.
+        /// </summary>
+        /// <returns>The formatted error message.</returns>
         public string GetMessage()
         {
             StringBuilder buffer = new();

@@ -1,76 +1,98 @@
-﻿using System.Collections;
+using System.Collections;
 
 namespace Flee.Parsing
 {
-    /**
-     * based on recursive descent parser, this implementation removes recursion
-     * and uses a stack instead. This parser handles LL(n) grammars,
-     * selecting the appropriate pattern to parse based on the next few
-     * tokens. 
-     */
+    /// <summary>
+    /// An LL(n) parser based on <see cref="RecursiveDescentParser"/> but using an explicit
+    /// stack instead of native recursion. The stack-based formulation avoids the
+    /// recursion-depth limit imposed by the .NET runtime.
+    /// </summary>
     internal class StackParser : Parser
     {
-        /**
-         * this is the parser state that is pushed onto the stack, simulating
-         * the variable state needed in recursive version. Some variables
-         * substitute for execution position, such as validnext, so patterns
-         * are processed in the proper order.
-         */
+        /// <summary>
+        /// The per-frame state pushed onto the parsing stack. Replaces the local variables a
+        /// recursive implementation would carry across calls; <see cref="validnext"/>, for
+        /// instance, mirrors the look-ahead bookkeeping that ensures alternatives are tried
+        /// in the right order.
+        /// </summary>
         internal class ParseState
         {
-            /**
-             * pattern for this state
-             */
+            /// <summary>
+            /// The pattern this frame is parsing.
+            /// </summary>
             internal ProductionPattern pattern = null!;
-            /**
-             * index of the alt pattern we are currently checking
-             */
+
+            /// <summary>
+            /// The index of the alternative currently being tried.
+            /// </summary>
             internal int altindex;
 
-            /**
-             * index into the list of elements for the alt pattern
-             */
+            /// <summary>
+            /// The index into the alternative's element list.
+            /// </summary>
             internal int elementindex;
 
-            /**
-             * index to the token we are processing.
-             */
+            /// <summary>
+            /// The index of the token currently being processed inside the active element.
+            /// </summary>
             internal int tokenindex;
 
-            /**
-             * The node for current state
-             */
+            /// <summary>
+            /// The node accumulated for this frame.
+            /// </summary>
             internal Node? node;
 
-            /**
-             * true if we already checked IsNext on the current pattern
-             * so we should not call it again
-             */
+            /// <summary>
+            /// Whether the look-ahead check on the current pattern has already succeeded so
+            /// it should not be repeated.
+            /// </summary>
             internal bool validnext;
-
         }
 
-
+        /// <summary>
+        /// Initializes a new parser reading from <paramref name="input"/>.
+        /// </summary>
+        /// <param name="input">The input source.</param>
         public StackParser(TextReader input) : base(input)
         {
         }
 
+        /// <summary>
+        /// Initializes a new parser with the supplied analyzer.
+        /// </summary>
+        /// <param name="input">The input source.</param>
+        /// <param name="analyzer">The analyzer to use, or <see langword="null"/> for the default.</param>
         public StackParser(TextReader input, Analyzer? analyzer)
             : base(input, analyzer)
         {
         }
 
+        /// <summary>
+        /// Initializes a new parser with the supplied tokenizer.
+        /// </summary>
+        /// <param name="tokenizer">The tokenizer to use.</param>
         public StackParser(Tokenizer tokenizer)
             : base(tokenizer)
         {
         }
 
+        /// <summary>
+        /// Initializes a new parser with the supplied tokenizer and analyzer.
+        /// </summary>
+        /// <param name="tokenizer">The tokenizer to use.</param>
+        /// <param name="analyzer">The analyzer to use, or <see langword="null"/> for the default.</param>
         public StackParser(Tokenizer tokenizer,
                                       Analyzer? analyzer)
             : base(tokenizer, analyzer)
         {
         }
 
+        /// <summary>
+        /// Adds <paramref name="pattern"/> after rejecting empty matches and left-recursive
+        /// patterns, neither of which the LL(n) algorithm can handle.
+        /// </summary>
+        /// <param name="pattern">The production pattern to add.</param>
+        /// <exception cref="ParserCreationException">If the pattern is empty or left-recursive.</exception>
         public override void AddPattern(ProductionPattern pattern)
         {
 
@@ -96,6 +118,10 @@ namespace Flee.Parsing
             base.AddPattern(pattern);
         }
 
+        /// <summary>
+        /// Validates the registered patterns and computes the look-ahead sets used during
+        /// parsing.
+        /// </summary>
         public override void Prepare()
         {
             // Performs production pattern checks
@@ -113,6 +139,10 @@ namespace Flee.Parsing
             SetInitialized(true);
         }
 
+        /// <summary>
+        /// Parses the start production and ensures no tokens remain after it.
+        /// </summary>
+        /// <returns>The root parse-tree node.</returns>
         protected override Node ParseStart()
         {
             var node = ParsePatterns(GetStartPattern()!);
@@ -148,12 +178,12 @@ namespace Flee.Parsing
         }
 
         /// <summary>
-        /// parse patterns using a stack. The stack is local to this method, since the parser
-        /// is a singleton and may be parsing expressions from multiple threads, so cannot
-        /// use the object to store our stack.
+        /// Parses the production patterns using a local stack. The stack is local because the
+        /// parser is used as a singleton across threads, so per-parse state cannot live on
+        /// the instance.
         /// </summary>
-        /// <param name="start"></param>
-        /// <returns></returns>
+        /// <param name="start">The start production.</param>
+        /// <returns>The parsed root node.</returns>
         private Node ParsePatterns(ProductionPattern start)
         {
             Stack<ParseState> _stack = new();
@@ -220,9 +250,10 @@ namespace Flee.Parsing
             return null!;
         }
 
-        /**
-         * return the pattern to push onto stack and process next.
-         */
+        /// <summary>
+        /// Returns the next pattern to push onto the stack, or <see langword="null"/> when
+        /// the alternative is fully consumed.
+        /// </summary>
         private ProductionPattern? ParseAlternative(ParseState state, ProductionPatternAlternative alt)
         {
             if (state.node == null)

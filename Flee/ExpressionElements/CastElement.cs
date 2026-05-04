@@ -8,11 +8,29 @@ using Flee.Resources;
 
 namespace Flee.ExpressionElements
 {
+    /// <summary>
+    /// Explicit cast expression. Validates that the cast is legal at compile time and emits
+    /// the appropriate IL: identity casts are no-ops, numerics get the right <c>conv</c> opcode,
+    /// boxing/unboxing handle value↔reference, and user-defined <c>op_Explicit</c> overloads
+    /// are honored.
+    /// </summary>
     internal class CastElement : ExpressionElement
     {
         private readonly ExpressionElement _myCastExpression;
         private readonly Type _myDestType;
-        public CastElement(ExpressionElement castExpression, string[] destTypeParts, bool isArray, IServiceProvider services)
+
+        /// <summary>
+        /// Initializes a new cast around <paramref name="castExpression"/>.
+        /// </summary>
+        /// <param name="castExpression">The expression being cast.</param>
+        /// <param name="destTypeParts">The dotted destination type name from the source.</param>
+        /// <param name="isArray">Whether the destination type was followed by <c>[]</c>.</param>
+        /// <param name="services">The compile services (used for type resolution).</param>
+        public CastElement(
+            ExpressionElement castExpression,
+            string[] destTypeParts,
+            bool isArray,
+            IServiceProvider services)
         {
             _myCastExpression = castExpression;
 
@@ -20,7 +38,10 @@ namespace Flee.ExpressionElements
 
             if (destType == null)
             {
-                ThrowCompileException(CompileErrorResourceKeys.CouldNotResolveType, CompileExceptionReason.UndefinedName, GetDestTypeString(destTypeParts, isArray));
+                ThrowCompileException(
+                    CompileErrorResourceKeys.CouldNotResolveType,
+                    CompileExceptionReason.UndefinedName,
+                    GetDestTypeString(destTypeParts, isArray));
             }
 
             _myDestType = destType!;
@@ -36,6 +57,13 @@ namespace Flee.ExpressionElements
             }
         }
 
+        /// <summary>
+        /// Reconstructs the dotted destination type string from its parts, appending <c>[]</c>
+        /// when the target was an array.
+        /// </summary>
+        /// <param name="parts">The dotted type-name parts.</param>
+        /// <param name="isArray">Whether the type was an array.</param>
+        /// <returns>The diagnostic string.</returns>
         private static string GetDestTypeString(string[] parts, bool isArray)
         {
             string s = string.Join(".", parts);
@@ -49,11 +77,12 @@ namespace Flee.ExpressionElements
         }
 
         /// <summary>
-        /// Resolve the type we are casting to
+        /// Resolve the type we are casting to, falling back to imports when the dotted name
+        /// isn't a built-in alias.
         /// </summary>
-        /// <param name="destTypeParts"></param>
-        /// <param name="services"></param>
-        /// <returns></returns>
+        /// <param name="destTypeParts">The dotted destination-type parts.</param>
+        /// <param name="services">The compile services.</param>
+        /// <returns>The CLR type, or <see langword="null"/> when unresolved.</returns>
         private static Type? GetDestType(string[] destTypeParts, IServiceProvider services)
         {
             ExpressionContext context = (ExpressionContext)services.GetService(typeof(ExpressionContext))!;
@@ -75,6 +104,14 @@ namespace Flee.ExpressionElements
             return context.Imports.FindType(destTypeParts);
         }
 
+        /// <summary>
+        /// Returns whether casting from <paramref name="sourceType"/> to <paramref name="destType"/>
+        /// is allowed. Walks each cast category in turn (identity, implicit, numeric, enum,
+        /// user-defined operator, value/reference shapes).
+        /// </summary>
+        /// <param name="sourceType">The source type.</param>
+        /// <param name="destType">The destination type.</param>
+        /// <returns><see langword="true"/> when the cast is valid.</returns>
         private bool IsValidCast(Type sourceType, Type destType)
         {
             if (ReferenceEquals(sourceType, destType))
@@ -109,8 +146,8 @@ namespace Flee.ExpressionElements
 
             if (sourceType.IsValueType)
             {
-                // If we get here then the cast always fails since we are either casting one value type to another
-                // or a value type to an invalid reference type
+                // If we get here then the cast always fails since we are either casting one
+                // value type to another or a value type to an invalid reference type
                 return false;
             }
             else
@@ -131,6 +168,13 @@ namespace Flee.ExpressionElements
             }
         }
 
+        /// <summary>
+        /// Looks for a user-defined <c>op_Explicit</c> on either the source or the destination
+        /// type, throwing when both define one (ambiguous).
+        /// </summary>
+        /// <param name="sourceType">The source type.</param>
+        /// <param name="destType">The destination type.</param>
+        /// <returns>The chosen operator, or <see langword="null"/> when none is defined.</returns>
         private MethodInfo? GetExplictOverloadedOperator(Type sourceType, Type destType)
         {
             ExplicitOperatorMethodBinder binder = new(destType, sourceType);
@@ -158,6 +202,12 @@ namespace Flee.ExpressionElements
             }
         }
 
+        /// <summary>
+        /// Reduces an enum cast to a cast between the underlying integral types.
+        /// </summary>
+        /// <param name="sourceType">The source type.</param>
+        /// <param name="destType">The destination type.</param>
+        /// <returns><see langword="true"/> when the underlying cast is valid.</returns>
         private bool IsValidExplicitEnumCast(Type sourceType, Type destType)
         {
             sourceType = GetUnderlyingEnumType(sourceType);
@@ -165,6 +215,13 @@ namespace Flee.ExpressionElements
             return IsValidCast(sourceType, destType);
         }
 
+        /// <summary>
+        /// Returns whether an explicit reference-to-reference conversion is allowed by the CLR rules
+        /// (covering object, arrays, classes, and interfaces).
+        /// </summary>
+        /// <param name="sourceType">The source type.</param>
+        /// <param name="destType">The destination type.</param>
+        /// <returns><see langword="true"/> when valid.</returns>
         private bool IsValidExplicitReferenceCast(Type sourceType, Type destType)
         {
             Debug.Assert(!sourceType.IsValueType & !destType.IsValueType, "expecting reference types");
@@ -176,8 +233,8 @@ namespace Flee.ExpressionElements
             }
             else if (sourceType.IsArray & destType.IsArray)
             {
-                // From an array-type S with an element type SE to an array-type T with an element type TE,
-                // provided all of the following are true:
+                // From an array-type S with an element type SE to an array-type T with an
+                // element type TE, provided all of the following are true:
 
                 // S and T have the same number of dimensions
                 if (sourceType.GetArrayRank() != destType.GetArrayRank())
@@ -208,12 +265,14 @@ namespace Flee.ExpressionElements
             }
             else if (sourceType.IsClass & destType.IsInterface)
             {
-                // From any class-type S to any interface-type T, provided S is not sealed and provided S does not implement T
+                // From any class-type S to any interface-type T, provided S is not sealed and
+                // provided S does not implement T
                 return !sourceType.IsSealed & !ImplementsInterface(sourceType, destType);
             }
             else if (sourceType.IsInterface & destType.IsClass)
             {
-                // From any interface-type S to any class-type T, provided T is not sealed or provided T implements S.
+                // From any interface-type S to any class-type T, provided T is not sealed or
+                // provided T implements S.
                 return !destType.IsSealed | ImplementsInterface(destType, sourceType);
             }
             else if (sourceType.IsInterface & destType.IsInterface)
@@ -229,6 +288,13 @@ namespace Flee.ExpressionElements
             return false;
         }
 
+        /// <summary>
+        /// Returns whether <paramref name="potentialBase"/> is anywhere on
+        /// <paramref name="target"/>'s base-type chain.
+        /// </summary>
+        /// <param name="target">The starting type.</param>
+        /// <param name="potentialBase">The candidate base type.</param>
+        /// <returns><see langword="true"/> when the relationship holds.</returns>
         private static bool IsBaseType(Type target, Type potentialBase)
         {
             Type? current = target;
@@ -243,27 +309,57 @@ namespace Flee.ExpressionElements
             return false;
         }
 
+        /// <summary>
+        /// Returns whether <paramref name="target"/> implements <paramref name="interfaceType"/>.
+        /// </summary>
+        /// <param name="target">The candidate type.</param>
+        /// <param name="interfaceType">The interface to look for.</param>
+        /// <returns><see langword="true"/> when implemented.</returns>
         private static bool ImplementsInterface(Type target, Type interfaceType)
         {
             Type[] interfaces = target.GetInterfaces();
             return Array.IndexOf(interfaces, interfaceType) != -1;
         }
 
+        /// <summary>
+        /// Throws a "cannot convert" compile exception describing the rejected cast.
+        /// </summary>
         private void ThrowInvalidCastException()
         {
-            ThrowCompileException(CompileErrorResourceKeys.CannotConvertType, CompileExceptionReason.InvalidExplicitCast, _myCastExpression.ResultType.Name, _myDestType.Name);
+            ThrowCompileException(
+                CompileErrorResourceKeys.CannotConvertType,
+                CompileExceptionReason.InvalidExplicitCast,
+                _myCastExpression.ResultType.Name,
+                _myDestType.Name);
         }
 
+        /// <summary>
+        /// Returns whether <paramref name="t"/> is a primitive type that participates in
+        /// numeric casts (everything except <see cref="bool"/>).
+        /// </summary>
+        /// <param name="t">The candidate type.</param>
+        /// <returns><see langword="true"/> when it qualifies.</returns>
         private static bool IsCastableNumericType(Type t)
         {
             return t.IsPrimitive & (!ReferenceEquals(t, typeof(bool)));
         }
 
+        /// <summary>
+        /// Returns the underlying integral type for an enum, or <paramref name="t"/> as-is when
+        /// it isn't an enum.
+        /// </summary>
+        /// <param name="t">The type to inspect.</param>
+        /// <returns>The underlying type.</returns>
         private static Type GetUnderlyingEnumType(Type t)
         {
             return t.IsEnum ? Enum.GetUnderlyingType(t) : t;
         }
 
+        /// <summary>
+        /// Emits the cast expression followed by the cast itself.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             _myCastExpression.Emit(ilg, services);
@@ -274,6 +370,13 @@ namespace Flee.ExpressionElements
             EmitCast(ilg, sourceType, destType, services);
         }
 
+        /// <summary>
+        /// Emits the IL pattern that corresponds to the validated cast category.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="sourceType">The source type.</param>
+        /// <param name="destType">The destination type.</param>
+        /// <param name="services">The compile services.</param>
         private void EmitCast(FleeILGenerator ilg, Type sourceType, Type destType, IServiceProvider services)
         {
             MethodInfo? explicitOperator = GetExplictOverloadedOperator(sourceType, destType);
@@ -325,6 +428,14 @@ namespace Flee.ExpressionElements
             }
         }
 
+        /// <summary>
+        /// Emits an enum cast, falling back to value-type box/unbox when one side isn't an enum,
+        /// or to an underlying-type cast when both are enums.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="sourceType">The source type.</param>
+        /// <param name="destType">The destination type.</param>
+        /// <param name="services">The compile services.</param>
         private void EmitEnumCast(FleeILGenerator ilg, Type sourceType, Type destType, IServiceProvider services)
         {
             if (!destType.IsValueType)
@@ -343,7 +454,19 @@ namespace Flee.ExpressionElements
             }
         }
 
-        private static void EmitExplicitNumericCast(FleeILGenerator ilg, Type sourceType, Type destType, IServiceProvider services)
+        /// <summary>
+        /// Emits the appropriate <c>conv</c> opcode for an explicit numeric cast, picking
+        /// checked/unsigned variants based on options and the source type's signedness.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="sourceType">The source numeric type.</param>
+        /// <param name="destType">The destination numeric type.</param>
+        /// <param name="services">The compile services (used to read <see cref="ExpressionOptions.Checked"/>).</param>
+        private static void EmitExplicitNumericCast(
+            FleeILGenerator ilg,
+            Type sourceType,
+            Type destType,
+            IServiceProvider services)
         {
             TypeCode desttc = Type.GetTypeCode(destType);
             TypeCode sourcetc = Type.GetTypeCode(sourceType);
@@ -385,7 +508,8 @@ namespace Flee.ExpressionElements
                     }
                     else if (sourcetc != TypeCode.UInt32)
                     {
-                        // Don't need to emit a convert for this case since, to the CLR, it is the same data type
+                        // Don't need to emit a convert for this case since, to the CLR, it is
+                        // the same data type
                         op = OpCodes.Conv_I4;
                     }
                     break;
@@ -463,11 +587,22 @@ namespace Flee.ExpressionElements
             }
         }
 
+        /// <summary>
+        /// Returns whether <paramref name="t"/> is one of the unsigned integral primitives.
+        /// </summary>
+        /// <param name="t">The candidate type.</param>
+        /// <returns><see langword="true"/> when unsigned.</returns>
         private static bool IsUnsignedType(Type t)
         {
-            return Type.GetTypeCode(t) is TypeCode.Byte or TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64;
+            return Type.GetTypeCode(t) is TypeCode.Byte
+                or TypeCode.UInt16
+                or TypeCode.UInt32
+                or TypeCode.UInt64;
         }
 
+        /// <summary>
+        /// Gets the destination type of the cast.
+        /// </summary>
         public override Type ResultType => _myDestType;
     }
 }

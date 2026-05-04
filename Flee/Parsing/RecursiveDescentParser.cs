@@ -2,36 +2,59 @@ using System.Collections;
 
 namespace Flee.Parsing
 {
-    /**
-     * A recursive descent parser. This parser handles LL(n) grammars,
-     * selecting the appropriate pattern to parse based on the next few
-     * tokens. The parser is more efficient the fewer look-ahead tokens
-     * that is has to consider.
-     */
+    /// <summary>
+    /// A recursive-descent LL(n) parser. Selects the production alternative to apply by
+    /// looking ahead at the next few tokens; the fewer look-ahead tokens required, the
+    /// faster the parser.
+    /// </summary>
     internal class RecursiveDescentParser : Parser
     {
         private int _stackdepth = 0;
 
+        /// <summary>
+        /// Initializes a new parser reading from <paramref name="input"/>.
+        /// </summary>
+        /// <param name="input">The input source.</param>
         public RecursiveDescentParser(TextReader input) : base(input)
         {
         }
 
+        /// <summary>
+        /// Initializes a new parser with the supplied analyzer.
+        /// </summary>
+        /// <param name="input">The input source.</param>
+        /// <param name="analyzer">The analyzer to use, or <see langword="null"/> for the default.</param>
         public RecursiveDescentParser(TextReader input, Analyzer? analyzer)
             : base(input, analyzer)
         {
         }
 
+        /// <summary>
+        /// Initializes a new parser with the supplied tokenizer.
+        /// </summary>
+        /// <param name="tokenizer">The tokenizer to use.</param>
         public RecursiveDescentParser(Tokenizer tokenizer)
             : base(tokenizer)
         {
         }
 
+        /// <summary>
+        /// Initializes a new parser with the supplied tokenizer and analyzer.
+        /// </summary>
+        /// <param name="tokenizer">The tokenizer to use.</param>
+        /// <param name="analyzer">The analyzer to use, or <see langword="null"/> for the default.</param>
         public RecursiveDescentParser(Tokenizer tokenizer,
                                       Analyzer? analyzer)
             : base(tokenizer, analyzer)
         {
         }
 
+        /// <summary>
+        /// Adds <paramref name="pattern"/> after rejecting empty matches and left-recursive
+        /// patterns, both of which the recursive-descent algorithm cannot handle.
+        /// </summary>
+        /// <param name="pattern">The production pattern to add.</param>
+        /// <exception cref="ParserCreationException">If the pattern is empty or left-recursive.</exception>
         public override void AddPattern(ProductionPattern pattern)
         {
 
@@ -57,6 +80,10 @@ namespace Flee.Parsing
             base.AddPattern(pattern);
         }
 
+        /// <summary>
+        /// Validates the registered patterns and computes the look-ahead sets used during
+        /// parsing.
+        /// </summary>
         public override void Prepare()
         {
             // Performs production pattern checks
@@ -74,6 +101,10 @@ namespace Flee.Parsing
             SetInitialized(true);
         }
 
+        /// <summary>
+        /// Parses the start production and ensures no tokens remain after it.
+        /// </summary>
+        /// <returns>The root parse-tree node.</returns>
         protected override Node ParseStart()
         {
             _stackdepth = 0;

@@ -2,13 +2,14 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-    /**
-      * A character stream tokenizer. This class groups the characters read
-      * from the stream together into tokens ("words"). The grouping is
-      * controlled by token patterns that contain either a fixed string to
-      * search for, or a regular expression. If the stream of characters
-      * don't match any of the token patterns, a parse exception is thrown.
-      */
+    /// <summary>
+    /// A character-stream tokenizer. Groups characters read from the stream into tokens
+    /// ("words") according to a set of token patterns; each pattern carries either a fixed
+    /// string to search for or a regular expression. If no token pattern matches the next
+    /// characters in the stream, a <see cref="ParseException"/> is thrown.
+    /// </summary>
+    /// <param name="input">The input source.</param>
+    /// <param name="ignoreCase">Whether matching should be case-insensitive.</param>
     internal class Tokenizer(TextReader input, bool ignoreCase)
     {
         private readonly StringDFAMatcher _stringDfaMatcher = new(ignoreCase);
@@ -18,23 +19,44 @@ namespace Flee.Parsing
         private readonly TokenMatch _lastMatch = new();
         private Token? _previousToken = null;
 
+        /// <summary>
+        /// Initializes a new case-sensitive tokenizer.
+        /// </summary>
+        /// <param name="input">The input source.</param>
         public Tokenizer(TextReader input)
             : this(input, false)
         {
         }
 
+        /// <summary>
+        /// Gets or sets whether tokens should be linked together via
+        /// <see cref="Token.Previous"/>/<see cref="Token.Next"/> as they are produced.
+        /// </summary>
         public bool UseTokenList { get; set; } = false;
 
+        /// <summary>
+        /// Returns whether the tokenizer maintains a doubly-linked list of produced tokens.
+        /// </summary>
+        /// <returns><see langword="true"/> when token linking is enabled.</returns>
         public bool GetUseTokenList()
         {
             return UseTokenList;
         }
 
+        /// <summary>
+        /// Sets whether the tokenizer should maintain a doubly-linked list of produced tokens.
+        /// </summary>
+        /// <param name="useTokenList">The new value.</param>
         public void SetUseTokenList(bool useTokenList)
         {
             UseTokenList = useTokenList;
         }
 
+        /// <summary>
+        /// Returns the short description of the registered pattern with id <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The pattern id.</param>
+        /// <returns>The short description, or an empty string when no pattern matches.</returns>
         public string GetPatternDescription(int id)
         {
             var pattern = _stringDfaMatcher.GetPattern(id);
@@ -43,19 +65,35 @@ namespace Flee.Parsing
             return pattern?.ToShortString() ?? string.Empty;
         }
 
+        /// <summary>
+        /// Returns the current line number reported by the input buffer.
+        /// </summary>
+        /// <returns>The current line number.</returns>
         public int GetCurrentLine()
         {
             return _buffer.LineNumber;
         }
 
+        /// <summary>
+        /// Returns the current column number reported by the input buffer.
+        /// </summary>
+        /// <returns>The current column number.</returns>
         public int GetCurrentColumn()
         {
             return _buffer.ColumnNumber;
         }
 
-        /**
-         * nfa - true to attempt as an nfa pattern for regexp. This handles most things except the complex repeates, ie {1,4}
-         */
+        /// <summary>
+        /// Adds <paramref name="pattern"/> to the tokenizer, dispatching to the appropriate
+        /// matcher based on the pattern type.
+        /// </summary>
+        /// <param name="pattern">The token pattern to add.</param>
+        /// <param name="nfa">
+        /// When <see langword="true"/> (the default), regex patterns are first tried against
+        /// the NFA matcher. The NFA handles most regex features but not complex repeats like
+        /// <c>{1,4}</c>; on failure the pattern falls back to the .NET regex engine.
+        /// </param>
+        /// <exception cref="ParserCreationException">If <paramref name="pattern"/> is invalid.</exception>
         public void AddPattern(TokenPattern pattern, bool nfa = true)
         {
             switch (pattern.Type)
@@ -112,6 +150,10 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Resets the tokenizer to read from a new input source.
+        /// </summary>
+        /// <param name="input">The new input source.</param>
         public void Reset(TextReader input)
         {
             //this.buffer.Dispose();
@@ -120,6 +162,12 @@ namespace Flee.Parsing
             _lastMatch.Clear();
         }
 
+        /// <summary>
+        /// Reads and returns the next non-ignored token, or <see langword="null"/> at end of
+        /// stream.
+        /// </summary>
+        /// <returns>The next token, or <see langword="null"/>.</returns>
+        /// <exception cref="ParseException">If the next token signals an error.</exception>
         public Token? Next()
         {
             Token? token;
@@ -194,6 +242,15 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Constructs a new <see cref="Token"/> for the matched pattern. Subclasses can
+        /// override to substitute a custom token type.
+        /// </summary>
+        /// <param name="pattern">The matched pattern.</param>
+        /// <param name="image">The matched character sequence.</param>
+        /// <param name="line">The starting line.</param>
+        /// <param name="column">The starting column.</param>
+        /// <returns>The new token.</returns>
         protected virtual Token NewToken(TokenPattern pattern,
                                          string image,
                                          int line,
@@ -203,6 +260,10 @@ namespace Flee.Parsing
             return new Token(pattern, image, line, column);
         }
 
+        /// <summary>
+        /// Returns a textual description of every registered token matcher.
+        /// </summary>
+        /// <returns>The textual description.</returns>
         public override string ToString()
         {
             StringBuilder buffer = new();

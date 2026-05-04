@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Emit;
 using Flee.ExpressionElements.Base;
@@ -10,21 +10,36 @@ using Flee.Resources;
 namespace Flee.ExpressionElements.MemberElements
 {
     /// <summary>
-    /// Represents a function call.
+    /// Represents a function call. Performs custom overload resolution against a candidate
+    /// method set, falls back to on-demand variable-collection functions, and emits the
+    /// chosen method's call (including <see cref="ParamArrayAttribute"/> and extension-method
+    /// shapes).
     /// </summary>
     internal class FunctionCallElement : MemberElement
     {
         private readonly ArgumentList _myArguments;
         private readonly ICollection<MethodInfo>? _myMethods;
         private CustomMethodInfo _myTargetMethodInfo = null!;
-
         private Type? _myOnDemandFunctionReturnType;
+
+        /// <summary>
+        /// Initializes a new instance with the parsed call site.
+        /// </summary>
+        /// <param name="name">The function name.</param>
+        /// <param name="arguments">The argument list.</param>
         public FunctionCallElement(string name, ArgumentList arguments)
         {
             MyName = name;
             _myArguments = arguments;
         }
 
+        /// <summary>
+        /// Initializes a new instance with a pre-resolved candidate method set. Used when the
+        /// caller has already narrowed candidates (e.g. an indexer property's getter).
+        /// </summary>
+        /// <param name="name">The function name.</param>
+        /// <param name="methods">The candidate methods.</param>
+        /// <param name="arguments">The argument list.</param>
         internal FunctionCallElement(string name, ICollection<MethodInfo> methods, ArgumentList arguments)
         {
             MyName = name;
@@ -32,6 +47,10 @@ namespace Flee.ExpressionElements.MemberElements
             _myMethods = methods;
         }
 
+        /// <summary>
+        /// Resolves the call: picks an overload from the candidate set, or falls back to
+        /// <see cref="VariableCollection.ResolveOnDemandFunction"/> when no method matches.
+        /// </summary>
         protected override void ResolveInternal()
         {
             // Get the types of our arguments
@@ -50,7 +69,7 @@ namespace Flee.ExpressionElements.MemberElements
 
             if (methods.Count > 0)
             {
-                // More than one method exists with this name			
+                // More than one method exists with this name
                 BindToMethod(methods, MyPrevious, argTypes);
                 return;
             }
@@ -65,41 +84,78 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
+        /// <summary>
+        /// Throws "undefined function" with the appropriate message based on whether there's
+        /// a predecessor in the dereference chain.
+        /// </summary>
+        /// <param name="previous">The predecessor in the dereference chain.</param>
         private void ThrowFunctionNotFoundException(MemberElement? previous)
         {
             if (previous == null)
             {
-                ThrowCompileException(CompileErrorResourceKeys.UndefinedFunction, CompileExceptionReason.UndefinedName, MyName, _myArguments);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.UndefinedFunction,
+                    CompileExceptionReason.UndefinedName,
+                    MyName,
+                    _myArguments);
             }
             else
             {
-                ThrowCompileException(CompileErrorResourceKeys.UndefinedFunctionOnType, CompileExceptionReason.UndefinedName, MyName, _myArguments, previous.TargetType.Name);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.UndefinedFunctionOnType,
+                    CompileExceptionReason.UndefinedName,
+                    MyName,
+                    _myArguments,
+                    previous.TargetType.Name);
             }
         }
 
+        /// <summary>
+        /// Throws "no accessible matches" with the appropriate message based on whether there's
+        /// a predecessor in the dereference chain.
+        /// </summary>
+        /// <param name="previous">The predecessor in the dereference chain.</param>
         private void ThrowNoAccessibleMethodsException(MemberElement? previous)
         {
             if (previous == null)
             {
-                ThrowCompileException(CompileErrorResourceKeys.NoAccessibleMatches, CompileExceptionReason.AccessDenied, MyName, _myArguments);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.NoAccessibleMatches,
+                    CompileExceptionReason.AccessDenied,
+                    MyName,
+                    _myArguments);
             }
             else
             {
-                ThrowCompileException(CompileErrorResourceKeys.NoAccessibleMatchesOnType, CompileExceptionReason.AccessDenied, MyName, _myArguments, previous.TargetType.Name);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.NoAccessibleMatchesOnType,
+                    CompileExceptionReason.AccessDenied,
+                    MyName,
+                    _myArguments,
+                    previous.TargetType.Name);
             }
         }
 
+        /// <summary>
+        /// Throws "ambiguous call" for the resolved candidate set.
+        /// </summary>
         private void ThrowAmbiguousMethodCallException()
         {
-            ThrowCompileException(CompileErrorResourceKeys.AmbiguousCallOfFunction, CompileExceptionReason.AmbiguousMatch, MyName, _myArguments);
+            ThrowCompileException(
+                CompileErrorResourceKeys.AmbiguousCallOfFunction,
+                CompileExceptionReason.AmbiguousMatch,
+                MyName,
+                _myArguments);
         }
 
         /// <summary>
-        /// Try to find a match from a set of methods
+        /// Try to find a match from a set of methods. Wraps each method in a
+        /// <see cref="CustomMethodInfo"/>, filters non-callable candidates, then runs overload
+        /// resolution.
         /// </summary>
-        /// <param name="methods"></param>
-        /// <param name="previous"></param>
-        /// <param name="argTypes"></param>
+        /// <param name="methods">The candidate methods.</param>
+        /// <param name="previous">The predecessor in the dereference chain.</param>
+        /// <param name="argTypes">The actual argument types.</param>
         private void BindToMethod(ICollection<MethodInfo> methods, MemberElement? previous, Type[] argTypes)
         {
             List<CustomMethodInfo> customInfos = [];
@@ -136,11 +192,12 @@ namespace Flee.ExpressionElements.MemberElements
         }
 
         /// <summary>
-        /// Find the best match from a set of overloaded methods
+        /// Find the best match from a set of overloaded methods by scoring, sorting, and
+        /// detecting ambiguous ties.
         /// </summary>
-        /// <param name="infos"></param>
-        /// <param name="previous"></param>
-        /// <param name="argTypes"></param>
+        /// <param name="infos">The candidate methods.</param>
+        /// <param name="previous">The predecessor in the dereference chain.</param>
+        /// <param name="argTypes">The actual argument types.</param>
         private void ResolveOverloads(CustomMethodInfo[] infos, MemberElement? previous, Type[] argTypes)
         {
             // Compute a score for each candidate
@@ -168,6 +225,12 @@ namespace Flee.ExpressionElements.MemberElements
             _myTargetMethodInfo = infos[0];
         }
 
+        /// <summary>
+        /// Filters <paramref name="infos"/> down to candidates whose declaring members are
+        /// accessible from this expression.
+        /// </summary>
+        /// <param name="infos">The candidate set.</param>
+        /// <returns>The accessible subset.</returns>
         private CustomMethodInfo[] GetAccessibleInfos(CustomMethodInfo[] infos)
         {
             List<CustomMethodInfo> accessible = [];
@@ -184,9 +247,10 @@ namespace Flee.ExpressionElements.MemberElements
         }
 
         /// <summary>
-        ///  Handle case where we have overloads with the same score
+        /// Handle case where we have overloads with the same score. Throws "ambiguous call"
+        /// when more than one candidate ties for the top score.
         /// </summary>
-        /// <param name="infos"></param>
+        /// <param name="infos">The candidate set, sorted best-first.</param>
         private void DetectAmbiguousMatches(CustomMethodInfo[] infos)
         {
             List<CustomMethodInfo> sameScores = [];
@@ -208,6 +272,10 @@ namespace Flee.ExpressionElements.MemberElements
             }
         }
 
+        /// <summary>
+        /// Validates that the resolved method has a return value (functions used in expressions
+        /// must produce a value).
+        /// </summary>
         protected override void Validate()
         {
             base.Validate();
@@ -220,10 +288,20 @@ namespace Flee.ExpressionElements.MemberElements
             // Any function reference in an expression must return a value
             if (ReferenceEquals(Method.ReturnType, typeof(void)))
             {
-                ThrowCompileException(CompileErrorResourceKeys.FunctionHasNoReturnValue, CompileExceptionReason.FunctionHasNoReturnValue, MyName);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.FunctionHasNoReturnValue,
+                    CompileExceptionReason.FunctionHasNoReturnValue,
+                    MyName);
             }
         }
 
+        /// <summary>
+        /// Emits the call. On-demand functions go through the variable-collection helper;
+        /// regular calls load the owner first when needed and then dispatch via
+        /// <see cref="EmitFunctionCall"/>.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             base.Emit(ilg, services);
@@ -237,7 +315,8 @@ namespace Flee.ExpressionElements.MemberElements
                 return;
             }
 
-            bool isOwnerMember = Method.ReflectedType != null && MyOptions.IsOwnerType(Method.ReflectedType);
+            bool isOwnerMember = Method.ReflectedType != null
+                && MyOptions.IsOwnerType(Method.ReflectedType);
 
             // Load the owner if required
             if (MyPrevious == null && isOwnerMember && !IsStatic)
@@ -248,7 +327,17 @@ namespace Flee.ExpressionElements.MemberElements
             EmitFunctionCall(NextRequiresAddress, ilg, services);
         }
 
-        private void EmitOnDemandFunction(ExpressionElement[] elements, FleeILGenerator ilg, IServiceProvider services)
+        /// <summary>
+        /// Emits an on-demand function call: loads the variable collection, name, and an
+        /// object-array of arguments, then calls the closed-generic helper.
+        /// </summary>
+        /// <param name="elements">The argument elements.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
+        private void EmitOnDemandFunction(
+            ExpressionElement[] elements,
+            FleeILGenerator ilg,
+            IServiceProvider services)
         {
             // Load the variable collection
             EmitLoadVariables(ilg);
@@ -263,8 +352,19 @@ namespace Flee.ExpressionElements.MemberElements
             EmitMethodCall(mi, ilg);
         }
 
-        // Emit the arguments to a paramArray method call
-        private void EmitParamArrayArguments(ParameterInfo[] parameters, ExpressionElement[] elements, FleeILGenerator ilg, IServiceProvider services)
+        /// <summary>
+        /// Emit the arguments to a paramArray method call: regular arguments first, then a
+        /// freshly built array of the trailing arguments.
+        /// </summary>
+        /// <param name="parameters">The candidate's parameters.</param>
+        /// <param name="elements">The argument elements.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
+        private void EmitParamArrayArguments(
+            ParameterInfo[] parameters,
+            ExpressionElement[] elements,
+            FleeILGenerator ilg,
+            IServiceProvider services)
         {
             // Get the fixed parameters
             ParameterInfo[] fixedParameters = new ParameterInfo[_myTargetMethodInfo.MyFixedArgTypes.Length];
@@ -278,21 +378,31 @@ namespace Flee.ExpressionElements.MemberElements
             EmitRegularFunctionInternal(fixedParameters, fixedElements, ilg, services);
 
             // Get the paramArray arguments
-            ExpressionElement[] paramArrayElements = new ExpressionElement[elements.Length - fixedElements.Length];
+            ExpressionElement[] paramArrayElements =
+                new ExpressionElement[elements.Length - fixedElements.Length];
             Array.Copy(elements, fixedElements.Length, paramArrayElements, 0, paramArrayElements.Length);
 
             // Emit them into an array
-            EmitElementArrayLoad(paramArrayElements, _myTargetMethodInfo.ParamArrayElementType!, ilg, services);
+            EmitElementArrayLoad(
+                paramArrayElements,
+                _myTargetMethodInfo.ParamArrayElementType!,
+                ilg,
+                services);
         }
 
         /// <summary>
-        /// Emit elements into an array
+        /// Emit elements into a fresh array of <paramref name="arrayElementType"/>, leaving
+        /// the array reference on the stack.
         /// </summary>
-        /// <param name="elements"></param>
-        /// <param name="arrayElementType"></param>
-        /// <param name="ilg"></param>
-        /// <param name="services"></param>
-        private static void EmitElementArrayLoad(ExpressionElement[] elements, Type arrayElementType, FleeILGenerator ilg, IServiceProvider services)
+        /// <param name="elements">The element values.</param>
+        /// <param name="arrayElementType">The CLR type of the array element.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
+        private static void EmitElementArrayLoad(
+            ExpressionElement[] elements,
+            Type arrayElementType,
+            FleeILGenerator ilg,
+            IServiceProvider services)
         {
             // Load the array length
             LiteralElement.EmitLoad(elements.Length, ilg);
@@ -323,6 +433,13 @@ namespace Flee.ExpressionElements.MemberElements
             Utility.EmitLoadLocal(ilg, arrayLocalIndex);
         }
 
+        /// <summary>
+        /// Public-from-the-assembly emit entry point used by <see cref="IndexerElement"/>
+        /// when it routes indexer-property dispatch through this element.
+        /// </summary>
+        /// <param name="nextRequiresAddress">Whether the next link wants the result's address.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         public void EmitFunctionCall(bool nextRequiresAddress, FleeILGenerator ilg, IServiceProvider services)
         {
             ParameterInfo[] parameters = Method.GetParameters();
@@ -348,7 +465,19 @@ namespace Flee.ExpressionElements.MemberElements
             EmitMethodCall(ResultType, nextRequiresAddress, Method, ilg);
         }
 
-        private void EmitExtensionFunctionInternal(ParameterInfo[] parameters, ExpressionElement[] elements, FleeILGenerator ilg, IServiceProvider services)
+        /// <summary>
+        /// Emit the receiver and arguments for an extension-method call: the implicit receiver
+        /// (predecessor or owner) takes parameter slot 0 and the explicit arguments fill the rest.
+        /// </summary>
+        /// <param name="parameters">The candidate's parameters.</param>
+        /// <param name="elements">The argument elements.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
+        private void EmitExtensionFunctionInternal(
+            ParameterInfo[] parameters,
+            ExpressionElement[] elements,
+            FleeILGenerator ilg,
+            IServiceProvider services)
         {
             Debug.Assert(parameters.Length == elements.Length + 1, "argument count mismatch");
             if (MyPrevious == null)
@@ -361,19 +490,26 @@ namespace Flee.ExpressionElements.MemberElements
                 ExpressionElement element = elements[i - 1];
                 ParameterInfo pi = parameters[i];
                 element.Emit(ilg, services);
-                bool success = ImplicitConverter.EmitImplicitConvert(element.ResultType, pi.ParameterType, ilg);
+                bool success = ImplicitConverter.EmitImplicitConvert(
+                    element.ResultType,
+                    pi.ParameterType,
+                    ilg);
                 Debug.Assert(success, "conversion failed");
             }
         }
 
         /// <summary>
-        ///  Emit the arguments to a regular method call
+        /// Emit the arguments to a regular method call.
         /// </summary>
-        /// <param name="parameters"></param>
-        /// <param name="elements"></param>
-        /// <param name="ilg"></param>
-        /// <param name="services"></param>
-        private void EmitRegularFunctionInternal(ParameterInfo[] parameters, ExpressionElement[] elements, FleeILGenerator ilg, IServiceProvider services)
+        /// <param name="parameters">The candidate's parameters.</param>
+        /// <param name="elements">The argument elements.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
+        private void EmitRegularFunctionInternal(
+            ParameterInfo[] parameters,
+            ExpressionElement[] elements,
+            FleeILGenerator ilg,
+            IServiceProvider services)
         {
             Debug.Assert(parameters.Length == elements.Length, "argument count mismatch");
 
@@ -383,23 +519,42 @@ namespace Flee.ExpressionElements.MemberElements
                 ExpressionElement element = elements[i];
                 ParameterInfo pi = parameters[i];
                 element.Emit(ilg, services);
-                bool success = ImplicitConverter.EmitImplicitConvert(element.ResultType, pi.ParameterType, ilg);
+                bool success = ImplicitConverter.EmitImplicitConvert(
+                    element.ResultType,
+                    pi.ParameterType,
+                    ilg);
                 Debug.Assert(success, "conversion failed");
             }
         }
 
         /// <summary>
-        /// The method info we will be calling
-        /// </summary>	
+        /// Gets the resolved method that will be called.
+        /// </summary>
         private MethodInfo Method => _myTargetMethodInfo.Target;
 
+        /// <summary>
+        /// Gets the function's return type, or the on-demand declared return type when applicable.
+        /// </summary>
         public override Type ResultType => _myOnDemandFunctionReturnType ?? Method.ReturnType;
 
+        /// <summary>
+        /// Method calls produce addressable results except for <see cref="object.GetType"/>.
+        /// </summary>
         protected override bool RequiresAddress => !IsGetTypeMethod(Method);
 
+        /// <summary>
+        /// Reports whether the resolved method is public.
+        /// </summary>
         protected override bool IsPublic => Method.IsPublic;
 
+        /// <summary>
+        /// Reports whether the resolved method is static.
+        /// </summary>
         public override bool IsStatic => Method.IsStatic;
+
+        /// <summary>
+        /// Reports whether overload resolution chose an extension-method candidate.
+        /// </summary>
         public override bool IsExtensionMethod => _myTargetMethodInfo.IsExtensionMethod;
     }
 }

@@ -7,14 +7,23 @@ using Flee.Resources;
 namespace Flee.InternalTypes
 {
     /// <summary>
-    /// Holds various shared utility methods.
+    /// Holds various shared utility methods used across the compiler — argument validation,
+    /// IL emit helpers, operator overload lookup, and resource-string formatting.
     /// </summary>
     internal class Utility
     {
+        /// <summary>
+        /// Private to enforce the static-only utility pattern.
+        /// </summary>
         private Utility()
         {
         }
 
+        /// <summary>
+        /// Throws <see cref="ArgumentNullException"/> when <paramref name="o"/> is <see langword="null"/>.
+        /// </summary>
+        /// <param name="o">The value to check.</param>
+        /// <param name="paramName">The parameter name used in the exception.</param>
         public static void AssertNotNull(object o, string paramName)
         {
             if (o == null)
@@ -23,6 +32,11 @@ namespace Flee.InternalTypes
             }
         }
 
+        /// <summary>
+        /// Emits the most compact <c>stloc</c> variant for the given local index.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="index">The zero-based local slot index.</param>
         public static void EmitStoreLocal(FleeILGenerator ilg, int index)
         {
             if (index >= 0 & index <= 3)
@@ -56,6 +70,11 @@ namespace Flee.InternalTypes
             }
         }
 
+        /// <summary>
+        /// Emits the most compact <c>ldloc</c> variant for the given local index.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="index">The zero-based local slot index.</param>
         public static void EmitLoadLocal(FleeILGenerator ilg, int index)
         {
             Debug.Assert(index >= 0, "Invalid index");
@@ -91,6 +110,11 @@ namespace Flee.InternalTypes
             }
         }
 
+        /// <summary>
+        /// Emits a <c>ldloca</c> (or short form) to push the address of the given local.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="index">The zero-based local slot index.</param>
         public static void EmitLoadLocalAddress(FleeILGenerator ilg, int index)
         {
             Debug.Assert(index >= 0, "Invalid index");
@@ -105,6 +129,11 @@ namespace Flee.InternalTypes
             }
         }
 
+        /// <summary>
+        /// Emits the appropriate <c>ldelem</c> opcode for the array element type.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="elementType">The element CLR type.</param>
         public static void EmitArrayLoad(FleeILGenerator ilg, Type elementType)
         {
             TypeCode tc = Type.GetTypeCode(elementType);
@@ -157,6 +186,11 @@ namespace Flee.InternalTypes
             }
         }
 
+        /// <summary>
+        /// Emits the appropriate <c>stelem</c> opcode for the array element type.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="elementType">The element CLR type.</param>
         public static void EmitArrayStore(FleeILGenerator ilg, Type elementType)
         {
             TypeCode tc = Type.GetTypeCode(elementType);
@@ -196,25 +230,45 @@ namespace Flee.InternalTypes
             }
         }
 
-
-
+        /// <summary>
+        /// Returns whether <paramref name="t"/> is one of the integral CLR primitives.
+        /// </summary>
+        /// <param name="t">The type to test.</param>
+        /// <returns><see langword="true"/> when integral.</returns>
         public static bool IsIntegralType(Type t)
         {
-            return Type.GetTypeCode(t) is TypeCode.Byte or TypeCode.SByte or TypeCode.Int16 or TypeCode.UInt16 or TypeCode.Int32 or TypeCode.UInt32 or TypeCode.Int64 or TypeCode.UInt64;
-        }
-
-        public static Type? GetBitwiseOpType(Type leftType, Type rightType)
-        {
-            return !IsIntegralType(leftType) || !IsIntegralType(rightType) ? null : ImplicitConverter.GetBinaryResultType(leftType, rightType);
+            return Type.GetTypeCode(t) is TypeCode.Byte
+                or TypeCode.SByte
+                or TypeCode.Int16
+                or TypeCode.UInt16
+                or TypeCode.Int32
+                or TypeCode.UInt32
+                or TypeCode.Int64
+                or TypeCode.UInt64;
         }
 
         /// <summary>
-        /// Find a simple (unary) overloaded operator
+        /// Returns the result type of a bitwise binary op given two integral operand types,
+        /// or <see langword="null"/> when either operand is not integral.
         /// </summary>
-        /// <param name="name">The name of the operator</param>
-        /// <param name="sourceType">The type to convert from</param>
-        /// <param name="destType">The type to convert to (can be null if it's not known beforehand)</param>
-        /// <returns>The operator's method or null of no match is found</returns>
+        /// <param name="leftType">The left operand type.</param>
+        /// <param name="rightType">The right operand type.</param>
+        /// <returns>The result type, or <see langword="null"/>.</returns>
+        public static Type? GetBitwiseOpType(Type leftType, Type rightType)
+        {
+            return !IsIntegralType(leftType) || !IsIntegralType(rightType)
+                ? null
+                : ImplicitConverter.GetBinaryResultType(leftType, rightType);
+        }
+
+        /// <summary>
+        /// Find a simple (unary) overloaded operator on <paramref name="sourceType"/> or its
+        /// ancestors, falling back to <paramref name="destType"/> and its ancestors.
+        /// </summary>
+        /// <param name="name">The operator name (without the <c>op_</c> prefix).</param>
+        /// <param name="sourceType">The type to convert from.</param>
+        /// <param name="destType">The type to convert to (may be <see langword="null"/>).</param>
+        /// <returns>The operator method, or <see langword="null"/> when no match is found.</returns>
         public static MethodInfo? GetSimpleOverloadedOperator(string name, Type sourceType, Type? destType)
         {
             Hashtable data = new()
@@ -258,18 +312,20 @@ namespace Flee.InternalTypes
         }
 
         /// <summary>
-        /// Matches simple overloaded operators
+        /// <see cref="MemberFilter"/> for <see cref="GetSimpleOverloadedOperator"/>: matches a
+        /// special-named method whose first parameter is assignable from the source type and
+        /// whose return type matches the destination type when one is supplied.
         /// </summary>
-        /// <param name="member"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
+        /// <param name="member">The candidate member.</param>
+        /// <param name="value">A hashtable carrying the filter inputs (Name, sourceType, destType).</param>
+        /// <returns><see langword="true"/> when the candidate qualifies.</returns>
         private static bool SimpleOverloadedOperatorFilter(MemberInfo member, object? value)
         {
             IDictionary data = (IDictionary)value!;
             MethodInfo method = (MethodInfo)member;
 
-            bool nameMatch = method.IsSpecialName && method.Name.Equals((string)data["Name"]!, StringComparison.OrdinalIgnoreCase);
+            bool nameMatch = method.IsSpecialName
+                && method.Name.Equals((string)data["Name"]!, StringComparison.OrdinalIgnoreCase);
 
             if (!nameMatch)
             {
@@ -290,18 +346,39 @@ namespace Flee.InternalTypes
             }
 
             ParameterInfo[] parameters = method.GetParameters();
-            bool argumentMatch = parameters.Length > 0 && parameters[0].ParameterType.IsAssignableFrom((Type)data["sourceType"]!);
+            bool argumentMatch = parameters.Length > 0
+                && parameters[0].ParameterType.IsAssignableFrom((Type)data["sourceType"]!);
 
             return argumentMatch;
         }
 
-        public static MethodInfo? GetOverloadedOperator(string name, Type sourceType, Binder binder, params Type[] argumentTypes)
+        /// <summary>
+        /// Looks up a public-static overloaded operator whose argument types match
+        /// <paramref name="argumentTypes"/>, walking <paramref name="sourceType"/> and its
+        /// ancestors and using <paramref name="binder"/> for overload resolution.
+        /// </summary>
+        /// <param name="name">The operator name (without the <c>op_</c> prefix).</param>
+        /// <param name="sourceType">The starting type for the lookup.</param>
+        /// <param name="binder">The reflection binder used to choose between overloads.</param>
+        /// <param name="argumentTypes">The expected argument types.</param>
+        /// <returns>The matching method, or <see langword="null"/> when none is found.</returns>
+        public static MethodInfo? GetOverloadedOperator(
+            string name,
+            Type sourceType,
+            Binder binder,
+            params Type[] argumentTypes)
         {
             name = string.Concat("op_", name);
             Type? sourceWalk = sourceType;
             do
             {
-                MethodInfo? mi = sourceWalk.GetMethod(name, BindingFlags.Public | BindingFlags.Static, binder, CallingConventions.Any, argumentTypes, null);
+                MethodInfo? mi = sourceWalk.GetMethod(
+                    name,
+                    BindingFlags.Public | BindingFlags.Static,
+                    binder,
+                    CallingConventions.Any,
+                    argumentTypes,
+                    null);
                 if (mi != null && mi.IsSpecialName)
                 {
                     return mi;
@@ -311,23 +388,50 @@ namespace Flee.InternalTypes
             return null;
         }
 
+        /// <summary>
+        /// Returns whether a branch from <paramref name="startPosition"/> to
+        /// <paramref name="endPosition"/> exceeds the short-branch range.
+        /// </summary>
+        /// <param name="startPosition">The start IL offset.</param>
+        /// <param name="endPosition">The target IL offset.</param>
+        /// <returns><see langword="true"/> when long branch is required.</returns>
         public static bool IsLongBranch(int startPosition, int endPosition)
         {
             return (endPosition - startPosition) > sbyte.MaxValue;
         }
 
+        /// <summary>
+        /// Joins <paramref name="items"/> using the current culture's list separator
+        /// followed by a space (e.g. <c>", "</c>).
+        /// </summary>
+        /// <param name="items">The strings to join.</param>
+        /// <returns>The joined string.</returns>
         public static string FormatList(string[] items)
         {
             string separator = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ListSeparator + " ";
             return string.Join(separator, items);
         }
 
+        /// <summary>
+        /// Returns a formatted general-error message from the resource bundle, falling back to
+        /// <paramref name="key"/> when the resource is missing.
+        /// </summary>
+        /// <param name="key">The resource key.</param>
+        /// <param name="args">The format arguments.</param>
+        /// <returns>The formatted message.</returns>
         public static string GetGeneralErrorMessage(string key, params object[] args)
         {
             string msg = FleeResourceManager.Instance.GetGeneralErrorString(key) ?? key;
             return string.Format(msg, args);
         }
 
+        /// <summary>
+        /// Returns a formatted compile-error message from the resource bundle, falling back to
+        /// <paramref name="key"/> when the resource is missing.
+        /// </summary>
+        /// <param name="key">The resource key.</param>
+        /// <param name="args">The format arguments.</param>
+        /// <returns>The formatted message.</returns>
         public static string GetCompileErrorMessage(string key, params object[] args)
         {
             string msg = FleeResourceManager.Instance.GetCompileErrorString(key) ?? key;

@@ -6,27 +6,53 @@ using Flee.InternalTypes;
 
 namespace Flee.ExpressionElements.LogicalBitwise
 {
+    /// <summary>
+    /// Short-circuited <c>and</c>/<c>or</c> for booleans, plus bitwise <c>&amp;</c>/<c>|</c>
+    /// for integrals. The boolean path emits a tree-walking IL pattern that branches to a
+    /// shared true/false terminal as soon as the result is determined.
+    /// </summary>
     internal class AndOrElement : BinaryExpressionElement
     {
         private AndOrOperation _myOperation;
         private static readonly object OurTrueTerminalKey = new();
         private static readonly object OurFalseTerminalKey = new();
 
+        /// <summary>
+        /// Legacy parameterless initialization helper retained for compatibility with the
+        /// VB.NET origin of the codebase. Currently a no-op.
+        /// </summary>
         public void New()
         {
         }
 
+        /// <summary>
+        /// Stores the parsed <see cref="AndOrOperation"/>.
+        /// </summary>
+        /// <param name="operation">The operator value from the parser.</param>
         protected override void GetOperation(object operation)
         {
             _myOperation = (AndOrOperation)operation;
         }
 
+        /// <summary>
+        /// Returns the bitwise result type when both operands are integral, <see cref="bool"/>
+        /// when both operands are boolean, otherwise <see langword="null"/>.
+        /// </summary>
+        /// <param name="leftType">The left operand type.</param>
+        /// <param name="rightType">The right operand type.</param>
+        /// <returns>The result type, or <see langword="null"/>.</returns>
         protected override Type? GetResultType(Type leftType, Type rightType)
         {
             Type? bitwiseOpType = Utility.GetBitwiseOpType(leftType, rightType);
             return bitwiseOpType ?? (AreBothChildrenOfType(typeof(bool)) ? typeof(bool) : null);
         }
 
+        /// <summary>
+        /// Emits the boolean short-circuit form when the result type is <see cref="bool"/>;
+        /// otherwise emits a straightforward bitwise <c>and</c>/<c>or</c>.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             Type resultType = ResultType;
@@ -45,6 +71,11 @@ namespace Flee.ExpressionElements.LogicalBitwise
             }
         }
 
+        /// <summary>
+        /// Emits the appropriate primitive bitwise opcode.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="op">The operator value.</param>
         private static void EmitBitwiseOperation(FleeILGenerator ilg, AndOrOperation op)
         {
             switch (op)
@@ -61,6 +92,12 @@ namespace Flee.ExpressionElements.LogicalBitwise
             }
         }
 
+        /// <summary>
+        /// Sets up the per-emit short-circuit tracking and dispatches to the tree-walking
+        /// emit.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         private void DoEmitLogical(FleeILGenerator ilg, IServiceProvider services)
         {
             // We have to do a 'fake' emit so we can get the positions of the labels
@@ -71,16 +108,17 @@ namespace Flee.ExpressionElements.LogicalBitwise
         }
 
         /// <summary>
-        /// Emit a short-circuited logical operation sequence
-        /// The idea: Store all the leaf operands in a stack with the leftmost at the top and rightmost at the bottom.
-        /// For each operand, emit it and try to find an end point for when it short-circuits.  This means we go up through
-        /// the stack of operators (ignoring siblings) until we find a different operation (then emit a branch to its right operand)
-        /// or we reach the root (emit a branch to a true/false).
-        /// Repeat the process for all operands and then emit the true/false/last operand end cases.
+        /// Emit a short-circuited logical operation sequence. The idea: store all the leaf
+        /// operands in a stack with the leftmost at the top and rightmost at the bottom.
+        /// For each operand, emit it and try to find an end point for when it short-circuits.
+        /// This means we go up through the stack of operators (ignoring siblings) until we
+        /// find a different operation (then emit a branch to its right operand) or we reach
+        /// the root (emit a branch to a true/false). Repeat the process for all operands and
+        /// then emit the true/false/last operand end cases.
         /// </summary>
-        /// <param name="ilg"></param>
-        /// <param name="info"></param>
-        /// <param name="services"></param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="info">The per-emit short-circuit state.</param>
+        /// <param name="services">The compile services.</param>
         private void EmitLogical(FleeILGenerator ilg, ShortCircuitInfo info, IServiceProvider services)
         {
             // We always have an end label
@@ -108,12 +146,17 @@ namespace Flee.ExpressionElements.LogicalBitwise
         }
 
         /// <summary>
-        /// Emit a sequence of and/or expressions with short-circuiting
+        /// Emit a sequence of and/or expressions with short-circuiting. Each loop iteration
+        /// pops one operator and its left operand, emits the operand, then branches to the
+        /// next short-circuit label.
         /// </summary>
-        /// <param name="ilg"></param>
-        /// <param name="info"></param>
-        /// <param name="services"></param>
-        private static void EmitLogicalShortCircuit(FleeILGenerator ilg, ShortCircuitInfo info, IServiceProvider services)
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="info">The per-emit short-circuit state.</param>
+        /// <param name="services">The compile services.</param>
+        private static void EmitLogicalShortCircuit(
+            FleeILGenerator ilg,
+            ShortCircuitInfo info,
+            IServiceProvider services)
         {
             while (info.Operators.Count != 0)
             {
@@ -132,7 +175,13 @@ namespace Flee.ExpressionElements.LogicalBitwise
             }
         }
 
-
+        /// <summary>
+        /// Emits the conditional branch to <paramref name="target"/>: <c>brfalse</c> for
+        /// AND-style short-circuit, <c>brtrue</c> for OR-style.
+        /// </summary>
+        /// <param name="op">The operator element being emitted.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="target">The branch target.</param>
         private static void EmitBranch(AndOrElement op, FleeILGenerator ilg, Label target)
         {
             // Get the branch opcode
@@ -146,15 +195,19 @@ namespace Flee.ExpressionElements.LogicalBitwise
             }
         }
 
-
         /// <summary>
-        /// Get the label for a short-circuit
+        /// Get the label for a short-circuit. Walks up the operator stack looking for a
+        /// different operation; when found, returns the label of that operation's right
+        /// operand. When the walk exhausts, returns the appropriate true/false terminal label.
         /// </summary>
-        /// <param name="current"></param>
-        /// <param name="info"></param>
-        /// <param name="ilg"></param>
-        /// <returns></returns>
-        private static Label GetShortCircuitLabel(AndOrElement current, ShortCircuitInfo info, FleeILGenerator ilg)
+        /// <param name="current">The operator currently being emitted.</param>
+        /// <param name="info">The per-emit short-circuit state.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <returns>The branch target label.</returns>
+        private static Label GetShortCircuitLabel(
+            AndOrElement current,
+            ShortCircuitInfo info,
+            FleeILGenerator ilg)
         {
             // We modify the given stacks so we need to clone them
             Stack cloneOperands = (Stack)info.Operands.Clone();
@@ -189,6 +242,12 @@ namespace Flee.ExpressionElements.LogicalBitwise
                 : GetLabel(OurTrueTerminalKey, ilg, info);
         }
 
+        /// <summary>
+        /// Pops the right child off <paramref name="operands"/> when it's a leaf, or recursively
+        /// when it's a nested and/or expression.
+        /// </summary>
+        /// <param name="operands">The operand stack to mutate.</param>
+        /// <param name="operators">The operator stack to mutate.</param>
         private void PopRightChild(Stack operands, Stack operators)
         {
             // What kind of child do we have?
@@ -205,10 +264,10 @@ namespace Flee.ExpressionElements.LogicalBitwise
         }
 
         /// <summary>
-        /// Recursively pop operators and operands
+        /// Recursively pop operators and operands corresponding to this subtree.
         /// </summary>
-        /// <param name="operands"></param>
-        /// <param name="operators"></param>
+        /// <param name="operands">The operand stack to mutate.</param>
+        /// <param name="operators">The operator stack to mutate.</param>
         private void Pop(Stack operands, Stack operators)
         {
             _ = operators.Pop();
@@ -235,7 +294,18 @@ namespace Flee.ExpressionElements.LogicalBitwise
             }
         }
 
-        private static void EmitOperand(ExpressionElement operand, ShortCircuitInfo info, FleeILGenerator ilg, IServiceProvider services)
+        /// <summary>
+        /// Emits an operand, marking the cached label first when one was registered for it.
+        /// </summary>
+        /// <param name="operand">The operand to emit.</param>
+        /// <param name="info">The per-emit short-circuit state.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
+        private static void EmitOperand(
+            ExpressionElement operand,
+            ShortCircuitInfo info,
+            FleeILGenerator ilg,
+            IServiceProvider services)
         {
             // Is this operand the target of a label?
             if (info.HasLabel(operand))
@@ -250,11 +320,13 @@ namespace Flee.ExpressionElements.LogicalBitwise
         }
 
         /// <summary>
-        /// Emit the end cases for a short-circuit
+        /// Emit the end cases for a short-circuit. The false terminal pushes <c>0</c>; the
+        /// true terminal pushes <c>1</c>; when both are needed, a branch to the end label
+        /// separates them.
         /// </summary>
-        /// <param name="info"></param>
-        /// <param name="ilg"></param>
-        /// <param name="endLabel"></param>
+        /// <param name="info">The per-emit short-circuit state.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="endLabel">The end label for the boolean expression.</param>
         private static void EmitTerminals(ShortCircuitInfo info, FleeILGenerator ilg, Label endLabel)
         {
             // Emit the false case if it was used
@@ -287,16 +359,25 @@ namespace Flee.ExpressionElements.LogicalBitwise
             }
         }
 
-
+        /// <summary>
+        /// Returns the cached label for <paramref name="key"/>, allocating one on first use.
+        /// </summary>
+        /// <param name="key">The lookup key.</param>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="info">The per-emit short-circuit state.</param>
+        /// <returns>The label.</returns>
         private static Label GetLabel(object key, FleeILGenerator ilg, ShortCircuitInfo info)
         {
-            return info.HasLabel(key) ? info.FindLabel(key) : info.AddLabel(key, ilg.DefineLabel());
+            return info.HasLabel(key)
+                ? info.FindLabel(key)
+                : info.AddLabel(key, ilg.DefineLabel());
         }
 
         /// <summary>
-        /// Visit the nodes of the tree (right then left) and populate some data structures
+        /// Visit the nodes of the tree (right then left) and populate the operand/operator
+        /// stacks used by <see cref="EmitLogicalShortCircuit"/>.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="info">The per-emit short-circuit state.</param>
         private void PopulateData(ShortCircuitInfo info)
         {
             // Is our right child a leaf or another And/Or expression?

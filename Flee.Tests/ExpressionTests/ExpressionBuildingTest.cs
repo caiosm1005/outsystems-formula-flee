@@ -83,7 +83,8 @@ namespace Flee.Tests.ExpressionTests
         {
             // bug #83 test.
             ExpressionContext context = new();
-            IDynamicExpression e1 = context.CompileDynamic("2432696330L = 2432696330L AND 2432696330L > 0 AND 2432696330L < 2432696331L");
+            IDynamicExpression e1 = context.CompileDynamic(
+                "2432696330L = 2432696330L AND 2432696330L > 0 AND 2432696330L < 2432696331L");
 
             Assert.IsTrue((bool)e1.Evaluate());
             e1 = context.CompileDynamic("2432696330L / 2");
@@ -106,7 +107,8 @@ namespace Flee.Tests.ExpressionTests
         public void IN_OperatorTest()
         {
             ExpressionContext context = new();
-            var e1 = context.CompileGeneric<bool>("NOT 15 IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22,23)");
+            var e1 = context.CompileGeneric<bool>(
+                "NOT 15 IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22,23)");
 
             Assert.IsTrue(e1.Evaluate());
 

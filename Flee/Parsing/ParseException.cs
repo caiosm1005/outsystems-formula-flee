@@ -3,86 +3,72 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-    /**
-     * A parse exception.
-     */
     /// <summary>
-    /// Creates a new parse exception. This constructor is only
-    /// used to supply the detailed information array, which is
-    /// only used for expected token errors. The list then contains
-    /// descriptions of the expected tokens.
+    /// A parse-time exception. Carries an error type, optional information string, optional
+    /// detail list (used for expected-token enumerations), and source-location coordinates.
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="info"></param>
-    /// <param name="details"></param>
-    /// <param name="line"></param>
-    /// <param name="column"></param>
+    /// <param name="type">The kind of parse error.</param>
+    /// <param name="info">An optional informational message.</param>
+    /// <param name="details">An optional list of expected-token descriptions.</param>
+    /// <param name="line">The line at which the error occurred.</param>
+    /// <param name="column">The column at which the error occurred.</param>
     public class ParseException(ParseException.ErrorType type,
                           string? info,
                           ArrayList? details,
                           int line,
                           int column) : Exception
     {
+        /// <summary>
+        /// Enumerates the kinds of parse errors that can be reported.
+        /// </summary>
         public enum ErrorType
         {
-
-            /**
-             * The internal error type is only used to signal an error
-             * that is a result of a bug in the parser or tokenizer
-             * code.
-             */
+            /// <summary>
+            /// Used to signal an error caused by a bug in the parser or tokenizer code itself.
+            /// </summary>
             INTERNAL,
 
-            /**
-             * The I/O error type is used for stream I/O errors.
-             */
+            /// <summary>
+            /// Used for stream I/O errors.
+            /// </summary>
             IO,
 
-            /**
-             * The unexpected end of file error type is used when end
-             * of file is encountered instead of a valid token.
-             */
+            /// <summary>
+            /// Raised when end of file is encountered where a valid token was expected.
+            /// </summary>
             UNEXPECTED_EOF,
 
-            /**
-             * The unexpected character error type is used when a
-             * character is read that isn't handled by one of the
-             * token patterns.
-             */
+            /// <summary>
+            /// Raised when a character is read that isn't handled by any token pattern.
+            /// </summary>
             UNEXPECTED_CHAR,
 
-            /**
-             * The unexpected token error type is used when another
-             * token than the expected one is encountered.
-             */
+            /// <summary>
+            /// Raised when a different token is encountered than the parser expected.
+            /// </summary>
             UNEXPECTED_TOKEN,
 
-            /**
-             * The invalid token error type is used when a token
-             * pattern with an error message is matched. The
-             * additional information provided should contain the
-             * error message.
-             */
+            /// <summary>
+            /// Raised when a token pattern with an attached error message is matched.
+            /// </summary>
             INVALID_TOKEN,
 
-            /**
-             * The analysis error type is used when an error is
-             * encountered in the analysis. The additional information
-             * provided should contain the error message.
-             */
+            /// <summary>
+            /// Raised when an error is encountered during analysis. <see cref="Info"/>
+            /// contains the analyzer-supplied error message.
+            /// </summary>
             ANALYSIS
         }
 
         private readonly ArrayList? _details = details;
 
-
         /// <summary>
-        /// Creates a new parse exception.
+        /// Initializes a new <see cref="ParseException"/> without a details list.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="info"></param>
-        /// <param name="line"></param>
-        /// <param name="column"></param>
+        /// <param name="type">The kind of parse error.</param>
+        /// <param name="info">An optional informational message.</param>
+        /// <param name="line">The line at which the error occurred.</param>
+        /// <param name="column">The column at which the error occurred.</param>
         public ParseException(ErrorType type,
                               string? info,
                               int line,
@@ -91,41 +77,80 @@ namespace Flee.Parsing
         {
         }
 
+        /// <summary>
+        /// Gets the kind of parse error.
+        /// </summary>
         public ErrorType Type { get; } = type;
 
+        /// <summary>
+        /// Returns the kind of parse error.
+        /// </summary>
+        /// <returns>The error type.</returns>
         public ErrorType GetErrorType()
         {
             return Type;
         }
 
+        /// <summary>
+        /// Gets the informational message attached to the error, if any.
+        /// </summary>
         public string? Info { get; } = info;
 
+        /// <summary>
+        /// Returns the informational message attached to the error.
+        /// </summary>
+        /// <returns>The information string, or <see langword="null"/> when none is set.</returns>
         public string? GetInfo()
         {
             return Info;
         }
 
+        /// <summary>
+        /// Gets a copy of the details list. The list typically holds expected-token
+        /// descriptions for <see cref="ErrorType.UNEXPECTED_TOKEN"/>.
+        /// </summary>
         public ArrayList Details => new(_details!);
 
+        /// <summary>
+        /// Returns a copy of the details list.
+        /// </summary>
+        /// <returns>The details list.</returns>
         public ArrayList GetDetails()
         {
             return Details;
         }
 
+        /// <summary>
+        /// Gets the line at which the error occurred.
+        /// </summary>
         public int Line { get; } = line;
 
+        /// <summary>
+        /// Returns the line at which the error occurred.
+        /// </summary>
+        /// <returns>The error line.</returns>
         public int GetLine()
         {
             return Line;
         }
 
+        /// <summary>
+        /// Gets the column at which the error occurred.
+        /// </summary>
         public int Column { get; } = column;
 
+        /// <summary>
+        /// Returns the column at which the error occurred.
+        /// </summary>
+        /// <returns>The error column.</returns>
         public int GetColumn()
         {
             return Column;
         }
 
+        /// <summary>
+        /// Gets the full error message, including the source location when available.
+        /// </summary>
         public override string Message
         {
             get
@@ -148,11 +173,18 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Returns the full error message.
+        /// </summary>
+        /// <returns>The full error message.</returns>
         public string GetMessage()
         {
             return Message;
         }
 
+        /// <summary>
+        /// Gets the error description without source-location coordinates.
+        /// </summary>
         public string ErrorMessage
         {
             get
@@ -209,6 +241,10 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Returns the error description without source-location coordinates.
+        /// </summary>
+        /// <returns>The error message body.</returns>
         public string GetErrorMessage()
         {
             return ErrorMessage;

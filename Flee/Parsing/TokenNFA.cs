@@ -1,20 +1,28 @@
 namespace Flee.Parsing
 {
-    /**
-    * A non-deterministic finite state automaton (NFA) for matching
-    * tokens. It supports both fixed strings and simple regular
-    * expressions, but should perform similar to a DFA due to highly
-    * optimized data structures and tuning. The memory footprint during
-    * matching should be near zero, since no heap memory is allocated
-    * unless the pre-allocated queues need to be enlarged. The NFA also
-    * does not use recursion, but iterates in a loop instead.
-    */
+    /// <summary>
+    /// A non-deterministic finite-state automaton (NFA) for matching tokens. Supports both
+    /// fixed strings and simple regular expressions yet aims for DFA-class throughput thanks
+    /// to highly optimized data structures and tuning.
+    /// </summary>
+    /// <remarks>
+    /// The memory footprint during matching should be near zero — no heap memory is
+    /// allocated unless the pre-allocated queues need to be enlarged. The NFA also avoids
+    /// recursion in favor of an explicit loop.
+    /// </remarks>
     internal class TokenNFA
     {
         private readonly NFAState[] _initialChar = new NFAState[128];
         private readonly NFAState _initial = new();
         private readonly NFAStateQueue _queue = new();
 
+        /// <summary>
+        /// Adds a fixed-string match starting at the implicit ASCII fast-path table when
+        /// possible.
+        /// </summary>
+        /// <param name="str">The string to match.</param>
+        /// <param name="ignoreCase">Whether matching should be case-insensitive.</param>
+        /// <param name="value">The token pattern to associate with the match.</param>
         public void AddTextMatch(string str, bool ignoreCase, TokenPattern value)
         {
             NFAState state;
@@ -36,6 +44,14 @@ namespace Flee.Parsing
             state.Value = value;
         }
 
+        /// <summary>
+        /// Adds a regular-expression match by compiling <paramref name="pattern"/> into a
+        /// sub-NFA and grafting it onto the initial state, choosing the most efficient entry
+        /// strategy based on the pattern shape.
+        /// </summary>
+        /// <param name="pattern">The regex source.</param>
+        /// <param name="ignoreCase">Whether matching should be case-insensitive.</param>
+        /// <param name="value">The token pattern to associate with the match.</param>
         public void AddRegExpMatch(string pattern,
                                    bool ignoreCase,
                                    TokenPattern value)
@@ -92,6 +108,13 @@ namespace Flee.Parsing
             value.DebugInfo = debug;
         }
 
+        /// <summary>
+        /// Runs the NFA against <paramref name="buffer"/>, updating <paramref name="match"/>
+        /// every time an accepting state is reached.
+        /// </summary>
+        /// <param name="buffer">The input buffer.</param>
+        /// <param name="match">The match accumulator to update.</param>
+        /// <returns>Always zero — the actual match length is recorded on <paramref name="match"/>.</returns>
         public int Match(ReaderBuffer buffer, TokenMatch match)
         {
             int length = 0;

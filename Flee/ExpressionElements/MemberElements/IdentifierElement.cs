@@ -16,7 +16,8 @@ using Flee.Resources;
 namespace Flee.ExpressionElements.MemberElements
 {
     /// <summary>
-    /// Represents an identifier.
+    /// Represents an identifier reference: a field, property, virtual <see cref="PropertyDescriptor"/>,
+    /// expression-context variable, or calc-engine cross-expression reference.
     /// </summary>
     internal class IdentifierElement : MemberElement
     {
@@ -25,11 +26,20 @@ namespace Flee.ExpressionElements.MemberElements
         private PropertyDescriptor? _myPropertyDescriptor;
         private Type? _myVariableType;
         private Type? _myCalcEngineReferenceType;
+
+        /// <summary>
+        /// Initializes a new identifier with the given source name.
+        /// </summary>
+        /// <param name="name">The identifier name as it appeared in the source.</param>
         public IdentifierElement(string name)
         {
             MyName = name;
         }
 
+        /// <summary>
+        /// Resolves the identifier in priority order: field/property → expression variable →
+        /// calc-engine reference. Throws when none matches.
+        /// </summary>
         protected override void ResolveInternal()
         {
             // Try to bind to a field or property
@@ -60,14 +70,27 @@ namespace Flee.ExpressionElements.MemberElements
 
             if (MyPrevious == null)
             {
-                ThrowCompileException(CompileErrorResourceKeys.NoIdentifierWithName, CompileExceptionReason.UndefinedName, MyName);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.NoIdentifierWithName,
+                    CompileExceptionReason.UndefinedName,
+                    MyName);
             }
             else
             {
-                ThrowCompileException(CompileErrorResourceKeys.NoIdentifierWithNameOnType, CompileExceptionReason.UndefinedName, MyName, MyPrevious.TargetType.Name);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.NoIdentifierWithNameOnType,
+                    CompileExceptionReason.UndefinedName,
+                    MyName,
+                    MyPrevious.TargetType.Name);
             }
         }
 
+        /// <summary>
+        /// Tries to bind the identifier to a field or property. Falls back to virtual-property
+        /// resolution when no accessible CLR member matches.
+        /// </summary>
+        /// <param name="previous">The predecessor in the dereference chain.</param>
+        /// <returns><see langword="true"/> when bound.</returns>
         private bool ResolveFieldProperty(MemberElement? previous)
         {
             MemberInfo[] members = GetMembers(MemberTypes.Field | MemberTypes.Property);
@@ -85,11 +108,18 @@ namespace Flee.ExpressionElements.MemberElements
                 // More than one accessible member
                 if (previous == null)
                 {
-                    ThrowCompileException(CompileErrorResourceKeys.IdentifierIsAmbiguous, CompileExceptionReason.AmbiguousMatch, MyName);
+                    ThrowCompileException(
+                        CompileErrorResourceKeys.IdentifierIsAmbiguous,
+                        CompileExceptionReason.AmbiguousMatch,
+                        MyName);
                 }
                 else
                 {
-                    ThrowCompileException(CompileErrorResourceKeys.IdentifierIsAmbiguousOnType, CompileExceptionReason.AmbiguousMatch, MyName, previous.TargetType.Name);
+                    ThrowCompileException(
+                        CompileErrorResourceKeys.IdentifierIsAmbiguousOnType,
+                        CompileExceptionReason.AmbiguousMatch,
+                        MyName,
+                        previous.TargetType.Name);
                 }
             }
             else

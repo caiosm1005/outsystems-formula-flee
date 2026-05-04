@@ -3,21 +3,25 @@ using System.Reflection.Emit;
 namespace Flee.InternalTypes
 {
     /// <summary>
-    /// Manages branch information and allows us to determine if we should emit a short or long branch.
+    /// Manages branch information and decides whether to emit a short or long branch for each
+    /// recorded jump. Drives the two-pass emit performed by <see cref="Expression{T}.Compile"/>.
     /// </summary>
     internal class BranchManager
     {
         private readonly IList<BranchInfo> MyBranchInfos;
 
+        /// <summary>
+        /// Initializes an empty manager.
+        /// </summary>
         public BranchManager()
         {
             MyBranchInfos = [];
         }
 
         /// <summary>
-        /// check if any long branches exist
+        /// Returns whether any tracked branch currently exceeds the short-branch range.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see langword="true"/> when at least one long branch is required.</returns>
         public bool HasLongBranches()
         {
             foreach (BranchInfo bi in MyBranchInfos)
@@ -31,11 +35,10 @@ namespace Flee.InternalTypes
         }
 
         /// <summary>
-        /// Determine whether to use short or long branches.
-        /// This advances the ilg offset with No-op to adjust
-        /// for the long branches needed.
+        /// Determines whether each branch should use the short or long opcode form, and
+        /// shifts subsequent IL positions to account for long branches.
         /// </summary>
-        /// <remarks></remarks>
+        /// <returns><see langword="true"/> when at least one long branch was emitted.</returns>
         public bool ComputeBranches()
         {
             //
@@ -80,13 +83,12 @@ namespace Flee.InternalTypes
             return longBranchCount > 0;
         }
 
-
         /// <summary>
-        /// Determine if a branch from a point to a label will be long
+        /// Returns whether the branch starting at <paramref name="ilg"/>'s current position is
+        /// long. Defaults to <see langword="true"/> for unknown branches so we err on the safe side.
         /// </summary>
-        /// <param name="ilg"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
+        /// <param name="ilg">The IL generator whose current position is the branch start.</param>
+        /// <returns><see langword="true"/> when long form should be emitted.</returns>
         public bool IsLongBranch(FleeILGenerator ilg)
         {
             ILLocation startLoc = new(ilg.Length);
@@ -106,11 +108,10 @@ namespace Flee.InternalTypes
         }
 
         /// <summary>
-        /// Add a branch from a location to a target label
+        /// Records a branch from <paramref name="ilg"/>'s current position to <paramref name="target"/>.
         /// </summary>
-        /// <param name="ilg"></param>
-        /// <param name="target"></param>
-        /// <remarks></remarks>
+        /// <param name="ilg">The IL generator providing the start position.</param>
+        /// <param name="target">The label being branched to.</param>
         public void AddBranch(FleeILGenerator ilg, Label target)
         {
             ILLocation startLoc = new(ilg.Length);
@@ -120,13 +121,12 @@ namespace Flee.InternalTypes
             MyBranchInfos.Add(bi);
         }
 
-
         /// <summary>
-        /// Set the position for a label
+        /// Resolves <paramref name="target"/> to <paramref name="ilg"/>'s current position
+        /// across all tracked branches.
         /// </summary>
-        /// <param name="ilg"></param>
-        /// <param name="target"></param>
-        /// <remarks></remarks>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="target">The label being marked.</param>
         public void MarkLabel(FleeILGenerator ilg, Label target)
         {
             int pos = ilg.Length;
@@ -137,6 +137,10 @@ namespace Flee.InternalTypes
             }
         }
 
+        /// <summary>
+        /// Returns a newline-separated diagnostic listing of every tracked branch.
+        /// </summary>
+        /// <returns>The diagnostic string.</returns>
         public override string ToString()
         {
             string[] arr = new string[MyBranchInfos.Count];

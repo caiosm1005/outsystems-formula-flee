@@ -1,4 +1,4 @@
-﻿using System.Reflection.Emit;
+using System.Reflection.Emit;
 using Flee.ExpressionElements.Base;
 using Flee.InternalTypes;
 using Flee.PublicTypes;
@@ -6,13 +6,28 @@ using Flee.Resources;
 
 namespace Flee.ExpressionElements
 {
+    /// <summary>
+    /// The conditional <c>if(cond, t, f)</c> expression. Validates that <c>cond</c> is boolean
+    /// and that one of <c>t</c>/<c>f</c> is implicitly convertible to the other; the chosen
+    /// type becomes the result type.
+    /// </summary>
     internal class ConditionalElement : ExpressionElement
     {
         private readonly ExpressionElement _myCondition;
         private readonly ExpressionElement _myWhenTrue;
         private readonly ExpressionElement _myWhenFalse;
         private readonly Type _myResultType = null!;
-        public ConditionalElement(ExpressionElement condition, ExpressionElement whenTrue, ExpressionElement whenFalse)
+
+        /// <summary>
+        /// Initializes a new instance and resolves the result type from the branches.
+        /// </summary>
+        /// <param name="condition">The boolean condition.</param>
+        /// <param name="whenTrue">The value when the condition is true.</param>
+        /// <param name="whenFalse">The value when the condition is false.</param>
+        public ConditionalElement(
+            ExpressionElement condition,
+            ExpressionElement whenTrue,
+            ExpressionElement whenFalse)
         {
             _myCondition = condition;
             _myWhenTrue = whenTrue;
@@ -20,7 +35,9 @@ namespace Flee.ExpressionElements
 
             if (!ReferenceEquals(_myCondition.ResultType, typeof(bool)))
             {
-                ThrowCompileException(CompileErrorResourceKeys.FirstArgNotBoolean, CompileExceptionReason.TypeMismatch);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.FirstArgNotBoolean,
+                    CompileExceptionReason.TypeMismatch);
             }
 
             // The result type is the type that is common to the true/false operands
@@ -34,15 +51,31 @@ namespace Flee.ExpressionElements
             }
             else
             {
-                ThrowCompileException(CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther, CompileExceptionReason.TypeMismatch, _myWhenTrue.ResultType.Name, _myWhenFalse.ResultType.Name);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.NeitherArgIsConvertibleToTheOther,
+                    CompileExceptionReason.TypeMismatch,
+                    _myWhenTrue.ResultType.Name,
+                    _myWhenFalse.ResultType.Name);
             }
         }
 
+        /// <summary>
+        /// Delegates to <see cref="EmitConditional"/>.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             EmitConditional(ilg, services);
         }
 
+        /// <summary>
+        /// Emits a branch-on-false to the false branch, the true branch with conversion to the
+        /// chosen result type, an unconditional jump to the end, then the false branch with its
+        /// own conversion.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         private void EmitConditional(FleeILGenerator ilg, IServiceProvider services)
         {
             Label falseLabel = ilg.DefineLabel();
@@ -70,6 +103,9 @@ namespace Flee.ExpressionElements
             ilg.MarkLabel(endLabel);
         }
 
+        /// <summary>
+        /// Gets the resolved result type.
+        /// </summary>
         public override Type ResultType => _myResultType;
     }
 }

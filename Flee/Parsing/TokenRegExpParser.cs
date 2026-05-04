@@ -4,25 +4,44 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-    /**
-     * A regular expression parser. The parser creates an NFA for the
-     * regular expression having a single start and acceptance states.
-   */
+    /// <summary>
+    /// A regular-expression parser. Compiles a regex into an NFA with a single start state
+    /// and a single acceptance state.
+    /// </summary>
     internal class TokenRegExpParser
     {
         private readonly string _pattern;
         private readonly bool _ignoreCase;
         private int _pos;
+
+        /// <summary>
+        /// The start state of the produced NFA fragment.
+        /// </summary>
         internal NFAState Start = new();
+
+        /// <summary>
+        /// The accepting state of the produced NFA fragment.
+        /// </summary>
         internal NFAState End;
+
         private int _stateCount;
         private int _transitionCount;
         private int _epsilonCount;
 
+        /// <summary>
+        /// Initializes a new case-sensitive parser and compiles <paramref name="pattern"/>.
+        /// </summary>
+        /// <param name="pattern">The regex source.</param>
         public TokenRegExpParser(string pattern) : this(pattern, false)
         {
         }
 
+        /// <summary>
+        /// Initializes a new parser and compiles <paramref name="pattern"/>.
+        /// </summary>
+        /// <param name="pattern">The regex source.</param>
+        /// <param name="ignoreCase">Whether matching should be case-insensitive.</param>
+        /// <exception cref="RegExpException">If <paramref name="pattern"/> is malformed.</exception>
         public TokenRegExpParser(string pattern, bool ignoreCase)
         {
             _pattern = pattern;
@@ -38,6 +57,11 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Returns a textual summary of the produced NFA's size, used as the
+        /// <see cref="TokenPattern.DebugInfo"/> when the regex is added to the tokenizer.
+        /// </summary>
+        /// <returns>The textual summary.</returns>
         public string GetDebugInfo()
         {
             if (_stateCount == 0)

@@ -1,27 +1,38 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Reflection.Emit;
 using System.Reflection;
 using Flee.ExpressionElements.Base;
-
 using Flee.InternalTypes;
 using Flee.PublicTypes;
 using Flee.Resources;
 
-
 namespace Flee.ExpressionElements
 {
+    /// <summary>
+    /// The <c>in</c> operator. Supports two forms: <c>x in (a, b, c)</c> compares the operand
+    /// against each list element; <c>x in collection</c> calls <c>Contains</c> (or <c>ContainsKey</c>
+    /// for dictionaries) on the target collection.
+    /// </summary>
     internal class InElement : ExpressionElement
     {
-        // Element we will search for
+        /// <summary>The element we will search for.</summary>
         private readonly ExpressionElement MyOperand;
-        // Elements we will compare against
-        private readonly List<ExpressionElement> MyArguments = null!;
-        // Collection to look in
-        private readonly ExpressionElement? MyTargetCollectionElement;
-        // Type of the collection
 
+        /// <summary>The list of elements to compare against (when using the list form).</summary>
+        private readonly List<ExpressionElement> MyArguments = null!;
+
+        /// <summary>The collection to look in (when using the collection form).</summary>
+        private readonly ExpressionElement? MyTargetCollectionElement;
+
+        /// <summary>The CLR collection type chosen for dispatch (when using the collection form).</summary>
         private Type? MyTargetCollectionType;
-        // Initialize for searching a list of values
+
+        /// <summary>
+        /// Initializes for the list form: comparing <paramref name="operand"/> against each
+        /// element in <paramref name="listElements"/>.
+        /// </summary>
+        /// <param name="operand">The element to search for.</param>
+        /// <param name="listElements">The literal list of elements to compare against.</param>
         public InElement(ExpressionElement operand, IList listElements)
         {
             MyOperand = operand;
@@ -33,7 +44,12 @@ namespace Flee.ExpressionElements
             ResolveForListSearch();
         }
 
-        // Initialize for searching a collection
+        /// <summary>
+        /// Initializes for the collection form: calling <c>Contains</c> on
+        /// <paramref name="targetCollection"/>.
+        /// </summary>
+        /// <param name="operand">The element to search for.</param>
+        /// <param name="targetCollection">The collection to search in.</param>
         public InElement(ExpressionElement operand, ExpressionElement targetCollection)
         {
             MyOperand = operand;
@@ -41,6 +57,9 @@ namespace Flee.ExpressionElements
             ResolveForCollectionSearch();
         }
 
+        /// <summary>
+        /// Validates that the operand can be compared with every list element.
+        /// </summary>
         private void ResolveForListSearch()
         {
             CompareElement ce = new();
@@ -53,6 +72,10 @@ namespace Flee.ExpressionElements
             }
         }
 
+        /// <summary>
+        /// Validates the collection form: <see cref="MyTargetCollectionElement"/> must implement
+        /// a known collection interface and the operand must be convertible to its element type.
+        /// </summary>
         private void ResolveForCollectionSearch()
         {
             // Try to find a collection type
@@ -60,7 +83,10 @@ namespace Flee.ExpressionElements
 
             if (MyTargetCollectionType == null)
             {
-                ThrowCompileException(CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType, CompileExceptionReason.TypeMismatch, MyTargetCollectionElement!.ResultType.Name);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.SearchArgIsNotKnownCollectionType,
+                    CompileExceptionReason.TypeMismatch,
+                    MyTargetCollectionElement!.ResultType.Name);
             }
 
             // Validate that the operand type is compatible with the collection
@@ -69,10 +95,20 @@ namespace Flee.ExpressionElements
 
             if (!ImplicitConverter.EmitImplicitConvert(MyOperand.ResultType, p1.ParameterType, null))
             {
-                ThrowCompileException(CompileErrorResourceKeys.OperandNotConvertibleToCollectionType, CompileExceptionReason.TypeMismatch, MyOperand.ResultType.Name, p1.ParameterType.Name);
+                ThrowCompileException(
+                    CompileErrorResourceKeys.OperandNotConvertibleToCollectionType,
+                    CompileExceptionReason.TypeMismatch,
+                    MyOperand.ResultType.Name,
+                    p1.ParameterType.Name);
             }
         }
 
+        /// <summary>
+        /// Inspects <see cref="MyTargetCollectionElement"/>'s type for a recognized collection
+        /// interface (<see cref="ICollection{T}"/>, <see cref="IDictionary{TKey,TValue}"/>,
+        /// <see cref="IList{T}"/>).
+        /// </summary>
+        /// <returns>The matched interface type, or <see langword="null"/> when none.</returns>
         private Type? GetTargetCollectionType()
         {
             Type collType = MyTargetCollectionElement!.ResultType;
@@ -89,7 +125,8 @@ namespace Flee.ExpressionElements
 
                 Type genericTypeDef = interfaceType.GetGenericTypeDefinition();
 
-                if (ReferenceEquals(genericTypeDef, typeof(ICollection<>)) | ReferenceEquals(genericTypeDef, typeof(IDictionary<,>)))
+                if (ReferenceEquals(genericTypeDef, typeof(ICollection<>))
+                    | ReferenceEquals(genericTypeDef, typeof(IDictionary<,>)))
                 {
                     return interfaceType;
                 }
@@ -109,6 +146,11 @@ namespace Flee.ExpressionElements
             return null;
         }
 
+        /// <summary>
+        /// Dispatches to the list or collection emit based on which constructor was used.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         public override void Emit(FleeILGenerator ilg, IServiceProvider services)
         {
             if (MyTargetCollectionType != null)
@@ -122,6 +164,11 @@ namespace Flee.ExpressionElements
             }
         }
 
+        /// <summary>
+        /// Emits a call to <c>Contains</c>/<c>ContainsKey</c> on the target collection.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         private void EmitCollectionIn(FleeILGenerator ilg, IServiceProvider services)
         {
             // Get the contains method
@@ -138,18 +185,32 @@ namespace Flee.ExpressionElements
             ilg.Emit(OpCodes.Callvirt, mi);
         }
 
+        /// <summary>
+        /// Resolves the <c>Contains</c>/<c>ContainsKey</c> method on the target collection type.
+        /// </summary>
+        /// <returns>The method metadata.</returns>
         private MethodInfo GetCollectionContainsMethod()
         {
             string methodName = "Contains";
 
-            if (MyTargetCollectionType!.IsGenericType && ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
+            if (MyTargetCollectionType!.IsGenericType
+                && ReferenceEquals(MyTargetCollectionType.GetGenericTypeDefinition(), typeof(IDictionary<,>)))
             {
                 methodName = "ContainsKey";
             }
 
-            return MyTargetCollectionType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)!;
+            return MyTargetCollectionType.GetMethod(
+                methodName,
+                BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)!;
         }
 
+        /// <summary>
+        /// Emits a sequence of equality compares against the literal list, branching to a
+        /// "true terminal" on the first match and falling through to push <c>false</c> when
+        /// none matches.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="services">The compile services.</param>
         private void EmitListIn(FleeILGenerator ilg, IServiceProvider services)
         {
             CompareElement ce = new();
@@ -185,11 +246,19 @@ namespace Flee.ExpressionElements
             ilg.MarkLabel(endLabel);
         }
 
+        /// <summary>
+        /// Emits a branch-on-true to <paramref name="trueTerminal"/>.
+        /// </summary>
+        /// <param name="ilg">The IL generator.</param>
+        /// <param name="trueTerminal">The branch target.</param>
         private static void EmitBranchToTrueTerminal(FleeILGenerator ilg, Label trueTerminal)
         {
             ilg.EmitBranchTrue(trueTerminal);
         }
 
+        /// <summary>
+        /// Always <see cref="bool"/>: <c>in</c> tests for membership.
+        /// </summary>
         public override Type ResultType => typeof(bool);
     }
 }

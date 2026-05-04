@@ -3,16 +3,22 @@ using Flee.PublicTypes;
 
 namespace Flee.CalcEngine.PublicTypes
 {
+    /// <summary>
+    /// Lightweight calculation engine that holds named compiled expressions but doesn't track
+    /// dependencies or propagate changes — callers are responsible for re-evaluating manually.
+    /// Use <see cref="CalculationEngine"/> when you need dependency-driven recalculation.
+    /// </summary>
     public class SimpleCalcEngine
     {
-
         #region "Fields"
-
         private readonly IDictionary<string, IExpression> _myExpressions;
         #endregion
 
         #region "Constructor"
 
+        /// <summary>
+        /// Initializes a new instance with an empty expression map and a fresh context.
+        /// </summary>
         public SimpleCalcEngine()
         {
             _myExpressions = new Dictionary<string, IExpression>(StringComparer.OrdinalIgnoreCase);
@@ -27,7 +33,8 @@ namespace Flee.CalcEngine.PublicTypes
         {
             if (_myExpressions.ContainsKey(expressionName))
             {
-                throw new InvalidOperationException($"The calc engine already contains an expression named '{expressionName}'");
+                throw new InvalidOperationException(
+                    $"The calc engine already contains an expression named '{expressionName}'");
             }
             else
             {

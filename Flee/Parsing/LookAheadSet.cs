@@ -3,23 +3,23 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-    /*
-      * A token look-ahead set. This class contains a set of token id
-      * sequences. All sequences in the set are limited in length, so
-      * that no single sequence is longer than a maximum value. This
-      * class also filters out duplicates. Each token sequence also
-      * contains a repeat flag, allowing the look-ahead set to contain
-      * information about possible infinite repetitions of certain
-      * sequences. That information is important when conflicts arise
-      * between two look-ahead sets, as such a conflict cannot be
-      * resolved if the conflicting sequences can be repeated (would
-      * cause infinite loop).
-      */
+    /// <summary>
+    /// A token look-ahead set. Holds a deduplicated set of token-id sequences whose length is
+    /// bounded by a maximum. Each sequence carries a repeat flag so the set can describe
+    /// possible infinite repetitions of a sequence; conflicts that involve repetitive
+    /// sequences cannot be resolved (they imply an infinite loop).
+    /// </summary>
+    /// <param name="maxLength">The maximum length of any sequence stored in the set.</param>
     internal class LookAheadSet(int maxLength)
     {
         private readonly ArrayList _elements = [];
         private readonly int _maxLength = maxLength;
 
+        /// <summary>
+        /// Initializes a new look-ahead set as a copy of <paramref name="set"/>.
+        /// </summary>
+        /// <param name="maxLength">The maximum sequence length.</param>
+        /// <param name="set">The source look-ahead set to copy from.</param>
         public LookAheadSet(int maxLength, LookAheadSet set)
             : this(maxLength)
         {
@@ -27,11 +27,19 @@ namespace Flee.Parsing
             AddAll(set);
         }
 
+        /// <summary>
+        /// Returns the number of sequences stored in the set.
+        /// </summary>
+        /// <returns>The sequence count.</returns>
         public int Size()
         {
             return _elements.Count;
         }
 
+        /// <summary>
+        /// Returns the length of the shortest sequence in the set.
+        /// </summary>
+        /// <returns>The minimum sequence length, or zero when the set is empty.</returns>
         public int GetMinLength()
         {
             int min = -1;
@@ -47,6 +55,10 @@ namespace Flee.Parsing
             return (min < 0) ? 0 : min;
         }
 
+        /// <summary>
+        /// Returns the length of the longest sequence in the set.
+        /// </summary>
+        /// <returns>The maximum sequence length.</returns>
         public int GetMaxLength()
         {
             int max = 0;
@@ -61,6 +73,11 @@ namespace Flee.Parsing
             return max;
         }
 
+        /// <summary>
+        /// Returns the deduplicated list of token ids that appear at the start of any sequence
+        /// in the set.
+        /// </summary>
+        /// <returns>The initial token ids.</returns>
         public int[] GetInitialTokens()
         {
             ArrayList list = [];
@@ -81,6 +98,10 @@ namespace Flee.Parsing
             return result;
         }
 
+        /// <summary>
+        /// Returns whether any sequence in the set is marked as repetitive.
+        /// </summary>
+        /// <returns><see langword="true"/> when at least one sequence is repetitive.</returns>
         public bool IsRepetitive()
         {
             for (int i = 0; i < _elements.Count; i++)
@@ -94,6 +115,12 @@ namespace Flee.Parsing
             return false;
         }
 
+        /// <summary>
+        /// Returns whether any sequence in the set matches the upcoming tokens of
+        /// <paramref name="parser"/>.
+        /// </summary>
+        /// <param name="parser">The parser to peek tokens from.</param>
+        /// <returns><see langword="true"/> when at least one sequence matches.</returns>
         public bool IsNext(Parser parser)
         {
             for (int i = 0; i < _elements.Count; i++)
@@ -107,6 +134,14 @@ namespace Flee.Parsing
             return false;
         }
 
+        /// <summary>
+        /// Returns whether any sequence in the set matches the upcoming tokens of
+        /// <paramref name="parser"/>, considering only the first <paramref name="length"/>
+        /// tokens.
+        /// </summary>
+        /// <param name="parser">The parser to peek tokens from.</param>
+        /// <param name="length">The maximum number of tokens to consider.</param>
+        /// <returns><see langword="true"/> when at least one sequence matches.</returns>
         public bool IsNext(Parser parser, int length)
         {
             for (int i = 0; i < _elements.Count; i++)
@@ -120,6 +155,12 @@ namespace Flee.Parsing
             return false;
         }
 
+        /// <summary>
+        /// Returns whether any sequence in this set overlaps a sequence in
+        /// <paramref name="set"/> (one is a prefix of the other).
+        /// </summary>
+        /// <param name="set">The other set.</param>
+        /// <returns><see langword="true"/> when an overlap exists.</returns>
         public bool IsOverlap(LookAheadSet set)
         {
             for (int i = 0; i < _elements.Count; i++)
@@ -150,6 +191,11 @@ namespace Flee.Parsing
             return FindSequence(elem) != null;
         }
 
+        /// <summary>
+        /// Returns whether this set and <paramref name="set"/> share at least one sequence.
+        /// </summary>
+        /// <param name="set">The other set.</param>
+        /// <returns><see langword="true"/> when a shared sequence exists.</returns>
         public bool Intersects(LookAheadSet set)
         {
             for (int i = 0; i < _elements.Count; i++)
@@ -186,11 +232,19 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Adds a single-token sequence to the set.
+        /// </summary>
+        /// <param name="token">The token id to add.</param>
         public void Add(int token)
         {
             Add(new Sequence(token));
         }
 
+        /// <summary>
+        /// Adds every sequence from <paramref name="set"/> to this set.
+        /// </summary>
+        /// <param name="set">The set to merge in.</param>
         public void AddAll(LookAheadSet set)
         {
             for (int i = 0; i < set._elements.Count; i++)
@@ -199,6 +253,9 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Adds the empty sequence to the set.
+        /// </summary>
         public void AddEmpty()
         {
             Add(new Sequence());
@@ -209,6 +266,10 @@ namespace Flee.Parsing
             _elements.Remove(seq);
         }
 
+        /// <summary>
+        /// Removes every sequence in <paramref name="set"/> from this set.
+        /// </summary>
+        /// <param name="set">The set whose sequences should be removed.</param>
         public void RemoveAll(LookAheadSet set)
         {
             for (int i = 0; i < set._elements.Count; i++)
@@ -217,6 +278,12 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Returns the look-ahead set obtained after consuming <paramref name="token"/> from
+        /// the front of every matching sequence.
+        /// </summary>
+        /// <param name="token">The token id to consume.</param>
+        /// <returns>The remaining-look-ahead set.</returns>
         public LookAheadSet CreateNextSet(int token)
         {
             LookAheadSet result = new(_maxLength - 1);
@@ -232,6 +299,12 @@ namespace Flee.Parsing
             return result;
         }
 
+        /// <summary>
+        /// Returns the intersection of this set and <paramref name="set"/>, preferring the
+        /// repetitive sequence when both share one.
+        /// </summary>
+        /// <param name="set">The other set.</param>
+        /// <returns>The intersection set.</returns>
         public LookAheadSet CreateIntersection(LookAheadSet set)
         {
             LookAheadSet result = new(_maxLength);
@@ -251,6 +324,12 @@ namespace Flee.Parsing
             return result;
         }
 
+        /// <summary>
+        /// Returns every concatenation of a sequence in this set followed by a sequence in
+        /// <paramref name="set"/>, truncated to the maximum length.
+        /// </summary>
+        /// <param name="set">The follow-up set.</param>
+        /// <returns>The combined set.</returns>
         public LookAheadSet CreateCombination(LookAheadSet set)
         {
             LookAheadSet result = new(_maxLength);
@@ -289,6 +368,12 @@ namespace Flee.Parsing
             return result;
         }
 
+        /// <summary>
+        /// Returns every sequence in this set that overlaps a sequence in
+        /// <paramref name="set"/>.
+        /// </summary>
+        /// <param name="set">The other set.</param>
+        /// <returns>The overlapping sequences.</returns>
         public LookAheadSet CreateOverlaps(LookAheadSet set)
         {
             LookAheadSet result = new(_maxLength);
@@ -304,6 +389,12 @@ namespace Flee.Parsing
             return result;
         }
 
+        /// <summary>
+        /// Returns every suffix produced by stripping a prefix in <paramref name="set"/> from
+        /// the sequences in this set.
+        /// </summary>
+        /// <param name="set">The set of prefixes to filter against.</param>
+        /// <returns>The filtered set.</returns>
         public LookAheadSet CreateFilter(LookAheadSet set)
         {
             LookAheadSet result = new(_maxLength);
@@ -330,6 +421,10 @@ namespace Flee.Parsing
             return result;
         }
 
+        /// <summary>
+        /// Returns a copy of this set with every sequence flagged as repetitive.
+        /// </summary>
+        /// <returns>The repetitive copy.</returns>
         public LookAheadSet CreateRepetitive()
         {
             LookAheadSet result = new(_maxLength);
@@ -349,11 +444,21 @@ namespace Flee.Parsing
             return result;
         }
 
+        /// <summary>
+        /// Returns a string representation of the set.
+        /// </summary>
+        /// <returns>The string form.</returns>
         public override string ToString()
         {
             return ToString(null);
         }
 
+        /// <summary>
+        /// Returns a string representation of the set, using <paramref name="tokenizer"/> to
+        /// resolve token-id descriptions when available.
+        /// </summary>
+        /// <param name="tokenizer">An optional tokenizer for token descriptions.</param>
+        /// <returns>The string form.</returns>
         public string ToString(Tokenizer? tokenizer)
         {
             StringBuilder buffer = new();

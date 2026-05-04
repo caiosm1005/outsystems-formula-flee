@@ -32,7 +32,8 @@ namespace Flee.Tests.CalcEngineTests
 			context.Imports.AddType(typeof(Math));
 			//            context.Imports.AddType(typeof(Math), "math");
 
-			//' add convert methods e.g. .ToInt64, .ToString, .ToDateTime...  https://msdn.microsoft.com/en-us/library/system.convert.aspx?f=255&MSPPError=-2147217396 
+			//' add convert methods e.g. .ToInt64, .ToString, .ToDateTime...
+			//' https://msdn.microsoft.com/en-us/library/system.convert.aspx?f=255&MSPPError=-2147217396
 			context.Imports.AddType(typeof(Convert));
 			context.Imports.AddType(typeof(string));
 
@@ -117,12 +118,14 @@ IF(2.1 > 2.1 AND 2.1 <= 2.1, 2.1, 2.1))))";
 		public void ShortCircuitLongBranches()
 		{
 			//var script = System.IO.File.ReadAllText(@"Flee.Tests\TestScripts\NestedConditionals.js");
-			var script = @"IF(
-1 = 2 AND (16 * 24 + 8 * -1 < 0 OR 1+1+1+1+1+1+1+1+1+1+1+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3*3-900 < 0)
-AND (5*6+13-6*9-3+1+2+3+4+5+6+7+8 = 5+6+7+8+9+1+2+3+4+5+6+1+2+3+4+9-48 OR 6+5+2+3+8+1*9-6*7 > 8+6*4*(15-6)*(5+1+1+1+1+1+1+1+2))
-,
-1.4d,2.6d
-)";
+			var script = "IF(\n"
+				+ "1 = 2 AND (16 * 24 + 8 * -1 < 0 OR"
+				+ " 1+1+1+1+1+1+1+1+1+1+1+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3+4+5+6+7+8+9+1+2+3*3-900 < 0)\n"
+				+ "AND (5*6+13-6*9-3+1+2+3+4+5+6+7+8 = 5+6+7+8+9+1+2+3+4+5+6+1+2+3+4+9-48 OR"
+				+ " 6+5+2+3+8+1*9-6*7 > 8+6*4*(15-6)*(5+1+1+1+1+1+1+1+2))\n"
+				+ ",\n"
+				+ "1.4d,2.6d\n"
+				+ ")";
 			var expr = _myEngine.Context.CompileDynamic(script);
 			var result = expr.Evaluate();
 
@@ -130,16 +133,25 @@ AND (5*6+13-6*9-3+1+2+3+4+5+6+7+8 = 5+6+7+8+9+1+2+3+4+5+6+1+2+3+4+9-48 OR 6+5+2+
 		}
 
 
-        private static readonly string crashscript= @"
-if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 10.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
-if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 20.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
-if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 30.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
-if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 40.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
-if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 50.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
-if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 60.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
-if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 70.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
-if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 80.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,
-if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99, ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,";
+        private static readonly string crashscript = "\n"
+            + "if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 10.99,"
+            + " ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,\n"
+            + "if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 20.99,"
+            + " ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,\n"
+            + "if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 30.99,"
+            + " ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,\n"
+            + "if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 40.99,"
+            + " ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,\n"
+            + "if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 50.99,"
+            + " ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,\n"
+            + "if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 60.99,"
+            + " ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,\n"
+            + "if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 70.99,"
+            + " ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,\n"
+            + "if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 80.99,"
+            + " ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,\n"
+            + "if(ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 = 90.99,"
+            + " ceiling(First(6.29,if(6.39<100.01,6.39*0.66,6.39*.25)))-.01 + 1,";
 
 
 

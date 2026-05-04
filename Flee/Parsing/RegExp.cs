@@ -5,13 +5,11 @@ using System.Text;
 
 namespace Flee.Parsing
 {
-    /**
-     * A regular expression. This class creates and holds an internal
-     * data structure representing a regular expression. It also
-     * allows creating matchers. This class is thread-safe. Multiple
-     * matchers may operate simultanously on the same regular
-     * expression.
-     */
+    /// <summary>
+    /// A regular expression. Builds and holds an internal data structure representing the
+    /// regex and exposes factories for <see cref="Matcher"/> instances. Multiple matchers may
+    /// operate on the same regex simultaneously.
+    /// </summary>
     internal class RegExp
     {
         private readonly Element _element;
@@ -19,11 +17,21 @@ namespace Flee.Parsing
         private readonly bool _ignoreCase;
         private int _pos;
 
+        /// <summary>
+        /// Initializes a new case-sensitive regex.
+        /// </summary>
+        /// <param name="pattern">The regex source.</param>
         public RegExp(string pattern)
             : this(pattern, false)
         {
         }
 
+        /// <summary>
+        /// Initializes a new regex.
+        /// </summary>
+        /// <param name="pattern">The regex source.</param>
+        /// <param name="ignoreCase">Whether matching should be case-insensitive.</param>
+        /// <exception cref="RegExpException">If <paramref name="pattern"/> is malformed.</exception>
         public RegExp(string pattern, bool ignoreCase)
         {
             _pattern = pattern;
@@ -39,16 +47,30 @@ namespace Flee.Parsing
             }
         }
 
+        /// <summary>
+        /// Creates a matcher over <paramref name="str"/>.
+        /// </summary>
+        /// <param name="str">The string to match against.</param>
+        /// <returns>The new matcher.</returns>
         public Matcher Matcher(string str)
         {
             return Matcher(new ReaderBuffer(new StringReader(str)));
         }
 
+        /// <summary>
+        /// Creates a matcher over <paramref name="buffer"/>.
+        /// </summary>
+        /// <param name="buffer">The reader buffer to match against.</param>
+        /// <returns>The new matcher.</returns>
         public Matcher Matcher(ReaderBuffer buffer)
         {
             return new Matcher((Element)_element.Clone(), buffer, _ignoreCase);
         }
 
+        /// <summary>
+        /// Returns a textual description of the compiled regex.
+        /// </summary>
+        /// <returns>The textual description.</returns>
         public override string ToString()
         {
             StringWriter str = new();

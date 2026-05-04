@@ -112,7 +112,8 @@ namespace Flee.Tests.ExpressionTests
             context.Variables.Add("m1", m1);
             context.Variables.Add("m2", m2);
 
-            var message = "ArithmeticElement: Operation 'Subtract' is not defined for types 'Derived' and 'OtherDerived'";
+            var message = "ArithmeticElement: Operation 'Subtract' is not defined for"
+                + " types 'Derived' and 'OtherDerived'";
             Assert.ThrowsException<ExpressionCompileException>(() => context.CompileDynamic("m1 - m2"), message);
         }
 
